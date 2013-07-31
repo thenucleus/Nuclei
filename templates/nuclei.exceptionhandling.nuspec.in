@@ -5,8 +5,8 @@
     <version>${Version}</version>
     <authors>P. van der Velde</authors>
     <owners>P. van der Velde</owners>
-    <licenseUrl>http://www.google.com</licenseUrl>
-    <projectUrl>http://www.google.com</projectUrl>
+    <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
+    <projectUrl>https://github.com/pvandervelde/Nuclei</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
       Provides an exception filter for handling unhandled exceptions without destroying the 
