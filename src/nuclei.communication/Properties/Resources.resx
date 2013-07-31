@@ -1,0 +1,297 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Exceptions_Messages_AChannelTypeMustBeDefined" xml:space="preserve">
+    <value>A channel type must be defined and cannot be the None type.</value>
+  </data>
+  <data name="Exceptions_Messages_AChannelTypeMustDeriveFromIChannelType" xml:space="preserve">
+    <value>A channel type must inherit from IChannelType.</value>
+  </data>
+  <data name="Exceptions_Messages_ACommandSetTypeMustDeriveFromICommandSet" xml:space="preserve">
+    <value>A command set type must inherit from ICommandSet.</value>
+  </data>
+  <data name="Exceptions_Messages_AMessageNeedsToHaveAnId" xml:space="preserve">
+    <value>A message must have an ID number. It cannot have the None ID as ID.</value>
+  </data>
+  <data name="Exceptions_Messages_ANotificationSetTypeMustDeriveFromINotificationSet" xml:space="preserve">
+    <value>A notification set must inherit from INotificationSet.</value>
+  </data>
+  <data name="Exceptions_Messages_ChannelAddresssMustBeDefined" xml:space="preserve">
+    <value>The address of a communication channel must be defined in order to connect to the channel.</value>
+  </data>
+  <data name="Exceptions_Messages_CommandAlreadyRegistered" xml:space="preserve">
+    <value>The given command interface has already been registered.</value>
+  </data>
+  <data name="Exceptions_Messages_CommandInvocationFailed" xml:space="preserve">
+    <value>The invocation of a command failed.</value>
+  </data>
+  <data name="Exceptions_Messages_CommandNotSupported" xml:space="preserve">
+    <value>The requested command is not supported by the endpoint.</value>
+  </data>
+  <data name="Exceptions_Messages_CommandNotSupported_WithCommand" xml:space="preserve">
+    <value>The command of type {0} is not supported by the endpoint.</value>
+  </data>
+  <data name="Exceptions_Messages_CommandObjectMustImplementCommandInterface" xml:space="preserve">
+    <value>The provided command object must implement the provided command interface.</value>
+  </data>
+  <data name="Exceptions_Messages_DataDownloadFailed" xml:space="preserve">
+    <value>The download of the desired data failed.</value>
+  </data>
+  <data name="Exceptions_Messages_EndpointIdCannotBeDeserializedFromAnEmptyString" xml:space="preserve">
+    <value>An endpoint ID cannot be deserialized from an empty string.</value>
+  </data>
+  <data name="Exceptions_Messages_EndpointNotContactable" xml:space="preserve">
+    <value>The endpoint cannot be contacted. No connection information for this endpoint is available.</value>
+  </data>
+  <data name="Exceptions_Messages_EndpointNotContactable_WithEndpoint" xml:space="preserve">
+    <value>The endpoint [{0}] cannot be contacted. No connection information for this endpoint is available.</value>
+  </data>
+  <data name="Exceptions_Messages_FailedToSendMessage" xml:space="preserve">
+    <value>Failed to send the message.</value>
+  </data>
+  <data name="Exceptions_Messages_FilePathCannotBeEmpty" xml:space="preserve">
+    <value>A file path cannot be an empty string.</value>
+  </data>
+  <data name="Exceptions_Messages_FileRegistrationNotFound" xml:space="preserve">
+    <value>No file registration was found for the given token.</value>
+  </data>
+  <data name="Exceptions_Messages_FileRegistrationNotFound_WithToken" xml:space="preserve">
+    <value>No file registration was found for the token: {0}</value>
+  </data>
+  <data name="Exceptions_Messages_IncorrectStreamTransferInformationObjectFound_WithTypes" xml:space="preserve">
+    <value>Transferring the information from the stream requires a different set of information than provided. The method required {0} but was provided with {1}.</value>
+  </data>
+  <data name="Exceptions_Messages_InvalidChannelType" xml:space="preserve">
+    <value>The given channel type is not valid.</value>
+  </data>
+  <data name="Exceptions_Messages_MaximumNumberOfChannelRestartsExceeded" xml:space="preserve">
+    <value>The maximum number of channel restarts was exceeded. Not restarting the channel anymore.</value>
+  </data>
+  <data name="Exceptions_Messages_MessageToFilterOnNeedsToImplementICommunicationMessage" xml:space="preserve">
+    <value>In order to filter on a given message kind the message class must implement the ICommunicationMessage interface.</value>
+  </data>
+  <data name="Exceptions_Messages_MissingBindingType" xml:space="preserve">
+    <value>The endpoint discovery message did not provide a binding type. Contact information for the endpoint is incomplete without the binding information.</value>
+  </data>
+  <data name="Exceptions_Messages_MissingCommandSet" xml:space="preserve">
+    <value>The requested command set could not be found.</value>
+  </data>
+  <data name="Exceptions_Messages_MissingEndpointId" xml:space="preserve">
+    <value>The endpoint discovery message did not provide an endpoint ID. Contact information for the endpoint is incomplete without the ID.</value>
+  </data>
+  <data name="Exceptions_Messages_NoCommunicationSubjectsRegistered" xml:space="preserve">
+    <value>No communication subjects have been registered. This may result in the rejection of all incoming endpoint connections.</value>
+  </data>
+  <data name="Exceptions_Messages_NotificationNotSupported" xml:space="preserve">
+    <value>The requested notification is not supported by the endpoint.</value>
+  </data>
+  <data name="Exceptions_Messages_NotificationNotSupported_WithNotification" xml:space="preserve">
+    <value>The notification of type {0} is not supported by the endpoint.</value>
+  </data>
+  <data name="Exceptions_Messages_NotificationObjectMustImplementNotificationInterface" xml:space="preserve">
+    <value>The provided notification object must implement the provided notification interface.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidCommandSet" xml:space="preserve">
+    <value>The given type is not a valid command set interface.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidCommandSet_CommandSetCannotHaveEvents" xml:space="preserve">
+    <value>The type {0} is not a valid command set because it contains the following events: {1}.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidCommandSet_CommandSetCannotHaveProperties" xml:space="preserve">
+    <value>The type {0} is not a valid command set because it contains the following properties: {1}.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidCommandSet_CommandSetMethodsCannotBeGeneric" xml:space="preserve">
+    <value>The type {0} is not a valid command set because it contains the method {1} with one or more generic parameters.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidCommandSet_CommandSetMethodsMustHaveCorrectReturnType" xml:space="preserve">
+    <value>The type {0} is not a valid command set because it contains the method {1} which does not return a void, a Task or a Task&lt;T&gt;.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidCommandSet_CommandSetMustHaveMethods" xml:space="preserve">
+    <value>The type {0} is not a valid command set because it does not have any methods.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidCommandSet_CommandSetParametersMustBeValid" xml:space="preserve">
+    <value>The type {0} is not a valid command set because it contains the method {1} which has an out parameter, a ref parameter or a parameter that cannot be serialized.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidCommandSet_TypeIsNotAnICommandSet" xml:space="preserve">
+    <value>The type {0} does not derive from ICommandSet.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidCommandSet_TypeIsNotAnInterface" xml:space="preserve">
+    <value>The type {0} is not a valid command set because it is not an interface.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidCommandSet_TypeMustBeClosedConstructed" xml:space="preserve">
+    <value>The type {0} is not a valid command set because it contains open generic parameters.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidNotificationSet" xml:space="preserve">
+    <value>The given type is not a valid notification set interface.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidNotificationSet_NotificationSetCannotHaveMethods" xml:space="preserve">
+    <value>The type {0} is not a valid notification set because it contains the following methods: {1}.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidNotificationSet_NotificationSetCannotHaveProperties" xml:space="preserve">
+    <value>The type {0} is not a valid notification set because it contains the following properties: {1}.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidNotificationSet_NotificationSetEventsMustUseEventHandler" xml:space="preserve">
+    <value>The type {0} is not a valid notification set because it contains the event {1} which either does not use the EventHandler or EventHandler&lt;T&gt; delegate, or the EventArgs generic parameter is not serializable.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidNotificationSet_NotificationSetMustHaveEvents" xml:space="preserve">
+    <value>The type {0} is not a valid notification set because it does not have any events.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidNotificationSet_TypeIsNotAnINotificationSet" xml:space="preserve">
+    <value>The type {0} does not derive from INotificationSet.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidNotificationSet_TypeIsNotAnInterface" xml:space="preserve">
+    <value>The type {0} is not a valid notification set because it is not an interface.</value>
+  </data>
+  <data name="Exceptions_Messages_TypeIsNotAValidNotificationSet_TypeMustBeClosedConstructed" xml:space="preserve">
+    <value>The type {0} is not a valid notification set because it contains open generic parameters.</value>
+  </data>
+  <data name="Exceptions_Messages_UnableToGenerateProxy" xml:space="preserve">
+    <value>Unable to generate a proxy for the given type.</value>
+  </data>
+  <data name="Exceptions_Messages_UnableToLoadProxyType" xml:space="preserve">
+    <value>An ICommandSet type could not be loaded.</value>
+  </data>
+  <data name="Exceptions_Messages_UnableToLoadProxyType_WithTypeName" xml:space="preserve">
+    <value>An proxy of type {0} could not be loaded.</value>
+  </data>
+  <data name="Exceptions_Messages_UnknownCommandSet" xml:space="preserve">
+    <value>The requested command set has not been registered.</value>
+  </data>
+  <data name="Exceptions_Messages_UnknownEndpointIdFormat" xml:space="preserve">
+    <value>The given endpoint had an unsupported format.</value>
+  </data>
+  <data name="Exceptions_Messages_UnknownNotificationSet" xml:space="preserve">
+    <value>The requested notification set has not been registered.</value>
+  </data>
+  <data name="Exceptions_Messages_UploadNotDeregistered" xml:space="preserve">
+    <value>An upload for the given token already exists.</value>
+  </data>
+  <data name="Exceptions_Messages_UploadNotDeregistered_WithToken" xml:space="preserve">
+    <value>An upload for the token [{0}] already exists.</value>
+  </data>
+  <data name="Log_Messages_FailedToStartCommunicationSystem_WithError" xml:space="preserve">
+    <value>Failed to start the communication system. Error was: {0}</value>
+  </data>
+  <data name="Log_Messages_ManualDiscoveryOfRemoteEndpoint_WithConnectionInformation" xml:space="preserve">
+    <value>Signaling new connection through manual discovery. Connection to endpoint {0} via channel {1} at {2}</value>
+  </data>
+  <data name="Log_Messages_ManualDisoveryWaitingForLayerSignIn" xml:space="preserve">
+    <value>Signaling new connection through manual discovery. Waiting for communication layer to sign in ...</value>
+  </data>
+</root>

@@ -1,0 +1,296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SolutionDir Condition="'$(SolutionDir)' == '' or '$(SolutionDir)' == '*undefined*'">$(MSBuildProjectDirectory)\..</SolutionDir>
+    <ProjectGuid>{B0D0341B-98D0-48D0-A2D8-9B05761AE64E}</ProjectGuid>
+    <OutputType>library</OutputType>
+    <RootNamespace>Nuclei.Communication</RootNamespace>
+    <AssemblyName>Nuclei.Communication</AssemblyName>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)\BaseConfiguration.targets" />
+  <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\..\packages\Autofac.3.0.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="Autofac.Configuration">
+      <HintPath>..\..\packages\Autofac.3.0.2\lib\net40\Autofac.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Core">
+      <HintPath>..\..\packages\Castle.Core.2.5.2\lib\NET35\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\packages\log4net.1.2.10\lib\2.0\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Lokad.ActionPolicy">
+      <HintPath>..\..\packages\Lokad.Shared.1.5.181.0\lib\Lokad.ActionPolicy.dll</HintPath>
+    </Reference>
+    <Reference Include="Lokad.Logging">
+      <HintPath>..\..\packages\Lokad.Shared.1.5.181.0\lib\Lokad.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Lokad.Quality">
+      <HintPath>..\..\packages\Lokad.Shared.1.5.181.0\lib\Lokad.Quality.dll</HintPath>
+    </Reference>
+    <Reference Include="Lokad.Shared">
+      <HintPath>..\..\packages\Lokad.Shared.1.5.181.0\lib\Lokad.Shared.dll</HintPath>
+    </Reference>
+    <Reference Include="Lokad.Stack">
+      <HintPath>..\..\packages\Lokad.Shared.1.5.181.0\lib\Lokad.Stack.dll</HintPath>
+    </Reference>
+    <Reference Include="Lokad.Testing">
+      <HintPath>..\..\packages\Lokad.Shared.1.5.181.0\lib\Lokad.Testing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Mono.Cecil">
+      <HintPath>..\..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb">
+      <HintPath>..\..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb">
+      <HintPath>..\..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks">
+      <HintPath>..\..\packages\Mono.Cecil.0.9.5.0\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Reactive">
+      <HintPath>..\..\packages\Rx-Main.1.0.10621\lib\Net4\System.Reactive.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Discovery" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(SOFTWARE_SIGNING_KEY_PATH)">
+      <Link>Properties\App.snk</Link>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\templates\AssemblyInfo.Base.cs">
+      <Link>Properties\AssemblyInfo.Base.cs</Link>
+    </Compile>
+    <Compile Include="..\..\build\temp\AssemblyInfo.BuildInformation.cs">
+      <Link>Properties\AssemblyInfo.BuildInformation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\build\temp\AssemblyInfo.InternalsVisibleTo.cs">
+      <Link>Properties\AssemblyInfo.InternalsVisibleTo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\build\temp\AssemblyInfo.VersionNumber.cs">
+      <Link>Properties\AssemblyInfo.VersionNumber.cs</Link>
+    </Compile>
+    <Compile Include="BuildSendingEndpoint.cs" />
+    <Compile Include="ChannelClosedEventArgs.cs" />
+    <Compile Include="ChannelConnectionInformation.cs" />
+    <Compile Include="ChannelOpenedEventArgs.cs" />
+    <Compile Include="ChannelType.cs" />
+    <Compile Include="CommandAlreadyRegisteredException.cs" />
+    <Compile Include="CommandInformationPerEndpoint.cs" />
+    <Compile Include="CommandInvocationFailedException.cs" />
+    <Compile Include="CommandNotSupportedException.cs" />
+    <Compile Include="CommandProxyBuilder.cs" />
+    <Compile Include="CommandSetAvailabilityEventArgs.cs" />
+    <Compile Include="CommandSetInterceptorSelector.cs" />
+    <Compile Include="CommandSetMethodWithoutResultInterceptor.cs" />
+    <Compile Include="CommandSetMethodWithResultInterceptor.cs" />
+    <Compile Include="CommandSetProxy.cs" />
+    <Compile Include="CommunicationSubject.cs" />
+    <Compile Include="CommunicationDescriptionStorage.cs" />
+    <Compile Include="CommunicationChannel.cs" />
+    <Compile Include="CommunicationConfigurationKeys.cs" />
+    <Compile Include="CommunicationConstants.cs" />
+    <Compile Include="CommunicationDescription.cs" />
+    <Compile Include="CommunicationLayer.cs" />
+    <Compile Include="CommunicationLayerStarter.cs" />
+    <Compile Include="CommunicationModule.cs" />
+    <Compile Include="DataHandler.cs" />
+    <Compile Include="DataReceivingEndpoint.cs" />
+    <Compile Include="DataTransferEventArgs.cs" />
+    <Compile Include="DataTransferMessage.cs" />
+    <Compile Include="EndpointDiscoveredEventArgs.cs" />
+    <Compile Include="EndpointLostEventArgs.cs" />
+    <Compile Include="EndpointSignInEventArgs.cs" />
+    <Compile Include="DownloadDataFromRemoteEndpoints.cs" />
+    <Compile Include="EndpointEventArgs.cs" />
+    <Compile Include="EndpointId.cs" />
+    <Compile Include="EndpointIdExtensions.cs" />
+    <Compile Include="EndpointInformationStorage.cs" />
+    <Compile Include="EndpointNotContactableException.cs" />
+    <Compile Include="EndpointSignedOutEventArgs.cs" />
+    <Compile Include="FailedToSendMessageException.cs" />
+    <Compile Include="FileRegistrationNotFoundException.cs" />
+    <Compile Include="HandshakeProtocolLayer.cs" />
+    <Compile Include="IAcceptExternalEndpointInformation.cs" />
+    <Compile Include="IDataPipe.cs" />
+    <Compile Include="IDataReceivingEndpointProxy.cs" />
+    <Compile Include="IDataTransferingEndpoint.cs" />
+    <Compile Include="IDirectIncomingData.cs" />
+    <Compile Include="IHoldServiceConnections.cs" />
+    <Compile Include="IMessagePipe.cs" />
+    <Compile Include="IMessageSendingEndpoint.cs" />
+    <Compile Include="IChannelType.cs" />
+    <Compile Include="ICommandCollection.cs" />
+    <Compile Include="ICommandSet.cs" />
+    <Compile Include="ICommunicationChannel.cs" />
+    <Compile Include="ICommunicationLayer.cs" />
+    <Compile Include="ICommunicationMessage.cs" />
+    <Compile Include="IDataReceivingEndpoint.cs" />
+    <Compile Include="IDirectIncomingMessages.cs" />
+    <Compile Include="IDiscoverOtherServices.cs" />
+    <Compile Include="IHandleHandshakes.cs" />
+    <Compile Include="IMessageFilter.cs" />
+    <Compile Include="IMessageProcessAction.cs" />
+    <Compile Include="INotificationSendersCollection.cs" />
+    <Compile Include="INotificationSet.cs" />
+    <Compile Include="INotifyOfEndpointStateChange.cs" />
+    <Compile Include="INotifyOfRemoteEndpointEvents.cs" />
+    <Compile Include="InternalCommandAttribute.cs" />
+    <Compile Include="InternalNotificationAttribute.cs" />
+    <Compile Include="InvalidChannelTypeException.cs" />
+    <Compile Include="IProcessIncomingData.cs" />
+    <Compile Include="IProcessIncomingMessages.cs" />
+    <Compile Include="IMessageReceivingEndpoint.cs" />
+    <Compile Include="IMessageReceivingEndpointProxy.cs" />
+    <Compile Include="IReceiveInformationFromRemoteEndpoints.cs" />
+    <Compile Include="ISendCommandsToRemoteEndpoints.cs" />
+    <Compile Include="ISendDataViaChannels.cs" />
+    <Compile Include="ISendingEndpoint.cs" />
+    <Compile Include="ISendNotifications.cs" />
+    <Compile Include="ISerializedEventRegistration.cs" />
+    <Compile Include="ISerializedMethodInvocation.cs" />
+    <Compile Include="ISerializedType.cs" />
+    <Compile Include="IStoreCommunicationDescriptions.cs" />
+    <Compile Include="IStoreInformationAboutEndpoints.cs" />
+    <Compile Include="IStoreUploads.cs" />
+    <Compile Include="LastChanceMessageHandlerAttribute.cs" />
+    <Compile Include="LocalCommandCollection.cs" />
+    <Compile Include="LocalNotificationCollection.cs" />
+    <Compile Include="ManualDiscoverySource.cs" />
+    <Compile Include="ManualEndpointDiscovery.cs" />
+    <Compile Include="MaximumNumberOfChannelRestartsExceededException.cs" />
+    <Compile Include="MessageEventArgs.cs" />
+    <Compile Include="MessageHandler.cs" />
+    <Compile Include="MessageId.cs" />
+    <Compile Include="Messages\CommandInvokedMessage.cs" />
+    <Compile Include="Messages\CommandInvokedResponseMessage.cs" />
+    <Compile Include="Messages\CommunicationMessage.cs" />
+    <Compile Include="Messages\CommunicationMessageExtensions.cs" />
+    <Compile Include="Messages\DataDownloadRequestMessage.cs" />
+    <Compile Include="Messages\EndpointConnectMessage.cs" />
+    <Compile Include="Messages\EndpointDisconnectMessage.cs" />
+    <Compile Include="Messages\FailureMessage.cs" />
+    <Compile Include="Messages\MessageKindFilter.cs" />
+    <Compile Include="Messages\NotificationRaisedMessage.cs" />
+    <Compile Include="Messages\Processors\CommandInvokedProcessAction.cs" />
+    <Compile Include="Messages\Processors\DataDownloadProcessAction.cs" />
+    <Compile Include="Messages\Processors\EndpointConnectProcessAction.cs" />
+    <Compile Include="Messages\Processors\NotificationRaisedProcessAction.cs" />
+    <Compile Include="Messages\Processors\RegisterForNotificationProcessAction.cs" />
+    <Compile Include="Messages\Processors\UnknownMessageTypeProcessAction.cs" />
+    <Compile Include="Messages\Processors\UnregisterFromNotificationProcessAction.cs" />
+    <Compile Include="Messages\RegisterForNotificationMessage.cs" />
+    <Compile Include="Messages\SuccessMessage.cs" />
+    <Compile Include="Messages\UnknownMessageTypeMessage.cs" />
+    <Compile Include="Messages\UnregisterFromNotificationMessage.cs" />
+    <Compile Include="MissingBindingTypeException.cs" />
+    <Compile Include="MissingCommandSetException.cs" />
+    <Compile Include="MissingEndpointIdException.cs" />
+    <Compile Include="NamedPipeChannelType.cs" />
+    <Compile Include="NetDataContractOperationBehavior.cs" />
+    <Compile Include="NoCommunicationSubjectsRegisteredException.cs" />
+    <Compile Include="NotificationEventAddMethodInterceptor.cs" />
+    <Compile Include="NotificationEventRemoveMethodInterceptor.cs" />
+    <Compile Include="NotificationInformationEventArgs.cs" />
+    <Compile Include="NotificationInformationPerEndpoint.cs" />
+    <Compile Include="NotificationNotSupportedException.cs" />
+    <Compile Include="NotificationProxyBuilder.cs" />
+    <Compile Include="NotificationSetAvailabilityEventArgs.cs" />
+    <Compile Include="NotificationSetInterceptorSelector.cs" />
+    <Compile Include="NotificationSetProxy.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ProxyExtensions.cs" />
+    <Compile Include="ProxyInformationEventArgs.cs" />
+    <Compile Include="ProxySelfReferenceInterceptor.cs" />
+    <Compile Include="MessageReceivingEndpoint.cs" />
+    <Compile Include="RemoteCommandHub.cs" />
+    <Compile Include="RemoteEndpointProxyHub.cs" />
+    <Compile Include="RemoteNotificationHub.cs" />
+    <Compile Include="RestoringDataTransferingEndpoint.cs" />
+    <Compile Include="RestoringMessageSendingEndpoint.cs" />
+    <Compile Include="SendingEndpoint.cs" />
+    <Compile Include="SerializedEvent.cs" />
+    <Compile Include="SerializedMethodInvocation.cs" />
+    <Compile Include="SerializedType.cs" />
+    <Compile Include="ServiceConnectionHolder.cs" />
+    <Compile Include="UdpBasedDiscoverySource.cs" />
+    <Compile Include="TcpChannelType.cs" />
+    <Compile Include="TypeIsNotAValidCommandSetException.cs" />
+    <Compile Include="TypeIsNotAValidNotificationSetException.cs" />
+    <Compile Include="UnableToGenerateProxyException.cs" />
+    <Compile Include="UnableToLoadProxyTypeException.cs" />
+    <Compile Include="UnknownCommandSetException.cs" />
+    <Compile Include="UnknownEndpointIdFormatException.cs" />
+    <Compile Include="UnknownNotificationSetException.cs" />
+    <Compile Include="UploadNotDeregisteredException.cs" />
+    <Compile Include="UploadToken.cs" />
+    <Compile Include="UseNetDataContractSerializerAttribute.cs" />
+    <Compile Include="WaitingUploads.cs" />
+  </ItemGroup>
+  <!-- Indicate that we depend on the SolutionLevel build projects -->
+  <ItemGroup>
+    <ProjectReference Include="..\nuclei.build\Nuclei.Build.csproj">
+      <Project>{aea39fa0-9b45-4fdf-b94c-543e410f480c}</Project>
+      <Name>Nuclei.Build</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\nuclei.configuration\Nuclei.Configuration.csproj">
+      <Project>{62e77b2f-34ee-4258-b1c7-9f30eb80ae12}</Project>
+      <Name>Nuclei.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\solutionlevel\SolutionLevel.csproj">
+      <Project>{b0b1c32a-53fc-4b7e-ba60-6dafb8180a42}</Project>
+      <Name>SolutionLevel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nuclei.Diagnostics\Nuclei.Diagnostics.csproj">
+      <Project>{751a1133-0a06-4fd1-a4c1-0daec2d40d31}</Project>
+      <Name>Nuclei.Diagnostics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nuclei\Nuclei.csproj">
+      <Project>{7c12c611-1780-4e93-9b0e-b806b738559d}</Project>
+      <Name>Nuclei</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- 
+       To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+    -->
+  <!--
+    <Target Name="BeforeBuild">
+    </Target>
+    -->
+  <!--
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+</Project>

@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Nuclei.Fusion</id>
+    <version>${Version}</version>
+    <authors>P. van der Velde</authors>
+    <owners>P. van der Velde</owners>
+    <licenseUrl>http://www.google.com</licenseUrl>
+    <projectUrl>http://www.google.com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      Provides methods for locating and loading assemblies from an AppDomain.AssemblyResolve event.
+    </description>
+    <releaseNotes>
+      ${ReleaseNotes}
+    </releaseNotes>
+    <dependencies>
+      ${Dependencies}
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="${DirBin}\*.cs.pp" target="content\Nuclei\Fusion" />
+  </files>
+</package>

@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SolutionDir Condition="'$(SolutionDir)' == '' or '$(SolutionDir)' == '*undefined*'">$(MSBuildProjectDirectory)\..</SolutionDir>
+    <ProjectGuid>{F0DBB163-09EE-4DC2-B278-87C2FC0A1758}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Nuclei.Communication</RootNamespace>
+    <AssemblyName>Test.Unit.Nuclei.Communication</AssemblyName>
+    <ShouldDoDocumentation>false</ShouldDoDocumentation>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)\BaseConfiguration.targets" />
+  <PropertyGroup>
+    <NoWarn>1685</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Moq">
+      <HintPath>..\..\packages\Moq.4.0.10827\lib\NET40\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="ParallelExtensionsExtras">
+      <HintPath>..\..\packages\ParallelExtensionsExtras.1.2.0.0\lib\net40\ParallelExtensionsExtras.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(SOFTWARE_SIGNING_KEY_PATH)">
+      <Link>Properties\App.snk</Link>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\templates\AssemblyInfo.Base.cs">
+      <Link>Properties\AssemblyInfo.Base.cs</Link>
+    </Compile>
+    <Compile Include="..\..\build\temp\AssemblyInfo.BuildInformation.cs">
+      <Link>Properties\AssemblyInfo.BuildInformation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\build\temp\AssemblyInfo.VersionNumber.cs">
+      <Link>Properties\AssemblyInfo.VersionNumber.cs</Link>
+    </Compile>
+    <Compile Include="ChannelClosedEventArgsTest.cs" />
+    <Compile Include="ChannelConnectionInformationTest.cs" />
+    <Compile Include="CommandAlreadyRegisteredExceptionTest.cs" />
+    <Compile Include="CommandInvocationFailedExceptionTest.cs" />
+    <Compile Include="CommandNotSupportedExceptionTest.cs" />
+    <Compile Include="CommandProxyBuilderTest.cs" />
+    <Compile Include="CommandProxyBuilderTest.Interfaces.cs" />
+    <Compile Include="CommunicationDescriptionStorageTest.cs" />
+    <Compile Include="CommunicationSubjectTest.cs" />
+    <Compile Include="DataHandlerTest.cs" />
+    <Compile Include="EndpointInformationStorageTest.cs" />
+    <Compile Include="EndpointSignInEventArgsTest.cs" />
+    <Compile Include="EndpointEventArgsTest.cs" />
+    <Compile Include="EndpointIdExtensionsTest.cs" />
+    <Compile Include="EndpointIdTest.cs" />
+    <Compile Include="EndpointNotContactableExceptionTest.cs" />
+    <Compile Include="FailedToSendMessageExceptionTest.cs" />
+    <Compile Include="FileRegistrationNotFoundExceptionTest.cs" />
+    <Compile Include="HandshakeProtocolLayerTest.cs" />
+    <Compile Include="InvalidChannelTypeExceptionTest.cs" />
+    <Compile Include="LocalCommandCollectionTest.cs" />
+    <Compile Include="LocalNotificationCollectionTest.cs" />
+    <Compile Include="ManualDiscoverySourceTest.cs" />
+    <Compile Include="MaximumNumberOfChannelRestartsExceededExceptionTest.cs" />
+    <Compile Include="MessageEventArgsTest.cs" />
+    <Compile Include="MessageHandlerTest.cs" />
+    <Compile Include="MessageIdTest.cs" />
+    <Compile Include="Messages\CommandInvokedMessageTest.cs" />
+    <Compile Include="Messages\CommandInvokedResponseMessageTest.cs" />
+    <Compile Include="Messages\DataDownloadRequestMessageTest.cs" />
+    <Compile Include="Messages\EndpointConnectMessageTest.cs" />
+    <Compile Include="Messages\EndpointDisconnectMessageTest.cs" />
+    <Compile Include="Messages\FailureMessageTest.cs" />
+    <Compile Include="Messages\MessageKindFilterTest.cs" />
+    <Compile Include="Messages\NotificationRaisedMessageTest.cs" />
+    <Compile Include="Messages\Processors\CommandInvokedProcessActionTest.cs" />
+    <Compile Include="Messages\Processors\DataDownloadProcessActionTest.cs" />
+    <Compile Include="Messages\Processors\EndpointConnectProcessActionTest.cs" />
+    <Compile Include="Messages\Processors\NotificationRaisedProcessActionTest.cs" />
+    <Compile Include="Messages\Processors\RegisterForNotificationProcessActionTest.cs" />
+    <Compile Include="Messages\Processors\UnknownMessageTypeProcessActionTest.cs" />
+    <Compile Include="Messages\Processors\UnregisterFromNotificationProcessActionTest.cs" />
+    <Compile Include="Messages\RegisterForNotificationMessageTest.cs" />
+    <Compile Include="Messages\SuccessMessageTest.cs" />
+    <Compile Include="Messages\UnknownMessageTypeMessageTest.cs" />
+    <Compile Include="Messages\UnregisterFromNotificationMessageTest.cs" />
+    <Compile Include="MissingBindingTypeExceptionTest.cs" />
+    <Compile Include="MissingCommandSetExceptionTest.cs" />
+    <Compile Include="MissingEndpointIdExceptionTest.cs" />
+    <Compile Include="NoCommunicationSubjectsRegisteredExceptionTest.cs" />
+    <Compile Include="NotificationNotSupportedExceptionTest.cs" />
+    <Compile Include="NotificationProxyBuilderTest.cs" />
+    <Compile Include="NotificationProxyBuilderTest.Interfaces.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReceivingEndpointTest.cs" />
+    <Compile Include="RemoteCommandHubTest.cs" />
+    <Compile Include="RemoteNotificationHubTest.cs" />
+    <Compile Include="RemoteOperationFailedExceptionTest.cs" />
+    <Compile Include="RestoringDataTransferingEndpointTest.cs" />
+    <Compile Include="RestoringMessageSendingEndpointTest.cs" />
+    <Compile Include="SendingEndpointTest.cs" />
+    <Compile Include="SerializedEventTest.cs" />
+    <Compile Include="SerializedMethodInvocationTest.cs" />
+    <Compile Include="SerializedTypeTest.cs" />
+    <Compile Include="TypeIsNotAValidCommandSetExceptionTest.cs" />
+    <Compile Include="TypeIsNotAValidNotificationSetExceptionTest.cs" />
+    <Compile Include="UnableToGenerateProxyExceptionTest.cs" />
+    <Compile Include="UnableToLoadProxyTypeException.cs" />
+    <Compile Include="UnknownCommandSetExceptionTest.cs" />
+    <Compile Include="UnknownEndpointIdFormatExceptionTest.cs" />
+    <Compile Include="UnknownNotificationSetExceptionTest.cs" />
+    <Compile Include="UploadNotDeregisteredExceptionTest.cs" />
+    <Compile Include="UploadTokenTest.cs" />
+    <Compile Include="WaitingUploadsTest.cs" />
+  </ItemGroup>
+  <!-- Indicate that we depend on the SolutionLevel build projects -->
+  <ItemGroup>
+    <ProjectReference Include="..\nuclei.build\Nuclei.Build.csproj">
+      <Project>{aea39fa0-9b45-4fdf-b94c-543e410f480c}</Project>
+      <Name>Nuclei.Build</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nuclei.Communication\Nuclei.Communication.csproj">
+      <Project>{b0d0341b-98d0-48d0-a2d8-9b05761ae64e}</Project>
+      <Name>Nuclei.Communication</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nuclei.Diagnostics\Nuclei.Diagnostics.csproj">
+      <Project>{751a1133-0a06-4fd1-a4c1-0daec2d40d31}</Project>
+      <Name>Nuclei.Diagnostics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\nuclei.nunit.extensions\Nuclei.NUnit.Extensions.csproj">
+      <Project>{95f183af-7bba-4ece-ac1c-ee006317470d}</Project>
+      <Name>Nuclei.NUnit.Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nuclei\Nuclei.csproj">
+      <Project>{7c12c611-1780-4e93-9b0e-b806b738559d}</Project>
+      <Name>Nuclei</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\solutionlevel\SolutionLevel.csproj">
+      <Project>{b0b1c32a-53fc-4b7e-ba60-6dafb8180a42}</Project>
+      <Name>SolutionLevel</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Nuclei.AppDomains</id>
+    <version>${Version}</version>
+    <authors>P. van der Velde</authors>
+    <owners>P. van der Velde</owners>
+    <licenseUrl>http://www.google.com</licenseUrl>
+    <projectUrl>http://www.google.com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      Provides methods to create application domains and attach assembly resolve and unhandled exception
+      handlers to the newly created domain.
+    </description>
+    <releaseNotes>
+      ${ReleaseNotes}
+    </releaseNotes>
+    <dependencies>
+      ${Dependencies}
+      <dependency id="Nuclei" version="${Version}" />
+      <dependency id="Nuclei.ExceptionHandling" version="${Version}" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="${DirBin}\*.cs.pp" target="content\Nuclei\AppDomains" />
+  </files>
+</package>
