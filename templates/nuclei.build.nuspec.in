@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Nuclei.Build</id>
+    <version>${Version}</version>
+    <authors>P. van der Velde</authors>
+    <owners>P. van der Velde</owners>
+    <licenseUrl>http://www.google.com</licenseUrl>
+    <projectUrl>http://www.google.com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      Provides attributes that can be applied to assemblies to provide build related information.
+    </description>
+    <releaseNotes>
+      ${ReleaseNotes}
+    </releaseNotes>
+    <dependencies>
+      ${Dependencies}
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="${DirBin}\Nuclei.Build.dll" target="lib\net45" />
+    <file src="${DirBin}\Nuclei.Build.pdb" target="lib\net45" />
+    <file src="${DirBin}\Nuclei.Build.xml" target="lib\net45" />
+    <file src="${DirSrc}\Nuclei.Build\**\*.cs" target="src\Nuclei.Build" />
+  </files>
+</package>

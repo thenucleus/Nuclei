@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Nuclei.Configuration</id>
+    <version>${Version}</version>
+    <authors>P. van der Velde</authors>
+    <owners>P. van der Velde</owners>
+    <licenseUrl>http://www.google.com</licenseUrl>
+    <projectUrl>http://www.google.com</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      Provides some useful utility source code.
+    </description>
+    <releaseNotes>
+      ${ReleaseNotes}
+    </releaseNotes>
+    <dependencies>
+      ${Dependencies}
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="${DirBin}\Nuclei.Configuration.dll" target="lib\net45" />
+    <file src="${DirBin}\Nuclei.Configuration.pdb" target="lib\net45" />
+    <file src="${DirBin}\Nuclei.Configuration.xml" target="lib\net45" />
+    <file src="${DirSrc}\Nuclei.Configuration\**\*.cs" target="src\Nuclei.Configuration" />
+  </files>
+</package>

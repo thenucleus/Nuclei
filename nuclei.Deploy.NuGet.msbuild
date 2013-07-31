@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0"
+         DefaultTargets="Run"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <!-- Build configuration -->
+        <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+        <Platform Condition=" '$(Platform)' == ''">Any CPU</Platform>
+        <PlatformTranslated>$(Platform.Replace(" ",""))</PlatformTranslated>
+    
+        <!-- Directories -->
+        <DirWorkspace>$(MSBuildProjectDirectory)</DirWorkspace>
+        <DirSrc>$(DirWorkspace)\src</DirSrc>
+        <DirTools>$(DirWorkspace)\tools</DirTools>
+        <DirBuild>$(DirWorkspace)\build</DirBuild>
+        <DirBuildDeploy>$(DirBuild)\deploy</DirBuildDeploy>
+        
+        <!-- Nuget -->
+        <!-- These should only be defined on the build server! -->
+        <ShouldDeploy Condition=" '$(ShouldDeploy)' == ''">false</ShouldDeploy>
+        <NugetFeedService Condition=" '$(NugetFeedService)' == '' "></NugetFeedService>
+    </PropertyGroup>
+    
+    <Target Name="Run" DependsOnTargets="_DisplayInfo;_DeployNugetPackage;" />
+    
+    <!-- Display info -->
+    <Target Name="_DisplayInfo">
+        <Message Text="Pushing NuGet packages to the feed..." Condition=" '$(NugetFeedService)' != '' AND '$(ShouldDeploy)' == 'true'" />
+        <Message Text="Not pushing NuGet packages to the feed." Condition="'$(ShouldDeploy)' != 'true'" />
+        <Message Text="No feed service defined!" Condition=" '$(NugetFeedService)' == ''" />
+    </Target>
+    
+    <PropertyGroup>
+        <DirNuget>$(DirSrc)\.nuget</DirNuget>
+    </PropertyGroup>
+    <Target Name="_DeployNugetPackage" DependsOnTargets="_DisplayInfo;" Condition=" '$(NugetFeedService)' != '' AND '$(ShouldDeploy)' == 'true'">
+        <Exec Command="&quot;$(DirNuget)\nuget.exe&quot; push &quot;$(DirBuildDeploy)\*.symbols.nupkg&quot; -Source $(NugetFeedService)"
+              Condition=" '$(NugetFeedService)' != '' AND '$(ShouldDeploy)' == 'true'" />
+    </Target>
+</Project>
