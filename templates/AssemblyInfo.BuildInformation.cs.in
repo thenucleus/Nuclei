@@ -23,7 +23,7 @@ using Nuclei.Build;
  */
 
 // The copyright
-[assembly: AssemblyCopyright("Copyright P. van der Velde 2011 - ${CopyrightYear}")]
+[assembly: AssemblyCopyright("Copyright Nuclei 2013 - ${CopyrightYear}")]
  
 // The build configuration (e.g. debug/release)
 [assembly: AssemblyConfiguration("${Configuration}")]
