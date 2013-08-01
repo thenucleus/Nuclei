@@ -28,25 +28,10 @@ Note that __Nuclei.AppDomains__, __Nuclei.ExceptionHandling__ and __Nuclei.Fusio
 
 
 # How to build
+The solution files are created in Visual Studio 2012 (using .NET 4.5) and the entire project can be build by invoking MsBuild on the nuclei.integration.msbuild script. This will build the binaries and the NuGet package. The binaries will be placed in the `build\bin\AnyCpu\Release` directory and the NuGet package will be placed in the `build\deploy` directory.
 
-* Have to have the Windows SDK 7 or 8 installed. We use sn.exe
-* Define an environment variable called SOFTWARE_SIGNING_KEY_PATH that points to an snk key file for signing
-* Assume that GIT is in the path somewhere (used to get the git hash)
-* Run msbuild script nuclei.integration.msbuild
+Note that the build scripts assume that:
 
-
-# How to contribute
-
-* Using the standard pull request system
-* GIT set to not(!) change line endings. Although we develop on a Windows machine (hence have windows style line endings)
-* Would be good if every (larger) change has an issue related to it.
-* If a new project is needed then reference both SolutionLevel and Nuclei.Build. The first project is used to generate the global AssemblyInfo files containing version numbers, build information and InternalsVisibleTo attributes.
-* Project files are quite heavily modified to get their configuration from a single file (to keep the configurations identical for all projects)
-* Only using NuGet as source for third-party DLL's
-
-
-# Quick links
-
-* [**Project Website**](http://github.com/pvandervelde/nuclei)
-* [Code Samples](http://github.com/pvandervelde/nuclei/tree/master/src/Examples)
-* [Work Items and Bug Tracker](http://github.com/pvandervelde/nuclei/issues)
+* The binaries should be signed, however the SNK key file is not included in the repository so a new key file has to be [created](http://msdn.microsoft.com/en-us/library/6f05ezxy(v=vs.110).aspx). The key file is referenced through an environment variable called `SOFTWARE_SIGNING_KEY_PATH` that has as value the full path of the key file. 
+* GIT can be found on the PATH somewhere so that it can be called to get the hash of the last commit in the current repository. This hash is embedded in the nuclei assemblies together with information about the build configuration and build time and date.
+* The Windows SDK 7 or 8 is installed on the machine so that the script has access to the strong naming utility (`sn.exe`) for the generation of the `InternalsVisibleTo` attributes that are used during the unit tests.
