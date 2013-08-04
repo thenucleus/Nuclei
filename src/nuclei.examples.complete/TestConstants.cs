@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Test.Manual.Nuclei.Communication
+namespace Nuclei.Examples.Complete
 {
     /// <summary>
     /// Provides the global constants for the application.

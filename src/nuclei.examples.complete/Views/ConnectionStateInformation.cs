@@ -6,7 +6,7 @@
 
 using System.Collections.ObjectModel;
 
-namespace Test.Manual.Console.Views
+namespace Nuclei.Examples.Complete.Views
 {
     /// <summary>
     /// Stores information about the currently known and active connections.

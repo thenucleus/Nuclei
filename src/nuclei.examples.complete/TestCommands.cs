@@ -9,10 +9,9 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using Nuclei;
 using Nuclei.Communication;
 
-namespace Test.Manual.Nuclei.Communication
+namespace Nuclei.Examples.Complete
 {
     /// <summary>
     /// Defines a set of test commands.

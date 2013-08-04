@@ -19,7 +19,7 @@ using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 using Test.Manual.Nuclei.Communication.Properties;
 
-namespace Test.Manual.Nuclei.Communication
+namespace Nuclei.Examples.Complete
 {
     /// <summary>
     /// Defines the main entry point for the test application.

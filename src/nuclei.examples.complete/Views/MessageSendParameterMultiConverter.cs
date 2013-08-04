@@ -6,9 +6,9 @@
 
 using System;
 using System.Windows.Data;
-using Test.Manual.Nuclei.Communication.Models;
+using Nuclei.Examples.Complete.Models;
 
-namespace Test.Manual.Nuclei.Communication.Views
+namespace Nuclei.Examples.Complete.Views
 {
     /// <summary>
     /// Converts a string and a <see cref="ConnectionInformationViewModel"/> to a tuple containing both.

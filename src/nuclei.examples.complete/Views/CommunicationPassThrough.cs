@@ -7,10 +7,10 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
-using Nuclei;
 using Nuclei.Communication;
+using Test.Manual.Nuclei.Communication;
 
-namespace Test.Manual.Nuclei.Communication.Views
+namespace Nuclei.Examples.Complete.Views
 {
     /// <summary>
     /// Forwards communication commands to the communication layer.

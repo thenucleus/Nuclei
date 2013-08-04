@@ -6,7 +6,7 @@
 
 using Nuclei.Communication;
 
-namespace Test.Manual.Nuclei.Communication.Models
+namespace Nuclei.Examples.Complete.Models
 {
     /// <summary>
     /// Stores information about a given communication subject.

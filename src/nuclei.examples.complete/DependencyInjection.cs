@@ -12,10 +12,11 @@ using Autofac;
 using Nuclei.Communication;
 using Nuclei.Configuration;
 using Nuclei.Diagnostics;
-using Test.Manual.Nuclei.Communication.Models;
-using Test.Manual.Nuclei.Communication.Views;
+using Nuclei.Examples.Complete.Models;
+using Nuclei.Examples.Complete.Views;
+using Test.Manual.Nuclei.Communication;
 
-namespace Test.Manual.Nuclei.Communication
+namespace Nuclei.Examples.Complete
 {
     /// <summary>
     /// Provides methods for use with the Dependency Injection of the different

@@ -18,7 +18,7 @@ using Nuclei.Diagnostics.Logging;
 using Nuclei.Diagnostics.Profiling;
 using Nuclei.Diagnostics.Profiling.Reporting;
 
-namespace Test.Manual.Nuclei.Communication
+namespace Nuclei.Examples.Complete
 {
     /// <summary>
     /// Handles the component registrations for the Nuclei part 

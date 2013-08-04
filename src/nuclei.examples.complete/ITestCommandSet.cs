@@ -7,7 +7,7 @@
 using System.Threading.Tasks;
 using Nuclei.Communication;
 
-namespace Test.Manual.Nuclei.Communication
+namespace Nuclei.Examples.Complete
 {
     /// <summary>
     /// Defines the interface for objects that provide a set of test commands.

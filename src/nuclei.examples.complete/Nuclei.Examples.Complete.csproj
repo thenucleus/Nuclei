@@ -4,8 +4,8 @@
     <SolutionDir Condition="'$(SolutionDir)' == '' or '$(SolutionDir)' == '*undefined*'">$(MSBuildProjectDirectory)\..</SolutionDir>
     <ProjectGuid>{F04CC16B-8422-403E-919B-1189D0C637CD}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Test.Manual.Nuclei.Communication</RootNamespace>
-    <AssemblyName>Test.Manual.Nuclei.Communication</AssemblyName>
+    <RootNamespace>Nuclei.Examples.Complete</RootNamespace>
+    <AssemblyName>Nuclei.Examples.Complete</AssemblyName>
     <ShouldDoDocumentation>false</ShouldDoDocumentation>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -73,14 +73,13 @@
     <Compile Include="Models\ConnectionViewModel.cs" />
     <Compile Include="Models\ConnectionInformationViewModel.cs" />
     <Compile Include="Mono.Options\Options.cs">
-        <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
+      <ExcludeFromStyleCop>true</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="TestCommands.cs" />
     <Compile Include="TestConstants.cs" />
     <Compile Include="UtilsModule.cs" />
     <Compile Include="Views\CommunicationPassThrough.cs" />
     <Compile Include="DependencyInjection.cs" />
-    <Compile Include="FakeConfiguration.cs" />
     <Compile Include="IInteractiveWindow.cs" />
     <Compile Include="Models\EndpointMessagesViewModel.cs" />
     <Compile Include="Views\ConnectionStateInformation.cs" />

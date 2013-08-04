@@ -26,7 +26,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.Nuclei.Communicat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.Nuclei.Diagnostics", "test.unit.Nuclei.diagnostics\Test.Unit.Nuclei.Diagnostics.csproj", "{A9D87967-A2DD-49D9-BB3A-FFDBCA92F516}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Manual.Nuclei.Communication", "test.manual.Nuclei.communication\Test.Manual.Nuclei.Communication.csproj", "{F04CC16B-8422-403E-919B-1189D0C637CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuclei.Examples.Complete", "nuclei.examples.complete\Nuclei.Examples.Complete.csproj", "{F04CC16B-8422-403E-919B-1189D0C637CD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{FE08C557-2C2F-409C-A106-C12F6A6E8C40}"
 	ProjectSection(SolutionItems) = preProject
@@ -50,8 +50,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.Nuclei.Fusion", "test.unit.nuclei.fusion\Test.Unit.Nuclei.Fusion.csproj", "{4A729817-3A73-4B6A-A617-150DBF58D12B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuclei.NUnit.Extensions", "nuclei.nunit.extensions\Nuclei.NUnit.Extensions.csproj", "{95F183AF-7BBA-4ECE-AC1C-EE006317470D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuclei.Examples", "nuclei.examples\Nuclei.Examples.csproj", "{DE5E4399-97A1-4069-8519-A8C5228F6154}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,12 +145,6 @@ Global
 		{95F183AF-7BBA-4ECE-AC1C-EE006317470D}.Deploy|Any CPU.Build.0 = Deploy|Any CPU
 		{95F183AF-7BBA-4ECE-AC1C-EE006317470D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95F183AF-7BBA-4ECE-AC1C-EE006317470D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DE5E4399-97A1-4069-8519-A8C5228F6154}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE5E4399-97A1-4069-8519-A8C5228F6154}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DE5E4399-97A1-4069-8519-A8C5228F6154}.Deploy|Any CPU.ActiveCfg = Deploy|Any CPU
-		{DE5E4399-97A1-4069-8519-A8C5228F6154}.Deploy|Any CPU.Build.0 = Deploy|Any CPU
-		{DE5E4399-97A1-4069-8519-A8C5228F6154}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DE5E4399-97A1-4069-8519-A8C5228F6154}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

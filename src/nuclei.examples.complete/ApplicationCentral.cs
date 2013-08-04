@@ -5,9 +5,9 @@
 //-----------------------------------------------------------------------
 
 using Nuclei.Communication;
-using Test.Manual.Nuclei.Communication.Models;
+using Nuclei.Examples.Complete.Models;
 
-namespace Test.Manual.Nuclei.Communication
+namespace Nuclei.Examples.Complete
 {
     /// <summary>
     /// Provides the methods necessary for handling incoming messages.

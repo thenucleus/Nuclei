@@ -4,17 +4,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Test.Manual.Nuclei.Communication
+namespace Nuclei.Examples.Complete
 {
     /// <summary>
-    /// Defines the interface for a window that allows the user to interact
-    /// with the application.
+    /// Defines the interface for classes that form the center of the application.
     /// </summary>
-    internal interface IInteractiveWindow
+    internal interface IFormTheApplicationCenter
     {
-        /// <summary>
-        /// Shows the window in a modeless way.
-        /// </summary>
-        void Show();
     }
 }

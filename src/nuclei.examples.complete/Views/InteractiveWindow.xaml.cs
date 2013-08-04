@@ -10,9 +10,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
-using Test.Manual.Nuclei.Communication.Models;
+using Nuclei.Examples.Complete.Models;
 
-namespace Test.Manual.Nuclei.Communication.Views
+namespace Nuclei.Examples.Complete.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml.

@@ -7,7 +7,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Nuclei.Communication;
 
-namespace Test.Manual.Nuclei.Communication.Views
+namespace Nuclei.Examples.Complete.Views
 {
     /// <summary>
     /// Defines the interface for objects that transmit communication commands 

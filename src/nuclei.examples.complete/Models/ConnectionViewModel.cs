@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using Nuclei.Communication;
 
-namespace Test.Manual.Nuclei.Communication.Models
+namespace Nuclei.Examples.Complete.Models
 {
     /// <summary>
     /// Stores information about the currently known and active connections.

@@ -1,20 +1,20 @@
-﻿<Window x:Class="Test.Manual.Nuclei.Communication.Views.InteractiveWindow"
+﻿<Window x:Class="Nuclei.Examples.Complete.Views.InteractiveWindow"
         x:ClassModifier="internal"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:views="clr-namespace:Test.Manual.Nuclei.Communication.Views"
+        xmlns:views2="clr-namespace:Nuclei.Examples.Complete.Views"
         Title="Communication Test" 
         Height="600" 
         Width="800"
         Closing="HandleWindowClosing">
     <Window.Resources>
-        <views:MessageSendParameterMultiConverter x:Key="MessageSendParameterMultiConverter" />
+        <views2:MessageSendParameterMultiConverter x:Key="MessageSendParameterMultiConverter" />
     </Window.Resources>
     <Window.CommandBindings>
-        <CommandBinding Command="{x:Static views:InteractiveWindow.SendMessageCommand}"
+        <CommandBinding Command="{x:Static views2:InteractiveWindow.SendMessageCommand}"
                         Executed="OnExecuteSendMessageCommand"
                         CanExecute="OnCanExecuteSendMessageCommand" />
-        <CommandBinding Command="{x:Static views:InteractiveWindow.SendDataCommand}"
+        <CommandBinding Command="{x:Static views2:InteractiveWindow.SendDataCommand}"
                         Executed="OnExecuteSendDataCommand"
                         CanExecute="OnCanExecuteSendDataCommand" />
     </Window.CommandBindings>
@@ -111,7 +111,7 @@
                             HorizontalAlignment="Right"
                             MinWidth="75"
                             Margin="3,3,3,3"
-                            Command="{x:Static views:InteractiveWindow.SendMessageCommand}">
+                            Command="{x:Static views2:InteractiveWindow.SendMessageCommand}">
                         <Button.Content>
                             <TextBlock Text="Send message" />
                         </Button.Content>
@@ -140,7 +140,7 @@
                             HorizontalAlignment="Right"
                             MinWidth="75"
                             Margin="3,3,3,3"
-                            Command="{x:Static views:InteractiveWindow.SendDataCommand}">
+                            Command="{x:Static views2:InteractiveWindow.SendDataCommand}">
                         <Button.Content>
                             <TextBlock Text="Send data" />
                         </Button.Content>

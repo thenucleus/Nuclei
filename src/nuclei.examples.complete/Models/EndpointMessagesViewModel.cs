@@ -7,7 +7,7 @@
 using System.Collections.ObjectModel;
 using Nuclei.Communication;
 
-namespace Test.Manual.Nuclei.Communication.Models
+namespace Nuclei.Examples.Complete.Models
 {
     /// <summary>
     /// Stores the messages that have been received from a given endpoint.
