@@ -9,14 +9,8 @@ using System;
 namespace Nuclei.ExceptionHandling
 {
     /// <summary>
-    /// Defines the interface for objects that process unhandled exceptions.
+    /// Defines the delegate used for actions that process unhandled exceptions.
     /// </summary>
-    public interface IExceptionProcessor : IDisposable
-    {
-        /// <summary>
-        /// Processes the given exception.
-        /// </summary>
-        /// <param name="exception">The exception to process.</param>
-        void Process(Exception exception);
-    }
+    /// <param name="exception">The exception to process.</param>
+    public delegate void ExceptionProcessor(Exception exception);
 }
