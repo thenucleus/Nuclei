@@ -144,7 +144,7 @@
       <FileSNExe Condition="!Exists($(FileSNExe))">$(WindowsSdkPath)bin\NETFX 4.0 Tools\sn.exe</FileSNExe>
     </PropertyGroup>
     <Message Text="sn.exe at: $(FileSNExe)" />
-  </Target>  
+  </Target>
   <PropertyGroup>
     <FileMoqDll>moq.dll</FileMoqDll>
   </PropertyGroup>
