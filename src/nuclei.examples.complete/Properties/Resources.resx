@@ -120,7 +120,7 @@
   <data name="CommandLine_Header" xml:space="preserve">
     <value>Apollo command-line communication test tool
 version: {0}
-{1}. All rights reserved.</value>
+{1}. All rights reserved. </value>
     <comment>Defines the header text which is always printed when the application is run. The input values are (1) the version number and (2) The copy right text.</comment>
   </data>
   <data name="CommandLine_Options_CommunicationSubject_Description" xml:space="preserve">

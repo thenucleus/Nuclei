@@ -17,7 +17,7 @@ using Mono.Options;
 using Nuclei.Communication;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
-using Test.Manual.Nuclei.Communication.Properties;
+using Nuclei.Examples.Complete.Properties;
 
 namespace Nuclei.Examples.Complete
 {
