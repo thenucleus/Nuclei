@@ -14,10 +14,16 @@ namespace Nuclei.Communication
     /// Forms the base for remote <see cref="INotificationSet"/> proxy objects.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// This type is not really meant to be used except by the DynamicProxy2 framework, hence
     /// it should be an open type which is not abstract.
+    /// </para>
+    /// <para>
+    /// This type is public because the .NET typeloader will throw an exception if it needs to build a dynamic type
+    /// based on an internal base class.
+    /// </para>
     /// </remarks>
-    internal class NotificationSetProxy : INotificationSet
+    public class NotificationSetProxy : INotificationSet
     {
         /// <summary>
         /// The lock which is used to guard the event handler collection.
