@@ -14,7 +14,6 @@ using Nuclei.Configuration;
 using Nuclei.Diagnostics;
 using Nuclei.Examples.Complete.Models;
 using Nuclei.Examples.Complete.Views;
-using Test.Manual.Nuclei.Communication;
 
 namespace Nuclei.Examples.Complete
 {

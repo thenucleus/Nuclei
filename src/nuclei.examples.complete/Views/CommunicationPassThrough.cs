@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using Nuclei.Communication;
-using Test.Manual.Nuclei.Communication;
 
 namespace Nuclei.Examples.Complete.Views
 {
