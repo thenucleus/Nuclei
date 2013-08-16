@@ -15,7 +15,7 @@ namespace Nuclei.Communication
     /// it should be an open type which is not abstract.
     /// </para>
     /// <para>
-    /// This type is public because the .NET typeloader will throw an exception if it needs to build a dynamic type
+    /// This type is public because the .NET type loader will throw an exception if it needs to build a dynamic type
     /// based on an internal base class.
     /// </para>
     /// </remarks>
