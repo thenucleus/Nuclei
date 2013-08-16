@@ -147,7 +147,7 @@ namespace Nuclei.Examples.Complete
                         channelType,
                         channelUriText));
 
-                var resolver = s_Container.Resolve<ManualEndpointDiscovery>();
+                var resolver = s_Container.Resolve<ManualEndpointConnection>();
                 resolver(hostId, channelType, channelUriText);
             }
 

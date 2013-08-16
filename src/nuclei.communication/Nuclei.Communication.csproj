@@ -182,7 +182,8 @@
     <Compile Include="LocalCommandCollection.cs" />
     <Compile Include="LocalNotificationCollection.cs" />
     <Compile Include="ManualDiscoverySource.cs" />
-    <Compile Include="ManualEndpointDiscovery.cs" />
+    <Compile Include="ManualEndpointConnection.cs" />
+    <Compile Include="ManualEndpointDisconnection.cs" />
     <Compile Include="MaximumNumberOfChannelRestartsExceededException.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageHandler.cs" />

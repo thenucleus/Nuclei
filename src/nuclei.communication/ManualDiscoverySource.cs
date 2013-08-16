@@ -82,5 +82,21 @@ namespace Nuclei.Communication
 
             RaiseOnEndpointBecomingAvailable(new ChannelConnectionInformation(id, channelType, address));
         }
+
+        /// <summary>
+        /// Stores or forwards information about an endpoint that has recently
+        /// disconnected from the network.
+        /// </summary>
+        /// <param name="id">The ID of the endpoint.</param>
+        /// <param name="channelType">The kind of channel this connection information describes.</param>
+        public void RecentlyDisconnectedEndpoint(EndpointId id, ChannelType channelType)
+        {
+            if (!m_IsDiscoveryAllowed)
+            {
+                return;
+            }
+
+            RaiseOnEndpointBecomingUnavailable(id, channelType);
+        }
     }
 }

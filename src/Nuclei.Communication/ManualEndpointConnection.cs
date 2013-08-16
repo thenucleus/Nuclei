@@ -16,5 +16,5 @@ namespace Nuclei.Communication
     /// <param name="endpointId">The endpoint ID of the remote endpoint.</param>
     /// <param name="channelType">The channel type of the remote endpoint.</param>
     /// <param name="address">The address of the remote endpoint.</param>
-    public delegate void ManualEndpointDiscovery(EndpointId endpointId, ChannelType channelType, string address);
+    public delegate void ManualEndpointConnection(EndpointId endpointId, ChannelType channelType, string address);
 }

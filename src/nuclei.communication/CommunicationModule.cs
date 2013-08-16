@@ -161,66 +161,126 @@ namespace Nuclei.Communication
                 .As<IDiscoverOtherServices>()
                 .As<IAcceptExternalEndpointInformation>()
                 .SingleInstance();
+        }
 
+        private static void RegisterManualEndpointConnection(ContainerBuilder builder)
+        {
             // This function is used to resolve connection information from
             // a set of strings.
-            builder.Register<ManualEndpointDiscovery>(
-                    c =>
+            builder.Register<ManualEndpointConnection>(
+                c =>
+                {
+                    var ctx = c.Resolve<IComponentContext>();
+                    return (id, channelType, address) =>
                     {
-                        var ctx = c.Resolve<IComponentContext>();
-                        return (id, channelType, address) =>
-                        {
-                            var diagnostics = ctx.Resolve<SystemDiagnostics>();
+                        var diagnostics = ctx.Resolve<SystemDiagnostics>();
 
-                            // We need to make sure that the communication layer is ready to start
-                            // sending / receiving messages, otherwise the we won't be able to
-                            // tell it that there are new endpoints.
-                            //
-                            // NOTE: this is kinda yucky because really we're only interested in
-                            // the IAcceptExternalEndpointInformation object and its willingness
-                            // to process information. However the only way that object is going to
-                            // be willing is if the communication layer is signed in so ...
-                            var layer = ctx.Resolve<ICommunicationLayer>();
-                            if (!layer.IsSignedIn)
-                            {
-                                var resetEvent = new AutoResetEvent(false);
-                                var availability =
-                                    Observable.FromEventPattern<EventArgs>(
-                                        h => layer.OnSignedIn += h,
-                                        h => layer.OnSignedIn -= h)
+                        // We need to make sure that the communication layer is ready to start
+                        // sending / receiving messages, otherwise the we won't be able to
+                        // tell it that there are new endpoints.
+                        //
+                        // NOTE: this is kinda yucky because really we're only interested in
+                        // the IAcceptExternalEndpointInformation object and its willingness
+                        // to process information. However the only way that object is going to
+                        // be willing is if the communication layer is signed in so ...
+                        var layer = ctx.Resolve<ICommunicationLayer>();
+                        if (!layer.IsSignedIn)
+                        {
+                            var resetEvent = new AutoResetEvent(false);
+                            var availability =
+                                Observable.FromEventPattern<EventArgs>(
+                                    h => layer.OnSignedIn += h,
+                                    h => layer.OnSignedIn -= h)
                                     .Take(1)
                                     .Subscribe(args => resetEvent.Set());
 
-                                using (availability)
+                            using (availability)
+                            {
+                                if (!layer.IsSignedIn)
                                 {
-                                    if (!layer.IsSignedIn)
-                                    {
-                                        diagnostics.Log(
-                                            LevelToLog.Trace, 
-                                            CommunicationConstants.DefaultLogTextPrefix,
-                                            Resources.Log_Messages_ManualDisoveryWaitingForLayerSignIn);
+                                    diagnostics.Log(
+                                        LevelToLog.Trace,
+                                        CommunicationConstants.DefaultLogTextPrefix,
+                                        Resources.Log_Messages_ManualDisoveryWaitingForLayerSignIn);
 
-                                        resetEvent.WaitOne();
-                                    }
+                                    resetEvent.WaitOne();
                                 }
                             }
+                        }
 
-                            diagnostics.Log(
-                                LevelToLog.Trace,
-                                CommunicationConstants.DefaultLogTextPrefix,
-                                string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    Resources.Log_Messages_ManualDiscoveryOfRemoteEndpoint_WithConnectionInformation,
-                                    id,
-                                    channelType,
-                                    address));
-
-                            ctx.Resolve<IAcceptExternalEndpointInformation>().RecentlyConnectedEndpoint(
+                        diagnostics.Log(
+                            LevelToLog.Trace,
+                            CommunicationConstants.DefaultLogTextPrefix,
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                Resources.Log_Messages_ManualConnectionOfRemoteEndpoint_WithConnectionInformation,
                                 id,
                                 channelType,
-                                new Uri(address));
-                        };
-                    })
+                                address));
+
+                        ctx.Resolve<IAcceptExternalEndpointInformation>().RecentlyConnectedEndpoint(id, channelType, new Uri(address));
+                    };
+                })
+                .SingleInstance();
+        }
+
+        private static void RegisterManualEndpointDisconnection(ContainerBuilder builder)
+        {
+            // This function is used to resolve connection information from
+            // a set of strings.
+            builder.Register<ManualEndpointDisconnection>(
+                c =>
+                {
+                    var ctx = c.Resolve<IComponentContext>();
+                    return (id, channelType) =>
+                    {
+                        var diagnostics = ctx.Resolve<SystemDiagnostics>();
+
+                        // We need to make sure that the communication layer is ready to start
+                        // sending / receiving messages, otherwise the we won't be able to
+                        // tell it that there are new endpoints.
+                        //
+                        // NOTE: this is kinda yucky because really we're only interested in
+                        // the IAcceptExternalEndpointInformation object and its willingness
+                        // to process information. However the only way that object is going to
+                        // be willing is if the communication layer is signed in so ...
+                        var layer = ctx.Resolve<ICommunicationLayer>();
+                        if (!layer.IsSignedIn)
+                        {
+                            var resetEvent = new AutoResetEvent(false);
+                            var availability =
+                                Observable.FromEventPattern<EventArgs>(
+                                    h => layer.OnSignedIn += h,
+                                    h => layer.OnSignedIn -= h)
+                                    .Take(1)
+                                    .Subscribe(args => resetEvent.Set());
+
+                            using (availability)
+                            {
+                                if (!layer.IsSignedIn)
+                                {
+                                    diagnostics.Log(
+                                        LevelToLog.Trace,
+                                        CommunicationConstants.DefaultLogTextPrefix,
+                                        Resources.Log_Messages_ManualDisoveryWaitingForLayerSignIn);
+
+                                    resetEvent.WaitOne();
+                                }
+                            }
+                        }
+
+                        diagnostics.Log(
+                            LevelToLog.Trace,
+                            CommunicationConstants.DefaultLogTextPrefix,
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                Resources.Log_Messages_ManualDisconnectionOfRemoteEndpoint_WithConnectionInformation,
+                                id,
+                                channelType));
+
+                        ctx.Resolve<IAcceptExternalEndpointInformation>().RecentlyDisconnectedEndpoint(id, channelType);
+                    };
+                })
                 .SingleInstance();
         }
 
@@ -601,6 +661,8 @@ namespace Nuclei.Communication
 
             RegisterCommunicationLayer(builder);
             RegisterEndpointDiscoverySources(builder, m_AllowChannelDiscovery);
+            RegisterManualEndpointConnection(builder);
+            RegisterManualEndpointDisconnection(builder);
             RegisterHandshakeLayer(builder);
             RegisterMessageHandler(builder);
             RegisterDataHandler(builder);
