@@ -137,7 +137,7 @@ namespace Nuclei.Communication
             var channel = ChannelForChannelType(args.ChannelType);
             if (channel != null)
             {
-                channel.DisconnectFrom(args.Endpoint);
+                channel.EndpointDisconnected(args.Endpoint);
             }
         }
 

@@ -34,10 +34,10 @@ namespace Nuclei.Communication
         void CloseChannel();
 
         /// <summary>
-        /// Disconnects from the given endpoint.
+        /// Indicates that the remote endpoint has disconnected.
         /// </summary>
-        /// <param name="endpoint">The ID number of the endpoint from which the channel needs to disconnect.</param>
-        void DisconnectFrom(EndpointId endpoint);
+        /// <param name="endpoint">The ID number of the endpoint that has disconnected.</param>
+        void EndpointDisconnected(EndpointId endpoint);
 
         /// <summary>
         /// Transfers the data to the receiving endpoint.

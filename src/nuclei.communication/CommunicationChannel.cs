@@ -284,15 +284,13 @@ namespace Nuclei.Communication
         }
 
         /// <summary>
-        /// Disconnects from the given endpoint.
+        /// Indicates that the remote endpoint has disconnected.
         /// </summary>
-        /// <param name="endpoint">The ID number of the endpoint from which the channel needs to disconnect.</param>
-        public void DisconnectFrom(EndpointId endpoint)
+        /// <param name="endpoint">The ID number of the endpoint that has disconnected.</param>
+        public void EndpointDisconnected(EndpointId endpoint)
         {
             if (m_ChannelConnectionMap.CanCommunicateWithEndpoint(endpoint))
             {
-                Send(endpoint, new EndpointDisconnectMessage(m_Id));
-
                 if (m_Sender != null)
                 {
                     m_Sender.CloseChannelTo(endpoint);
