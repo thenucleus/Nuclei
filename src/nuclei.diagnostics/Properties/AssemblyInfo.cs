@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Reflection;
 using System.Resources;
 
@@ -15,9 +14,6 @@ using System.Resources;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyProduct("Nuclei.Diagnostics")]
 [assembly: AssemblyCulture("")]
-
-// Indicate that the assembly is CLS compliant.
-[assembly: CLSCompliant(true)]
 
 // Resources
 [assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.MainAssembly)]
