@@ -106,6 +106,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The application must be allowed to connect via at least one channel type..
+        /// </summary>
+        internal static string Exceptions_Messages_AtLeastOneChannelTypeMustBeAllowed {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_AtLeastOneChannelTypeMustBeAllowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The address of a communication channel must be defined in order to connect to the channel..
         /// </summary>
         internal static string Exceptions_Messages_ChannelAddresssMustBeDefined {

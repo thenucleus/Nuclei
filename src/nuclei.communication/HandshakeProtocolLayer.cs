@@ -123,6 +123,11 @@ namespace Nuclei.Communication
         private readonly IStoreCommunicationDescriptions m_Descriptions;
 
         /// <summary>
+        /// The collection containing the types of channel that should be opened.
+        /// </summary>
+        private readonly IEnumerable<ChannelType> m_AllowedChannelTypes;
+
+        /// <summary>
         /// The object that provides the diagnostics methods for the system.
         /// </summary>
         private readonly SystemDiagnostics m_Diagnostics;
@@ -134,6 +139,7 @@ namespace Nuclei.Communication
         /// <param name="discoverySources">The object that handles the discovery of remote endpoints.</param>
         /// <param name="layer">The object responsible for sending messages with remote endpoints.</param>
         /// <param name="descriptions">The object that stores information about the available communication descriptions.</param>
+        /// <param name="allowedChannelTypes">The collection that contains all the channel types for which a channel should be opened.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="potentialEndpoints"/> is <see langword="null" />.
@@ -148,6 +154,9 @@ namespace Nuclei.Communication
         ///     Thrown if <paramref name="descriptions"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="allowedChannelTypes"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public HandshakeProtocolLayer(
@@ -155,6 +164,7 @@ namespace Nuclei.Communication
             IEnumerable<IDiscoverOtherServices> discoverySources,
             ISendDataViaChannels layer,
             IStoreCommunicationDescriptions descriptions,
+            IEnumerable<ChannelType> allowedChannelTypes,
             SystemDiagnostics systemDiagnostics)
         {
             {
@@ -162,6 +172,7 @@ namespace Nuclei.Communication
                 Lokad.Enforce.Argument(() => discoverySources);
                 Lokad.Enforce.Argument(() => layer);
                 Lokad.Enforce.Argument(() => descriptions);
+                Lokad.Enforce.Argument(() => allowedChannelTypes);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
 
@@ -169,6 +180,7 @@ namespace Nuclei.Communication
             m_DiscoverySources = discoverySources;
             m_Layer = layer;
             m_Descriptions = descriptions;
+            m_AllowedChannelTypes = allowedChannelTypes;
             m_Diagnostics = systemDiagnostics;
 
             // Initiate discovery of other services. 
@@ -194,6 +206,12 @@ namespace Nuclei.Communication
                 return;
             }
 
+            // Filter out the endpoint connections that have a channel type that is not being used.
+            if (!IsAllowedToCommunicateWithConnection(info))
+            {
+                return;
+            }
+
             if (!m_PotentialEndpoints.CanCommunicateWithEndpoint(info.Id)
                 && !m_PotentialEndpoints.IsWaitingForApproval(info.Id)
                 && !m_PotentialEndpoints.HasBeenContacted(info.Id))
@@ -211,6 +229,11 @@ namespace Nuclei.Communication
                 StorePotentialEndpoint(info);
                 InitiateHandshakeWith(info);
             }
+        }
+
+        private bool IsAllowedToCommunicateWithConnection(ChannelConnectionInformation info)
+        {
+            return m_AllowedChannelTypes.Contains(info.ChannelType);
         }
 
         // How do we handle endpoints disappearing and then reappearing. If the remote process

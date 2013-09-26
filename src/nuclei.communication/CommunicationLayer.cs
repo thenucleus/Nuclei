@@ -58,6 +58,11 @@ namespace Nuclei.Communication
         private readonly Func<ChannelType, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> m_ChannelBuilder;
 
         /// <summary>
+        /// The collection containing the types of channel that should be opened.
+        /// </summary>
+        private readonly IEnumerable<ChannelType> m_ChannelTypesToUse;
+
+        /// <summary>
         /// The object that provides the diagnostics methods for the system.
         /// </summary>
         private readonly SystemDiagnostics m_Diagnostics;
@@ -76,6 +81,7 @@ namespace Nuclei.Communication
         ///     The function that returns a tuple of a <see cref="ICommunicationChannel"/> and a <see cref="IDirectIncomingMessages"/>
         ///     based on the type of the <see cref="IChannelType"/> that is related to the channel.
         /// </param>
+        /// <param name="channelTypesToUse">The collection that contains all the channel types for which a channel should be opened.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoints"/> is <see langword="null" />.
@@ -87,24 +93,30 @@ namespace Nuclei.Communication
         ///     Thrown if <paramref name="channelBuilder"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="channelTypesToUse"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public CommunicationLayer(
             IStoreInformationAboutEndpoints endpoints,
             IEnumerable<IDiscoverOtherServices> discoverySources,
             Func<ChannelType, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder,
+            IEnumerable<ChannelType> channelTypesToUse,
             SystemDiagnostics systemDiagnostics)
         {
             {
                 Lokad.Enforce.Argument(() => endpoints);
                 Lokad.Enforce.Argument(() => discoverySources);
                 Lokad.Enforce.Argument(() => channelBuilder);
+                Lokad.Enforce.Argument(() => channelTypesToUse);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
 
             m_Endpoints = endpoints;
             m_ChannelBuilder = channelBuilder;
             m_DiscoverySources = discoverySources;
+            m_ChannelTypesToUse = channelTypesToUse;
             m_Diagnostics = systemDiagnostics;
 
             m_Endpoints.OnEndpointConnected += HandleOnEndpointApproved;
@@ -226,8 +238,10 @@ namespace Nuclei.Communication
             {
                 // Always open our own channels so that the message processors and the handshake protocol
                 // are all created and initialized
-                OpenChannel(ChannelType.NamedPipe);
-                OpenChannel(ChannelType.TcpIP);
+                foreach (var channelType in m_ChannelTypesToUse)
+                {
+                    OpenChannel(channelType);
+                }
 
                 // Initiate discovery of other services. 
                 foreach (var source in m_DiscoverySources)

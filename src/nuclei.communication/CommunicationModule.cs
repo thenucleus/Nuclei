@@ -122,7 +122,7 @@ namespace Nuclei.Communication
             return layer.SendMessageAndWaitForResponse(endpoint, message);
         }
 
-        private static void RegisterCommunicationLayer(ContainerBuilder builder)
+        private static void RegisterCommunicationLayer(ContainerBuilder builder, IEnumerable<ChannelType> allowedChannelTypes)
         {
             builder.Register(
                 c =>
@@ -136,6 +136,7 @@ namespace Nuclei.Communication
                         (t, id) => Tuple.Create(
                             ctx.ResolveKeyed<ICommunicationChannel>(t, new TypedParameter(typeof(EndpointId), id)),
                             ctx.Resolve<IDirectIncomingMessages>()),
+                        allowedChannelTypes,
                         c.Resolve<SystemDiagnostics>());
                 })
                 .As<ISendDataViaChannels>()
@@ -284,7 +285,7 @@ namespace Nuclei.Communication
                 .SingleInstance();
         }
 
-        private static void RegisterHandshakeLayer(ContainerBuilder builder)
+        private static void RegisterHandshakeLayer(ContainerBuilder builder, IEnumerable<ChannelType> allowedChannelTypes)
         {
             builder.Register(
                 c => new HandshakeProtocolLayer(
@@ -292,6 +293,7 @@ namespace Nuclei.Communication
                     c.Resolve<IEnumerable<IDiscoverOtherServices>>(),
                     c.Resolve<ISendDataViaChannels>(),
                     c.Resolve<IStoreCommunicationDescriptions>(),
+                    allowedChannelTypes,
                     c.Resolve<SystemDiagnostics>()))
                 .As<IHandleHandshakes>()
                 .SingleInstance();
@@ -629,6 +631,11 @@ namespace Nuclei.Communication
         private readonly IEnumerable<CommunicationSubject> m_Subjects;
 
         /// <summary>
+        /// The collection containing the types of channel that should be opened.
+        /// </summary>
+        private readonly IEnumerable<ChannelType> m_AllowedChannelTypes;
+
+        /// <summary>
         /// Indicates if the communication channels are allowed to provide discovery.
         /// </summary>
         private readonly bool m_AllowChannelDiscovery;
@@ -637,17 +644,35 @@ namespace Nuclei.Communication
         /// Initializes a new instance of the <see cref="CommunicationModule"/> class.
         /// </summary>
         /// <param name="subjects">The collection containing the communication subjects for the application.</param>
+        /// <param name="allowedChannelTypes">The collection of channel types on which the application is allowed to connect.</param>
         /// <param name="allowChannelDiscovery">
         ///     A flag that indicates if the communication channels are allowed to provide
         ///     discovery.
         /// </param>
-        public CommunicationModule(IEnumerable<CommunicationSubject> subjects, bool allowChannelDiscovery)
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="subjects"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="allowedChannelTypes"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        ///     Thrown if <paramref name="allowedChannelTypes"/> is an empty collection.
+        /// </exception>
+        public CommunicationModule(
+            IEnumerable<CommunicationSubject> subjects, 
+            IEnumerable<ChannelType> allowedChannelTypes, 
+            bool allowChannelDiscovery)
         {
             {
                 Lokad.Enforce.Argument(() => subjects);
+                Lokad.Enforce.Argument(() => allowedChannelTypes);
+                Lokad.Enforce.With<ArgumentException>(
+                    allowedChannelTypes.Any(), 
+                    Resources.Exceptions_Messages_AtLeastOneChannelTypeMustBeAllowed);
             }
 
             m_Subjects = subjects;
+            m_AllowedChannelTypes = allowedChannelTypes;
             m_AllowChannelDiscovery = allowChannelDiscovery;
         }
 
@@ -659,11 +684,11 @@ namespace Nuclei.Communication
         {
             base.Load(builder);
 
-            RegisterCommunicationLayer(builder);
+            RegisterCommunicationLayer(builder, m_AllowedChannelTypes);
             RegisterEndpointDiscoverySources(builder, m_AllowChannelDiscovery);
             RegisterManualEndpointConnection(builder);
             RegisterManualEndpointDisconnection(builder);
-            RegisterHandshakeLayer(builder);
+            RegisterHandshakeLayer(builder, m_AllowedChannelTypes);
             RegisterMessageHandler(builder);
             RegisterDataHandler(builder);
             RegisterMessageProcessingActions(builder);

@@ -76,6 +76,11 @@ namespace Nuclei.Communication
                     }, 
                 communicationLayer.Object,
                 communicationDescriptions,
+                new[]
+                    {
+                        ChannelType.NamedPipe,
+                        ChannelType.TcpIP, 
+                    },
                 new SystemDiagnostics((l, m) => { }, null));
 
             discovery.Raise(
@@ -160,6 +165,11 @@ namespace Nuclei.Communication
                     },
                 communicationLayer.Object,
                 communicationDescriptions,
+                new[]
+                    {
+                        ChannelType.NamedPipe,
+                        ChannelType.TcpIP, 
+                    },
                 new SystemDiagnostics((l, m) => { }, null));
 
             layer.ContinueHandshakeWith(
@@ -235,6 +245,11 @@ namespace Nuclei.Communication
                     },
                 communicationLayer.Object,
                 communicationDescriptions,
+                new[]
+                    {
+                        ChannelType.NamedPipe,
+                        ChannelType.TcpIP, 
+                    },
                 new SystemDiagnostics((l, m) => { }, null));
 
             Assert.IsNotNull(layer);
@@ -304,6 +319,11 @@ namespace Nuclei.Communication
                     },
                 communicationLayer.Object,
                 communicationDescriptions,
+                new[]
+                    {
+                        ChannelType.NamedPipe,
+                        ChannelType.TcpIP, 
+                    },
                 new SystemDiagnostics((l, m) => { }, null));
 
             layer.ContinueHandshakeWith(

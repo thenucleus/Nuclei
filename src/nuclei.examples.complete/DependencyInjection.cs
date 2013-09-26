@@ -37,7 +37,15 @@ namespace Nuclei.Examples.Complete
         {
             var builder = new ContainerBuilder();
             {
-                builder.RegisterModule(new CommunicationModule(subjects, allowChannelDiscovery));
+                builder.RegisterModule(
+                    new CommunicationModule(
+                        subjects,
+                        new[]
+                            {
+                                ChannelType.NamedPipe,
+                                ChannelType.TcpIP, 
+                            },
+                        allowChannelDiscovery));
                 builder.RegisterModule(new UtilsModule());
 
                 builder.Register(

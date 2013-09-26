@@ -132,6 +132,9 @@
   <data name="Exceptions_Messages_ANotificationSetTypeMustDeriveFromINotificationSet" xml:space="preserve">
     <value>A notification set must inherit from INotificationSet.</value>
   </data>
+  <data name="Exceptions_Messages_AtLeastOneChannelTypeMustBeAllowed" xml:space="preserve">
+    <value>The application must be allowed to connect via at least one channel type.</value>
+  </data>
   <data name="Exceptions_Messages_ChannelAddresssMustBeDefined" xml:space="preserve">
     <value>The address of a communication channel must be defined in order to connect to the channel.</value>
   </data>
