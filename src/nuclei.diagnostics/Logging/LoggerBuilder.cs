@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Globalization;
 using NLog;
 using NLog.Config;
@@ -97,13 +98,15 @@ namespace Nuclei.Diagnostics.Logging
         /// </summary>
         /// <param name="filePath">The file path to which the information gets logged.</param>
         /// <param name="template">The log template that handles the translation from the <see cref="ILogMessage"/> to the log text.</param>
+        /// <param name="applicationName">The name of the application that has instantiated the logger.</param>
+        /// <param name="applicationVersion">The version of the application that has instantiated the logger.</param>
         /// <returns>
         /// The newly created logger that logs information to a given file.
         /// </returns>
-        public static ILogger ForFile(string filePath, ILogTemplate template)
+        public static ILogger ForFile(string filePath, ILogTemplate template, string applicationName = null, Version applicationVersion = null)
         {
             var factory = BuildLogFactory(template.Name, LogLevel.Trace, BuildFileTarget(filePath));
-            return new Logger(factory, template);
+            return new Logger(factory, template, applicationName, applicationVersion);
         }
 
         /// <summary>
@@ -111,13 +114,19 @@ namespace Nuclei.Diagnostics.Logging
         /// </summary>
         /// <param name="eventLogSource">The event log source name under which the current application is registered.</param>
         /// <param name="template">The log template that handles the translation from the <see cref="ILogMessage"/> to the log text.</param>
+        /// <param name="applicationName">The name of the application that has instantiated the logger.</param>
+        /// <param name="applicationVersion">The version of the application that has instantiated the logger.</param>
         /// <returns>
         /// The newly created logger that logs information to the event log.
         /// </returns>
-        public static ILogger ForEventLog(string eventLogSource, ILogTemplate template)
+        public static ILogger ForEventLog(
+            string eventLogSource, 
+            ILogTemplate template, 
+            string applicationName = null, 
+            Version applicationVersion = null)
         {
             var factory = BuildLogFactory(template.Name, LogLevel.Warn, BuildEventLogTarget(eventLogSource));
-            return new Logger(factory, template);
+            return new Logger(factory, template, applicationName, applicationVersion);
         }
     }
 }

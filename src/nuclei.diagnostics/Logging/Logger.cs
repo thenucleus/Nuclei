@@ -105,13 +105,15 @@ namespace Nuclei.Diagnostics.Logging
         /// </summary>
         /// <param name="factory">The log factory.</param>
         /// <param name="template">The template.</param>
+        /// <param name="applicationName">The name of the application that has instantiated the logger.</param>
+        /// <param name="applicationVersion">The version of the application that has instantiated the logger.</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="factory"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="template"/> is <see langword="null"/>.
         /// </exception>
-        internal Logger(LogFactory factory, ILogTemplate template)
+        internal Logger(LogFactory factory, ILogTemplate template, string applicationName = null, Version applicationVersion = null)
         {
             {
                 Lokad.Enforce.Argument(() => factory);
@@ -132,13 +134,18 @@ namespace Nuclei.Diagnostics.Logging
             var openingText = string.Format(CultureInfo.InvariantCulture, "Starting {0} logger.", template.Name);
             m_Logger.Info(template.Translate(new LogMessage(LevelToLog.Info, openingText)));
 
-            var versionInfoText = 
-                string.Format(
-                    CultureInfo.InvariantCulture, 
-                    "{0} - {1}",
-                    Assembly.GetEntryAssembly().GetName().Name,
-                    Assembly.GetEntryAssembly().GetName().Version);
-            m_Logger.Info(template.Translate(new LogMessage(LevelToLog.Info, versionInfoText)));
+            if (((applicationName != null) && (applicationVersion != null)) 
+                || ((applicationName == null) && (applicationVersion == null)))
+            {
+                var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly() ?? Assembly.GetExecutingAssembly();
+                var versionInfoText = 
+                    string.Format(
+                        CultureInfo.InvariantCulture, 
+                        "{0} - {1}",
+                        applicationName ?? assembly.GetName().Name,
+                        applicationVersion ?? assembly.GetName().Version);
+                m_Logger.Info(template.Translate(new LogMessage(LevelToLog.Info, versionInfoText)));
+            }
         }
 
         /// <summary>
