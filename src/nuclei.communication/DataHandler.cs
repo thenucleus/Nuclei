@@ -116,6 +116,12 @@ namespace Nuclei.Communication
                 {
                     try
                     {
+                        var directory = Path.GetDirectoryName(pair.Item1);
+                        if ((directory != null) && !Directory.Exists(directory))
+                        {
+                            Directory.CreateDirectory(directory);
+                        }
+
                         using (var fileStream = new FileStream(pair.Item1, FileMode.Create, FileAccess.Write, FileShare.None))
                         {
                             message.Data.CopyTo(fileStream);
