@@ -58,8 +58,15 @@ namespace Nuclei.Communication.Messages.Processors
             /// <returns>The communication message that should be send if the task finishes successfully.</returns>
             [SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic",
                 Justification = "Will not make this method static so that the signature is consistent with HandleTypedTaskReturnValue<T>.")]
+            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode",
+                Justification = "This code is called via reflection.")]
             public ICommunicationMessage HandleTaskReturnValue(EndpointId local, ICommunicationMessage originalMsg, Task returnValue)
             {
+                m_Diagnostics.Log(
+                    LevelToLog.Trace,
+                    CommunicationConstants.DefaultLogTextPrefix,
+                    "Processing Task return value from command.");
+
                 if (returnValue.IsCanceled || returnValue.IsFaulted)
                 {
                     m_Diagnostics.Log(
@@ -89,8 +96,16 @@ namespace Nuclei.Communication.Messages.Processors
                 Justification = "Cannot make this method static because then we cannot use 'dynamic' anymore to get to it.")]
             [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode",
                 Justification = "This code is called via reflection.")]
-            public ICommunicationMessage HandleTypedTaskReturnValue<T>(EndpointId local, ICommunicationMessage originalMsg, Task<T> returnValue)
+            public ICommunicationMessage HandleTaskReturnValue<T>(EndpointId local, ICommunicationMessage originalMsg, Task<T> returnValue)
             {
+                m_Diagnostics.Log(
+                    LevelToLog.Trace,
+                    CommunicationConstants.DefaultLogTextPrefix,
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        "Processing Task<T> return value from command. T is {0}",
+                        typeof(T)));
+
                 if (returnValue.IsCanceled || returnValue.IsFaulted)
                 {
                     m_Diagnostics.Log(
@@ -257,46 +272,17 @@ namespace Nuclei.Communication.Messages.Processors
                 }
                 else
                 {
-                    // The resulting type can either be Task or Task<T>
-                    var resultType = result.GetType();
-                    Debug.Assert(!resultType.ContainsGenericParameters, "The return type should be a closed constructed type.");
+                    // The result is either Task or Task<T> (or a continuation task of some form of 
+                    // ContinuationTaskFromTask, ContinuationResultTaskFromResultTask etc. etc.)
+                    // In order to select the right method on the TaskReturn object we would need to know at compile time
+                    // which type we get. Fortunately through the use of the 'dynamic' keyword we can let the 
+                    // runtime deal with the selection of the right method. By using 'dynamic' the generic parameters 
+                    // for the method are determined by the input parameters, not by the declared ones.
+                    dynamic taskBuilder = new TaskReturn(m_Diagnostics);
 
-                    var genericArguments = resultType.GetGenericArguments();
-                    Debug.Assert(
-                        genericArguments.Length == 0 || genericArguments.Length == 1, 
-                        "There should either be zero or one generic argument.");
-                    if (genericArguments.Length == 0)
-                    {
-                        m_Diagnostics.Log(
-                            LevelToLog.Trace,
-                            CommunicationConstants.DefaultLogTextPrefix,
-                            "Returning Task value.");
-
-                        returnMsg = new TaskReturn(m_Diagnostics).HandleTaskReturnValue(m_Current, msg, result);
-                    }
-                    else
-                    {
-                        m_Diagnostics.Log(
-                            LevelToLog.Trace,
-                            CommunicationConstants.DefaultLogTextPrefix,
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "Returning Task<T> value. T is {0}",
-                                genericArguments[0]));
-
-                        // The result is Task<T>. This is where things are about to get very messy
-                        // We need to use the HandleTaskReturnValue(EndpointId, MessageId, Task<T>) method to get our message
-                        //
-                        // So 'build' a method that can process the Task<T> object. We can do this with the 'dynamic
-                        // keyword because the generic parameters for the method are determined by the input parameters
-                        // so if we create a 'dynamic' object and call the method with the desired name then the runtime
-                        // will determine what the type parameter has to be.
-                        dynamic taskBuilder = new TaskReturn(m_Diagnostics);
-
-                        // Call the desired method, making sure that we force the runtime to use the runtime type of the result
-                        // variable, not the compile time one.
-                        returnMsg = (ICommunicationMessage)taskBuilder.HandleTypedTaskReturnValue(m_Current, msg, (dynamic)result);
-                    }
+                    // Call the desired method, making sure that we force the runtime to use the runtime type of the result
+                    // variable, not the compile time one.
+                    returnMsg = (ICommunicationMessage)taskBuilder.HandleTaskReturnValue(m_Current, msg, (dynamic)result);
                 }
 
                 m_SendMessage(msg.OriginatingEndpoint, returnMsg);
