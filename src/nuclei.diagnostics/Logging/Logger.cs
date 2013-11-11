@@ -128,16 +128,17 @@ namespace Nuclei.Diagnostics.Logging
 
             m_Logger = m_Factory.GetLogger(template.Name);
 
+            // log this at the highest level possible so that it always goes in
             var separationLine = "============================================================================";
-            m_Logger.Info(separationLine);
+            m_Logger.Fatal(separationLine);
 
             var openingText = string.Format(CultureInfo.InvariantCulture, "Starting {0} logger.", template.Name);
-            m_Logger.Info(template.Translate(new LogMessage(LevelToLog.Info, openingText)));
+            m_Logger.Fatal(template.Translate(new LogMessage(LevelToLog.Info, openingText)));
 
+            var assembly = Assembly.GetEntryAssembly();
             if (((applicationName != null) && (applicationVersion != null)) 
-                || ((applicationName == null) && (applicationVersion == null)))
+                || (((applicationName == null) && (applicationVersion == null)) && (assembly != null)))
             {
-                var assembly = Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly() ?? Assembly.GetExecutingAssembly();
                 var versionInfoText = 
                     string.Format(
                         CultureInfo.InvariantCulture, 
@@ -225,7 +226,7 @@ namespace Nuclei.Diagnostics.Logging
         /// </summary>
         public void Close()
         {
-            m_Logger.Info("Stopping logger.");
+            m_Logger.Fatal(m_Template.Translate(new LogMessage(LevelToLog.Info, "Stopping logger.")));
             m_Logger.Factory.Flush();
         }
 
