@@ -5,8 +5,8 @@
     <!-- Define the values for the version number -->
     <PropertyGroup>
         <VersionMajor>0</VersionMajor>
-        <VersionMinor>6</VersionMinor>
-        <VersionBuild>7</VersionBuild>
+        <VersionMinor>7</VersionMinor>
+        <VersionBuild>0</VersionBuild>
         <VersionRevision>0</VersionRevision>
     </PropertyGroup>
 
