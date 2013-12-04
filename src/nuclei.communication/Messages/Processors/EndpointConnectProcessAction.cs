@@ -104,7 +104,7 @@ namespace Nuclei.Communication.Messages.Processors
                 return;
             }
 
-            using (m_Diagnostics.Profiler.Measure("Endpoint trying to connect"))
+            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Endpoint trying to connect"))
             {
                 m_HandShakeHandler.ContinueHandshakeWith(
                     new ChannelConnectionInformation(

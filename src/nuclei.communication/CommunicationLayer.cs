@@ -234,7 +234,7 @@ namespace Nuclei.Communication
                 return;
             }
 
-            using (m_Diagnostics.Profiler.Measure("CommunicationLayer: Signing in"))
+            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "CommunicationLayer: Signing in"))
             {
                 // Always open our own channels so that the message processors and the handshake protocol
                 // are all created and initialized
@@ -327,7 +327,7 @@ namespace Nuclei.Communication
                 return;
             }
 
-            using (m_Diagnostics.Profiler.Measure("CommunicationLayer: signing out"))
+            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "CommunicationLayer: signing out"))
             {
                 // Stop discovering other services. We just stopped caring.
                 foreach (var source in m_DiscoverySources)
@@ -467,7 +467,9 @@ namespace Nuclei.Communication
                 Lokad.Enforce.Argument(() => message);
             }
 
-            using (m_Diagnostics.Profiler.Measure("CommunicationLayer: sending message without waiting for response"))
+            using (m_Diagnostics.Profiler.Measure(
+                CommunicationConstants.TimingGroup, 
+                "CommunicationLayer: sending message without waiting for response"))
             {
                 var connection = RetrieveEndpointConnection(endpoint);
                 if (connection == null)
@@ -527,7 +529,7 @@ namespace Nuclei.Communication
                 Lokad.Enforce.Argument(() => message);
             }
 
-            using (m_Diagnostics.Profiler.Measure("CommunicationLayer: sending message and waiting for response"))
+            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "CommunicationLayer: sending message and waiting for response"))
             {
                 var connection = RetrieveEndpointConnection(endpoint);
                 if (connection == null)

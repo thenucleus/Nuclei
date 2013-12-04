@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using Nuclei.Diagnostics.Profiling;
 
 namespace Nuclei.Communication
 {
@@ -77,5 +78,21 @@ namespace Nuclei.Communication
         /// The version of the communication system.
         /// </summary>
         public static readonly Version CommunicationVersion = new Version(1, 0, 0, 0);
+
+        /// <summary>
+        /// The timing group used for the profiling of the communication system.
+        /// </summary>
+        private static readonly TimingGroup s_TimingGroup = new TimingGroup();
+
+        /// <summary>
+        /// Gets the timing group used for the profiling of the communication system.
+        /// </summary>
+        internal static TimingGroup TimingGroup
+        {
+            get
+            {
+                return s_TimingGroup;
+            }
+        }
     }
 }

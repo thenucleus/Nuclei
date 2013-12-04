@@ -179,7 +179,7 @@ namespace Nuclei.Communication
                 Lokad.Enforce.Argument(() => message);
             }
 
-            using (m_Diagnostics.Profiler.Measure("MessageHandler: processing message"))
+            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "MessageHandler: processing message"))
             {
                 // First check that the message isn't a response
                 if (!message.InResponseTo.Equals(MessageId.None))
@@ -193,7 +193,7 @@ namespace Nuclei.Communication
                             message.Id,
                             message.InResponseTo));
 
-                    using (m_Diagnostics.Profiler.Measure("Processing response message"))
+                    using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Processing response message"))
                     {
                         TaskCompletionSource<ICommunicationMessage> source = null;
                         lock (m_Lock)
@@ -225,7 +225,7 @@ namespace Nuclei.Communication
                     return;
                 }
 
-                using (m_Diagnostics.Profiler.Measure("Using message filters"))
+                using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Using message filters"))
                 {
                     // The message isn't a response so go to the filters
                     // First copy the filters and their associated actions so that we can

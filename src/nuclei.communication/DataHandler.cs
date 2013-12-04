@@ -97,7 +97,7 @@ namespace Nuclei.Communication
                     "Received data stream from {0}.",
                     message.SendingEndpoint));
 
-            using (m_Diagnostics.Profiler.Measure("Processing incoming data stream"))
+            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Processing incoming data stream"))
             {
                 Tuple<string, TaskCompletionSource<FileInfo>> pair = null;
                 lock (m_Lock)

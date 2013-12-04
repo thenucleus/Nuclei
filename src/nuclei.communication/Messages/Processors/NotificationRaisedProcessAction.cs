@@ -92,7 +92,7 @@ namespace Nuclei.Communication.Messages.Processors
 
             try
             {
-                using (var interval = m_Diagnostics.Profiler.Measure("Raise notification"))
+                using (var interval = m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Raise notification"))
                 {
                     var type = ProxyExtensions.ToType(invocation.Type);
                     var notificationSet = m_AvailableProxies.NotificationsFor(msg.OriginatingEndpoint, type);

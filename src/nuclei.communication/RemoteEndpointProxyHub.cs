@@ -79,7 +79,7 @@ namespace Nuclei.Communication
 
         private void HandleEndpointSignIn(object sender, EndpointSignInEventArgs eventArgs)
         {
-            using (m_Diagnostics.Profiler.Measure("Received endpoint information"))
+            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Received endpoint information"))
             {
                 var endpoint = eventArgs.ConnectionInformation.Id;
 
@@ -165,7 +165,7 @@ namespace Nuclei.Communication
                 {
                     if (proxyList.Count > 0)
                     {
-                        using (m_Diagnostics.Profiler.Measure("Notifying of new endpoint"))
+                        using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Notifying of new endpoint"))
                         {
                             RaiseOnEndpointSignedIn(endpoint, proxyList);
                         }
@@ -176,7 +176,7 @@ namespace Nuclei.Communication
 
         private void HandleEndpointSignOut(object sender, EndpointSignedOutEventArgs eventArgs)
         {
-            using (m_Diagnostics.Profiler.Measure("Endpoint disconnected - removing proxies."))
+            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Endpoint disconnected - removing proxies."))
             {
                 lock (m_Lock)
                 {
@@ -209,7 +209,7 @@ namespace Nuclei.Communication
                     }
                 }
 
-                using (m_Diagnostics.Profiler.Measure("Notifying of proxy removal."))
+                using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Notifying of proxy removal."))
                 {
                     RaiseOnEndpointSignedOff(eventArgs.Endpoint);
                 }
