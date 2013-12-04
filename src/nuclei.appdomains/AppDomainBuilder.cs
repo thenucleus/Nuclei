@@ -9,6 +9,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Security.Permissions;
+using Nuclei;
 using Nuclei.ExceptionHandling;
 
 namespace Nuclei.AppDomains
