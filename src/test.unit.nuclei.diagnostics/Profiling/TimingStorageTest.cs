@@ -81,18 +81,19 @@ namespace Nuclei.Diagnostics.Profiling
                     .Returns(10L);
             }
 
+            var group = new TimingGroup();
             var parents = new ITimerInterval[] 
                 { 
-                    new TimerInterval(owner.Object, "a"),
+                    new TimerInterval(owner.Object, group, "a"),
                 };
 
-            var children = new ITimerInterval[][] 
-                { 
+            var children = new[]
+            { 
                     new ITimerInterval[] 
                         {
-                            new TimerInterval(owner.Object, "aa"),
-                            new TimerInterval(owner.Object, "ab"),
-                            new TimerInterval(owner.Object, "ac"),
+                            new TimerInterval(owner.Object, group, "aa"),
+                            new TimerInterval(owner.Object, group, "ab"),
+                            new TimerInterval(owner.Object, group, "ac"),
                         },
                 };
 
@@ -112,83 +113,39 @@ namespace Nuclei.Diagnostics.Profiling
                     .Returns(10L);
             }
 
+            var group = new TimingGroup();
             var parents = new ITimerInterval[] 
                 { 
-                    new TimerInterval(owner.Object, "a"),
-                    new TimerInterval(owner.Object, "b"),
-                    new TimerInterval(owner.Object, "c"),
+                    new TimerInterval(owner.Object, group, "a"),
+                    new TimerInterval(owner.Object, group, "b"),
+                    new TimerInterval(owner.Object, group, "c"),
                 };
 
-            var children = new ITimerInterval[][] 
-                { 
+            var children = new[]
+            { 
                     new ITimerInterval[] 
                         {
-                            new TimerInterval(owner.Object, "aa"),
-                            new TimerInterval(owner.Object, "ab"),
-                            new TimerInterval(owner.Object, "ac"),
+                            new TimerInterval(owner.Object, group, "aa"),
+                            new TimerInterval(owner.Object, group, "ab"),
+                            new TimerInterval(owner.Object, group, "ac"),
                         },
                     new ITimerInterval[] 
                         {
-                            new TimerInterval(owner.Object, "ba"),
-                            new TimerInterval(owner.Object, "bb"),
-                            new TimerInterval(owner.Object, "bc"),
+                            new TimerInterval(owner.Object, group, "ba"),
+                            new TimerInterval(owner.Object, group, "bb"),
+                            new TimerInterval(owner.Object, group, "bc"),
                         },
                     new ITimerInterval[] 
                         {
-                            new TimerInterval(owner.Object, "ca"),
-                            new TimerInterval(owner.Object, "cb"),
-                            new TimerInterval(owner.Object, "cc"),
+                            new TimerInterval(owner.Object, group, "ca"),
+                            new TimerInterval(owner.Object, group, "cb"),
+                            new TimerInterval(owner.Object, group, "cc"),
                         },
                 };
 
             var storage = BuildStorage(parents, children);
             var report = storage.FromStartTillEnd();
             CheckReport(report, parents, children);
-
-            CleanUpIntervals(parents, children);
-        }
-
-        [Test]
-        public void FromIntervalTillEnd()
-        {
-            var owner = new Mock<IIntervalOwner>();
-            {
-                owner.Setup(o => o.CurrentTicks)
-                    .Returns(10L);
-            }
-
-            var parents = new ITimerInterval[] 
-                { 
-                    new TimerInterval(owner.Object, "a"),
-                    new TimerInterval(owner.Object, "b"),
-                    new TimerInterval(owner.Object, "c"),
-                };
-
-            var children = new ITimerInterval[][] 
-                { 
-                    new ITimerInterval[] 
-                        {
-                            new TimerInterval(owner.Object, "aa"),
-                            new TimerInterval(owner.Object, "ab"),
-                            new TimerInterval(owner.Object, "ac"),
-                        },
-                    new ITimerInterval[] 
-                        {
-                            new TimerInterval(owner.Object, "ba"),
-                            new TimerInterval(owner.Object, "bb"),
-                            new TimerInterval(owner.Object, "bc"),
-                        },
-                    new ITimerInterval[] 
-                        {
-                            new TimerInterval(owner.Object, "ca"),
-                            new TimerInterval(owner.Object, "cb"),
-                            new TimerInterval(owner.Object, "cc"),
-                        },
-                };
-
-            var storage = BuildStorage(parents, children);
-            var report = storage.FromIntervalTillEnd(parents[1]);
-            CheckReport(report, new ITimerInterval[] { parents[1], parents[2] }, new ITimerInterval[][] { children[1], children[2] });
 
             CleanUpIntervals(parents, children);
         }
@@ -202,38 +159,39 @@ namespace Nuclei.Diagnostics.Profiling
                     .Returns(10L);
             }
 
+            var group = new TimingGroup();
             var parents = new ITimerInterval[] 
                 { 
-                    new TimerInterval(owner.Object, "a"),
-                    new TimerInterval(owner.Object, "b"),
-                    new TimerInterval(owner.Object, "c"),
+                    new TimerInterval(owner.Object, group, "a"),
+                    new TimerInterval(owner.Object, group, "b"),
+                    new TimerInterval(owner.Object, group, "c"),
                 };
 
-            var children = new ITimerInterval[][] 
-                { 
+            var children = new[]
+            { 
                     new ITimerInterval[] 
                         {
-                            new TimerInterval(owner.Object, "aa"),
-                            new TimerInterval(owner.Object, "ab"),
-                            new TimerInterval(owner.Object, "ac"),
+                            new TimerInterval(owner.Object, group, "aa"),
+                            new TimerInterval(owner.Object, group, "ab"),
+                            new TimerInterval(owner.Object, group, "ac"),
                         },
                     new ITimerInterval[] 
                         {
-                            new TimerInterval(owner.Object, "ba"),
-                            new TimerInterval(owner.Object, "bb"),
-                            new TimerInterval(owner.Object, "bc"),
+                            new TimerInterval(owner.Object, group, "ba"),
+                            new TimerInterval(owner.Object, group, "bb"),
+                            new TimerInterval(owner.Object, group, "bc"),
                         },
                     new ITimerInterval[] 
                         {
-                            new TimerInterval(owner.Object, "ca"),
-                            new TimerInterval(owner.Object, "cb"),
-                            new TimerInterval(owner.Object, "cc"),
+                            new TimerInterval(owner.Object, group, "ca"),
+                            new TimerInterval(owner.Object, group, "cb"),
+                            new TimerInterval(owner.Object, group, "cc"),
                         },
                 };
 
             var storage = BuildStorage(parents, children);
             var report = storage.FromIntervalToInterval(parents[0], parents[1]);
-            CheckReport(report, new ITimerInterval[] { parents[0], parents[1] }, new ITimerInterval[][] { children[0], children[1] });
+            CheckReport(report, new[] { parents[0], parents[1] }, new[] { children[0], children[1] });
 
             CleanUpIntervals(parents, children);
         }
@@ -247,38 +205,39 @@ namespace Nuclei.Diagnostics.Profiling
                     .Returns(10L);
             }
 
+            var group = new TimingGroup();
             var parents = new ITimerInterval[] 
                 { 
-                    new TimerInterval(owner.Object, "a"),
-                    new TimerInterval(owner.Object, "b"),
-                    new TimerInterval(owner.Object, "c"),
+                    new TimerInterval(owner.Object, group, "a"),
+                    new TimerInterval(owner.Object, group, "b"),
+                    new TimerInterval(owner.Object, group, "c"),
                 };
 
-            var children = new ITimerInterval[][] 
-                { 
+            var children = new[]
+            { 
                     new ITimerInterval[] 
                         {
-                            new TimerInterval(owner.Object, "aa"),
-                            new TimerInterval(owner.Object, "ab"),
-                            new TimerInterval(owner.Object, "ac"),
+                            new TimerInterval(owner.Object, group, "aa"),
+                            new TimerInterval(owner.Object, group, "ab"),
+                            new TimerInterval(owner.Object, group, "ac"),
                         },
                     new ITimerInterval[] 
                         {
-                            new TimerInterval(owner.Object, "ba"),
-                            new TimerInterval(owner.Object, "bb"),
-                            new TimerInterval(owner.Object, "bc"),
+                            new TimerInterval(owner.Object, group, "ba"),
+                            new TimerInterval(owner.Object, group, "bb"),
+                            new TimerInterval(owner.Object, group, "bc"),
                         },
                     new ITimerInterval[] 
                         {
-                            new TimerInterval(owner.Object, "ca"),
-                            new TimerInterval(owner.Object, "cb"),
-                            new TimerInterval(owner.Object, "cc"),
+                            new TimerInterval(owner.Object, group, "ca"),
+                            new TimerInterval(owner.Object, group, "cb"),
+                            new TimerInterval(owner.Object, group, "cc"),
                         },
                 };
 
             var storage = BuildStorage(parents, children);
             var report = storage.ForInterval(parents[1]);
-            CheckReport(report, new ITimerInterval[] { parents[1] }, new ITimerInterval[][] { children[1] });
+            CheckReport(report, new[] { parents[1] }, new[] { children[1] });
 
             CleanUpIntervals(parents, children);
         }

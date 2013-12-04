@@ -19,14 +19,6 @@ namespace Nuclei.Diagnostics.Profiling
         TimingReport FromStartTillEnd();
 
         /// <summary>
-        /// Creates a new report that contains all timing intervals starting at the
-        /// specified interval till the current point in time.
-        /// </summary>
-        /// <param name="interval">The interval from which the report should start.</param>
-        /// <returns>A new report that contains all intervals since the specified interval.</returns>
-        TimingReport FromIntervalTillEnd(ITimerInterval interval);
-
-        /// <summary>
         /// Creates a new report that contains all timing intervals starting at the specified
         /// <paramref name="start"/> interval up to the <paramref name="inclusiveEnd"/> interval,
         /// including all child intervals.

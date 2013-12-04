@@ -31,7 +31,8 @@ namespace Nuclei.Diagnostics.Profiling
             var profiler = new Profiler(storage.Object);
 
             var description = "description";
-            var interval = profiler.MeasureInterval(description);
+            var group = new TimingGroup();
+            var interval = profiler.MeasureInterval(group, description);
             using (interval)
             {
                 Thread.Sleep(10);
@@ -61,17 +62,18 @@ namespace Nuclei.Diagnostics.Profiling
             var profiler = new Profiler(storage.Object);
 
             var description = "description";
+            var group = new TimingGroup();
             ITimerInterval topLevelInterval;
             ITimerInterval firstChild;
             ITimerInterval secondChild;
-            using (topLevelInterval = profiler.MeasureInterval(description))
+            using (topLevelInterval = profiler.MeasureInterval(group, description))
             {
-                using (firstChild = profiler.MeasureInterval(string.Empty))
+                using (firstChild = profiler.MeasureInterval(group, string.Empty))
                 {
                     Thread.Sleep(10);
                 }
 
-                using (secondChild = profiler.MeasureInterval(string.Empty))
+                using (secondChild = profiler.MeasureInterval(group, string.Empty))
                 {
                     Thread.Sleep(10);
                 }
@@ -80,12 +82,39 @@ namespace Nuclei.Diagnostics.Profiling
             Assert.That(
                 timers,
                 Is.EquivalentTo(
-                    new Tuple<ITimerInterval, int>[] 
+                    new[] 
                         {
                             new Tuple<ITimerInterval, int>(topLevelInterval, 0),
                             new Tuple<ITimerInterval, int>(firstChild, 1),
                             new Tuple<ITimerInterval, int>(secondChild, 1),
                         }));
+        }
+
+        [Test]
+        public void MeasureWithMultipleGroups()
+        {
+            ITimerInterval storedInterval = null;
+            var storage = new Mock<IStoreIntervals>();
+            {
+                storage.Setup(r => r.AddBaseInterval(It.IsAny<ITimerInterval>()))
+                    .Callback<ITimerInterval>(i => storedInterval = i);
+            }
+
+            var profiler = new Profiler(storage.Object);
+
+            var description = "description";
+            for (int i = 0; i < 10; i++)
+            {
+                var group = new TimingGroup();
+                var interval = profiler.MeasureInterval(group, description);
+                using (interval)
+                {
+                    Thread.Sleep(10);
+                }
+
+                Assert.AreSame(interval, storedInterval);
+                storage.Verify(r => r.AddChildInterval(It.IsAny<ITimerInterval>(), It.IsAny<ITimerInterval>()), Times.Never());
+            }
         }
     }
 }

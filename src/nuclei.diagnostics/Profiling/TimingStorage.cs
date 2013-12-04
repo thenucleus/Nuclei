@@ -45,35 +45,18 @@ namespace Nuclei.Diagnostics.Profiling
         /// <returns>A new report that contains all known timing intervals.</returns>
         public TimingReport FromStartTillEnd()
         {
-            var tree = CopyTreeSection(null, null);
+            var tree = new TimingTree(m_Tree);
             return new TimingReport(tree);
+        }
+
+        private TimingTree CopyTreeSection(ITimerInterval interval)
+        {
+            return new TimingTree(m_Tree, interval);
         }
 
         private TimingTree CopyTreeSection(ITimerInterval start, ITimerInterval end)
         {
             return new TimingTree(m_Tree, start, end);
-        }
-
-        /// <summary>
-        /// Creates a new report that contains all timing intervals starting at the
-        /// specified interval till the current point in time.
-        /// </summary>
-        /// <param name="interval">The interval from which the report should start.</param>
-        /// <returns>A new report that contains all intervals since the specified interval.</returns>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="interval"/> is <see langword="null" />.
-        /// </exception>
-        /// <exception cref="UnknownIntervalException">
-        ///     Thrown if <paramref name="interval"/> is not part of the root of the tree.
-        /// </exception>
-        public TimingReport FromIntervalTillEnd(ITimerInterval interval)
-        {
-            {
-                Lokad.Enforce.Argument(() => interval);
-            }
-
-            var tree = CopyTreeSection(interval, null);
-            return new TimingReport(tree);
         }
 
         /// <summary>
@@ -125,7 +108,7 @@ namespace Nuclei.Diagnostics.Profiling
                 Lokad.Enforce.Argument(() => interval);
             }
 
-            var tree = CopyTreeSection(interval, interval);
+            var tree = CopyTreeSection(interval);
             return new TimingReport(tree);
         }
     }

@@ -14,6 +14,14 @@ namespace Nuclei.Diagnostics.Profiling
     public interface ITimerInterval : IDisposable
     {
         /// <summary>
+        /// Gets the group to which the current interval belongs.
+        /// </summary>
+        TimingGroup Group
+        {
+            get;
+        }
+
+        /// <summary>
         /// Gets the description for the current interval.
         /// </summary>
         string Description

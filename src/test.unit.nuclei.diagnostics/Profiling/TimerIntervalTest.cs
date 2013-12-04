@@ -25,7 +25,7 @@ namespace Nuclei.Diagnostics.Profiling
                     .Returns(10L);
             }
 
-            using (var interval = new TimerInterval(owner.Object, description))
+            using (var interval = new TimerInterval(owner.Object, new TimingGroup(), description))
             {
                 interval.Start();
                 Assert.AreSame(description, interval.Description);
@@ -41,7 +41,7 @@ namespace Nuclei.Diagnostics.Profiling
                     .Returns(10L);
             }
 
-            var interval = new TimerInterval(owner.Object, string.Empty);
+            var interval = new TimerInterval(owner.Object, new TimingGroup(), string.Empty);
             using (interval)
             {
                 interval.Start();
@@ -58,7 +58,7 @@ namespace Nuclei.Diagnostics.Profiling
                     .Returns(10L);
             }
 
-            var interval = new TimerInterval(owner.Object, string.Empty);
+            var interval = new TimerInterval(owner.Object, new TimingGroup(), string.Empty);
             using (interval)
             {
                 interval.Start();

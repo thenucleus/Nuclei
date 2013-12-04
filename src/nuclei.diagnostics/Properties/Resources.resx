@@ -129,4 +129,7 @@
   <data name="Exceptions_Messages_UnknownInterval" xml:space="preserve">
     <value>The given interval is not stored in the current tree.</value>
   </data>
+  <data name="Exceptions_Messages_NonMatchingTimingGroups" xml:space="preserve">
+    <value>Cannot perform operation on timing intervals that belong to different groups.</value>
+  </data>
 </root>

@@ -109,6 +109,8 @@
     <Compile Include="Profiling\CanOnlyMeasureIntervalOnceException.cs" />
     <Compile Include="Profiling\IGenerateTimingReports.cs" />
     <Compile Include="Profiling\IIntervalOwner.cs" />
+    <Compile Include="Profiling\NonMatchingTimingGroupsException.cs" />
+    <Compile Include="Profiling\TimingGroup.cs" />
     <Compile Include="Profiling\IStoreIntervals.cs" />
     <Compile Include="Profiling\ITimerInterval.cs" />
     <Compile Include="Profiling\Profiler.cs" />
@@ -138,6 +140,10 @@
     <ProjectReference Include="..\nuclei.configuration\Nuclei.Configuration.csproj">
       <Project>{62e77b2f-34ee-4258-b1c7-9f30eb80ae12}</Project>
       <Name>Nuclei.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Nuclei\Nuclei.csproj">
+      <Project>{7c12c611-1780-4e93-9b0e-b806b738559d}</Project>
+      <Name>Nuclei</Name>
     </ProjectReference>
     <ProjectReference Include="..\solutionlevel\SolutionLevel.csproj">
       <Project>{b0b1c32a-53fc-4b7e-ba60-6dafb8180a42}</Project>

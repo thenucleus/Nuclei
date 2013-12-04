@@ -17,6 +17,7 @@ namespace Nuclei.Diagnostics.Profiling
         /// Returns an <see cref="ITimerInterval"/> object reference.
         /// </summary>
         /// <param name="profiler">The profiler which should provide the timer interval. May be <see langword="null" />.</param>
+        /// <param name="group">The group to which the current timing will belong.</param>
         /// <param name="description">The description for the interval.</param>
         /// <returns>
         /// A new <see cref="ITimerInterval"/> if the <paramref name="profiler"/> reference is not <see langword="null" />;
@@ -31,9 +32,9 @@ namespace Nuclei.Diagnostics.Profiling
         /// }
         /// </code>
         /// </example>
-        public static IDisposable Measure(this Profiler profiler, string description)
+        public static IDisposable Measure(this Profiler profiler, TimingGroup group, string description)
         {
-            return (profiler != null) ? profiler.MeasureInterval(description) : null;
+            return (profiler != null) ? profiler.MeasureInterval(group, description) : null;
         }
     }
 }

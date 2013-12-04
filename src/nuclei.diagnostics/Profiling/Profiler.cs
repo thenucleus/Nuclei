@@ -18,7 +18,8 @@ namespace Nuclei.Diagnostics.Profiling
         /// <summary>
         /// The currently active timers.
         /// </summary>
-        private readonly Stack<ITimerInterval> m_ActiveIntervals = new Stack<ITimerInterval>();
+        private readonly IDictionary<TimingGroup, Stack<ITimerInterval>> m_ActiveIntervals 
+            = new Dictionary<TimingGroup, Stack<ITimerInterval>>();
 
         /// <summary>
         /// The stopwatch that is used to track the time. Each timing interval will use
@@ -50,6 +51,7 @@ namespace Nuclei.Diagnostics.Profiling
         /// <summary>
         /// Starts the measurement of a time interval.
         /// </summary>
+        /// <param name="group">The group to which the current timing belongs.</param>
         /// <param name="stepDescription">The description for the new interval.</param>
         /// <returns>
         /// The object that describes the interval.
@@ -62,14 +64,14 @@ namespace Nuclei.Diagnostics.Profiling
         /// }
         /// </code>
         /// </example>
-        internal ITimerInterval MeasureInterval(string stepDescription)
+        internal ITimerInterval MeasureInterval(TimingGroup group, string stepDescription)
         {
             if (!m_Timer.IsRunning)
             {
                 m_Timer.Start();
             }
 
-            var interval = new TimerInterval(this, stepDescription);
+            var interval = new TimerInterval(this, group, stepDescription);
             StoreIntervalInTree(interval);
 
             interval.Start();
@@ -78,17 +80,25 @@ namespace Nuclei.Diagnostics.Profiling
 
         private void StoreIntervalInTree(TimerInterval interval)
         {
-            if (m_ActiveIntervals.Count > 0)
+            Stack<ITimerInterval> stack;
+            if (m_ActiveIntervals.ContainsKey(interval.Group) && (m_ActiveIntervals[interval.Group].Count > 0))
             {
-                var parent = m_ActiveIntervals.Peek();
+                stack = m_ActiveIntervals[interval.Group];
+                var parent = stack.Peek();
                 m_Storage.AddChildInterval(parent, interval);
             }
             else
             {
+                if (!m_ActiveIntervals.ContainsKey(interval.Group))
+                {
+                    m_ActiveIntervals.Add(interval.Group, new Stack<ITimerInterval>());
+                }
+
+                stack = m_ActiveIntervals[interval.Group];
                 m_Storage.AddBaseInterval(interval);
             }
 
-            m_ActiveIntervals.Push(interval);
+            stack.Push(interval);
         }
 
         /// <summary>
@@ -110,12 +120,22 @@ namespace Nuclei.Diagnostics.Profiling
         public void StopInterval(ITimerInterval timerInterval)
         {
             {
+                Debug.Assert(timerInterval != null, "The interval that should be stopped should not be a null reference.");
                 Debug.Assert(
-                    ReferenceEquals(m_ActiveIntervals.Peek(), timerInterval),
+                    m_ActiveIntervals.ContainsKey(timerInterval.Group),
+                    "The timer interval does not belong to a known timing group.");
+                Debug.Assert(
+                    ReferenceEquals(m_ActiveIntervals[timerInterval.Group].Peek(), timerInterval),
                     "Parent interval stopped before child intervals have stopped.");
             }
 
-            m_ActiveIntervals.Pop();
+            var stack = m_ActiveIntervals[timerInterval.Group];
+            stack.Pop();
+            if (stack.Count == 0)
+            {
+                m_ActiveIntervals.Remove(timerInterval.Group);
+            }
+
             if (m_ActiveIntervals.Count == 0)
             {
                 m_Timer.Stop();

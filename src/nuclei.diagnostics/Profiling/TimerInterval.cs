@@ -21,6 +21,11 @@ namespace Nuclei.Diagnostics.Profiling
         private readonly IIntervalOwner m_Owner;
 
         /// <summary>
+        /// The group to which the current interval belongs.
+        /// </summary>
+        private readonly TimingGroup m_Group;
+
+        /// <summary>
         /// The description for the current interval.
         /// </summary>
         private readonly string m_IntervalDescription;
@@ -41,17 +46,23 @@ namespace Nuclei.Diagnostics.Profiling
         /// Initializes a new instance of the <see cref="TimerInterval"/> class.
         /// </summary>
         /// <param name="owner">The objects which owns the current interval.</param>
+        /// <param name="group">The group to which the current interval belongs.</param>
         /// <param name="intervalDescription">The description for the current interval.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="owner"/> is <see langword="null" />.
         /// </exception>
-        internal TimerInterval(IIntervalOwner owner, string intervalDescription)
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="group"/> is <see langword="null" />.
+        /// </exception>
+        internal TimerInterval(IIntervalOwner owner, TimingGroup group, string intervalDescription)
         {
             {
                 Lokad.Enforce.Argument(() => owner);
+                Lokad.Enforce.Argument(() => group);
             }
 
             m_Owner = owner;
+            m_Group = group;
             m_IntervalDescription = intervalDescription;
         }
 
@@ -83,6 +94,17 @@ namespace Nuclei.Diagnostics.Profiling
             }
 
             m_StartTicks = m_Owner.CurrentTicks;
+        }
+
+        /// <summary>
+        /// Gets the group to which the current interval belongs.
+        /// </summary>
+        public TimingGroup Group
+        {
+            get
+            {
+                return m_Group;
+            }
         }
 
         /// <summary>

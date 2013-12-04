@@ -43,11 +43,14 @@ namespace Nuclei.Diagnostics.Profiling.Reporting
         [Test]
         public void ToReport()
         {
+            var group = new TimingGroup();
             var description = "description";
             var ticks = 10L;
 
             var interval = new Mock<ITimerInterval>();
             {
+                interval.Setup(i => i.Group)
+                    .Returns(group);
                 interval.Setup(i => i.Description)
                     .Returns(description);
                 interval.Setup(i => i.TotalTicks)
@@ -83,8 +86,11 @@ namespace Nuclei.Diagnostics.Profiling.Reporting
         {
             var ticks = 10L;
 
+            var group = new TimingGroup();
             var parent = new Mock<ITimerInterval>();
             {
+                parent.Setup(i => i.Group)
+                    .Returns(group);
                 parent.Setup(i => i.Description)
                     .Returns("parent");
                 parent.Setup(i => i.TotalTicks)
@@ -93,6 +99,8 @@ namespace Nuclei.Diagnostics.Profiling.Reporting
 
             var child1 = new Mock<ITimerInterval>();
             {
+                child1.Setup(i => i.Group)
+                    .Returns(group);
                 child1.Setup(i => i.Description)
                     .Returns("child1");
                 child1.Setup(i => i.TotalTicks)
@@ -101,6 +109,8 @@ namespace Nuclei.Diagnostics.Profiling.Reporting
 
             var child2 = new Mock<ITimerInterval>();
             {
+                child2.Setup(i => i.Group)
+                    .Returns(group);
                 child2.Setup(i => i.Description)
                     .Returns("child2");
                 child2.Setup(i => i.TotalTicks)

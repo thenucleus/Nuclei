@@ -48,9 +48,11 @@
     <Compile Include="Logging\DebugLogTemplateTest.cs" />
     <Compile Include="Logging\LogMessageTest.cs" />
     <Compile Include="Profiling\CanOnlyMeasureIntervalOnceExceptionTest.cs" />
+    <Compile Include="Profiling\NonMatchingTimingGroupsExceptionTest.cs" />
     <Compile Include="Profiling\ProfilerTest.cs" />
     <Compile Include="Profiling\Reporting\TextReporterTest.cs" />
     <Compile Include="Profiling\TimerIntervalTest.cs" />
+    <Compile Include="Profiling\TimingGroupTest.cs" />
     <Compile Include="Profiling\TimingStorageTest.cs" />
     <Compile Include="Profiling\TimingTreeTest.cs" />
     <Compile Include="Profiling\UnknownIntervalExceptionTest.cs" />

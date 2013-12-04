@@ -27,8 +27,8 @@ namespace Nuclei.Diagnostics.Profiling
         /// <summary>
         /// The intervals that form the top-level intervals.
         /// </summary>
-        private readonly List<ITimerInterval> m_Roots
-            = new List<ITimerInterval>();
+        private readonly Dictionary<TimingGroup, List<ITimerInterval>> m_Roots
+            = new Dictionary<TimingGroup, List<ITimerInterval>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TimingTree"/> class.
@@ -43,8 +43,64 @@ namespace Nuclei.Diagnostics.Profiling
         /// </summary>
         /// <param name="treeToCopy">The tree that should be copied.</param>
         public TimingTree(TimingTree treeToCopy)
-            : this(treeToCopy, null, null)
         {
+            {
+                Lokad.Enforce.Argument(() => treeToCopy);
+            }
+
+            foreach (var pair in treeToCopy.m_Roots)
+            {
+                var localTimings = new List<ITimerInterval>();
+                m_Roots.Add(pair.Key, localTimings);
+                for (int i = 0; i < pair.Value.Count; i++)
+                {
+                    localTimings.Add(pair.Value[i]);
+                }
+
+                foreach (var root in localTimings)
+                {
+                    CopyTreeSection(treeToCopy.m_Graph, root);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimingTree"/> class and copies the 
+        /// provided tree from the start interval till the end interval.
+        /// </summary>
+        /// <param name="treeToCopy">The tree that should be copied.</param>
+        /// <param name="root">The interval which should be copied. Must be a root interval.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="treeToCopy"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="UnknownIntervalException">
+        ///     Thrown if <paramref name="root"/> is not part of the root of the tree.
+        /// </exception>
+        public TimingTree(TimingTree treeToCopy, ITimerInterval root)
+        {
+            {
+                Lokad.Enforce.Argument(() => treeToCopy);
+                Lokad.Enforce.Argument(() => root);
+
+                Lokad.Enforce.With<UnknownIntervalException>(
+                    treeToCopy.m_Roots.ContainsKey(root.Group),
+                    Resources.Exceptions_Messages_UnknownInterval);
+                Lokad.Enforce.With<UnknownIntervalException>(
+                    treeToCopy.m_Roots[root.Group].Contains(root),
+                    Resources.Exceptions_Messages_UnknownInterval);
+            }
+
+            var timings = treeToCopy.m_Roots[root.Group];
+            int index = timings.IndexOf(root);
+
+            var localTimings = new List<ITimerInterval>();
+            m_Roots.Add(root.Group, localTimings);
+            localTimings.Add(timings[index]);
+
+            foreach (var interval in localTimings)
+            {
+                CopyTreeSection(treeToCopy.m_Graph, interval);
+            }
         }
 
         /// <summary>
@@ -57,6 +113,9 @@ namespace Nuclei.Diagnostics.Profiling
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="treeToCopy"/> is <see langword="null" />.
         /// </exception>
+        /// <exception cref="NonMatchingTimingGroupsException">
+        ///     Thrown if <paramref name="start"/> and <paramref name="end"/> belong to a different timing group.
+        /// </exception>
         /// <exception cref="UnknownIntervalException">
         ///     Thrown if <paramref name="start"/> is not part of the root of the tree.
         /// </exception>
@@ -67,23 +126,39 @@ namespace Nuclei.Diagnostics.Profiling
         {
             {
                 Lokad.Enforce.Argument(() => treeToCopy);
-
+                Lokad.Enforce.Argument(() => start);
+                Lokad.Enforce.Argument(() => end);
+                
                 Lokad.Enforce.With<UnknownIntervalException>(
-                    (start == null) || treeToCopy.m_Roots.Contains(start),
+                    treeToCopy.m_Roots.ContainsKey(start.Group),
                     Resources.Exceptions_Messages_UnknownInterval);
                 Lokad.Enforce.With<UnknownIntervalException>(
-                    (end == null) || treeToCopy.m_Roots.Contains(end),
+                    treeToCopy.m_Roots.ContainsKey(end.Group),
+                    Resources.Exceptions_Messages_UnknownInterval);
+
+                Lokad.Enforce.With<NonMatchingTimingGroupsException>(
+                    start.Group.Equals(end.Group),
+                    Resources.Exceptions_Messages_NonMatchingTimingGroups);
+                Lokad.Enforce.With<UnknownIntervalException>(
+                    treeToCopy.m_Roots[start.Group].Contains(start),
+                    Resources.Exceptions_Messages_UnknownInterval);
+                Lokad.Enforce.With<UnknownIntervalException>(
+                    treeToCopy.m_Roots[end.Group].Contains(end),
                     Resources.Exceptions_Messages_UnknownInterval);
             }
 
-            int startIndex = (start != null) ? treeToCopy.m_Roots.IndexOf(start) : 0;
-            int endIndex = (end != null) ? treeToCopy.m_Roots.IndexOf(end) + 1 : treeToCopy.m_Roots.Count;
+            var timings = treeToCopy.m_Roots[start.Group];
+            int startIndex = (start != null) ? timings.IndexOf(start) : 0;
+            int endIndex = (end != null) ? timings.IndexOf(end) + 1 : timings.Count;
+
+            var localTimings = new List<ITimerInterval>();
+            m_Roots.Add(start.Group, localTimings);
             for (int i = startIndex; i < endIndex; i++)
             {
-                m_Roots.Add(treeToCopy.m_Roots[i]);
+                localTimings.Add(timings[i]);
             }
 
-            foreach (var root in m_Roots)
+            foreach (var root in localTimings)
             {
                 CopyTreeSection(treeToCopy.m_Graph, root);
             }
@@ -121,7 +196,14 @@ namespace Nuclei.Diagnostics.Profiling
             }
 
             m_Graph.AddVertex(interval);
-            m_Roots.Add(interval);
+
+            if (!m_Roots.ContainsKey(interval.Group))
+            {
+                m_Roots.Add(interval.Group, new List<ITimerInterval>());
+            }
+
+            var list = m_Roots[interval.Group];
+            list.Add(interval);
         }
 
         /// <summary>
@@ -144,12 +226,17 @@ namespace Nuclei.Diagnostics.Profiling
         /// <summary>
         /// Returns the collection of base intervals that have been registered.
         /// </summary>
+        /// <param name="group">The group for which the base intervals should be obtained.</param>
         /// <returns>
         /// The collection containing all the base intervals.
         /// </returns>
-        public IEnumerable<ITimerInterval> BaseIntervals()
+        public IEnumerable<ITimerInterval> BaseIntervals(TimingGroup group)
         {
-            return m_Roots;
+            {
+                Debug.Assert(group != null, "The timing group should not be a null reference.");
+            }
+
+            return m_Roots[group];
         }
 
         /// <summary>
@@ -166,15 +253,34 @@ namespace Nuclei.Diagnostics.Profiling
         }
 
         /// <summary>
-        /// Traverses the tree in pre-order (root before sub-trees) format.
+        /// Traverses the entire tree in pre-order (root before sub-trees) format.
         /// </summary>
         /// <param name="nodeAction">The action that is taken for each node.</param>
         public void TraversePreOrder(Action<ITimerInterval, int> nodeAction)
         {
-            var toVisit = new Stack<Tuple<ITimerInterval, int>>();
-            for (int i = m_Roots.Count - 1; i >= 0; i--)
+            foreach (var group in m_Roots.Keys)
             {
-                toVisit.Push(new Tuple<ITimerInterval, int>(m_Roots[i], 0));
+                TraversePreOrder(group, nodeAction);
+            }
+        }
+
+        /// <summary>
+        /// Traverses the section of the tree with the specific group in pre-order (root before sub-trees) format.
+        /// </summary>
+        /// <param name="group">The group for which the traverse should take place.</param>
+        /// <param name="nodeAction">The action that is taken for each node.</param>
+        public void TraversePreOrder(TimingGroup group, Action<ITimerInterval, int> nodeAction)
+        {
+            if ((group == null) || !m_Roots.ContainsKey(group))
+            {
+                return;
+            }
+
+            var toVisit = new Stack<Tuple<ITimerInterval, int>>();
+            var list = m_Roots[group];
+            for (int i = list.Count - 1; i >= 0; i--)
+            {
+                toVisit.Push(new Tuple<ITimerInterval, int>(list[i], 0));
             }
 
             while (toVisit.Count > 0)
