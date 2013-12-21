@@ -202,9 +202,35 @@ namespace Nuclei.Communication
                         LevelToLog.Debug,
                         CommunicationConstants.DefaultLogTextPrefix,
                         string.Format(
-                            CultureInfo.InvariantCulture, 
+                            CultureInfo.InvariantCulture,
                             "Disposed of channel for {0}",
                             m_Factory.Endpoint.Address.Uri));
+                }
+                catch (CommunicationObjectFaultedException e)
+                {
+                    // The channel is faulted but there is nothing
+                    // we can do about that so just ignore it.
+                    m_Diagnostics.Log(
+                        LevelToLog.Debug,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Channel for {0} failed to close normally. Exception was: {1}",
+                            m_Factory.Endpoint.Address.Uri,
+                            e));
+                }
+                catch (ProtocolException e)
+                {
+                    // Apparently the channel was still in use, but we don't want to 
+                    // use it anymore so just ignore it
+                    m_Diagnostics.Log(
+                        LevelToLog.Debug,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Channel for {0} failed to close normally. Exception was: {1}",
+                            m_Factory.Endpoint.Address.Uri,
+                            e));
                 }
                 catch (CommunicationObjectAbortedException e)
                 {
@@ -220,7 +246,7 @@ namespace Nuclei.Communication
                             e));
                 }
                 catch (TimeoutException e)
-                { 
+                {
                     // The default close timeout elapsed before we were 
                     // finished closing the channel. So the channel
                     // is aborted. Nothing we can do, just ignore it.
