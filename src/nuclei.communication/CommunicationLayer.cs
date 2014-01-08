@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Properties;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;

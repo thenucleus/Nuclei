@@ -129,7 +129,7 @@
     <Compile Include="DataReceivingEndpoint.cs" />
     <Compile Include="DataTransferEventArgs.cs" />
     <Compile Include="DataTransferMessage.cs" />
-    <Compile Include="EndpointDiscoveredEventArgs.cs" />
+    <Compile Include="Discovery\EndpointDiscoveredEventArgs.cs" />
     <Compile Include="EndpointLostEventArgs.cs" />
     <Compile Include="EndpointSignInEventArgs.cs" />
     <Compile Include="DownloadDataFromRemoteEndpoints.cs" />
@@ -158,7 +158,7 @@
     <Compile Include="ICommunicationMessage.cs" />
     <Compile Include="IDataReceivingEndpoint.cs" />
     <Compile Include="IDirectIncomingMessages.cs" />
-    <Compile Include="IDiscoverOtherServices.cs" />
+    <Compile Include="Discovery\IDiscoverOtherServices.cs" />
     <Compile Include="IHandleHandshakes.cs" />
     <Compile Include="IMessageFilter.cs" />
     <Compile Include="IMessageProcessAction.cs" />
@@ -187,9 +187,9 @@
     <Compile Include="LastChanceMessageHandlerAttribute.cs" />
     <Compile Include="LocalCommandCollection.cs" />
     <Compile Include="LocalNotificationCollection.cs" />
-    <Compile Include="ManualDiscoverySource.cs" />
-    <Compile Include="ManualEndpointConnection.cs" />
-    <Compile Include="ManualEndpointDisconnection.cs" />
+    <Compile Include="Discovery\ManualDiscoverySource.cs" />
+    <Compile Include="Discovery\ManualEndpointConnection.cs" />
+    <Compile Include="Discovery\ManualEndpointDisconnection.cs" />
     <Compile Include="MaximumNumberOfChannelRestartsExceededException.cs" />
     <Compile Include="MessageEventArgs.cs" />
     <Compile Include="MessageHandler.cs" />
@@ -250,7 +250,7 @@
     <Compile Include="SerializedMethodInvocation.cs" />
     <Compile Include="SerializedType.cs" />
     <Compile Include="ServiceConnectionHolder.cs" />
-    <Compile Include="UdpBasedDiscoverySource.cs" />
+    <Compile Include="Discovery\UdpBasedDiscoverySource.cs" />
     <Compile Include="TcpChannelType.cs" />
     <Compile Include="TypeIsNotAValidCommandSetException.cs" />
     <Compile Include="TypeIsNotAValidNotificationSetException.cs" />
@@ -288,7 +288,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Discovery\" />
     <Folder Include="Protocol\" />
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

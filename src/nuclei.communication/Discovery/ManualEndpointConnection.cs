@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Discovery
 {
     /// <summary>
     /// A delegate used to manually add endpoints to the collection of known endpoints. 

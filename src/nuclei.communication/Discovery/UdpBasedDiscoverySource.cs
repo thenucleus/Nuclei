@@ -12,7 +12,7 @@ using System.ServiceModel;
 using System.ServiceModel.Discovery;
 using System.Xml.Linq;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Discovery
 {
     /// <summary>
     /// Handles the discovery of endpoints on other applications to which a connection can be 

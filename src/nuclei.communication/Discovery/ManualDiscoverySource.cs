@@ -7,7 +7,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Discovery
 {
     /// <summary>
     /// Handles the discovery of endpoints by accepting endpoint information from

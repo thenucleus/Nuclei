@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Discovery
 {
     /// <summary>
     /// Defines the methods for objects that handle discovery of endpoints.

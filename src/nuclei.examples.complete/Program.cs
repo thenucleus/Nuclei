@@ -15,6 +15,7 @@ using System.Windows.Forms.Integration;
 using Autofac;
 using Mono.Options;
 using Nuclei.Communication;
+using Nuclei.Communication.Discovery;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 using Nuclei.Examples.Complete.Properties;

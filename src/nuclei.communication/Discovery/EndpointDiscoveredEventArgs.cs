@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Discovery
 {
     /// <summary>
     /// Defines an <see cref="EventArgs"/> class that stores information about an endpoint that was
