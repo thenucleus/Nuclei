@@ -6,6 +6,7 @@
 
 using System;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication
 {
@@ -33,14 +34,14 @@ namespace Nuclei.Communication
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if <paramref name="channelType"/> is <see cref="Communication.ChannelType.None"/>.
+        ///     Thrown if <paramref name="channelType"/> is <see cref="Protocol.ChannelType.None"/>.
         /// </exception>
         public ChannelOpenedEventArgs(EndpointId endpoint, ChannelType channelType)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
                 Lokad.Enforce.With<InvalidChannelTypeException>(
-                    channelType != Communication.ChannelType.None,
+                    channelType != ChannelType.None,
                     Resources.Exceptions_Messages_AChannelTypeMustBeDefined);
             }
 

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Moq;
+using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 

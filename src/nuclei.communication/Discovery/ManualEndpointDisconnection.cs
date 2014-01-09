@@ -4,6 +4,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using Nuclei.Communication.Protocol;
+
 namespace Nuclei.Communication.Discovery
 {
     /// <summary>

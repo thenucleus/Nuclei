@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using Moq;
 using Nuclei.Communication.Messages;
 using Nuclei.Communication.Messages.Processors;
+using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 

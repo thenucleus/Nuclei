@@ -8,6 +8,7 @@ using System;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication
 {

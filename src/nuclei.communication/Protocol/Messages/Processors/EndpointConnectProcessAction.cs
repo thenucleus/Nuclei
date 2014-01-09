@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Profiling;
 

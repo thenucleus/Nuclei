@@ -7,21 +7,66 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
+using System.Management;
+using System.Net;
+using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Discovery;
 using System.Xml.Linq;
+using Nuclei.Communication.Protocol;
 using Nuclei.Configuration;
 
 namespace Nuclei.Communication
 {
     /// <summary>
-    /// Defines a <see cref="IChannelType"/> that uses named pipes for communication between
-    /// applications on the same local machine.
+    /// Defines a <see cref="IChannelType"/> that uses TCP/IP connections for communication between
+    /// applications different machines.
     /// </summary>
-    internal sealed class NamedPipeChannelType : IChannelType
+    internal sealed class TcpChannelType : IChannelType
     {
+        /// <summary>
+        /// Returns the DNS name of the machine.
+        /// </summary>
+        /// <returns>The DNS name of the machine.</returns>
+        private static string MachineDnsName()
+        {
+            try
+            {
+                var searcher = new ManagementObjectSearcher(
+                    "root\\CIMV2",
+                    "SELECT * FROM Win32_NetworkAdapterConfiguration WHERE ServiceName != 'tunnel' AND DNSHostName != null");
+
+                string dnsHostName = (from ManagementObject queryObj in searcher.Get()
+                                      select queryObj["DNSHostName"] as string).FirstOrDefault();
+
+                return (!string.IsNullOrWhiteSpace(dnsHostName)) ? dnsHostName : Environment.MachineName;
+            }
+            catch (ManagementException)
+            {
+                return Environment.MachineName;
+            }
+        }
+
+        /// <summary>
+        /// Returns the next available TCP/IP port.
+        /// </summary>
+        /// <returns>
+        /// The number of the port.
+        /// </returns>
+        private static int DetermineNextAvailablePort()
+        {
+            var endPoint = new IPEndPoint(IPAddress.Any, 0);
+            using (var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
+            {
+                socket.Bind(endPoint);
+                var local = (IPEndPoint)socket.LocalEndPoint;
+                return local.Port;
+            }
+        }
+
         /// <summary>
         /// Returns the process ID of the process that is currently executing
         /// this code.
@@ -48,22 +93,22 @@ namespace Nuclei.Communication
         private readonly bool m_ShouldProvideDiscovery;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NamedPipeChannelType"/> class.
+        /// Initializes a new instance of the <see cref="TcpChannelType"/> class.
         /// </summary>
-        /// <param name="namedPipeConfiguration">The configuration for the WCF named pipe channel.</param>
+        /// <param name="tcpConfiguration">The configuration for the WCF tcp channel.</param>
         /// <param name="shouldProvideDiscovery">
-        ///     A flag that indicates if the named pipe channels should participate in the UDP discovery.
+        ///     A flag that indicates if the TCP channels should participate in the UDP discovery.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="namedPipeConfiguration"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="tcpConfiguration"/> is <see langword="null" />.
         /// </exception>
-        public NamedPipeChannelType(IConfiguration namedPipeConfiguration, bool shouldProvideDiscovery)
+        public TcpChannelType(IConfiguration tcpConfiguration, bool shouldProvideDiscovery)
         {
             {
-                Lokad.Enforce.Argument(() => namedPipeConfiguration);
+                Lokad.Enforce.Argument(() => tcpConfiguration);
             }
 
-            m_Configuration = namedPipeConfiguration;
+            m_Configuration = tcpConfiguration;
             m_ShouldProvideDiscovery = shouldProvideDiscovery;
         }
 
@@ -74,7 +119,7 @@ namespace Nuclei.Communication
         {
             get
             {
-                return ChannelType.NamedPipe;
+                return ChannelType.TcpIP;
             }
         }
 
@@ -86,10 +131,14 @@ namespace Nuclei.Communication
         /// </returns>
         public Uri GenerateNewChannelUri()
         {
-            var channelUri = string.Format(
-                CultureInfo.InvariantCulture, 
-                CommunicationConstants.DefaultNamedPipeChannelUriTemplate, 
-                CurrentProcessId());
+            int port = m_Configuration.HasValueFor(CommunicationConfigurationKeys.TcpPort) ?
+                m_Configuration.Value<int>(CommunicationConfigurationKeys.TcpPort) : 
+                DetermineNextAvailablePort();
+            string address = m_Configuration.HasValueFor(CommunicationConfigurationKeys.TcpBaseAddress) ? 
+                m_Configuration.Value<string>(CommunicationConfigurationKeys.TcpBaseAddress) : 
+                MachineDnsName();
+
+            var channelUri = string.Format(CultureInfo.InvariantCulture, CommunicationConstants.DefaultTcpIpChannelUriTemplate, address, port);
             return new Uri(channelUri);
         }
 
@@ -101,11 +150,11 @@ namespace Nuclei.Communication
         /// </returns>
         public Binding GenerateMessageBinding()
         {
-            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None) 
-                { 
+            var binding = new NetTcpBinding(SecurityMode.None, false)
+                {
                     MaxConnections = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
                         ? m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
-                        : CommunicationConstants.DefaultMaximumNumberOfConnectionsForNamedPipes,
+                        : CommunicationConstants.DefaultMaximumNumberOfConnectionsForTcpIp,
                     ReceiveTimeout = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds) 
                         ? TimeSpan.FromMilliseconds(m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds)) 
                         : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultBindingReceiveTimeoutInMilliSeconds),
@@ -129,22 +178,22 @@ namespace Nuclei.Communication
         /// </returns>
         public Binding GenerateDataBinding()
         {
-            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
-            {
-                MaxConnections = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
-                    ? m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
-                    : CommunicationConstants.DefaultMaximumNumberOfConnectionsForNamedPipes,
-                ReceiveTimeout = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds) 
-                    ? TimeSpan.FromMilliseconds(m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds)) 
-                    : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultBindingReceiveTimeoutInMilliSeconds),
-                MaxBufferSize = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaxBufferSizeForDataInBytes)
-                    ? m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaxBufferSizeForDataInBytes)
-                    : CommunicationConstants.DefaultBindingMaxBufferSizeForMessagesInBytes,
-                MaxReceivedMessageSize = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaxReceivedSizeForDataInBytes)
-                    ? m_Configuration.Value<long>(CommunicationConfigurationKeys.BindingMaxReceivedSizeForDataInBytes)
-                    : CommunicationConstants.DefaultBindingMaxReceivedSizeForMessagesInBytes,
-                TransferMode = TransferMode.Streamed,
-            };
+            var binding = new NetTcpBinding(SecurityMode.None, false)
+                {
+                    MaxConnections = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
+                        ? m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
+                        : CommunicationConstants.DefaultMaximumNumberOfConnectionsForTcpIp,
+                    ReceiveTimeout = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds) 
+                        ? TimeSpan.FromMilliseconds(m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds)) 
+                        : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultBindingReceiveTimeoutInMilliSeconds),
+                    MaxBufferSize = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaxBufferSizeForDataInBytes)
+                        ? m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaxBufferSizeForDataInBytes)
+                        : CommunicationConstants.DefaultBindingMaxBufferSizeForMessagesInBytes,
+                    MaxReceivedMessageSize = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaxReceivedSizeForDataInBytes)
+                        ? m_Configuration.Value<long>(CommunicationConfigurationKeys.BindingMaxReceivedSizeForDataInBytes)
+                        : CommunicationConstants.DefaultBindingMaxReceivedSizeForMessagesInBytes,
+                    TransferMode = TransferMode.Streamed,
+                };
 
             return binding;
         }
@@ -175,11 +224,17 @@ namespace Nuclei.Communication
             return endpoint;
         }
 
+        /// <summary>
+        /// Generates a new address for the channel endpoint.
+        /// </summary>
+        /// <returns>
+        /// The newly generated address for the channel endpoint.
+        /// </returns>
         private string GenerateNewMessageAddress()
         {
-            return m_Configuration.HasValueFor(CommunicationConfigurationKeys.NamedPipeSubaddress) ?
-                m_Configuration.Value<string>(CommunicationConfigurationKeys.NamedPipeSubaddress) :
-                string.Format(CultureInfo.InvariantCulture, CommunicationConstants.DefaultNamedPipeAddressTemplate, CurrentProcessId());
+            return m_Configuration.HasValueFor(CommunicationConfigurationKeys.TcpSubaddress) ?
+                m_Configuration.Value<string>(CommunicationConfigurationKeys.TcpSubaddress) :
+                string.Format(CultureInfo.InvariantCulture, CommunicationConstants.DefaultTcpIpAddressTemplate, CurrentProcessId());
         }
 
         /// <summary>

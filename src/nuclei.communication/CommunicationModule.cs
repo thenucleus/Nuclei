@@ -18,6 +18,7 @@ using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Messages;
 using Nuclei.Communication.Messages.Processors;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
 using Nuclei.Configuration;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;

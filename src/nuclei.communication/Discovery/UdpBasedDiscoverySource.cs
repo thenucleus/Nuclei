@@ -11,6 +11,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Discovery;
 using System.Xml.Linq;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication.Discovery
 {

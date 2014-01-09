@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Messages;
+using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 

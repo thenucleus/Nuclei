@@ -6,6 +6,7 @@
 
 using System;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication
 {
@@ -33,7 +34,7 @@ namespace Nuclei.Communication
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if <paramref name="channelType"/> is <see cref="Communication.ChannelType.None"/>.
+        ///     Thrown if <paramref name="channelType"/> is <see cref="Protocol.ChannelType.None"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="messageAddress"/> is <see langword="null" />.
@@ -57,7 +58,7 @@ namespace Nuclei.Communication
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if <paramref name="channelType"/> is <see cref="Communication.ChannelType.None"/>.
+        ///     Thrown if <paramref name="channelType"/> is <see cref="Protocol.ChannelType.None"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="messageAddress"/> is <see langword="null" />.

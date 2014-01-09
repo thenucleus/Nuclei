@@ -6,6 +6,7 @@
 
 using System;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication.Messages
 {
@@ -34,7 +35,7 @@ namespace Nuclei.Communication.Messages
         ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if <paramref name="channelType"/> is <see cref="Communication.ChannelType.None"/>.
+        ///     Thrown if <paramref name="channelType"/> is <see cref="Protocol.ChannelType.None"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="originatingMessageAddress"/> is <see langword="null" />.

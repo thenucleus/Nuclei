@@ -14,6 +14,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 using Nuclei.Diagnostics.Profiling;
@@ -276,7 +277,7 @@ namespace Nuclei.Communication
         /// </summary>
         /// <param name="channelType">The channel type to open.</param>
         /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if <paramref name="channelType"/> is <see cref="Communication.ChannelType.None"/>.
+        ///     Thrown if <paramref name="channelType"/> is <see cref="ChannelType.None"/>.
         /// </exception>
         private void OpenChannel(ChannelType channelType)
         {

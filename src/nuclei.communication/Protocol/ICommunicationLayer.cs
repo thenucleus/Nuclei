@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication
 {

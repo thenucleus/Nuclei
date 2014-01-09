@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Autofac;
 using Nuclei.Communication;
+using Nuclei.Communication.Protocol;
 using Nuclei.Configuration;
 using Nuclei.Diagnostics;
 using Nuclei.Examples.Complete.Models;
