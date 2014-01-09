@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication.Messages
+namespace Nuclei.Communication.Protocol.Messages
 {
     /// <summary>
     /// Defines the base methods for <see cref="ICommunicationMessage"/> objects.

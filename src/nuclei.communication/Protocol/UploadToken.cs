@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines an ID number for uploads.

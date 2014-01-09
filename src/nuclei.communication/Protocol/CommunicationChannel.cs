@@ -12,11 +12,10 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
 using System.Threading.Tasks;
-using Nuclei.Communication.Messages;
-using Nuclei.Communication.Protocol;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the methods required for handling communication with other Apollo applications 

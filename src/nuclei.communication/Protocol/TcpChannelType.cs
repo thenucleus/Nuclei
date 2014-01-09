@@ -16,10 +16,9 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Discovery;
 using System.Xml.Linq;
-using Nuclei.Communication.Protocol;
 using Nuclei.Configuration;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines a <see cref="IChannelType"/> that uses TCP/IP connections for communication between

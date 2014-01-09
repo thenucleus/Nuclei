@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication.Messages.Processors
+namespace Nuclei.Communication.Protocol.Messages.Processors
 {
     /// <summary>
     /// Defines the action that processes an <see cref="DataDownloadRequestMessage"/>.

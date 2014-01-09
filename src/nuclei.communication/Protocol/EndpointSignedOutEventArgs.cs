@@ -5,9 +5,8 @@
 //-----------------------------------------------------------------------
 
 using System;
-using Nuclei.Communication.Protocol;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines an <see cref="EventArgs"/> class that provides the endpoint information for an endpoint that 

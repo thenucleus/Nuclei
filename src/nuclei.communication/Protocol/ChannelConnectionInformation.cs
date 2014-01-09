@@ -6,9 +6,8 @@
 
 using System;
 using Nuclei.Communication.Properties;
-using Nuclei.Communication.Protocol;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Stores the information required to contact a given WCF endpoint on a specific machine.

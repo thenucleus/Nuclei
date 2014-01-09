@@ -10,6 +10,7 @@ using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 using Nuclei.Communication;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Examples.Complete
 {

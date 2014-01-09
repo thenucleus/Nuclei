@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// An exception thrown when the user tries to send a message to an endpoint for which 

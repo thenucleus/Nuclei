@@ -6,9 +6,8 @@
 
 using System;
 using Nuclei.Communication.Properties;
-using Nuclei.Communication.Protocol;
 
-namespace Nuclei.Communication.Messages
+namespace Nuclei.Communication.Protocol.Messages
 {
     /// <summary>
     /// Defines a message that indicates that the sending endpoint has connected to

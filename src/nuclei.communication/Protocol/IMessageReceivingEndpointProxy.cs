@@ -7,7 +7,7 @@
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the interface for a proxy that handles all message sending. This interface

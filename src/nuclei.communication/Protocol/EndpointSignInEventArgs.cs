@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// An <see cref="EventArgs"/> class that stores information about an endpoint that has signed in with the current endpoint.

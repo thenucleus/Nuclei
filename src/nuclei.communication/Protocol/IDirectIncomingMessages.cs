@@ -6,7 +6,7 @@
 
 using System.Threading.Tasks;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the interface for objects that direct incoming communication messages.

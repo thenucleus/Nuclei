@@ -9,8 +9,9 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using Castle.DynamicProxy;
-using Nuclei.Communication.Messages;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 
 namespace Nuclei.Communication.Interaction

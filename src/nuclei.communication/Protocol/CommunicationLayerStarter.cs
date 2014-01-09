@@ -15,7 +15,7 @@ using Nuclei.Communication.Properties;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines a initialization method for starting the communication layer when the application

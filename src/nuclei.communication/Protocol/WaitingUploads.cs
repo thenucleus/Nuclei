@@ -7,7 +7,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Stores a collection of file paths for files that should be

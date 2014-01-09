@@ -12,8 +12,9 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
-using Nuclei.Communication.Messages;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 

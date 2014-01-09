@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// An exception thrown when a user tries to re-register a file for uploading if it 

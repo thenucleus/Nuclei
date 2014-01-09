@@ -14,12 +14,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Properties;
-using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 using Nuclei.Diagnostics.Profiling;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the methods needed to communicate with one or more remote applications.

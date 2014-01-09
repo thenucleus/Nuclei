@@ -9,6 +9,7 @@ using System.IO;
 using System.Reflection;
 using Nuclei.Communication;
 using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Examples.Complete.Views
 {

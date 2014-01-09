@@ -12,7 +12,7 @@ using System.ServiceModel.Description;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Handles the creation and keeping alive of a <see cref="ServiceHost"/> connection.

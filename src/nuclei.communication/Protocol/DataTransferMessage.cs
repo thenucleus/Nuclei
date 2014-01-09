@@ -7,7 +7,7 @@
 using System.IO;
 using System.ServiceModel;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Contains information describing a data stream that is transferred between two endpoints.

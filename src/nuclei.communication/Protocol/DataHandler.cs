@@ -14,7 +14,7 @@ using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 using Nuclei.Diagnostics.Profiling;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     internal sealed class DataHandler : IDirectIncomingData, IProcessIncomingData
     {

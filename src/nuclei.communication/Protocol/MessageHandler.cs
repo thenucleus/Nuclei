@@ -8,14 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
-using Nuclei.Communication.Messages;
 using Nuclei.Communication.Properties;
-using Nuclei.Communication.Protocol;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 using Nuclei.Diagnostics.Profiling;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Handles incoming messages and dispatches them to the correct processors.

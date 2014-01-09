@@ -11,6 +11,7 @@ using System.Linq;
 using Moq;
 using Nuclei.Communication.Messages;
 using NUnit.Framework;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication
 {

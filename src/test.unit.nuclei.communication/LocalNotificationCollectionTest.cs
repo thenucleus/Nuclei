@@ -12,6 +12,7 @@ using Moq;
 using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Messages;
 using NUnit.Framework;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication
 {

@@ -8,7 +8,7 @@ using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the methods used to create a <see cref="ServiceHost"/> and to keep the connection

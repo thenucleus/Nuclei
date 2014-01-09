@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Nuclei.Communication.Messages
+namespace Nuclei.Communication.Protocol.Messages
 {
     internal static class CommunicationMessageExtensions
     {

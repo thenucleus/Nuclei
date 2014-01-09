@@ -7,7 +7,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// A delegate used to download data from a remote endpoint. 

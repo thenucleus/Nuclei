@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// An exception thrown if a user tries to deregister an upload for a token that is not registered.

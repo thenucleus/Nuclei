@@ -7,7 +7,7 @@
 using System;
 using System.Globalization;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines an ID number for messages.

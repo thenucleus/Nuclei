@@ -10,7 +10,7 @@ using System.Globalization;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication.Messages.Processors
+namespace Nuclei.Communication.Protocol.Messages.Processors
 {
     /// <summary>
     /// Defines the action that processes an any kind of <see cref="ICommunicationMessage"/>

@@ -12,12 +12,11 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Nuclei.Communication.Discovery;
-using Nuclei.Communication.Messages;
-using Nuclei.Communication.Protocol;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the protocol for connection handshake behavior.

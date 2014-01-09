@@ -10,7 +10,7 @@ using System.Runtime.Serialization;
 using System.ServiceModel.Description;
 using System.Xml;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines a new data contract serialization approach. 

@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using Nuclei.Communication;
+using Nuclei.Communication.Protocol;
 using Nuclei.Examples.Complete.Models;
 
 namespace Nuclei.Examples.Complete

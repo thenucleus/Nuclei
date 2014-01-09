@@ -9,11 +9,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Nuclei.Communication.Properties;
-using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Profiling;
 
-namespace Nuclei.Communication.Messages.Processors
+namespace Nuclei.Communication.Protocol.Messages.Processors
 {
     /// <summary>
     /// Defines the action that processes an <see cref="EndpointConnectMessage"/>.

@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Reflection;
 using Castle.DynamicProxy;
 using Nuclei.Communication.Messages;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 

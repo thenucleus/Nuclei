@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication.Discovery
 {

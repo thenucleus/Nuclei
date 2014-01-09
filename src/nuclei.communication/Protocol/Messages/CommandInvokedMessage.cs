@@ -7,7 +7,7 @@
 using System;
 using Nuclei.Communication.Interaction;
 
-namespace Nuclei.Communication.Messages
+namespace Nuclei.Communication.Protocol.Messages
 {
     /// <summary>
     /// Defines a message that indicates that the an <see cref="ICommandSet"/> method was

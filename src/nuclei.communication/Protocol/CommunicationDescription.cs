@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using Nuclei.Communication.Interaction;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Stores information about the current connection.
