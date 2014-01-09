@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Nuclei.Communication.Interaction;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 

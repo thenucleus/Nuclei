@@ -9,8 +9,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Defines a collection that contains command objects for the local endpoint.

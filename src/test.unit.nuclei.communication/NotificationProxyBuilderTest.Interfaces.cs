@@ -6,6 +6,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Nuclei.Communication.Interaction;
 
 namespace Nuclei.Communication
 {

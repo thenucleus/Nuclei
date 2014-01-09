@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Nuclei.Diagnostics;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Defines the methods for handling communication notifications.

@@ -103,7 +103,7 @@
     </Compile>
     <Compile Include="Protocol\BuildSendingEndpoint.cs" />
     <Compile Include="Protocol\ChannelClosedEventArgs.cs" />
-    <Compile Include="ChannelConnectionInformation.cs" />
+    <Compile Include="Protocol\ChannelConnectionInformation.cs" />
     <Compile Include="Protocol\ChannelOpenedEventArgs.cs" />
     <Compile Include="Protocol\ChannelType.cs" />
     <Compile Include="Interaction\CommandAlreadyRegisteredException.cs" />
@@ -116,12 +116,12 @@
     <Compile Include="Interaction\CommandSetMethodWithoutResultInterceptor.cs" />
     <Compile Include="Interaction\CommandSetMethodWithResultInterceptor.cs" />
     <Compile Include="Interaction\CommandSetProxy.cs" />
-    <Compile Include="CommunicationSubject.cs" />
-    <Compile Include="CommunicationDescriptionStorage.cs" />
+    <Compile Include="Protocol\CommunicationSubject.cs" />
+    <Compile Include="Protocol\CommunicationDescriptionStorage.cs" />
     <Compile Include="Protocol\CommunicationChannel.cs" />
     <Compile Include="CommunicationConfigurationKeys.cs" />
     <Compile Include="CommunicationConstants.cs" />
-    <Compile Include="CommunicationDescription.cs" />
+    <Compile Include="Protocol\CommunicationDescription.cs" />
     <Compile Include="Protocol\CommunicationLayer.cs" />
     <Compile Include="Protocol\CommunicationLayerStarter.cs" />
     <Compile Include="CommunicationModule.cs" />
@@ -132,15 +132,15 @@
     <Compile Include="Discovery\EndpointDiscoveredEventArgs.cs" />
     <Compile Include="Protocol\EndpointLostEventArgs.cs" />
     <Compile Include="Protocol\EndpointSignInEventArgs.cs" />
-    <Compile Include="DownloadDataFromRemoteEndpoints.cs" />
+    <Compile Include="Protocol\DownloadDataFromRemoteEndpoints.cs" />
     <Compile Include="EndpointEventArgs.cs" />
     <Compile Include="EndpointId.cs" />
     <Compile Include="EndpointIdExtensions.cs" />
     <Compile Include="Protocol\EndpointInformationStorage.cs" />
-    <Compile Include="EndpointNotContactableException.cs" />
+    <Compile Include="Protocol\EndpointNotContactableException.cs" />
     <Compile Include="Protocol\EndpointSignedOutEventArgs.cs" />
     <Compile Include="Protocol\FailedToSendMessageException.cs" />
-    <Compile Include="FileRegistrationNotFoundException.cs" />
+    <Compile Include="Protocol\FileRegistrationNotFoundException.cs" />
     <Compile Include="Protocol\HandshakeProtocolLayer.cs" />
     <Compile Include="Discovery\IAcceptExternalEndpointInformation.cs" />
     <Compile Include="Protocol\IDataPipe.cs" />
@@ -164,16 +164,16 @@
     <Compile Include="Protocol\IMessageProcessAction.cs" />
     <Compile Include="Interaction\INotificationSendersCollection.cs" />
     <Compile Include="Interaction\INotificationSet.cs" />
-    <Compile Include="INotifyOfEndpointStateChange.cs" />
+    <Compile Include="Protocol\INotifyOfEndpointStateChange.cs" />
     <Compile Include="Interaction\INotifyOfRemoteEndpointEvents.cs" />
     <Compile Include="Interaction\InternalCommandAttribute.cs" />
     <Compile Include="Interaction\InternalNotificationAttribute.cs" />
-    <Compile Include="InvalidChannelTypeException.cs" />
+    <Compile Include="Protocol\InvalidChannelTypeException.cs" />
     <Compile Include="Protocol\IProcessIncomingData.cs" />
     <Compile Include="Protocol\IProcessIncomingMessages.cs" />
     <Compile Include="Protocol\IMessageReceivingEndpoint.cs" />
     <Compile Include="Protocol\IMessageReceivingEndpointProxy.cs" />
-    <Compile Include="IReceiveInformationFromRemoteEndpoints.cs" />
+    <Compile Include="Protocol\IReceiveInformationFromRemoteEndpoints.cs" />
     <Compile Include="Interaction\ISendCommandsToRemoteEndpoints.cs" />
     <Compile Include="Protocol\ISendDataViaChannels.cs" />
     <Compile Include="Protocol\ISendingEndpoint.cs" />
@@ -181,9 +181,9 @@
     <Compile Include="Interaction\ISerializedEventRegistration.cs" />
     <Compile Include="Interaction\ISerializedMethodInvocation.cs" />
     <Compile Include="Interaction\ISerializedType.cs" />
-    <Compile Include="IStoreCommunicationDescriptions.cs" />
-    <Compile Include="IStoreInformationAboutEndpoints.cs" />
-    <Compile Include="IStoreUploads.cs" />
+    <Compile Include="Protocol\IStoreCommunicationDescriptions.cs" />
+    <Compile Include="Protocol\IStoreInformationAboutEndpoints.cs" />
+    <Compile Include="Protocol\IStoreUploads.cs" />
     <Compile Include="Protocol\LastChanceMessageHandlerAttribute.cs" />
     <Compile Include="Interaction\LocalCommandCollection.cs" />
     <Compile Include="Interaction\LocalNotificationCollection.cs" />
@@ -193,7 +193,7 @@
     <Compile Include="Protocol\MaximumNumberOfChannelRestartsExceededException.cs" />
     <Compile Include="Protocol\MessageEventArgs.cs" />
     <Compile Include="Protocol\MessageHandler.cs" />
-    <Compile Include="MessageId.cs" />
+    <Compile Include="Protocol\MessageId.cs" />
     <Compile Include="Protocol\Messages\CommandInvokedMessage.cs" />
     <Compile Include="Protocol\Messages\CommandInvokedResponseMessage.cs" />
     <Compile Include="Protocol\Messages\CommunicationMessage.cs" />
@@ -215,12 +215,12 @@
     <Compile Include="Protocol\Messages\SuccessMessage.cs" />
     <Compile Include="Protocol\Messages\UnknownMessageTypeMessage.cs" />
     <Compile Include="Protocol\Messages\UnregisterFromNotificationMessage.cs" />
-    <Compile Include="MissingBindingTypeException.cs" />
+    <Compile Include="Discovery\MissingBindingTypeException.cs" />
     <Compile Include="Interaction\MissingCommandSetException.cs" />
-    <Compile Include="MissingEndpointIdException.cs" />
+    <Compile Include="Discovery\MissingEndpointIdException.cs" />
     <Compile Include="Protocol\NamedPipeChannelType.cs" />
     <Compile Include="Protocol\NetDataContractOperationBehavior.cs" />
-    <Compile Include="NoCommunicationSubjectsRegisteredException.cs" />
+    <Compile Include="Protocol\NoCommunicationSubjectsRegisteredException.cs" />
     <Compile Include="Interaction\NotificationEventAddMethodInterceptor.cs" />
     <Compile Include="Interaction\NotificationEventRemoveMethodInterceptor.cs" />
     <Compile Include="Interaction\NotificationInformationEventArgs.cs" />
@@ -259,10 +259,10 @@
     <Compile Include="Interaction\UnknownCommandSetException.cs" />
     <Compile Include="UnknownEndpointIdFormatException.cs" />
     <Compile Include="Interaction\UnknownNotificationSetException.cs" />
-    <Compile Include="UploadNotDeregisteredException.cs" />
-    <Compile Include="UploadToken.cs" />
-    <Compile Include="UseNetDataContractSerializerAttribute.cs" />
-    <Compile Include="WaitingUploads.cs" />
+    <Compile Include="Protocol\UploadNotDeregisteredException.cs" />
+    <Compile Include="Protocol\UploadToken.cs" />
+    <Compile Include="Protocol\UseNetDataContractSerializerAttribute.cs" />
+    <Compile Include="Protocol\WaitingUploads.cs" />
   </ItemGroup>
   <!-- Indicate that we depend on the SolutionLevel build projects -->
   <ItemGroup>

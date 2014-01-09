@@ -8,7 +8,7 @@ using System;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// An exception thrown the user tries to register a command for which an interface has

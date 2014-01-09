@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using Nuclei.Communication.Interaction;
 
 namespace Nuclei.Communication.Messages
 {

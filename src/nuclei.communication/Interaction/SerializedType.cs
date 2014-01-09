@@ -8,7 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Stores type information about a <see cref="ICommandSet"/> in serializable form.

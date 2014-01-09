@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Defines the interface for objects that track registrations of notifications

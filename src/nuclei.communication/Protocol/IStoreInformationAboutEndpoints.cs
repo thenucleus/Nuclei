@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the interface for objects that store information about all known endpoints.

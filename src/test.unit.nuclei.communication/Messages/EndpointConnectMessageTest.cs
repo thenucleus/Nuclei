@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Protocol;
 using Nuclei.Nunit.Extensions;
 using NUnit.Framework;

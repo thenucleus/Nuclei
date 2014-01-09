@@ -9,7 +9,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// An exception thrown the user requests a given notification from an endpoint that does

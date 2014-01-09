@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
+using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Properties;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;

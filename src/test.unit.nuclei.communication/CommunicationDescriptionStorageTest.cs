@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Nuclei.Communication.Interaction;
 
 namespace Nuclei.Communication
 {

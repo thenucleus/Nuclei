@@ -7,7 +7,7 @@
 using System;
 using Nuclei.Communication.Protocol;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Discovery
 {
     /// <summary>
     /// Defines the interface for objects that store or forward information about

@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using Nuclei.Communication.Interaction;
 
 namespace Nuclei.Communication
 {

@@ -8,7 +8,7 @@ using System;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// An exception thrown when a user tries to access an <see cref="ICommandSet"/> that has not been registered.

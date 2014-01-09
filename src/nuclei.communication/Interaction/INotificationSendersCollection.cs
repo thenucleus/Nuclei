@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Defines the interface for collections that store one or more <see cref="INotificationSet"/>

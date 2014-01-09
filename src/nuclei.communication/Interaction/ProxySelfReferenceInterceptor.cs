@@ -6,7 +6,7 @@
 
 using Castle.DynamicProxy;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Defines an <see cref="IInterceptor"/> for <see cref="CommandSetProxy.SelfReference"/>.

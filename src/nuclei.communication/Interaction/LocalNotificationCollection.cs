@@ -9,8 +9,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Nuclei.Communication.Messages;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Defines a collection that contains notification objects for the local endpoint.

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using Nuclei.Communication.Interaction;
 
 namespace Nuclei.Communication
 {

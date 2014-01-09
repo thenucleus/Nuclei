@@ -12,7 +12,7 @@ using System.IO;
 using System.Reflection;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Defines helper methods for 'serializing' proxy type layout and invocation signatures.

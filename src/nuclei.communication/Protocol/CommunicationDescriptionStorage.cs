@@ -6,6 +6,8 @@
 
 using System;
 using System.Collections.Generic;
+using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication
 {

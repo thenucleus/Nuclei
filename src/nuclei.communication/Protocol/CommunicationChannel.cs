@@ -13,6 +13,7 @@ using System.ServiceModel.Description;
 using System.Threading;
 using System.Threading.Tasks;
 using Nuclei.Communication.Messages;
+using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 
 namespace Nuclei.Communication

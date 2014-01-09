@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Indicates that a <see cref="ICommandSet"/> is only for use by the command system.

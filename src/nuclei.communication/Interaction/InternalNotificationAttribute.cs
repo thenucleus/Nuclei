@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Indicates that a <see cref="INotificationSet"/> is only for use by the notification system.

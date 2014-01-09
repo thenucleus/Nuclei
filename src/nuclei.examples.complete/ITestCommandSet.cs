@@ -6,6 +6,7 @@
 
 using System.Threading.Tasks;
 using Nuclei.Communication;
+using Nuclei.Communication.Interaction;
 
 namespace Nuclei.Examples.Complete
 {

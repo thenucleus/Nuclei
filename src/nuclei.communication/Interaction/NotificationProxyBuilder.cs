@@ -13,7 +13,7 @@ using Nuclei.Communication.Messages;
 using Nuclei.Communication.Properties;
 using Nuclei.Diagnostics;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Builds proxy objects for the <see cref="RemoteNotificationHub"/>.

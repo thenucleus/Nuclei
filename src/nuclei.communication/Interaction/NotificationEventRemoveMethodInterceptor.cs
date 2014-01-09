@@ -13,7 +13,7 @@ using Nuclei.Communication.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Defines an <see cref="IInterceptor"/> for the 'remove' method of an <see cref="INotificationSet"/> event.

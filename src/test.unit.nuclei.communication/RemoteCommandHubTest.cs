@@ -11,6 +11,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Schedulers;
 using Moq;
+using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;

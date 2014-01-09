@@ -6,6 +6,7 @@
 
 using System;
 using System.Diagnostics;
+using Nuclei.Communication.Interaction;
 
 namespace Nuclei.Communication.Messages.Processors
 {

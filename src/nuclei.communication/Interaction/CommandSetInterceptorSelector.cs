@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// An <see cref="IInterceptorSelector"/> that indicates which selector should be used for a

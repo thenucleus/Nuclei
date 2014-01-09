@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Maps an endpoint to a set of registered notifications.

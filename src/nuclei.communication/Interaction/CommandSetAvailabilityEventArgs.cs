@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Defines a <see cref="EventArgs"/> class that stores information about the availability of commands for

@@ -6,8 +6,9 @@
 
 using System;
 using System.Collections.Generic;
+using Nuclei.Communication.Interaction;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the interface for objects that store information about the API's that are available for the
