@@ -9,8 +9,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Moq;
-using NUnit.Framework;
 using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Protocol;
+using NUnit.Framework;
 
 namespace Nuclei.Communication
 {

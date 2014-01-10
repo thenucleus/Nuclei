@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Protocol;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Nunit.Extensions;
 using NUnit.Framework;
 

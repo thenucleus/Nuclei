@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Messages;
 using Nuclei.Communication.Protocol;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 

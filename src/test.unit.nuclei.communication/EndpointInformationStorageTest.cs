@@ -7,8 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using NUnit.Framework;
+using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Protocol;
+using NUnit.Framework;
 
 namespace Nuclei.Communication
 {

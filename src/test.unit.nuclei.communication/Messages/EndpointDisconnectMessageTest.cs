@@ -6,6 +6,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using Nuclei.Communication.Protocol;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Nunit.Extensions;
 using NUnit.Framework;
 

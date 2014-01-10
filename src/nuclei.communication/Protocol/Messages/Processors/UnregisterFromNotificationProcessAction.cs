@@ -7,7 +7,6 @@
 using System;
 using System.Diagnostics;
 using Nuclei.Communication.Interaction;
-using Nuclei.Communication.Messages;
 
 namespace Nuclei.Communication.Protocol.Messages.Processors
 {

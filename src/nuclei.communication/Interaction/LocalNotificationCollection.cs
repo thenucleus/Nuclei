@@ -7,7 +7,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Nuclei.Communication.Messages;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;

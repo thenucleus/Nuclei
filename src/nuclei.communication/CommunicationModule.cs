@@ -16,7 +16,6 @@ using Autofac;
 using Autofac.Core;
 using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Interaction;
-using Nuclei.Communication.Messages;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;

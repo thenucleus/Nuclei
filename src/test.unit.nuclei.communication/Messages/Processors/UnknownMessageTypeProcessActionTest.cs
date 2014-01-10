@@ -7,6 +7,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Nuclei.Communication.Protocol;
+using Nuclei.Communication.Protocol.Messages;
+using Nuclei.Communication.Protocol.Messages.Processors;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 

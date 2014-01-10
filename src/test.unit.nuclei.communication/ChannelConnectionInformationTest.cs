@@ -6,8 +6,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using NUnit.Framework;
 using Nuclei.Communication.Protocol;
+using NUnit.Framework;
 
 namespace Nuclei.Communication
 {
