@@ -406,7 +406,7 @@ namespace Nuclei.Communication
             builder.Register(
                 (c, p) =>
                 {
-                    var channelType = c.Resolve<NamedPipeChannelType>();
+                    var channelType = c.Resolve<NamedPipeProtocolChannelType>();
                     var ctx = c.Resolve<IComponentContext>();
                     return new CommunicationChannel(
                         p.TypedAs<EndpointId>(),
@@ -435,7 +435,7 @@ namespace Nuclei.Communication
             builder.Register(
                 (c, p) =>
                 {
-                    var channelType = c.Resolve<TcpChannelType>();
+                    var channelType = c.Resolve<TcpProtocolChannelType>();
                     var ctx = c.Resolve<IComponentContext>();
                     return new CommunicationChannel(
                         p.TypedAs<EndpointId>(),
@@ -481,17 +481,17 @@ namespace Nuclei.Communication
 
         private static void RegisterChannelTypes(ContainerBuilder builder, bool allowChannelDiscovery)
         {
-            builder.Register(c => new NamedPipeChannelType(
+            builder.Register(c => new NamedPipeProtocolChannelType(
                     c.Resolve<IConfiguration>(),
                     allowChannelDiscovery))
                 .As<IChannelType>()
-                .As<NamedPipeChannelType>();
+                .As<NamedPipeProtocolChannelType>();
 
-            builder.Register(c => new TcpChannelType(
+            builder.Register(c => new TcpProtocolChannelType(
                     c.Resolve<IConfiguration>(),
                     allowChannelDiscovery))
                 .As<IChannelType>()
-                .As<TcpChannelType>();
+                .As<TcpProtocolChannelType>();
         }
 
         private static void RegisterEndpointStorage(ContainerBuilder builder)

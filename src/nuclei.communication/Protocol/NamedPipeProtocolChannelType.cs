@@ -17,10 +17,10 @@ using Nuclei.Configuration;
 namespace Nuclei.Communication.Protocol
 {
     /// <summary>
-    /// Defines a <see cref="IChannelType"/> that uses named pipes for communication between
+    /// Defines a <see cref="IProtocolChannelType"/> that uses named pipes for communication between
     /// applications on the same local machine.
     /// </summary>
-    internal sealed class NamedPipeChannelType : IChannelType
+    internal sealed class NamedPipeProtocolChannelType : IProtocolChannelType
     {
         /// <summary>
         /// Returns the process ID of the process that is currently executing
@@ -48,7 +48,7 @@ namespace Nuclei.Communication.Protocol
         private readonly bool m_ShouldProvideDiscovery;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NamedPipeChannelType"/> class.
+        /// Initializes a new instance of the <see cref="NamedPipeProtocolChannelType"/> class.
         /// </summary>
         /// <param name="namedPipeConfiguration">The configuration for the WCF named pipe channel.</param>
         /// <param name="shouldProvideDiscovery">
@@ -57,7 +57,7 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="namedPipeConfiguration"/> is <see langword="null" />.
         /// </exception>
-        public NamedPipeChannelType(IConfiguration namedPipeConfiguration, bool shouldProvideDiscovery)
+        public NamedPipeProtocolChannelType(IConfiguration namedPipeConfiguration, bool shouldProvideDiscovery)
         {
             {
                 Lokad.Enforce.Argument(() => namedPipeConfiguration);

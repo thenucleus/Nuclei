@@ -12,7 +12,7 @@ using System.ServiceModel.Description;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication
 {
     /// <summary>
     /// Handles the creation and keeping alive of a <see cref="ServiceHost"/> connection.
@@ -282,7 +282,7 @@ namespace Nuclei.Communication.Protocol
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "Closed channel of type: {0}",
-                    m_Type.ChannelType));
+                    m_Type.GetType().Name));
         }
 
         /// <summary>

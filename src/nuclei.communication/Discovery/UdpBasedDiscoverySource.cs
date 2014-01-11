@@ -6,7 +6,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Discovery;
@@ -19,9 +18,9 @@ namespace Nuclei.Communication.Discovery
     /// Handles the discovery of endpoints on other applications to which a connection can be 
     /// made via one of the WCF protocols.
     /// </summary>
-    internal sealed class UdpBasedDiscoverySource : IDiscoverOtherServices, IDisposable
+    internal sealed class UdpBasedDiscoverySource : DiscoverySource, IDisposable
     {
-        // Note that the EndpointId meta data is defined by the TcpChannelType
+        // Note that the EndpointId meta data is defined by the BootstrapChannel
         private static EndpointId GetEndpointId(EndpointDiscoveryMetadata metadata)
         {
             XElement endpointElement = metadata.Extensions.Elements("EndpointId").FirstOrDefault();
@@ -32,22 +31,7 @@ namespace Nuclei.Communication.Discovery
 
             return new EndpointId(endpointElement.Value);
         }
-
-        // Note that the BindingType meta data is defined by the TcpChannelType
-        private static ChannelType GetBindingType(EndpointDiscoveryMetadata metadata)
-        {
-            XElement bindingTypeElement = metadata.Extensions.Elements("BindingType").FirstOrDefault();
-            if (bindingTypeElement == null)
-            {
-                throw new MissingBindingTypeException();
-            }
-
-            var type = (ChannelType)Enum.Parse(typeof(ChannelType), bindingTypeElement.Value);
-
-            Debug.Assert(type != ChannelType.None, "Found an incorrect binding type.");
-            return type;
-        }
-
+        
         /// <summary>
         /// The service that handles the detection of discovery announcements.
         /// </summary>
@@ -60,38 +44,12 @@ namespace Nuclei.Communication.Discovery
         private DiscoveryClient m_DiscoveryClient;
 
         /// <summary>
-        /// An event raised when a remote endpoint becomes available.
-        /// </summary>
-        public event EventHandler<EndpointDiscoveredEventArgs> OnEndpointBecomingAvailable;
-
-        private void RaiseOnEndpointBecomingAvailable(ChannelConnectionInformation info)
-        {
-            var local = OnEndpointBecomingAvailable;
-            if (local != null)
-            {
-                local(this, new EndpointDiscoveredEventArgs(info));
-            }
-        }
-
-        /// <summary>
-        /// An event raised when a remote endpoint becomes unavailable.
-        /// </summary>
-        public event EventHandler<EndpointLostEventArgs> OnEndpointBecomingUnavailable;
-
-        private void RaiseOnEndpointBecomingUnavailable(EndpointId id, ChannelType channelType)
-        {
-            var local = OnEndpointBecomingUnavailable;
-            if (local != null)
-            {
-                local(this, new EndpointLostEventArgs(id, channelType));
-            }
-        }
-
-        /// <summary>
         /// Starts the endpoint discovery process.
         /// </summary>
-        public void StartDiscovery()
+        public override void StartDiscovery()
         {
+            base.StartDiscovery();
+
             var service = new AnnouncementService();
             service.OnlineAnnouncementReceived += (s, e) => HandleOnlineAnnouncementReceived(e.EndpointDiscoveryMetadata);
             service.OfflineAnnouncementReceived += (se, e) => HandleOfflineAnnouncementReceived(e.EndpointDiscoveryMetadata);
@@ -111,10 +69,10 @@ namespace Nuclei.Communication.Discovery
             if (metadata.ContractTypeNames.FirstOrDefault(x => x.Name == typeof(IMessageReceivingEndpoint).Name) != null)
             {
                 var id = GetEndpointId(metadata);
-                var bindingType = GetBindingType(metadata);
                 var address = metadata.Address.Uri;
 
-                RaiseOnEndpointBecomingAvailable(new ChannelConnectionInformation(id, bindingType, address));
+                // Do we want to thread this?
+                LocatedRemoteEndpointOnChannel(id, address);
             }
         }
 
@@ -124,8 +82,7 @@ namespace Nuclei.Communication.Discovery
             if (metadata.ContractTypeNames.FirstOrDefault(x => x.Name == typeof(IMessageReceivingEndpoint).Name) != null)
             {
                 var id = GetEndpointId(metadata);
-                var bindingType = GetBindingType(metadata);
-                RaiseOnEndpointBecomingUnavailable(id, bindingType);
+                LostRemoteEndpointWithId(id);
             }
         }
 
@@ -180,10 +137,12 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// Ends the endpoint discovery process.
         /// </summary>
-        public void EndDiscovery()
+        public override void EndDiscovery()
         {
             CloseDiscoveryClient();
             CleanupHost();
+
+            base.EndDiscovery();
         }
 
         private void CleanupHost()

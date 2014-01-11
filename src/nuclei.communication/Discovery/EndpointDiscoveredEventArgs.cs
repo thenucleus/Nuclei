@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication.Discovery
 {
@@ -23,7 +22,7 @@ namespace Nuclei.Communication.Discovery
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="channelInformation"/> is <see langword="null" />.
         /// </exception>
-        public EndpointDiscoveredEventArgs(ChannelConnectionInformation channelInformation)
+        public EndpointDiscoveredEventArgs(IDiscoveryInformation channelInformation)
         {
             {
                 Lokad.Enforce.Argument(() => channelInformation);
@@ -35,7 +34,7 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// Gets the information for the channel on which the new endpoint can be contacted.
         /// </summary>
-        public ChannelConnectionInformation ConnectionInformation
+        public IDiscoveryInformation ConnectionInformation
         {
             get;
             private set;

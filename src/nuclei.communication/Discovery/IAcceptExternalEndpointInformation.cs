@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication.Discovery
 {
@@ -19,17 +18,15 @@ namespace Nuclei.Communication.Discovery
         /// Stores or forwards information about an endpoint that has recently
         /// connected to the network.
         /// </summary>
-        /// <param name="id">The ID of the endpoint.</param>
-        /// <param name="channelType">The kind of channel this connection information describes.</param>
-        /// <param name="address">The full URI for the channel.</param>
-        void RecentlyConnectedEndpoint(EndpointId id, ChannelType channelType, Uri address);
+        /// <param name="id">The ID of the recently discovered endpoint.</param>
+        /// <param name="address">The full URI for the discovery channel of the endpoint.</param>
+        void RecentlyConnectedEndpoint(EndpointId id, Uri address);
 
         /// <summary>
         /// Stores or forwards information about an endpoint that has recently
         /// disconnected from the network.
         /// </summary>
         /// <param name="id">The ID of the endpoint.</param>
-        /// <param name="channelType">The kind of channel this connection information describes.</param>
-        void RecentlyDisconnectedEndpoint(EndpointId id, ChannelType channelType);
+        void RecentlyDisconnectedEndpoint(EndpointId id);
     }
 }

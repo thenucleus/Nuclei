@@ -4,8 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Nuclei.Communication.Protocol;
-
 namespace Nuclei.Communication.Discovery
 {
     /// <summary>
@@ -15,8 +13,6 @@ namespace Nuclei.Communication.Discovery
     /// This delegate is mainly to be used through the <see cref="CommunicationModule"/> where this 
     /// delegate is registered.
     /// </remarks>
-    /// <param name="endpointId">The endpoint ID of the remote endpoint.</param>
-    /// <param name="channelType">The channel type of the remote endpoint.</param>
-    /// <param name="address">The address of the remote endpoint.</param>
-    public delegate void ManualEndpointConnection(EndpointId endpointId, ChannelType channelType, string address);
+    /// <param name="address">The URI of the discovery point for the remote endpoint.</param>
+    public delegate void ManualEndpointConnection(string address);
 }

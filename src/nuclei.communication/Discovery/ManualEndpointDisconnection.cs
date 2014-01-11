@@ -4,8 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using Nuclei.Communication.Protocol;
-
 namespace Nuclei.Communication.Discovery
 {
     /// <summary>
@@ -16,6 +14,5 @@ namespace Nuclei.Communication.Discovery
     /// delegate is registered.
     /// </remarks>
     /// <param name="endpointId">The endpoint ID of the remote endpoint.</param>
-    /// <param name="channelType">The channel type of the remote endpoint.</param>
-    public delegate void ManualEndpointDisconnection(EndpointId endpointId, ChannelType channelType);
+    public delegate void ManualEndpointDisconnection(EndpointId endpointId);
 }

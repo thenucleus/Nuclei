@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="Nuclei">
-//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// <copyright company="P. van der Velde">
+//     Copyright (c) P. van der Velde. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
@@ -13,9 +13,9 @@ namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the interface for objects that provide information about a specific type of
-    /// WCF channel, e.g. TCP.
+    /// WCF channel for the protocol level, e.g. TCP.
     /// </summary>
-    internal interface IChannelType
+    internal interface IProtocolChannelType : IChannelType
     {
         /// <summary>
         /// Gets the type of the channel.
@@ -24,14 +24,6 @@ namespace Nuclei.Communication.Protocol
         {
             get;
         }
-
-        /// <summary>
-        /// Generates a new URI for the channel.
-        /// </summary>
-        /// <returns>
-        /// The newly generated URI.
-        /// </returns>
-        Uri GenerateNewChannelUri();
 
         /// <summary>
         /// Generates a new binding object used to send messages across the channel.

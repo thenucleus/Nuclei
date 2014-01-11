@@ -44,7 +44,7 @@ namespace Nuclei.Communication.Protocol
         /// Indicates the type of channel that we're dealing with and provides
         /// utility methods for the channel.
         /// </summary>
-        private readonly IChannelType m_Type;
+        private readonly IProtocolChannelType m_Type;
 
         /// <summary>
         /// The host information for the message sending host.
@@ -148,7 +148,7 @@ namespace Nuclei.Communication.Protocol
         public CommunicationChannel(
             EndpointId id, 
             IStoreInformationAboutEndpoints connectionMap,
-            IChannelType channelType, 
+            IProtocolChannelType channelType, 
             IHoldServiceConnections messageHost,
             IHoldServiceConnections dataHost,
             Func<IMessagePipe> messageReceiverBuilder,

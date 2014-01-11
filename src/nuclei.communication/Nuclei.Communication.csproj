@@ -101,6 +101,13 @@
     <Compile Include="..\..\build\temp\AssemblyInfo.VersionNumber.cs">
       <Link>Properties\AssemblyInfo.VersionNumber.cs</Link>
     </Compile>
+    <Compile Include="Discovery\BootstrapChannel.cs" />
+    <Compile Include="Discovery\DiscoverySource.cs" />
+    <Compile Include="Discovery\IBootstrapChannel.cs" />
+    <Compile Include="Discovery\IDiscoveryChannelType.cs" />
+    <Compile Include="Discovery\IDiscoveryEndpoint.cs" />
+    <Compile Include="Discovery\IDiscoveryInformation.cs" />
+    <Compile Include="Discovery\TcpDiscoveryChannelType.cs" />
     <Compile Include="Protocol\BuildSendingEndpoint.cs" />
     <Compile Include="Protocol\ChannelClosedEventArgs.cs" />
     <Compile Include="Protocol\ChannelConnectionInformation.cs" />
@@ -130,7 +137,7 @@
     <Compile Include="Protocol\DataTransferEventArgs.cs" />
     <Compile Include="Protocol\DataTransferMessage.cs" />
     <Compile Include="Discovery\EndpointDiscoveredEventArgs.cs" />
-    <Compile Include="Protocol\EndpointLostEventArgs.cs" />
+    <Compile Include="Discovery\EndpointLostEventArgs.cs" />
     <Compile Include="Protocol\EndpointSignInEventArgs.cs" />
     <Compile Include="Protocol\DownloadDataFromRemoteEndpoints.cs" />
     <Compile Include="EndpointEventArgs.cs" />
@@ -147,10 +154,10 @@
     <Compile Include="Protocol\IDataReceivingEndpointProxy.cs" />
     <Compile Include="Protocol\IDataTransferingEndpoint.cs" />
     <Compile Include="Protocol\IDirectIncomingData.cs" />
-    <Compile Include="Protocol\IHoldServiceConnections.cs" />
+    <Compile Include="IHoldServiceConnections.cs" />
     <Compile Include="Protocol\IMessagePipe.cs" />
     <Compile Include="Protocol\IMessageSendingEndpoint.cs" />
-    <Compile Include="Protocol\IChannelType.cs" />
+    <Compile Include="IChannelType.cs" />
     <Compile Include="Interaction\ICommandCollection.cs" />
     <Compile Include="Interaction\ICommandSet.cs" />
     <Compile Include="Protocol\ICommunicationChannel.cs" />
@@ -173,8 +180,9 @@
     <Compile Include="Protocol\IProcessIncomingMessages.cs" />
     <Compile Include="Protocol\IMessageReceivingEndpoint.cs" />
     <Compile Include="Protocol\IMessageReceivingEndpointProxy.cs" />
-    <Compile Include="Protocol\IReceiveInformationFromRemoteEndpoints.cs" />
+    <Compile Include="IReceiveInformationFromRemoteEndpoints.cs" />
     <Compile Include="Interaction\ISendCommandsToRemoteEndpoints.cs" />
+    <Compile Include="Protocol\IProtocolChannelType.cs" />
     <Compile Include="Protocol\ISendDataViaChannels.cs" />
     <Compile Include="Protocol\ISendingEndpoint.cs" />
     <Compile Include="Interaction\ISendNotifications.cs" />
@@ -190,7 +198,7 @@
     <Compile Include="Discovery\ManualDiscoverySource.cs" />
     <Compile Include="Discovery\ManualEndpointConnection.cs" />
     <Compile Include="Discovery\ManualEndpointDisconnection.cs" />
-    <Compile Include="Protocol\MaximumNumberOfChannelRestartsExceededException.cs" />
+    <Compile Include="MaximumNumberOfChannelRestartsExceededException.cs" />
     <Compile Include="Protocol\MessageEventArgs.cs" />
     <Compile Include="Protocol\MessageHandler.cs" />
     <Compile Include="Protocol\MessageId.cs" />
@@ -218,7 +226,7 @@
     <Compile Include="Discovery\MissingBindingTypeException.cs" />
     <Compile Include="Interaction\MissingCommandSetException.cs" />
     <Compile Include="Discovery\MissingEndpointIdException.cs" />
-    <Compile Include="Protocol\NamedPipeChannelType.cs" />
+    <Compile Include="Protocol\NamedPipeProtocolChannelType.cs" />
     <Compile Include="Protocol\NetDataContractOperationBehavior.cs" />
     <Compile Include="Protocol\NoCommunicationSubjectsRegisteredException.cs" />
     <Compile Include="Interaction\NotificationEventAddMethodInterceptor.cs" />
@@ -249,14 +257,15 @@
     <Compile Include="Interaction\SerializedEvent.cs" />
     <Compile Include="Interaction\SerializedMethodInvocation.cs" />
     <Compile Include="Interaction\SerializedType.cs" />
-    <Compile Include="Protocol\ServiceConnectionHolder.cs" />
+    <Compile Include="ServiceConnectionHolder.cs" />
     <Compile Include="Discovery\UdpBasedDiscoverySource.cs" />
-    <Compile Include="Protocol\TcpChannelType.cs" />
+    <Compile Include="Protocol\TcpProtocolChannelType.cs" />
     <Compile Include="Interaction\TypeIsNotAValidCommandSetException.cs" />
     <Compile Include="Interaction\TypeIsNotAValidNotificationSetException.cs" />
     <Compile Include="Interaction\UnableToGenerateProxyException.cs" />
     <Compile Include="Interaction\UnableToLoadProxyTypeException.cs" />
     <Compile Include="Interaction\UnknownCommandSetException.cs" />
+    <Compile Include="TcpChannelType.cs" />
     <Compile Include="UnknownEndpointIdFormatException.cs" />
     <Compile Include="Interaction\UnknownNotificationSetException.cs" />
     <Compile Include="Protocol\UploadNotDeregisteredException.cs" />

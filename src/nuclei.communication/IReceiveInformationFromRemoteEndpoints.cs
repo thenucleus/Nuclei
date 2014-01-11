@@ -6,7 +6,7 @@
 
 using System.ServiceModel;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication
 {
     /// <summary>
     /// Defines the base interface for objects that act as message or data receiving proxies for a <see cref="ServiceHost"/>.
