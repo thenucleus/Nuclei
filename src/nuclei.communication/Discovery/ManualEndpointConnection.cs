@@ -13,6 +13,7 @@ namespace Nuclei.Communication.Discovery
     /// This delegate is mainly to be used through the <see cref="CommunicationModule"/> where this 
     /// delegate is registered.
     /// </remarks>
+    /// <param name="endpointId">The endpoint ID of the remote endpoint.</param>
     /// <param name="address">The URI of the discovery point for the remote endpoint.</param>
-    public delegate void ManualEndpointConnection(string address);
+    public delegate void ManualEndpointConnection(EndpointId endpointId, string address);
 }

@@ -292,10 +292,10 @@
     <value>Failed to start the communication system. Error was: {0}</value>
   </data>
   <data name="Log_Messages_ManualConnectionOfRemoteEndpoint_WithConnectionInformation" xml:space="preserve">
-    <value>Signaling manual connection of endpoint. Connection to endpoint {0} via channel {1} at {2}</value>
+    <value>Signaling manual connection of endpoint. Connection to endpoint {0} at {1}</value>
   </data>
   <data name="Log_Messages_ManualDisconnectionOfRemoteEndpoint_WithConnectionInformation" xml:space="preserve">
-    <value>Signalling manual disconnection of endpoint. Endpoint {0} via channel {1}</value>
+    <value>Signalling manual disconnection of endpoint {0}</value>
   </data>
   <data name="Log_Messages_ManualDisoveryWaitingForLayerSignIn" xml:space="preserve">
     <value>Signaling new connection through manual discovery. Waiting for communication layer to sign in ...</value>

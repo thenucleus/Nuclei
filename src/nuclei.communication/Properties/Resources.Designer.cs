@@ -587,7 +587,7 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Signaling manual connection of endpoint. Connection to endpoint {0} via channel {1} at {2}.
+        ///   Looks up a localized string similar to Signaling manual connection of endpoint. Connection to endpoint {0} at {1}.
         /// </summary>
         internal static string Log_Messages_ManualConnectionOfRemoteEndpoint_WithConnectionInformation {
             get {
@@ -596,7 +596,7 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Signalling manual disconnection of endpoint. Endpoint {0} via channel {1}.
+        ///   Looks up a localized string similar to Signalling manual disconnection of endpoint {0}.
         /// </summary>
         internal static string Log_Messages_ManualDisconnectionOfRemoteEndpoint_WithConnectionInformation {
             get {

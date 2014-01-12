@@ -175,7 +175,7 @@ namespace Nuclei.Communication
                 c =>
                 {
                     var ctx = c.Resolve<IComponentContext>();
-                    return (id, channelType, address) =>
+                    return (id, address) =>
                     {
                         var diagnostics = ctx.Resolve<SystemDiagnostics>();
 
@@ -219,10 +219,9 @@ namespace Nuclei.Communication
                                 CultureInfo.InvariantCulture,
                                 Resources.Log_Messages_ManualConnectionOfRemoteEndpoint_WithConnectionInformation,
                                 id,
-                                channelType,
                                 address));
 
-                        ctx.Resolve<IAcceptExternalEndpointInformation>().RecentlyConnectedEndpoint(id, channelType, new Uri(address));
+                        ctx.Resolve<IAcceptExternalEndpointInformation>().RecentlyConnectedEndpoint(id, new Uri(address));
                     };
                 })
                 .SingleInstance();
@@ -236,7 +235,7 @@ namespace Nuclei.Communication
                 c =>
                 {
                     var ctx = c.Resolve<IComponentContext>();
-                    return (id, channelType) =>
+                    return (id) =>
                     {
                         var diagnostics = ctx.Resolve<SystemDiagnostics>();
 
@@ -279,10 +278,9 @@ namespace Nuclei.Communication
                             string.Format(
                                 CultureInfo.InvariantCulture,
                                 Resources.Log_Messages_ManualDisconnectionOfRemoteEndpoint_WithConnectionInformation,
-                                id,
-                                channelType));
+                                id));
 
-                        ctx.Resolve<IAcceptExternalEndpointInformation>().RecentlyDisconnectedEndpoint(id, channelType);
+                        ctx.Resolve<IAcceptExternalEndpointInformation>().RecentlyDisconnectedEndpoint(id);
                     };
                 })
                 .SingleInstance();
@@ -479,17 +477,15 @@ namespace Nuclei.Communication
                 .As<IDataPipe>();
         }
 
-        private static void RegisterChannelTypes(ContainerBuilder builder, bool allowChannelDiscovery)
+        private static void RegisterChannelTypes(ContainerBuilder builder)
         {
             builder.Register(c => new NamedPipeProtocolChannelType(
-                    c.Resolve<IConfiguration>(),
-                    allowChannelDiscovery))
+                    c.Resolve<IConfiguration>()))
                 .As<IChannelType>()
                 .As<NamedPipeProtocolChannelType>();
 
             builder.Register(c => new TcpProtocolChannelType(
-                    c.Resolve<IConfiguration>(),
-                    allowChannelDiscovery))
+                    c.Resolve<IConfiguration>()))
                 .As<IChannelType>()
                 .As<TcpProtocolChannelType>();
         }
@@ -698,7 +694,7 @@ namespace Nuclei.Communication
             RegisterConnectionHolders(builder);
             RegisterCommunicationChannel(builder);
             RegisterEndpoints(builder);
-            RegisterChannelTypes(builder, m_AllowChannelDiscovery);
+            RegisterChannelTypes(builder);
             RegisterEndpointStorage(builder);
             RegisterCommunicationDescriptions(builder, m_Subjects);
             RegisterCommandHub(builder);
