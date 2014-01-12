@@ -36,25 +36,15 @@ namespace Nuclei.Communication.Protocol
         }
 
         /// <summary>
-        /// A flag that indicates if the channel should participate in the UDP 
-        /// discovery or not.
-        /// </summary>
-        private readonly bool m_ShouldProvideDiscovery;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="TcpProtocolChannelType"/> class.
         /// </summary>
         /// <param name="tcpConfiguration">The configuration for the WCF tcp channel.</param>
-        /// <param name="shouldProvideDiscovery">
-        ///     A flag that indicates if the TCP channels should participate in the UDP discovery.
-        /// </param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="tcpConfiguration"/> is <see langword="null" />.
         /// </exception>
-        public TcpProtocolChannelType(IConfiguration tcpConfiguration, bool shouldProvideDiscovery)
+        public TcpProtocolChannelType(IConfiguration tcpConfiguration)
             : base(tcpConfiguration)
         {
-            m_ShouldProvideDiscovery = shouldProvideDiscovery;
         }
 
         /// <summary>
@@ -134,19 +124,6 @@ namespace Nuclei.Communication.Protocol
         public ServiceEndpoint AttachMessageEndpoint(ServiceHost host, Type implementedContract, EndpointId localEndpoint)
         {
             var endpoint = host.AddServiceEndpoint(implementedContract, GenerateMessageBinding(), GenerateNewMessageAddress());
-            if (m_ShouldProvideDiscovery)
-            {
-                var discoveryBehavior = new ServiceDiscoveryBehavior();
-                discoveryBehavior.AnnouncementEndpoints.Add(new UdpAnnouncementEndpoint());
-                host.Description.Behaviors.Add(discoveryBehavior);
-                host.Description.Endpoints.Add(new UdpDiscoveryEndpoint());
-
-                var endpointDiscoveryBehavior = new EndpointDiscoveryBehavior();
-                endpointDiscoveryBehavior.Extensions.Add(new XElement("root", new XElement("EndpointId", localEndpoint.ToString())));
-                endpointDiscoveryBehavior.Extensions.Add(new XElement("root", new XElement("BindingType", ChannelType)));
-                endpoint.Behaviors.Add(endpointDiscoveryBehavior);
-            }
-
             return endpoint;
         }
 

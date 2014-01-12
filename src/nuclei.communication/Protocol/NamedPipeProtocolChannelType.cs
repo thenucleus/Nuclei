@@ -42,29 +42,19 @@ namespace Nuclei.Communication.Protocol
         private readonly IConfiguration m_Configuration;
 
         /// <summary>
-        /// A flag that indicates if the channel should participate in the UDP 
-        /// discovery or not.
-        /// </summary>
-        private readonly bool m_ShouldProvideDiscovery;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="NamedPipeProtocolChannelType"/> class.
         /// </summary>
         /// <param name="namedPipeConfiguration">The configuration for the WCF named pipe channel.</param>
-        /// <param name="shouldProvideDiscovery">
-        ///     A flag that indicates if the named pipe channels should participate in the UDP discovery.
-        /// </param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="namedPipeConfiguration"/> is <see langword="null" />.
         /// </exception>
-        public NamedPipeProtocolChannelType(IConfiguration namedPipeConfiguration, bool shouldProvideDiscovery)
+        public NamedPipeProtocolChannelType(IConfiguration namedPipeConfiguration)
         {
             {
                 Lokad.Enforce.Argument(() => namedPipeConfiguration);
             }
 
             m_Configuration = namedPipeConfiguration;
-            m_ShouldProvideDiscovery = shouldProvideDiscovery;
         }
 
         /// <summary>
@@ -159,19 +149,6 @@ namespace Nuclei.Communication.Protocol
         public ServiceEndpoint AttachMessageEndpoint(ServiceHost host, Type implementedContract, EndpointId localEndpoint)
         {
             var endpoint = host.AddServiceEndpoint(implementedContract, GenerateMessageBinding(), GenerateNewMessageAddress());
-            if (m_ShouldProvideDiscovery)
-            {
-                var discoveryBehavior = new ServiceDiscoveryBehavior();
-                discoveryBehavior.AnnouncementEndpoints.Add(new UdpAnnouncementEndpoint());
-                host.Description.Behaviors.Add(discoveryBehavior);
-                host.Description.Endpoints.Add(new UdpDiscoveryEndpoint());
-
-                var endpointDiscoveryBehavior = new EndpointDiscoveryBehavior();
-                endpointDiscoveryBehavior.Extensions.Add(new XElement("root", new XElement("EndpointId", localEndpoint.ToString())));
-                endpointDiscoveryBehavior.Extensions.Add(new XElement("root", new XElement("BindingType", ChannelType)));
-                endpoint.Behaviors.Add(endpointDiscoveryBehavior);
-            }
-
             return endpoint;
         }
 
