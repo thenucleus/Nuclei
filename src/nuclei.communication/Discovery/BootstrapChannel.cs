@@ -15,8 +15,6 @@ namespace Nuclei.Communication.Discovery
     /// </summary>
     internal sealed class BootstrapChannel : IBootstrapChannel, IDisposable
     {
-        // Has UDP discovery broadcast, provide only endpoint ID
-
         /// <summary>
         /// The ID number of the current endpoint.
         /// </summary>
@@ -30,7 +28,7 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// the function used to build discovery endpoints.
         /// </summary>
-        private readonly Func<IDiscoveryEndpoint> m_EndpointBuilder;
+        private readonly Func<IDiscoveryInformationRespondingEndpoint> m_EndpointBuilder;
 
         /// <summary>
         /// The host information for the discovery host.
@@ -40,7 +38,7 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// The WCF endpoint object for the current channel.
         /// </summary>
-        private IDiscoveryEndpoint m_Endpoint;
+        private IDiscoveryInformationRespondingEndpoint m_Endpoint;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BootstrapChannel"/> class.
@@ -66,7 +64,7 @@ namespace Nuclei.Communication.Discovery
         public BootstrapChannel(
             EndpointId id, 
             IDiscoveryChannelType type, 
-            Func<IDiscoveryEndpoint> endpointBuilder, 
+            Func<IDiscoveryInformationRespondingEndpoint> endpointBuilder, 
             IHoldServiceConnections host)
         {
             {
@@ -91,7 +89,7 @@ namespace Nuclei.Communication.Discovery
             Func<ServiceHost, ServiceEndpoint> endpointBuilder =
                 host =>
                 {
-                    var dataEndpoint = m_Type.AttachDiscoveryEndpoint(host, typeof(IDiscoveryEndpoint), m_Id);
+                    var dataEndpoint = m_Type.AttachDiscoveryEndpoint(host, typeof(IDiscoveryInformationRespondingEndpoint), m_Id);
                     return dataEndpoint;
                 };
             m_Host.OpenChannel(m_Endpoint, endpointBuilder);
