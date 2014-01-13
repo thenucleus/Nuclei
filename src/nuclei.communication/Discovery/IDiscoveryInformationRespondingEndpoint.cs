@@ -14,7 +14,7 @@ namespace Nuclei.Communication.Discovery
     /// Defines the interface for objects that provide the methods that can be called on the discovery channel.
     /// </summary>
     [ServiceContract]
-    internal interface IDiscoveryEndpoint : IReceiveInformationFromRemoteEndpoints
+    internal interface IDiscoveryInformationRespondingEndpoint : IReceiveInformationFromRemoteEndpoints
     {
         /// <summary>
         /// Returns the version of the discovery protocol.
