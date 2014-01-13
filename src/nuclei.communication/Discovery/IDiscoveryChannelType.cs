@@ -1,5 +1,12 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright company="P. van der Velde">
+//     Copyright (c) P. van der Velde. All rights reserved.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 
 namespace Nuclei.Communication.Discovery
@@ -9,6 +16,14 @@ namespace Nuclei.Communication.Discovery
     /// </summary>
     internal interface IDiscoveryChannelType : IChannelType
     {
+        /// <summary>
+        /// Generates a new binding object for the channel.
+        /// </summary>
+        /// <returns>
+        /// The newly generated binding.
+        /// </returns>
+        Binding GenerateBinding();
+
         /// <summary>
         /// Attaches a new endpoint to the given host.
         /// </summary>

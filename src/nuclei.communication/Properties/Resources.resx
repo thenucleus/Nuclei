@@ -288,6 +288,9 @@
   <data name="Exceptions_Messages_UploadNotDeregistered_WithToken" xml:space="preserve">
     <value>An upload for the token [{0}] already exists.</value>
   </data>
+  <data name="Log_Messages_DiscoveryFailedToConnectToEndpoint_WithUriAndError" xml:space="preserve">
+    <value>Connection to discovery URI {0} failed with error. Error was: {1}</value>
+  </data>
   <data name="Log_Messages_FailedToStartCommunicationSystem_WithError" xml:space="preserve">
     <value>Failed to start the communication system. Error was: {0}</value>
   </data>

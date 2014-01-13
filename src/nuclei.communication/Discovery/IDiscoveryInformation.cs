@@ -17,7 +17,7 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// Gets the version of the information object.
         /// </summary>
-        Version DiscoveryVersion
+        Version ProtocolVersion
         {
             get;
         }

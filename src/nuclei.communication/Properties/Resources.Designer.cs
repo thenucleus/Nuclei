@@ -578,6 +578,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Connection to discovery URI {0} failed with error. Error was: {1}.
+        /// </summary>
+        internal static string Log_Messages_DiscoveryFailedToConnectToEndpoint_WithUriAndError {
+            get {
+                return ResourceManager.GetString("Log_Messages_DiscoveryFailedToConnectToEndpoint_WithUriAndError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to start the communication system. Error was: {0}.
         /// </summary>
         internal static string Log_Messages_FailedToStartCommunicationSystem_WithError {

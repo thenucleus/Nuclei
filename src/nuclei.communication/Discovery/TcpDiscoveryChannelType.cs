@@ -5,14 +5,10 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Discovery;
-using System.Text;
 using System.Xml.Linq;
 using Nuclei.Configuration;
 
@@ -38,7 +34,7 @@ namespace Nuclei.Communication.Discovery
         /// <returns>
         /// The newly generated binding.
         /// </returns>
-        private Binding GenerateBinding()
+        public Binding GenerateBinding()
         {
             var binding = new NetTcpBinding(SecurityMode.None, false)
             {
