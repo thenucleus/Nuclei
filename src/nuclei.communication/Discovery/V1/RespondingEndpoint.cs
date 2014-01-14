@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Nuclei.Communication.Discovery
+namespace Nuclei.Communication.Discovery.V1
 {
     /// <summary>
     /// Defines the WCF endpoint that responds to discovery requests.

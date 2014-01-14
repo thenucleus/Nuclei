@@ -8,13 +8,13 @@ using System;
 using System.Net.Security;
 using System.ServiceModel;
 
-namespace Nuclei.Communication.Discovery
+namespace Nuclei.Communication.Discovery.V1
 {
     /// <summary>
     /// Defines the interface for objects that provide the methods that can be called on the discovery channel.
     /// </summary>
     [ServiceContract]
-    internal interface IDiscoveryInformationRespondingEndpoint : IReceiveInformationFromRemoteEndpoints
+    internal interface IDiscoveryInformationRespondingEndpoint : IDiscoveryEndpoint
     {
         /// <summary>
         /// Returns the version of the discovery protocol.
@@ -26,6 +26,8 @@ namespace Nuclei.Communication.Discovery
             IsTerminating = false,
             ProtectionLevel = ProtectionLevel.None)]
         Version DiscoveryVersion();
+
+        foobar();
 
         /// <summary>
         /// Returns an array containing all the versions of the supported communication protocols.

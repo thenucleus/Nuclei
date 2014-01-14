@@ -7,7 +7,7 @@
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
-namespace Nuclei.Communication.Discovery
+namespace Nuclei.Communication.Discovery.V1
 {
     /// <summary>
     /// Defines the interface for a proxy that handles all requests for discovery. This interface
