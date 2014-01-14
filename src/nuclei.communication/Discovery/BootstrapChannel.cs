@@ -1,10 +1,6 @@
-﻿//-----------------------------------------------------------------------
-// <copyright company="P. van der Velde">
-//     Copyright (c) P. van der Velde. All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
-
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 
@@ -15,6 +11,13 @@ namespace Nuclei.Communication.Discovery
     /// </summary>
     internal sealed class BootstrapChannel : IBootstrapChannel, IDisposable
     {
+        /// <summary>
+        /// The collection that stores the hosts based on the version of the 
+        /// discovery layer they provide.
+        /// </summary>
+        private readonly Dictionary<Version, IHoldServiceConnections> m_HostsByVersion
+            = new Dictionary<Version, IHoldServiceConnections>();
+
         /// <summary>
         /// The ID number of the current endpoint.
         /// </summary>
@@ -28,26 +31,26 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// the function used to build discovery endpoints.
         /// </summary>
-        private readonly Func<IDiscoveryInformationRespondingEndpoint> m_EndpointBuilder;
+        private readonly Func<Version, Tuple<Type, IVersionedDiscoveryEndpoint>> m_VersionedEndpointBuilder;
 
         /// <summary>
-        /// The host information for the discovery host.
+        /// The function that creates the host information for the discovery host.
         /// </summary>
-        private readonly IHoldServiceConnections m_Host;
+        private readonly Func<IHoldServiceConnections> m_HostBuilder;
 
         /// <summary>
-        /// The WCF endpoint object for the current channel.
+        /// The host for the discovery bootstrap channel.
         /// </summary>
-        private IDiscoveryInformationRespondingEndpoint m_Endpoint;
+        private IHoldServiceConnections m_BootstrapHost;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BootstrapChannel"/> class.
         /// </summary>
         /// <param name="id">The ID of the endpoint that owns the current bootstrap channel.</param>
         /// <param name="type">The channel type that should be used for the current bootstrap channel.</param>
-        /// <param name="endpointBuilder">The function that builds WCF endpoints.</param>
-        /// <param name="host">
-        /// The object that handles the <see cref="ServiceHost"/> for the channel used to communicate with.
+        /// <param name="versionedEndpointBuilder">The function that builds WCF endpoints.</param>
+        /// <param name="hostBuilder">
+        /// The function that returns an object which handles the <see cref="ServiceHost"/> for the channel used to communicate with.
         /// </param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="id"/> is <see langword="null" />.
@@ -56,28 +59,28 @@ namespace Nuclei.Communication.Discovery
         ///     Thrown if <paramref name="type"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="endpointBuilder"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="versionedEndpointBuilder"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="host"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="hostBuilder"/> is <see langword="null" />.
         /// </exception>
         public BootstrapChannel(
             EndpointId id, 
-            IDiscoveryChannelType type, 
-            Func<IDiscoveryInformationRespondingEndpoint> endpointBuilder, 
-            IHoldServiceConnections host)
+            IDiscoveryChannelType type,
+            Func<Version, Tuple<Type, IVersionedDiscoveryEndpoint>> versionedEndpointBuilder, 
+            Func<IHoldServiceConnections> hostBuilder)
         {
             {
                 Lokad.Enforce.Argument(() => id);
                 Lokad.Enforce.Argument(() => type);
-                Lokad.Enforce.Argument(() => endpointBuilder);
-                Lokad.Enforce.Argument(() => host);
+                Lokad.Enforce.Argument(() => versionedEndpointBuilder);
+                Lokad.Enforce.Argument(() => hostBuilder);
             }
 
             m_Id = id;
             m_Type = type;
-            m_EndpointBuilder = endpointBuilder;
-            m_Host = host;
+            m_VersionedEndpointBuilder = versionedEndpointBuilder;
+            m_HostBuilder = hostBuilder;
         }
 
         /// <summary>
@@ -85,14 +88,28 @@ namespace Nuclei.Communication.Discovery
         /// </summary>
         public void OpenChannel()
         {
-            m_Endpoint = m_EndpointBuilder();
-            Func<ServiceHost, ServiceEndpoint> endpointBuilder =
-                host =>
-                {
-                    var dataEndpoint = m_Type.AttachDiscoveryEndpoint(host, typeof(IDiscoveryInformationRespondingEndpoint), m_Id);
-                    return dataEndpoint;
-                };
-            m_Host.OpenChannel(m_Endpoint, endpointBuilder);
+            var discoveryChannelsByVersion = new Dictionary<Version, Uri>();
+            foreach (var version in DiscoveryVersions.SupportedVersions())
+            {
+                var host = m_HostBuilder();
+                var endpoint = m_VersionedEndpointBuilder(version);
+
+                var localVersion = version;
+                var type = endpoint.Item1;
+                Func<ServiceHost, ServiceEndpoint> endpointBuilder = h => m_Type.AttachVersionedDiscoveryEndpoint(h, type, localVersion);
+                var uri = host.OpenChannel(endpoint.Item2, endpointBuilder);
+                
+                m_HostsByVersion.Add(version, host);
+                discoveryChannelsByVersion.Add(version, uri);
+            }
+
+            // Open the channel that provides the discovery of the discovery channels
+            m_BootstrapHost = m_HostBuilder();
+            var bootstrapEndpoint = new BootstrapEndpoint(discoveryChannelsByVersion.Select(p => new Tuple<Version, Uri>(p.Key, p.Value)));
+
+            Func<ServiceHost, ServiceEndpoint> bootstrapEndpointBuilder = 
+                h => m_Type.AttachDiscoveryEntryEndpoint(h, typeof(IBootstrapEndpoint), m_Id);
+            m_BootstrapHost.OpenChannel(bootstrapEndpoint, bootstrapEndpointBuilder);
         }
 
         /// <summary>
@@ -100,7 +117,11 @@ namespace Nuclei.Communication.Discovery
         /// </summary>
         public void CloseChannel()
         {
-            m_Host.CloseConnection();
+            m_BootstrapHost.CloseConnection();
+            foreach (var pair in m_HostsByVersion)
+            {
+                pair.Value.CloseConnection();
+            }
         }
 
         /// <summary>

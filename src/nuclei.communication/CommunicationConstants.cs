@@ -70,9 +70,14 @@ namespace Nuclei.Communication
         public const string DefaultTcpIpAddressTemplate = "Tcp.Nuclei.Communication_message_{0}";
 
         /// <summary>
-        /// The default string template for a discovery address.
+        /// The default string template for the discovery entry address.
         /// </summary>
-        public const string DefaultDiscoveryAddressTemplate = "Discovery";
+        public const string DefaultDiscoveryEntryAddressTemplate = "Discovery";
+
+        /// <summary>
+        /// The default string template for the versioned discovery address.
+        /// </summary>
+        public const string DefaultDiscoveryVersionedAddressTemplate = DefaultDiscoveryEntryAddressTemplate + @"/{0}";
 
         /// <summary>
         /// The default maximum number of connections that a TCP/IP binding can handle.

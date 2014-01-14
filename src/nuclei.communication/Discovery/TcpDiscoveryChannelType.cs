@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Globalization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -16,6 +17,31 @@ namespace Nuclei.Communication.Discovery
 {
     internal sealed class TcpDiscoveryChannelType : TcpChannelType, IDiscoveryChannelType
     {
+        /// <summary>
+        /// Generates a new address for the entry channel endpoint.
+        /// </summary>
+        /// <returns>
+        /// The newly generated address for the entry channel endpoint.
+        /// </returns>
+        private static string GenerateNewDiscoveryEntryAddress()
+        {
+            return CommunicationConstants.DefaultDiscoveryEntryAddressTemplate;
+        }
+
+        /// <summary>
+        /// Generates a new address for the versioned channel endpoint.
+        /// </summary>
+        /// <returns>
+        /// The newly generated address for the versioned channel endpoint.
+        /// </returns>
+        private static string GenerateNewDiscoveryVersionedAddress(Version version)
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                CommunicationConstants.DefaultDiscoveryVersionedAddressTemplate,
+                version.ToString(4));
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TcpChannelType"/> class.
         /// </summary>
@@ -63,9 +89,9 @@ namespace Nuclei.Communication.Discovery
         /// <param name="implementedContract">The contract implemented by the endpoint.</param>
         /// <param name="localEndpoint">The ID of the local endpoint, to be used in the endpoint metadata.</param>
         /// <returns>The newly attached endpoint.</returns>
-        public ServiceEndpoint AttachDiscoveryEndpoint(ServiceHost host, Type implementedContract, EndpointId localEndpoint)
+        public ServiceEndpoint AttachDiscoveryEntryEndpoint(ServiceHost host, Type implementedContract, EndpointId localEndpoint)
         {
-            var endpoint = host.AddServiceEndpoint(implementedContract, GenerateBinding(), GenerateNewDiscoveryAddress());
+            var endpoint = host.AddServiceEndpoint(implementedContract, GenerateBinding(), GenerateNewDiscoveryEntryAddress());
             var discoveryBehavior = new ServiceDiscoveryBehavior();
             discoveryBehavior.AnnouncementEndpoints.Add(new UdpAnnouncementEndpoint());
             host.Description.Behaviors.Add(discoveryBehavior);
@@ -79,14 +105,16 @@ namespace Nuclei.Communication.Discovery
         }
 
         /// <summary>
-        /// Generates a new address for the channel endpoint.
+        /// Attaches a new endpoint to the given host.
         /// </summary>
-        /// <returns>
-        /// The newly generated address for the channel endpoint.
-        /// </returns>
-        private string GenerateNewDiscoveryAddress()
+        /// <param name="host">The host to which the endpoint should be attached.</param>
+        /// <param name="implementedContract">The contract implemented by the endpoint.</param>
+        /// <param name="version">The version of the discovery endpoint.</param>
+        /// <returns>The newly attached endpoint.</returns>
+        public ServiceEndpoint AttachVersionedDiscoveryEndpoint(ServiceHost host, Type implementedContract, Version version)
         {
-            return CommunicationConstants.DefaultDiscoveryAddressTemplate;
+            var endpoint = host.AddServiceEndpoint(implementedContract, GenerateBinding(), GenerateNewDiscoveryVersionedAddress(version));
+            return endpoint;
         }
     }
 }

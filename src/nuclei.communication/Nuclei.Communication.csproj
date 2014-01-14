@@ -102,7 +102,10 @@
       <Link>Properties\AssemblyInfo.VersionNumber.cs</Link>
     </Compile>
     <Compile Include="Discovery\BootstrapChannel.cs" />
+    <Compile Include="Discovery\BootstrapEndpoint.cs" />
     <Compile Include="Discovery\DiscoveryVersions.cs" />
+    <Compile Include="Discovery\IBootstrapEndpoint.cs" />
+    <Compile Include="Discovery\IBootstrapEndpointProxy.cs" />
     <Compile Include="Discovery\IDiscoveryEndpoint.cs" />
     <Compile Include="Discovery\IVersionedDiscoveryEndpoint.cs" />
     <Compile Include="Discovery\V1\IInformationEndpointProxy.cs" />

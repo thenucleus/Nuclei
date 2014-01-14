@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 
 namespace Nuclei.Communication.Discovery
 {
@@ -20,19 +21,31 @@ namespace Nuclei.Communication.Discovery
         {
             get
             {
-                return Base;
+                return V1;
             }
         }
 
         /// <summary>
         /// Gets the version of the base discovery layer.
         /// </summary>
-        public static Version Base
+        public static Version V1
         {
             get
             {
                 return new Version(1, 0, 0, 0);
             }
+        }
+
+        /// <summary>
+        /// Returns a collection containing all the supported versions of the discovery protocol.
+        /// </summary>
+        /// <returns>A collection containing all the supported versions of the discovery protocol.</returns>
+        public static IEnumerable<Version> SupportedVersions()
+        {
+            return new[]
+                {
+                    V1,
+                };
         }
     }
 }
