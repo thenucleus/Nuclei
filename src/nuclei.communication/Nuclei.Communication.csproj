@@ -104,12 +104,13 @@
     <Compile Include="Discovery\BootstrapChannel.cs" />
     <Compile Include="Discovery\DiscoveryVersions.cs" />
     <Compile Include="Discovery\IDiscoveryEndpoint.cs" />
-    <Compile Include="Discovery\V1\IDiscoveryInformationRespondingEndpointProxy.cs" />
-    <Compile Include="Discovery\V1\RespondingEndpoint.cs" />
+    <Compile Include="Discovery\IVersionedDiscoveryEndpoint.cs" />
+    <Compile Include="Discovery\V1\IInformationEndpointProxy.cs" />
+    <Compile Include="Discovery\V1\InformationEndpoint.cs" />
     <Compile Include="Discovery\DiscoverySource.cs" />
     <Compile Include="Discovery\IBootstrapChannel.cs" />
     <Compile Include="Discovery\IDiscoveryChannelType.cs" />
-    <Compile Include="Discovery\V1\IDiscoveryInformationRespondingEndpoint.cs" />
+    <Compile Include="Discovery\V1\IInformationEndpoint.cs" />
     <Compile Include="Discovery\IDiscoveryInformation.cs" />
     <Compile Include="Discovery\TcpDiscoveryChannelType.cs" />
     <Compile Include="Protocol\BuildSendingEndpoint.cs" />

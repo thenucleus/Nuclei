@@ -1,10 +1,4 @@
-﻿//-----------------------------------------------------------------------
-// <copyright company="P. van der Velde">
-//     Copyright (c) P. van der Velde. All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,7 +7,7 @@ namespace Nuclei.Communication.Discovery.V1
     /// <summary>
     /// Defines the WCF endpoint that responds to discovery requests.
     /// </summary>
-    internal sealed class RespondingEndpoint : IDiscoveryInformationRespondingEndpoint
+    internal sealed class InformationEndpoint : IInformationEndpoint
     {
         /// <summary>
         /// Defines an discovery information object that carries information about a null, or non-existant, protocol.
@@ -39,13 +33,13 @@ namespace Nuclei.Communication.Discovery.V1
             = new SortedList<Version, IDiscoveryInformation>();
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RespondingEndpoint"/> class.
+        /// Initializes a new instance of the <see cref="InformationEndpoint"/> class.
         /// </summary>
         /// <param name="protocolInformation">The array containing the information about all the versions of the protocol layer.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="protocolInformation"/> is <see langword="null" />.
         /// </exception>
-        public RespondingEndpoint(IDiscoveryInformation[] protocolInformation)
+        public InformationEndpoint(IDiscoveryInformation[] protocolInformation)
         {
             {
                 Lokad.Enforce.Argument(() => protocolInformation);
@@ -61,9 +55,9 @@ namespace Nuclei.Communication.Discovery.V1
         /// Returns the version of the discovery protocol.
         /// </summary>
         /// <returns>The version of the discovery protocol.</returns>
-        public Version DiscoveryVersion()
+        public Version Version()
         {
-            return DiscoveryVersions.Current;
+            return DiscoveryVersions.V1;
         }
 
         /// <summary>
@@ -72,7 +66,9 @@ namespace Nuclei.Communication.Discovery.V1
         /// <returns>An array containing the versions of the supported communication protocols.</returns>
         public Version[] ProtocolVersions()
         {
-            return m_ProtocolInformation.Keys.ToArray();
+            return m_ProtocolInformation.Keys
+                .OrderBy(v => v)
+                .ToArray();
         }
 
         /// <summary>

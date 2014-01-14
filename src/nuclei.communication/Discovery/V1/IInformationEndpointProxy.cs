@@ -1,6 +1,6 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="P. van der Velde">
-//     Copyright (c) P. van der Velde. All rights reserved.
+// <copyright company="Nuclei">
+//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
 // </copyright>
 //-----------------------------------------------------------------------
 
@@ -13,7 +13,7 @@ namespace Nuclei.Communication.Discovery.V1
     /// Defines the interface for a proxy that handles all requests for discovery. This interface
     /// is only used by the WCF <see cref="ChannelFactory{TChannel}"/>.
     /// </summary>
-    internal interface IDiscoveryInformationRespondingEndpointProxy : IDiscoveryInformationRespondingEndpoint, IOutputChannel
+    internal interface IInformationEndpointProxy : IInformationEndpoint, IOutputChannel
     {
     }
 }

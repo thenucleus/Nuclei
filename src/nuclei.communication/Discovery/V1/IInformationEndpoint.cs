@@ -1,10 +1,4 @@
-﻿//-----------------------------------------------------------------------
-// <copyright company="P. van der Velde">
-//     Copyright (c) P. van der Velde. All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
-
-using System;
+﻿using System;
 using System.Net.Security;
 using System.ServiceModel;
 
@@ -14,21 +8,8 @@ namespace Nuclei.Communication.Discovery.V1
     /// Defines the interface for objects that provide the methods that can be called on the discovery channel.
     /// </summary>
     [ServiceContract]
-    internal interface IDiscoveryInformationRespondingEndpoint : IDiscoveryEndpoint
+    internal interface IInformationEndpoint : IVersionedDiscoveryEndpoint
     {
-        /// <summary>
-        /// Returns the version of the discovery protocol.
-        /// </summary>
-        /// <returns>The version of the discovery protocol.</returns>
-        [OperationContract(
-            IsOneWay = false,
-            IsInitiating = true,
-            IsTerminating = false,
-            ProtectionLevel = ProtectionLevel.None)]
-        Version DiscoveryVersion();
-
-        foobar();
-
         /// <summary>
         /// Returns an array containing all the versions of the supported communication protocols.
         /// </summary>
