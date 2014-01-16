@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using ProtoBuf;
 
 namespace Nuclei.Communication.Discovery.V1
 {
@@ -14,60 +15,27 @@ namespace Nuclei.Communication.Discovery.V1
     /// <remarks>
     /// This class should never be changed so that it is always backwards compatible.
     /// </remarks>
+    [ProtoContract]
     internal sealed class VersionedChannelInformation
     {
         /// <summary>
-        /// The version of the protocol for the current channel.
-        /// </summary>
-        private readonly Version m_ProtocolVersion;
-
-        /// <summary>
-        /// The address of the given channel.
-        /// </summary>
-        private readonly Uri m_Address;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VersionedChannelInformation"/> class.
-        /// </summary>
-        /// <param name="protocolVersion">The version of the protocol for the given channel.</param>
-        /// <param name="address">The address of the given channel.</param>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="protocolVersion"/> is <see langword="null" />.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="address"/> is <see langword="null" />.
-        /// </exception>
-        public VersionedChannelInformation(Version protocolVersion, Uri address)
-        {
-            {
-                Lokad.Enforce.Argument(() => protocolVersion);
-                Lokad.Enforce.Argument(() => address);
-            }
-
-            m_ProtocolVersion = protocolVersion;
-            m_Address = address;
-        }
-
-        /// <summary>
         /// Gets the version of the information object.
         /// </summary>
+        [ProtoMember(1, IsRequired = true)]
         public Version ProtocolVersion
         {
-            get
-            {
-                return m_ProtocolVersion;
-            }
+            get;
+            set;
         }
 
         /// <summary>
         /// Gets the address of the channel.
         /// </summary>
+        [ProtoMember(2, IsRequired = true)]
         public Uri Address
         {
-            get
-            {
-                return m_Address;
-            }
+            get;
+            set;
         }
     }
 }

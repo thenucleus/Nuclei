@@ -19,7 +19,11 @@ namespace Nuclei.Communication.Discovery.V1
         /// <returns>A object describing the versioned channel information.</returns>
         public static VersionedChannelInformation ToVersioned(ChannelInformation info)
         {
-            return new VersionedChannelInformation(info.ProtocolVersion, info.Address);
+            return new VersionedChannelInformation
+            {
+                ProtocolVersion = info.ProtocolVersion, 
+                Address = info.Address
+            };
         }
 
         /// <summary>

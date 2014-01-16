@@ -1,6 +1,13 @@
-﻿ using System;
+﻿//-----------------------------------------------------------------------
+// <copyright company="Nuclei">
+//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Net.Security;
 using System.ServiceModel;
+using ProtoBuf;
 
 namespace Nuclei.Communication.Discovery.V1
 {
@@ -8,6 +15,7 @@ namespace Nuclei.Communication.Discovery.V1
     /// Defines the interface for objects that provide the methods that can be called on the discovery channel.
     /// </summary>
     [ServiceContract]
+    [ProtoContract]
     internal interface IInformationEndpoint : IVersionedDiscoveryEndpoint
     {
         /// <summary>
