@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 
 namespace Nuclei.Communication.Discovery
 {
@@ -8,6 +9,9 @@ namespace Nuclei.Communication.Discovery
     /// Defines an endpoint that will provide information about all known versioned discovery
     /// endpoints for an application.
     /// </summary>
+    [ServiceBehavior(
+        ConcurrencyMode = ConcurrencyMode.Multiple,
+        InstanceContextMode = InstanceContextMode.Single)]
     internal sealed class BootstrapEndpoint : IBootstrapEndpoint
     {
         /// <summary>

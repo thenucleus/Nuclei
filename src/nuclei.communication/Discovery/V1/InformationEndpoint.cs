@@ -7,12 +7,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 
 namespace Nuclei.Communication.Discovery.V1
 {
     /// <summary>
     /// Defines the WCF endpoint that responds to discovery requests.
     /// </summary>
+    [ServiceBehavior(
+        ConcurrencyMode = ConcurrencyMode.Multiple,
+        InstanceContextMode = InstanceContextMode.Single)]
     internal sealed class InformationEndpoint : IInformationEndpoint
     {
         /// <summary>
