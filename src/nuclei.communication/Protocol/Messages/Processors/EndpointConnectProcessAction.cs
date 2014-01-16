@@ -20,10 +20,10 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
     internal sealed class EndpointConnectProcessAction : IMessageProcessAction
     {
         /// <summary>
-        /// The collection that contains all the known <see cref="IChannelType"/> of the 
+        /// The collection that contains all the known <see cref="IChannelTemplate"/> of the 
         /// communication channel from which the messages that are being processed originate.
         /// </summary>
-        private readonly List<ChannelType> m_ConnectedChannelTypes = new List<ChannelType>();
+        private readonly List<ChannelTemplate> m_ConnectedChannelTypes = new List<ChannelTemplate>();
 
         /// <summary>
         /// The object that handles the handshake protocol.
@@ -42,7 +42,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// The object that handles the handshake protocol for the current endpoint.
         /// </param>
         /// <param name="channelTypes">
-        /// The collection that contains all possible <see cref="IChannelType"/> types for the 
+        /// The collection that contains all possible <see cref="IChannelTemplate"/> types for the 
         /// communication channel from which the messages that are being processed originate.
         /// </param>
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
@@ -53,14 +53,14 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         ///     Thrown if <paramref name="channelTypes"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if one of the entries in <paramref name="channelTypes"/> is <see cref="ChannelType.None"/>.
+        ///     Thrown if one of the entries in <paramref name="channelTypes"/> is <see cref="ChannelTemplate.None"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public EndpointConnectProcessAction(
             IHandleHandshakes handshakeHandler,
-            IEnumerable<ChannelType> channelTypes,
+            IEnumerable<ChannelTemplate> channelTypes,
             SystemDiagnostics systemDiagnostics)
         {
             {
@@ -68,7 +68,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
 
                 Lokad.Enforce.Argument(() => channelTypes);
                 Lokad.Enforce.With<InvalidChannelTypeException>(
-                    channelTypes.All(t => t != ChannelType.None),
+                    channelTypes.All(t => t != ChannelTemplate.None),
                     Resources.Exceptions_Messages_AChannelTypeMustBeDefined);
 
                 Lokad.Enforce.Argument(() => systemDiagnostics);
@@ -109,7 +109,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                 m_HandShakeHandler.ContinueHandshakeWith(
                     new ChannelConnectionInformation(
                         msg.OriginatingEndpoint, 
-                        msg.ChannelType, 
+                        msg.ChannelTemplate, 
                         new Uri(msg.MessageAddress), 
                         new Uri(msg.DataAddress)),
                     msg.Information,

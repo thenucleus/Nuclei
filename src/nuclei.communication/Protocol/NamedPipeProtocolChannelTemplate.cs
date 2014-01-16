@@ -17,10 +17,10 @@ using Nuclei.Configuration;
 namespace Nuclei.Communication.Protocol
 {
     /// <summary>
-    /// Defines a <see cref="IProtocolChannelType"/> that uses named pipes for communication between
+    /// Defines a <see cref="IProtocolChannelTemplate"/> that uses named pipes for communication between
     /// applications on the same local machine.
     /// </summary>
-    internal sealed class NamedPipeProtocolChannelType : IProtocolChannelType
+    internal sealed class NamedPipeProtocolChannelTemplate : IProtocolChannelTemplate
     {
         /// <summary>
         /// Returns the process ID of the process that is currently executing
@@ -42,13 +42,13 @@ namespace Nuclei.Communication.Protocol
         private readonly IConfiguration m_Configuration;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NamedPipeProtocolChannelType"/> class.
+        /// Initializes a new instance of the <see cref="NamedPipeProtocolChannelTemplate"/> class.
         /// </summary>
         /// <param name="namedPipeConfiguration">The configuration for the WCF named pipe channel.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="namedPipeConfiguration"/> is <see langword="null" />.
         /// </exception>
-        public NamedPipeProtocolChannelType(IConfiguration namedPipeConfiguration)
+        public NamedPipeProtocolChannelTemplate(IConfiguration namedPipeConfiguration)
         {
             {
                 Lokad.Enforce.Argument(() => namedPipeConfiguration);
@@ -60,11 +60,11 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Gets the type of the channel.
         /// </summary>
-        public ChannelType ChannelType
+        public ChannelTemplate ChannelTemplate
         {
             get
             {
-                return ChannelType.NamedPipe;
+                return ChannelTemplate.NamedPipe;
             }
         }
 

@@ -15,10 +15,10 @@ using Nuclei.Configuration;
 namespace Nuclei.Communication
 {
     /// <summary>
-    /// Defines a <see cref="IChannelType"/> that uses TCP/IP connections for communication between applications
+    /// Defines a <see cref="IChannelTemplate"/> that uses TCP/IP connections for communication between applications
     /// on different machines.
     /// </summary>
-    internal abstract class TcpChannelType : IChannelType
+    internal abstract class TcpChannelTemplate : IChannelTemplate
     {
         /// <summary>
         /// Returns the DNS name of the machine.
@@ -67,13 +67,13 @@ namespace Nuclei.Communication
         private readonly IConfiguration m_Configuration;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TcpChannelType"/> class.
+        /// Initializes a new instance of the <see cref="TcpChannelTemplate"/> class.
         /// </summary>
         /// <param name="tcpConfiguration">The configuration for the WCF tcp channel.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="tcpConfiguration"/> is <see langword="null" />.
         /// </exception>
-        protected TcpChannelType(IConfiguration tcpConfiguration)
+        protected TcpChannelTemplate(IConfiguration tcpConfiguration)
         {
             {
                 Lokad.Enforce.Argument(() => tcpConfiguration);

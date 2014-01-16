@@ -86,10 +86,10 @@ namespace Nuclei.Communication.Protocol
         {
             if (info.Id.IsOnLocalMachine())
             {
-                return info.ChannelType == ChannelType.NamedPipe;
+                return info.ChannelTemplate == ChannelTemplate.NamedPipe;
             }
 
-            return info.ChannelType == ChannelType.TcpIP;
+            return info.ChannelTemplate == ChannelTemplate.TcpIP;
         }
 
         /// <summary>
@@ -126,7 +126,7 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// The collection containing the types of channel that should be opened.
         /// </summary>
-        private readonly IEnumerable<ChannelType> m_AllowedChannelTypes;
+        private readonly IEnumerable<ChannelTemplate> m_AllowedChannelTypes;
 
         /// <summary>
         /// The object that provides the diagnostics methods for the system.
@@ -165,7 +165,7 @@ namespace Nuclei.Communication.Protocol
             IEnumerable<IDiscoverOtherServices> discoverySources,
             ISendDataViaChannels layer,
             IStoreCommunicationDescriptions descriptions,
-            IEnumerable<ChannelType> allowedChannelTypes,
+            IEnumerable<ChannelTemplate> allowedChannelTypes,
             SystemDiagnostics systemDiagnostics)
         {
             {
@@ -234,7 +234,7 @@ namespace Nuclei.Communication.Protocol
 
         private bool IsAllowedToCommunicateWithConnection(ChannelConnectionInformation info)
         {
-            return m_AllowedChannelTypes.Contains(info.ChannelType);
+            return m_AllowedChannelTypes.Contains(info.ChannelTemplate);
         }
 
         // How do we handle endpoints disappearing and then reappearing. If the remote process
@@ -273,7 +273,7 @@ namespace Nuclei.Communication.Protocol
         /// <param name="information">The connection information for the endpoint.</param>
         private void InitiateHandshakeWith(ChannelConnectionInformation information)
         {
-            var connectionInfo = m_Layer.LocalConnectionFor(information.ChannelType);
+            var connectionInfo = m_Layer.LocalConnectionFor(information.ChannelTemplate);
             if (connectionInfo != null)
             {
                 lock (m_Lock)
@@ -287,7 +287,7 @@ namespace Nuclei.Communication.Protocol
 
                         var message = new EndpointConnectMessage(
                             m_Layer.Id,
-                            information.ChannelType,
+                            information.ChannelTemplate,
                             connectionInfo.Item2.AbsoluteUri,
                             connectionInfo.Item3.AbsoluteUri,
                             m_Descriptions.ToStorage());
@@ -344,7 +344,7 @@ namespace Nuclei.Communication.Protocol
                         string.Format(
                             CultureInfo.InvariantCulture,
                             "New endpoint connected via the {0} channel. Endpoint {1} is at {2}.",
-                            information.ChannelType,
+                            information.ChannelTemplate,
                             information.Id,
                             information.MessageAddress));
                 }
@@ -463,7 +463,7 @@ namespace Nuclei.Communication.Protocol
                             CultureInfo.InvariantCulture,
                             "New endpoint ({0}) approved for communication via the {1} channel. Message URL: {2}. Data URL: {3}",
                             info.Id,
-                            info.ChannelType,
+                            info.ChannelTemplate,
                             info.MessageAddress,
                             info.DataAddress));
                 }

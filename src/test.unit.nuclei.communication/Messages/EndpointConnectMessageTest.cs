@@ -35,7 +35,7 @@ namespace Nuclei.Communication.Messages
         public void Create()
         {
             var id = new EndpointId("sendingEndpoint");
-            var channelType = ChannelType.TcpIP;
+            var channelType = ChannelTemplate.TcpIP;
             var messageAddress = "bla";
             var dataAddress = "bladibla";
             var description = new CommunicationDescription(
@@ -47,7 +47,7 @@ namespace Nuclei.Communication.Messages
 
             Assert.AreSame(id, msg.OriginatingEndpoint);
             Assert.AreSame(messageAddress, msg.MessageAddress);
-            Assert.AreEqual(channelType, msg.ChannelType);
+            Assert.AreEqual(channelType, msg.ChannelTemplate);
             Assert.AreSame(description, msg.Information);
         }
 
@@ -55,7 +55,7 @@ namespace Nuclei.Communication.Messages
         public void RoundTripSerialise()
         {
             var id = new EndpointId("sendingEndpoint");
-            var channelType = ChannelType.TcpIP;
+            var channelType = ChannelTemplate.TcpIP;
             var messageAddress = "bla";
             var dataAddress = "bladibla";
             var description = new CommunicationDescription(
@@ -79,7 +79,7 @@ namespace Nuclei.Communication.Messages
             Assert.AreEqual(msg.Id, otherMsg.Id);
             Assert.AreEqual(MessageId.None, otherMsg.InResponseTo);
             Assert.AreEqual(messageAddress, otherMsg.MessageAddress);
-            Assert.AreEqual(channelType, otherMsg.ChannelType);
+            Assert.AreEqual(channelType, otherMsg.ChannelTemplate);
             Assert.AreEqual(description.CommunicationVersion, otherMsg.Information.CommunicationVersion);
             Assert.That(otherMsg.Information.Subjects, Is.EquivalentTo(description.Subjects));
             Assert.That(otherMsg.Information.CommandProxies, Is.EquivalentTo(description.CommandProxies));

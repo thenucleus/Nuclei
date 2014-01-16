@@ -30,7 +30,7 @@ namespace Nuclei.Communication.Discovery.V1
         /// <summary>
         /// The channel type used for discovery purposes.
         /// </summary>
-        private readonly IDiscoveryChannelType m_Type;
+        private readonly IDiscoveryChannelTemplate m_Template;
 
         /// <summary>
         /// The object that provides the diagnostics for the application.
@@ -43,30 +43,30 @@ namespace Nuclei.Communication.Discovery.V1
         /// <param name="protocolVersions">
         ///     The collection containing all the versions of the protocol layer.
         /// </param>
-        /// <param name="type">The channel type used for discovery purposes.</param>
+        /// <param name="template">The channel type used for discovery purposes.</param>
         /// <param name="diagnostics">The object that provides the diagnostics for the application.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="protocolVersions"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="type"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="template"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
         /// </exception>
         public DiscoveryChannelTranslator(
             Version[] protocolVersions,
-            IDiscoveryChannelType type,
+            IDiscoveryChannelTemplate template,
             SystemDiagnostics diagnostics)
         {
             {
                 Lokad.Enforce.Argument(() => protocolVersions);
-                Lokad.Enforce.Argument(() => type);
+                Lokad.Enforce.Argument(() => template);
                 Lokad.Enforce.Argument(() => diagnostics);
             }
 
             m_ProtocolVersions = new SortedSet<Version>(protocolVersions);
-            m_Type = type;
+            m_Template = template;
             m_Diagnostics = diagnostics;
         }
 
@@ -193,7 +193,7 @@ namespace Nuclei.Communication.Discovery.V1
         private ChannelFactory<IInformationEndpointProxy> CreateFactoryForDiscoveryChannel(Uri address)
         {
             var endpoint = new EndpointAddress(address);
-            var binding = m_Type.GenerateBinding();
+            var binding = m_Template.GenerateBinding();
 
             return new ChannelFactory<IInformationEndpointProxy>(binding, endpoint);
         }

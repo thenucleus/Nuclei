@@ -22,30 +22,30 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// The type of channel that was opened.
         /// </summary>
-        private readonly ChannelType m_ChannelType;
+        private readonly ChannelTemplate m_ChannelTemplate;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ChannelOpenedEventArgs"/> class.
         /// </summary>
         /// <param name="endpoint">The ID of the endpoint for which the channel was opened.</param>
-        /// <param name="channelType">The type of channel which was opened.</param>
+        /// <param name="channelTemplate">The type of channel which was opened.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if <paramref name="channelType"/> is <see cref="Protocol.ChannelType.None"/>.
+        ///     Thrown if <paramref name="channelTemplate"/> is <see cref="ChannelTemplate.None"/>.
         /// </exception>
-        public ChannelOpenedEventArgs(EndpointId endpoint, ChannelType channelType)
+        public ChannelOpenedEventArgs(EndpointId endpoint, ChannelTemplate channelTemplate)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
                 Lokad.Enforce.With<InvalidChannelTypeException>(
-                    channelType != ChannelType.None,
+                    channelTemplate != ChannelTemplate.None,
                     Resources.Exceptions_Messages_AChannelTypeMustBeDefined);
             }
 
             m_Endpoint = endpoint;
-            m_ChannelType = channelType;
+            m_ChannelTemplate = channelTemplate;
         }
 
         /// <summary>
@@ -62,11 +62,11 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Gets the type of channel that was opened.
         /// </summary>
-        public ChannelType ChannelType
+        public ChannelTemplate ChannelTemplate
         {
             get
             {
-                return m_ChannelType;
+                return m_ChannelTemplate;
             }
         }
     }

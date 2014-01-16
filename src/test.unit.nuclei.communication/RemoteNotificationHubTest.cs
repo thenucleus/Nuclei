@@ -52,7 +52,7 @@ namespace Nuclei.Communication
 
             var connectionInfo = new ChannelConnectionInformation(
                 new EndpointId("other"),
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("net.pipe://localhost/apollo_test"));
             var description = new CommunicationDescription(
                 new Version(1, 0), 
@@ -92,7 +92,7 @@ namespace Nuclei.Communication
 
             var connectionInfo = new ChannelConnectionInformation(
                 new EndpointId("other"),
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("net.pipe://localhost/apollo_test"));
             var description = new CommunicationDescription(
                 new Version(1, 0),
@@ -122,7 +122,7 @@ namespace Nuclei.Communication
             Assert.IsTrue(eventWasTriggered);
 
             eventWasTriggered = false;
-            notifier.Raise(n => n.OnEndpointDisconnected += null, new EndpointSignedOutEventArgs(connectionInfo.Id, connectionInfo.ChannelType));
+            notifier.Raise(n => n.OnEndpointDisconnected += null, new EndpointSignedOutEventArgs(connectionInfo.Id, connectionInfo.ChannelTemplate));
             Assert.IsTrue(eventWasTriggered);
         }
 
@@ -143,7 +143,7 @@ namespace Nuclei.Communication
 
             var connectionInfo = new ChannelConnectionInformation(
                 new EndpointId("other"),
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("net.pipe://localhost/apollo_test"));
             var description = new CommunicationDescription(
                 new Version(1, 0),
@@ -186,7 +186,7 @@ namespace Nuclei.Communication
 
             var connectionInfo = new ChannelConnectionInformation(
                 new EndpointId("other"),
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("net.pipe://localhost/apollo_test"));
             var description = new CommunicationDescription(
                 new Version(1, 0),

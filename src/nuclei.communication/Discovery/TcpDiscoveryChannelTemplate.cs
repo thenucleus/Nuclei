@@ -12,10 +12,14 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Discovery;
 using System.Xml.Linq;
 using Nuclei.Configuration;
+using ProtoBuf.ServiceModel;
 
 namespace Nuclei.Communication.Discovery
 {
-    internal sealed class TcpDiscoveryChannelType : TcpChannelType, IDiscoveryChannelType
+    /// <summary>
+    /// Defines a TCP channel type for discovery channels.
+    /// </summary>
+    internal sealed class TcpDiscoveryChannelTemplate : TcpChannelTemplate, IDiscoveryChannelTemplate
     {
         /// <summary>
         /// Generates a new address for the entry channel endpoint.
@@ -43,13 +47,13 @@ namespace Nuclei.Communication.Discovery
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TcpChannelType"/> class.
+        /// Initializes a new instance of the <see cref="TcpChannelTemplate"/> class.
         /// </summary>
         /// <param name="tcpConfiguration">The configuration for the WCF tcp channel.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="tcpConfiguration"/> is <see langword="null" />.
         /// </exception>
-        public TcpDiscoveryChannelType(IConfiguration tcpConfiguration) 
+        public TcpDiscoveryChannelTemplate(IConfiguration tcpConfiguration) 
             : base(tcpConfiguration)
         {
         }
@@ -100,6 +104,7 @@ namespace Nuclei.Communication.Discovery
             var endpointDiscoveryBehavior = new EndpointDiscoveryBehavior();
             endpointDiscoveryBehavior.Extensions.Add(new XElement("root", new XElement("EndpointId", localEndpoint.ToString())));
             endpoint.Behaviors.Add(endpointDiscoveryBehavior);
+            endpoint.Behaviors.Add(new ProtoEndpointBehavior());
 
             return endpoint;
         }
@@ -114,6 +119,7 @@ namespace Nuclei.Communication.Discovery
         public ServiceEndpoint AttachVersionedDiscoveryEndpoint(ServiceHost host, Type implementedContract, Version version)
         {
             var endpoint = host.AddServiceEndpoint(implementedContract, GenerateBinding(), GenerateNewDiscoveryVersionedAddress(version));
+            endpoint.Behaviors.Add(new ProtoEndpointBehavior());
             return endpoint;
         }
     }

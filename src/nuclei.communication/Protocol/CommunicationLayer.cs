@@ -36,10 +36,10 @@ namespace Nuclei.Communication.Protocol
         private readonly IStoreInformationAboutEndpoints m_Endpoints;
 
         /// <summary>
-        /// The collection of <see cref="IChannelType"/> objects which refer to a communication.
+        /// The collection of <see cref="IChannelTemplate"/> objects which refer to a communication.
         /// </summary>
-        private readonly Dictionary<ChannelType, Tuple<ICommunicationChannel, IDirectIncomingMessages>> m_OpenConnections =
-            new Dictionary<ChannelType, Tuple<ICommunicationChannel, IDirectIncomingMessages>>();
+        private readonly Dictionary<ChannelTemplate, Tuple<ICommunicationChannel, IDirectIncomingMessages>> m_OpenConnections =
+            new Dictionary<ChannelTemplate, Tuple<ICommunicationChannel, IDirectIncomingMessages>>();
 
         /// <summary>
         /// The ID number of the current endpoint.
@@ -54,14 +54,14 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// The function that returns a tuple of a <see cref="ICommunicationChannel"/> and
         /// a <see cref="IDirectIncomingMessages"/> which belong together. The return values
-        /// are based on the type of the <see cref="IChannelType"/> for the channel.
+        /// are based on the type of the <see cref="IChannelTemplate"/> for the channel.
         /// </summary>
-        private readonly Func<ChannelType, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> m_ChannelBuilder;
+        private readonly Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> m_ChannelBuilder;
 
         /// <summary>
         /// The collection containing the types of channel that should be opened.
         /// </summary>
-        private readonly IEnumerable<ChannelType> m_ChannelTypesToUse;
+        private readonly IEnumerable<ChannelTemplate> m_ChannelTypesToUse;
 
         /// <summary>
         /// The object that provides the diagnostics methods for the system.
@@ -80,7 +80,7 @@ namespace Nuclei.Communication.Protocol
         /// <param name="discoverySources">The object that handles the discovery of remote endpoints.</param>
         /// <param name="channelBuilder">
         ///     The function that returns a tuple of a <see cref="ICommunicationChannel"/> and a <see cref="IDirectIncomingMessages"/>
-        ///     based on the type of the <see cref="IChannelType"/> that is related to the channel.
+        ///     based on the type of the <see cref="IChannelTemplate"/> that is related to the channel.
         /// </param>
         /// <param name="channelTypesToUse">The collection that contains all the channel types for which a channel should be opened.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
@@ -102,8 +102,8 @@ namespace Nuclei.Communication.Protocol
         public CommunicationLayer(
             IStoreInformationAboutEndpoints endpoints,
             IEnumerable<IDiscoverOtherServices> discoverySources,
-            Func<ChannelType, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder,
-            IEnumerable<ChannelType> channelTypesToUse,
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder,
+            IEnumerable<ChannelTemplate> channelTypesToUse,
             SystemDiagnostics systemDiagnostics)
         {
             {
@@ -147,7 +147,7 @@ namespace Nuclei.Communication.Protocol
 
             RaiseOnEndpointSignedOut(args.Endpoint);
 
-            var channel = ChannelForChannelType(args.ChannelType);
+            var channel = ChannelForChannelType(args.ChannelTemplate);
             if (channel != null)
             {
                 channel.EndpointDisconnected(args.Endpoint);
@@ -197,17 +197,17 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Gets the connection information for the channel of a given type created by the current application.
         /// </summary>
-        /// <param name="channelType">The type of channel for which the connection information is required.</param>
+        /// <param name="channelTemplate">The type of channel for which the connection information is required.</param>
         /// <returns>
         /// A tuple containing the <see cref="EndpointId"/>, the <see cref="Uri"/> of the message channel and the 
         /// <see cref="Uri"/> of the data channel; returns <see langword="null" /> if no channel of the given type exists.
         /// </returns>
-        public Tuple<EndpointId, Uri, Uri> LocalConnectionFor(ChannelType channelType)
+        public Tuple<EndpointId, Uri, Uri> LocalConnectionFor(ChannelTemplate channelTemplate)
         {
             Tuple<EndpointId, Uri, Uri> result = null;
-            if (m_OpenConnections.ContainsKey(channelType))
+            if (m_OpenConnections.ContainsKey(channelTemplate))
             {
-                var connection = m_OpenConnections[channelType].Item1.LocalConnectionPoint;
+                var connection = m_OpenConnections[channelTemplate].Item1.LocalConnectionPoint;
                 result = new Tuple<EndpointId, Uri, Uri>(connection.Id, connection.MessageAddress, connection.DataAddress);
             }
 
@@ -260,51 +260,51 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Indicates if there is a channel for the given channel type.
         /// </summary>
-        /// <param name="channelType">The type of the channel.</param>
+        /// <param name="channelTemplate">The type of the channel.</param>
         /// <returns>
         /// <see langword="true"/> if there is a channel of the given type; otherwise, <see langword="false" />.
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        private bool HasChannelFor(ChannelType channelType)
+        private bool HasChannelFor(ChannelTemplate channelTemplate)
         {
-            return m_OpenConnections.ContainsKey(channelType);
+            return m_OpenConnections.ContainsKey(channelTemplate);
         }
 
         /// <summary>
         /// Opens a channel of the given type.
         /// </summary>
-        /// <param name="channelType">The channel type to open.</param>
+        /// <param name="channelTemplate">The channel type to open.</param>
         /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if <paramref name="channelType"/> is <see cref="ChannelType.None"/>.
+        ///     Thrown if <paramref name="channelTemplate"/> is <see cref="ChannelTemplate.None"/>.
         /// </exception>
-        private void OpenChannel(ChannelType channelType)
+        private void OpenChannel(ChannelTemplate channelTemplate)
         {
             {
                 Lokad.Enforce.With<InvalidChannelTypeException>(
-                    channelType != ChannelType.None, 
+                    channelTemplate != ChannelTemplate.None, 
                     Resources.Exceptions_Messages_AChannelTypeMustBeDefined);
             }
 
-            if (HasChannelFor(channelType))
+            if (HasChannelFor(channelTemplate))
             {
                 return;
             }
 
             lock (m_Lock)
             {
-                var pair = m_ChannelBuilder(channelType, m_Id);
-                m_OpenConnections.Add(channelType, pair);
+                var pair = m_ChannelBuilder(channelTemplate, m_Id);
+                m_OpenConnections.Add(channelTemplate, pair);
                 pair.Item1.OpenChannel();
             }
         }
 
-        private ICommunicationChannel ChannelForChannelType(ChannelType connection)
+        private ICommunicationChannel ChannelForChannelType(ChannelTemplate connection)
         {
             return ChannelInformationForType(connection).Item1;
         }
 
-        private Tuple<ICommunicationChannel, IDirectIncomingMessages> ChannelInformationForType(ChannelType connection)
+        private Tuple<ICommunicationChannel, IDirectIncomingMessages> ChannelInformationForType(ChannelTemplate connection)
         {
             Tuple<ICommunicationChannel, IDirectIncomingMessages> channel = null;
             lock (m_Lock)
@@ -478,12 +478,12 @@ namespace Nuclei.Communication.Protocol
                     throw new EndpointNotContactableException(endpoint);
                 }
 
-                if (!HasChannelFor(connection.ChannelType))
+                if (!HasChannelFor(connection.ChannelTemplate))
                 {
-                    OpenChannel(connection.ChannelType);
+                    OpenChannel(connection.ChannelTemplate);
                 }
 
-                var channel = ChannelForChannelType(connection.ChannelType);
+                var channel = ChannelForChannelType(connection.ChannelTemplate);
                 Debug.Assert(channel != null, "The channel should exist.");
 
                 m_Diagnostics.Log(
@@ -494,7 +494,7 @@ namespace Nuclei.Communication.Protocol
                         "Sending msg of type {0} to endpoint ({1}) via the {2} channel without waiting for the response.",
                         message.GetType(),
                         endpoint,
-                        connection.ChannelType));
+                        connection.ChannelTemplate));
 
                 channel.Send(endpoint, message);
             }
@@ -538,12 +538,12 @@ namespace Nuclei.Communication.Protocol
                     throw new EndpointNotContactableException(endpoint);
                 }
 
-                if (!HasChannelFor(connection.ChannelType))
+                if (!HasChannelFor(connection.ChannelTemplate))
                 {
-                    OpenChannel(connection.ChannelType);
+                    OpenChannel(connection.ChannelTemplate);
                 }
 
-                var pair = ChannelInformationForType(connection.ChannelType);
+                var pair = ChannelInformationForType(connection.ChannelTemplate);
                 Debug.Assert(pair != null, "The channel should exist.");
 
                 var result = pair.Item2.ForwardResponse(endpoint, message.Id);
@@ -556,7 +556,7 @@ namespace Nuclei.Communication.Protocol
                         "Sending msg of type {0} to endpoint ({1}) via the {2} channel while waiting for the response.",
                         message.GetType(),
                         endpoint,
-                        connection.ChannelType));
+                        connection.ChannelTemplate));
 
                 pair.Item1.Send(endpoint, message);
                 return result;
@@ -589,12 +589,12 @@ namespace Nuclei.Communication.Protocol
                 throw new EndpointNotContactableException(receivingEndpoint);
             }
 
-            if (!HasChannelFor(connection.ChannelType))
+            if (!HasChannelFor(connection.ChannelTemplate))
             {
-                OpenChannel(connection.ChannelType);
+                OpenChannel(connection.ChannelTemplate);
             }
 
-            var channel = ChannelForChannelType(connection.ChannelType);
+            var channel = ChannelForChannelType(connection.ChannelTemplate);
             Debug.Assert(channel != null, "The channel should exist.");
 
             return channel.TransferData(receivingEndpoint, filePath, token, scheduler);

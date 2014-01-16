@@ -191,7 +191,7 @@ namespace Nuclei.Communication.Protocol
             var local = OnEndpointDisconnected;
             if (local != null)
             {
-                local(this, new EndpointSignedOutEventArgs(info.Id, info.ChannelType));
+                local(this, new EndpointSignedOutEventArgs(info.Id, info.ChannelTemplate));
             }
         }
 

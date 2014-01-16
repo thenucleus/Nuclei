@@ -18,18 +18,18 @@ namespace Nuclei.Communication.Protocol
         /// Initializes a new instance of the <see cref="EndpointSignedOutEventArgs"/> class.
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint.</param>
-        /// <param name="channelType">The type of channel on which the endpoint was connected.</param>
+        /// <param name="channelTemplate">The type of channel on which the endpoint was connected.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
-        public EndpointSignedOutEventArgs(EndpointId endpoint, ChannelType channelType)
+        public EndpointSignedOutEventArgs(EndpointId endpoint, ChannelTemplate channelTemplate)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
             }
 
             Endpoint = endpoint;
-            ChannelType = channelType;
+            ChannelTemplate = channelTemplate;
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Gets the type of channel on which the affected endpoint was connected.
         /// </summary>
-        public ChannelType ChannelType
+        public ChannelTemplate ChannelTemplate
         {
             get;
             private set;

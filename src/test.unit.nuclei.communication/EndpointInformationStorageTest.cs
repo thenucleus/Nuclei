@@ -25,7 +25,7 @@ namespace Nuclei.Communication
 
             var connection = new ChannelConnectionInformation(
                 new EndpointId("a"), 
-                ChannelType.NamedPipe, 
+                ChannelTemplate.NamedPipe, 
                 new Uri("http://localhost"));
             Assert.IsFalse(storage.TryAdd(null, connection));
         }
@@ -45,7 +45,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("a");
             var connection = new ChannelConnectionInformation(
                 endpoint,
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
@@ -54,7 +54,7 @@ namespace Nuclei.Communication
 
             var newConnection = new ChannelConnectionInformation(
                 endpoint,
-                ChannelType.TcpIP,
+                ChannelTemplate.TcpIP,
                 new Uri("http://localhost"));
             Assert.IsFalse(storage.TryAdd(endpoint, newConnection));
 
@@ -72,7 +72,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("a");
             var connection = new ChannelConnectionInformation(
                 new EndpointId("a"),
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
@@ -129,7 +129,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("a");
             var connection = new ChannelConnectionInformation(
                 new EndpointId("a"),
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
@@ -154,7 +154,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("a");
             var connection = new ChannelConnectionInformation(
                 new EndpointId("a"),
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
@@ -187,7 +187,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("a");
             var connection = new ChannelConnectionInformation(
                 endpoint,
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
@@ -219,7 +219,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("a");
             var connection = new ChannelConnectionInformation(
                 endpoint,
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
 
             var description = new CommunicationDescription(
@@ -265,7 +265,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("a");
             var connection = new ChannelConnectionInformation(
                 endpoint,
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
 
             var description = new CommunicationDescription(
@@ -292,7 +292,7 @@ namespace Nuclei.Communication
 
             var newConnection = new ChannelConnectionInformation(
                 endpoint,
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri(@"http://localhost"),
                 new Uri(@"http://localhost/data"));
             Assert.IsFalse(storage.TryUpdate(newConnection));
@@ -304,7 +304,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("a");
             var connection = new ChannelConnectionInformation(
                 endpoint,
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
 
             var storage = new EndpointInformationStorage();
@@ -312,7 +312,7 @@ namespace Nuclei.Communication
             
             var newConnection = new ChannelConnectionInformation(
                 endpoint,
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri(@"http://localhost"),
                 new Uri(@"http://localhost/data"));
             Assert.IsTrue(storage.TryUpdate(newConnection));
@@ -328,7 +328,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("a");
             var connection = new ChannelConnectionInformation(
                 endpoint,
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
 
             var description = new CommunicationDescription(
@@ -343,7 +343,7 @@ namespace Nuclei.Communication
 
             var newConnection = new ChannelConnectionInformation(
                 endpoint,
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri(@"http://localhost"),
                 new Uri(@"http://localhost/data"));
             Assert.IsTrue(storage.TryUpdate(newConnection));
@@ -377,7 +377,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("a");
             var connection = new ChannelConnectionInformation(
                 new EndpointId("a"),
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
@@ -397,7 +397,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("a");
             var connection = new ChannelConnectionInformation(
                 endpoint,
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));

@@ -24,8 +24,8 @@ namespace Nuclei.Communication.Protocol
         /// Initializes a new instance of the <see cref="ChannelConnectionInformation"/> class.
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint for which this connection information is valid.</param>
-        /// <param name="channelType">
-        ///     The type of the <see cref="IChannelType"/> which indicates which kind of channel this connection
+        /// <param name="channelTemplate">
+        ///     The type of the <see cref="IChannelTemplate"/> which indicates which kind of channel this connection
         ///     information describes.
         /// </param>
         /// <param name="messageAddress">The full URI for the message receiving channel.</param>
@@ -33,13 +33,13 @@ namespace Nuclei.Communication.Protocol
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if <paramref name="channelType"/> is <see cref="Protocol.ChannelType.None"/>.
+        ///     Thrown if <paramref name="channelTemplate"/> is <see cref="ChannelTemplate.None"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="messageAddress"/> is <see langword="null" />.
         /// </exception>
-        public ChannelConnectionInformation(EndpointId endpoint, ChannelType channelType, Uri messageAddress)
-            : this(endpoint, channelType, messageAddress, s_InvalidUri)
+        public ChannelConnectionInformation(EndpointId endpoint, ChannelTemplate channelTemplate, Uri messageAddress)
+            : this(endpoint, channelTemplate, messageAddress, s_InvalidUri)
         {
         }
 
@@ -47,8 +47,8 @@ namespace Nuclei.Communication.Protocol
         /// Initializes a new instance of the <see cref="ChannelConnectionInformation"/> class.
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint for which this connection information is valid.</param>
-        /// <param name="channelType">
-        ///     The type of the <see cref="IChannelType"/> which indicates which kind of channel this connection
+        /// <param name="channelTemplate">
+        ///     The type of the <see cref="IChannelTemplate"/> which indicates which kind of channel this connection
         ///     information describes.
         /// </param>
         /// <param name="messageAddress">The full URI for the message receiving channel.</param>
@@ -57,7 +57,7 @@ namespace Nuclei.Communication.Protocol
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if <paramref name="channelType"/> is <see cref="Protocol.ChannelType.None"/>.
+        ///     Thrown if <paramref name="channelTemplate"/> is <see cref="ChannelTemplate.None"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="messageAddress"/> is <see langword="null" />.
@@ -65,12 +65,12 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="dataAddress"/> is <see langword="null" />.
         /// </exception>
-        public ChannelConnectionInformation(EndpointId endpoint, ChannelType channelType, Uri messageAddress, Uri dataAddress)
+        public ChannelConnectionInformation(EndpointId endpoint, ChannelTemplate channelTemplate, Uri messageAddress, Uri dataAddress)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
                 Lokad.Enforce.With<InvalidChannelTypeException>(
-                    channelType != ChannelType.None, 
+                    channelTemplate != ChannelTemplate.None, 
                     Resources.Exceptions_Messages_AChannelTypeMustBeDefined);
 
                 Lokad.Enforce.Argument(() => messageAddress);
@@ -78,7 +78,7 @@ namespace Nuclei.Communication.Protocol
             }
 
             Id = endpoint;
-            ChannelType = channelType;
+            ChannelTemplate = channelTemplate;
             MessageAddress = messageAddress;
             DataAddress = dataAddress;
         }
@@ -106,9 +106,9 @@ namespace Nuclei.Communication.Protocol
 
         /// <summary>
         /// Gets a value indicating which type the channel is. The <see cref="Type"/>
-        /// will be a derivative of <see cref="IChannelType"/>.
+        /// will be a derivative of <see cref="IChannelTemplate"/>.
         /// </summary>
-        public ChannelType ChannelType
+        public ChannelTemplate ChannelTemplate
         {
             get;
             private set;

@@ -46,7 +46,7 @@ namespace Nuclei.Communication
         /// Indicates the type of channel that we're dealing with and provides
         /// utility methods for the channel.
         /// </summary>
-        private readonly IChannelType m_Type;
+        private readonly IChannelTemplate m_Template;
 
         /// <summary>
         /// The function that returns the current time.
@@ -86,11 +86,11 @@ namespace Nuclei.Communication
         /// <summary>
         /// Initializes a new instance of the <see cref="ServiceConnectionHolder"/> class.
         /// </summary>
-        /// <param name="channelType">The type of channel, e.g. TCP.</param>
+        /// <param name="channelTemplate">The type of channel, e.g. TCP.</param>
         /// <param name="currentTime">The function that returns the current time.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="channelType"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="channelTemplate"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="currentTime"/> is <see langword="null" />.
@@ -99,17 +99,17 @@ namespace Nuclei.Communication
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public ServiceConnectionHolder(
-            IChannelType channelType,
+            IChannelTemplate channelTemplate,
             Func<DateTimeOffset> currentTime,
             SystemDiagnostics systemDiagnostics)
         {
             {
-                Lokad.Enforce.Argument(() => channelType);
+                Lokad.Enforce.Argument(() => channelTemplate);
                 Lokad.Enforce.Argument(() => currentTime);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
 
-            m_Type = channelType;
+            m_Template = channelTemplate;
             m_CurrentTime = currentTime;
             m_Diagnostics = systemDiagnostics;
         }
@@ -141,7 +141,7 @@ namespace Nuclei.Communication
             m_Receiver = receiver;
             m_AttachEndpoint = attachEndpoint;
 
-            var uri = m_Type.GenerateNewChannelUri();
+            var uri = m_Template.GenerateNewChannelUri();
             return ReopenChannel(uri);
         }
 
@@ -282,7 +282,7 @@ namespace Nuclei.Communication
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "Closed channel of type: {0}",
-                    m_Type.GetType().Name));
+                    m_Template.GetType().Name));
         }
 
         /// <summary>

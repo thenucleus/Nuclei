@@ -155,7 +155,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("sendingEndpoint");
             var msg = new EndpointConnectMessage(
                 endpoint, 
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 @"net.pipe://localhost/test", 
                 @"net.pipe://localhost/test/data",
                 new CommunicationDescription(
@@ -194,7 +194,7 @@ namespace Nuclei.Communication
             var endpoint = new EndpointId("sendingEndpoint");
             var msg = new EndpointConnectMessage(
                 endpoint,
-                ChannelType.NamedPipe,
+                ChannelTemplate.NamedPipe,
                 @"net.pipe://localhost/test",
                 @"net.pipe://localhost/test/data", 
                 new CommunicationDescription(

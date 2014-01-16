@@ -125,7 +125,7 @@ namespace Nuclei.Communication
             return layer.SendMessageAndWaitForResponse(endpoint, message);
         }
 
-        private static void RegisterCommunicationLayer(ContainerBuilder builder, IEnumerable<ChannelType> allowedChannelTypes)
+        private static void RegisterCommunicationLayer(ContainerBuilder builder, IEnumerable<ChannelTemplate> allowedChannelTemplates)
         {
             builder.Register(
                 c =>
@@ -139,7 +139,7 @@ namespace Nuclei.Communication
                         (t, id) => Tuple.Create(
                             ctx.ResolveKeyed<ICommunicationChannel>(t, new TypedParameter(typeof(EndpointId), id)),
                             ctx.Resolve<IDirectIncomingMessages>()),
-                        allowedChannelTypes,
+                        allowedChannelTemplates,
                         c.Resolve<SystemDiagnostics>());
                 })
                 .As<ISendDataViaChannels>()
@@ -286,7 +286,7 @@ namespace Nuclei.Communication
                 .SingleInstance();
         }
 
-        private static void RegisterHandshakeLayer(ContainerBuilder builder, IEnumerable<ChannelType> allowedChannelTypes)
+        private static void RegisterHandshakeLayer(ContainerBuilder builder, IEnumerable<ChannelTemplate> allowedChannelTemplates)
         {
             builder.Register(
                 c => new HandshakeProtocolLayer(
@@ -294,7 +294,7 @@ namespace Nuclei.Communication
                     c.Resolve<IEnumerable<IDiscoverOtherServices>>(),
                     c.Resolve<ISendDataViaChannels>(),
                     c.Resolve<IStoreCommunicationDescriptions>(),
-                    allowedChannelTypes,
+                    allowedChannelTemplates,
                     c.Resolve<SystemDiagnostics>()))
                 .As<IHandleHandshakes>()
                 .SingleInstance();
@@ -335,7 +335,7 @@ namespace Nuclei.Communication
                         var ctx = c.Resolve<IComponentContext>();
                         return new EndpointConnectProcessAction(
                             c.Resolve<IHandleHandshakes>(),
-                            from channelType in ctx.Resolve<IEnumerable<IChannelType>>() select channelType.ChannelType,
+                            from channelType in ctx.Resolve<IEnumerable<IProtocolChannelTemplate>>() select channelType.ChannelTemplate,
                             c.Resolve<SystemDiagnostics>());
                     })
                 .As<IMessageProcessAction>();
@@ -390,7 +390,7 @@ namespace Nuclei.Communication
         private static void RegisterConnectionHolders(ContainerBuilder builder)
         {
             builder.Register((c, p) => new ServiceConnectionHolder(
-                    p.TypedAs<IChannelType>(),
+                    p.TypedAs<IChannelTemplate>(),
                     () => DateTimeOffset.Now,
                     c.Resolve<SystemDiagnostics>()))
                 .As<IHoldServiceConnections>();
@@ -404,14 +404,14 @@ namespace Nuclei.Communication
             builder.Register(
                 (c, p) =>
                 {
-                    var channelType = c.Resolve<NamedPipeProtocolChannelType>();
+                    var channelTemplate = c.Resolve<NamedPipeProtocolChannelTemplate>();
                     var ctx = c.Resolve<IComponentContext>();
                     return new CommunicationChannel(
                         p.TypedAs<EndpointId>(),
                         c.Resolve<IStoreInformationAboutEndpoints>(),
-                        channelType,
-                        c.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelType), channelType)),
-                        c.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelType), channelType)),
+                        channelTemplate,
+                        c.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
+                        c.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
                         ctx.Resolve<IMessagePipe>,
                         ctx.Resolve<IDataPipe>,
                         (id, msgProxy, dataProxy) => ctx.Resolve<ISendingEndpoint>(
@@ -427,20 +427,20 @@ namespace Nuclei.Communication
                         c.Resolve<SystemDiagnostics>());
                 })
                 .OnActivated(ConnectToMessageHandler)
-                .Keyed<ICommunicationChannel>(ChannelType.NamedPipe)
+                .Keyed<ICommunicationChannel>(ChannelTemplate.NamedPipe)
                 .SingleInstance();
 
             builder.Register(
                 (c, p) =>
                 {
-                    var channelType = c.Resolve<TcpProtocolChannelType>();
+                    var channelTemplate = c.Resolve<TcpProtocolChannelTemplate>();
                     var ctx = c.Resolve<IComponentContext>();
                     return new CommunicationChannel(
                         p.TypedAs<EndpointId>(),
                         c.Resolve<IStoreInformationAboutEndpoints>(),
-                        channelType,
-                        c.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelType), channelType)),
-                        c.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelType), channelType)),
+                        channelTemplate,
+                        c.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
+                        c.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
                         ctx.Resolve<IMessagePipe>,
                         ctx.Resolve<IDataPipe>,
                         (id, msgProxy, dataProxy) => ctx.Resolve<ISendingEndpoint>(
@@ -456,7 +456,7 @@ namespace Nuclei.Communication
                         c.Resolve<SystemDiagnostics>());
                 })
                 .OnActivated(ConnectToMessageHandler)
-                .Keyed<ICommunicationChannel>(ChannelType.TcpIP)
+                .Keyed<ICommunicationChannel>(ChannelTemplate.TcpIP)
                 .SingleInstance();
         }
 
@@ -479,15 +479,15 @@ namespace Nuclei.Communication
 
         private static void RegisterChannelTypes(ContainerBuilder builder)
         {
-            builder.Register(c => new NamedPipeProtocolChannelType(
+            builder.Register(c => new NamedPipeProtocolChannelTemplate(
                     c.Resolve<IConfiguration>()))
-                .As<IChannelType>()
-                .As<NamedPipeProtocolChannelType>();
+                .As<IChannelTemplate>()
+                .As<NamedPipeProtocolChannelTemplate>();
 
-            builder.Register(c => new TcpProtocolChannelType(
+            builder.Register(c => new TcpProtocolChannelTemplate(
                     c.Resolve<IConfiguration>()))
-                .As<IChannelType>()
-                .As<TcpProtocolChannelType>();
+                .As<IChannelTemplate>()
+                .As<TcpProtocolChannelTemplate>();
         }
 
         private static void RegisterEndpointStorage(ContainerBuilder builder)
@@ -632,7 +632,7 @@ namespace Nuclei.Communication
         /// <summary>
         /// The collection containing the types of channel that should be opened.
         /// </summary>
-        private readonly IEnumerable<ChannelType> m_AllowedChannelTypes;
+        private readonly IEnumerable<ChannelTemplate> m_AllowedChannelTemplates;
 
         /// <summary>
         /// Indicates if the communication channels are allowed to provide discovery.
@@ -643,7 +643,7 @@ namespace Nuclei.Communication
         /// Initializes a new instance of the <see cref="CommunicationModule"/> class.
         /// </summary>
         /// <param name="subjects">The collection containing the communication subjects for the application.</param>
-        /// <param name="allowedChannelTypes">The collection of channel types on which the application is allowed to connect.</param>
+        /// <param name="allowedChannelTemplates">The collection of channel types on which the application is allowed to connect.</param>
         /// <param name="allowChannelDiscovery">
         ///     A flag that indicates if the communication channels are allowed to provide
         ///     discovery.
@@ -652,26 +652,26 @@ namespace Nuclei.Communication
         ///     Thrown if <paramref name="subjects"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="allowedChannelTypes"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="allowedChannelTemplates"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentException">
-        ///     Thrown if <paramref name="allowedChannelTypes"/> is an empty collection.
+        ///     Thrown if <paramref name="allowedChannelTemplates"/> is an empty collection.
         /// </exception>
         public CommunicationModule(
             IEnumerable<CommunicationSubject> subjects, 
-            IEnumerable<ChannelType> allowedChannelTypes, 
+            IEnumerable<ChannelTemplate> allowedChannelTemplates, 
             bool allowChannelDiscovery)
         {
             {
                 Lokad.Enforce.Argument(() => subjects);
-                Lokad.Enforce.Argument(() => allowedChannelTypes);
+                Lokad.Enforce.Argument(() => allowedChannelTemplates);
                 Lokad.Enforce.With<ArgumentException>(
-                    allowedChannelTypes.Any(), 
+                    allowedChannelTemplates.Any(), 
                     Resources.Exceptions_Messages_AtLeastOneChannelTypeMustBeAllowed);
             }
 
             m_Subjects = subjects;
-            m_AllowedChannelTypes = allowedChannelTypes;
+            m_AllowedChannelTemplates = allowedChannelTemplates;
             m_AllowChannelDiscovery = allowChannelDiscovery;
         }
 
@@ -683,11 +683,11 @@ namespace Nuclei.Communication
         {
             base.Load(builder);
 
-            RegisterCommunicationLayer(builder, m_AllowedChannelTypes);
+            RegisterCommunicationLayer(builder, m_AllowedChannelTemplates);
             RegisterEndpointDiscoverySources(builder, m_AllowChannelDiscovery);
             RegisterManualEndpointConnection(builder);
             RegisterManualEndpointDisconnection(builder);
-            RegisterHandshakeLayer(builder, m_AllowedChannelTypes);
+            RegisterHandshakeLayer(builder, m_AllowedChannelTemplates);
             RegisterMessageHandler(builder);
             RegisterDataHandler(builder);
             RegisterMessageProcessingActions(builder);

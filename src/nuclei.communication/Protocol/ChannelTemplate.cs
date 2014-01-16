@@ -9,7 +9,7 @@ namespace Nuclei.Communication.Protocol
     /// <summary>
     /// Defines what types of communication channels are available.
     /// </summary>
-    public enum ChannelType
+    public enum ChannelTemplate
     {
         /// <summary>
         /// The channel type is not defined.

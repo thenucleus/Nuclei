@@ -22,7 +22,7 @@ namespace Nuclei.Communication
         public void Create()
         {
             var endpoint = new EndpointId("id");
-            var channelType = ChannelType.TcpIP;
+            var channelType = ChannelTemplate.TcpIP;
             var uri = new Uri("http://localhost");
 
             var info = new ChannelConnectionInformation(endpoint, channelType, uri);

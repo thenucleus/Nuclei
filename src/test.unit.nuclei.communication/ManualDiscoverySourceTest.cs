@@ -23,28 +23,28 @@ namespace Nuclei.Communication
             var source = new ManualDiscoverySource();
 
             EndpointId connectedEndpoint = null;
-            ChannelType channelType = ChannelType.None;
+            ChannelTemplate channelTemplate = ChannelTemplate.None;
             Uri channelUri = null;
             source.OnEndpointBecomingAvailable +=
                 (s, e) =>
                 {
                     connectedEndpoint = e.ConnectionInformation.Id;
-                    channelType = e.ConnectionInformation.ChannelType;
+                    channelTemplate = e.ConnectionInformation.ChannelType;
                     channelUri = e.ConnectionInformation.MessageAddress;
                 };
 
-            source.RecentlyConnectedEndpoint(new EndpointId("sendingEndpoint"), ChannelType.TcpIP, new Uri("net.pipe://localhost/apollo_test"));
+            source.RecentlyConnectedEndpoint(new EndpointId("sendingEndpoint"), ChannelTemplate.TcpIP, new Uri("net.pipe://localhost/apollo_test"));
             Assert.IsNull(connectedEndpoint);
 
             source.StartDiscovery();
 
             var newEndpoint = new EndpointId("other");
-            var type = ChannelType.TcpIP;
+            var type = ChannelTemplate.TcpIP;
             var uri = new Uri("net.pipe://localhost/apollo_test");
             source.RecentlyConnectedEndpoint(newEndpoint, type, uri);
 
             Assert.AreSame(newEndpoint, connectedEndpoint);
-            Assert.AreEqual(type, channelType);
+            Assert.AreEqual(type, channelTemplate);
             Assert.AreSame(uri, channelUri);
         }
 
@@ -55,33 +55,33 @@ namespace Nuclei.Communication
             source.StartDiscovery();
 
             EndpointId connectedEndpoint = null;
-            ChannelType channelType = ChannelType.None;
+            ChannelTemplate channelTemplate = ChannelTemplate.None;
             Uri channelUri = null;
             source.OnEndpointBecomingAvailable +=
                 (s, e) =>
                 {
                     connectedEndpoint = e.ConnectionInformation.Id;
-                    channelType = e.ConnectionInformation.ChannelType;
+                    channelTemplate = e.ConnectionInformation.ChannelType;
                     channelUri = e.ConnectionInformation.MessageAddress;
                 };
 
             var newEndpoint = new EndpointId("other");
-            var type = ChannelType.TcpIP;
+            var type = ChannelTemplate.TcpIP;
             var uri = new Uri("net.pipe://localhost/apollo_test");
             source.RecentlyConnectedEndpoint(newEndpoint, type, uri);
 
             Assert.AreSame(newEndpoint, connectedEndpoint);
-            Assert.AreEqual(type, channelType);
+            Assert.AreEqual(type, channelTemplate);
             Assert.AreSame(uri, channelUri);
 
             source.EndDiscovery();
             connectedEndpoint = null;
-            channelType = ChannelType.None;
+            channelTemplate = ChannelTemplate.None;
             channelUri = null;
 
             source.RecentlyConnectedEndpoint(newEndpoint, type, uri);
             Assert.IsNull(connectedEndpoint);
-            Assert.AreEqual(ChannelType.None, channelType);
+            Assert.AreEqual(ChannelTemplate.None, channelTemplate);
             Assert.IsNull(channelUri);
         }
 
@@ -92,23 +92,23 @@ namespace Nuclei.Communication
             source.StartDiscovery();
 
             EndpointId connectedEndpoint = null;
-            ChannelType channelType = ChannelType.None;
+            ChannelTemplate channelTemplate = ChannelTemplate.None;
             Uri channelUri = null;
             source.OnEndpointBecomingAvailable +=
                 (s, e) =>
                 {
                     connectedEndpoint = e.ConnectionInformation.Id;
-                    channelType = e.ConnectionInformation.ChannelType;
+                    channelTemplate = e.ConnectionInformation.ChannelType;
                     channelUri = e.ConnectionInformation.MessageAddress;
                 };
 
             var newEndpoint = new EndpointId("other");
-            var type = ChannelType.TcpIP;
+            var type = ChannelTemplate.TcpIP;
             var uri = new Uri("net.pipe://localhost/apollo_test");
             source.RecentlyConnectedEndpoint(newEndpoint, type, uri);
 
             Assert.AreSame(newEndpoint, connectedEndpoint);
-            Assert.AreEqual(type, channelType);
+            Assert.AreEqual(type, channelTemplate);
             Assert.AreSame(uri, channelUri);
         }
     }

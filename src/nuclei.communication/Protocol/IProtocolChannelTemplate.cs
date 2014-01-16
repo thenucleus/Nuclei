@@ -9,37 +9,53 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 
-namespace Nuclei.Communication.Discovery
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
-    /// Defines the channel type for discovery purposes.
+    /// Defines the interface for objects that provide information about a specific type of
+    /// WCF channel for the protocol level, e.g. TCP.
     /// </summary>
-    internal interface IDiscoveryChannelType : IChannelType
+    internal interface IProtocolChannelTemplate : IChannelTemplate
     {
         /// <summary>
-        /// Generates a new binding object for the channel.
+        /// Gets the type of the channel.
+        /// </summary>
+        ChannelTemplate ChannelTemplate
+        {
+            get;
+        }
+
+        /// <summary>
+        /// Generates a new binding object used to send messages across the channel.
         /// </summary>
         /// <returns>
         /// The newly generated binding.
         /// </returns>
-        Binding GenerateBinding();
+        Binding GenerateMessageBinding();
 
         /// <summary>
-        /// Attaches a new endpoint to the given host.
+        /// Generates a new binding object used to transfer data across the channel.
+        /// </summary>
+        /// <returns>
+        /// The newly generated binding.
+        /// </returns>
+        Binding GenerateDataBinding();
+
+        /// <summary>
+        /// Attaches a new message endpoint to the given host.
         /// </summary>
         /// <param name="host">The host to which the endpoint should be attached.</param>
         /// <param name="implementedContract">The contract implemented by the endpoint.</param>
         /// <param name="localEndpoint">The ID of the local endpoint, to be used in the endpoint metadata.</param>
         /// <returns>The newly attached endpoint.</returns>
-        ServiceEndpoint AttachDiscoveryEntryEndpoint(ServiceHost host, Type implementedContract, EndpointId localEndpoint);
+        ServiceEndpoint AttachMessageEndpoint(ServiceHost host, Type implementedContract, EndpointId localEndpoint);
 
         /// <summary>
         /// Attaches a new endpoint to the given host.
         /// </summary>
         /// <param name="host">The host to which the endpoint should be attached.</param>
         /// <param name="implementedContract">The contract implemented by the endpoint.</param>
-        /// <param name="version">The version of the discovery endpoint.</param>
         /// <returns>The newly attached endpoint.</returns>
-        ServiceEndpoint AttachVersionedDiscoveryEndpoint(ServiceHost host, Type implementedContract, Version version);
+        ServiceEndpoint AttachDataEndpoint(ServiceHost host, Type implementedContract);
     }
 }

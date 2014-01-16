@@ -20,8 +20,8 @@ namespace Nuclei.Communication.Protocol.Messages
         /// Initializes a new instance of the <see cref="EndpointConnectMessage"/> class.
         /// </summary>
         /// <param name="origin">The ID of the endpoint that send the message.</param>
-        /// <param name="channelType">
-        ///     The <see cref="IChannelType"/> of the channel that was used to send this message.
+        /// <param name="channelTemplate">
+        ///     The <see cref="IChannelTemplate"/> of the channel that was used to send this message.
         /// </param>
         /// <param name="originatingMessageAddress">The address of the originating endpoint that is used for message reception.</param>
         /// <param name="originatingDataAddres">The address of the originating endpoint that is used for data reception.</param>
@@ -34,7 +34,7 @@ namespace Nuclei.Communication.Protocol.Messages
         ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if <paramref name="channelType"/> is <see cref="Protocol.ChannelType.None"/>.
+        ///     Thrown if <paramref name="channelTemplate"/> is <see cref="ChannelTemplate.None"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="originatingMessageAddress"/> is <see langword="null" />.
@@ -53,7 +53,7 @@ namespace Nuclei.Communication.Protocol.Messages
         /// </exception>
         public EndpointConnectMessage(
             EndpointId origin, 
-            ChannelType channelType, 
+            ChannelTemplate channelTemplate, 
             string originatingMessageAddress, 
             string originatingDataAddres,
             CommunicationDescription information)
@@ -61,7 +61,7 @@ namespace Nuclei.Communication.Protocol.Messages
         {
             {
                 Lokad.Enforce.With<InvalidChannelTypeException>(
-                    channelType != ChannelType.None, 
+                    channelTemplate != ChannelTemplate.None, 
                     Resources.Exceptions_Messages_AChannelTypeMustBeDefined);
 
                 Lokad.Enforce.Argument(() => originatingMessageAddress);
@@ -77,7 +77,7 @@ namespace Nuclei.Communication.Protocol.Messages
                 Lokad.Enforce.Argument(() => information);
             }
 
-            ChannelType = channelType;
+            ChannelTemplate = channelTemplate;
             MessageAddress = originatingMessageAddress;
             DataAddress = originatingDataAddres;
             Information = information;
@@ -87,7 +87,7 @@ namespace Nuclei.Communication.Protocol.Messages
         /// Gets a value indicating what kind of channel was used
         /// to send this message.
         /// </summary>
-        public ChannelType ChannelType
+        public ChannelTemplate ChannelTemplate
         {
             get;
             private set;

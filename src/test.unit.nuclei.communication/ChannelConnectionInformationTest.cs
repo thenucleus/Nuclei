@@ -22,7 +22,7 @@ namespace Nuclei.Communication
             Assert.Throws<InvalidChannelTypeException>(
                 () => new ChannelConnectionInformation(
                     new EndpointId("a"), 
-                    ChannelType.None, 
+                    ChannelTemplate.None, 
                     new Uri(@"net.pipe://localhost/pipe/sendingEndpoint"),
                     new Uri(@"net.pipe://localhost/pipe/sendingEndpoint/Data")));
         }
@@ -31,13 +31,13 @@ namespace Nuclei.Communication
         public void Create()
         {
             var endpoint = new EndpointId("a");
-            var type = ChannelType.NamedPipe;
+            var type = ChannelTemplate.NamedPipe;
             var messageUri = new Uri(@"net.pipe://localhost/pipe/sendingEndpoint");
             var dataUri = new Uri(@"net.pipe://localhost/pipe/sendingEndpoint/Data");
             var info = new ChannelConnectionInformation(endpoint, type, messageUri, dataUri);
 
             Assert.AreSame(endpoint, info.Id);
-            Assert.AreEqual(type, info.ChannelType);
+            Assert.AreEqual(type, info.ChannelTemplate);
             Assert.AreSame(messageUri, info.MessageAddress);
             Assert.AreSame(dataUri, info.DataAddress);
         }

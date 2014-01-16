@@ -33,7 +33,7 @@ namespace Nuclei.Communication
             var subject = new CommunicationSubject("a");
             var connection = new ChannelConnectionInformation(
                 id,
-                ChannelType.TcpIP,
+                ChannelTemplate.TcpIP,
                 new Uri(@"http://localhost"),
                 new Uri(@"http://localhost/data"));
 
@@ -59,7 +59,7 @@ namespace Nuclei.Communication
             {
                 communicationLayer.Setup(l => l.Id)
                     .Returns(id);
-                communicationLayer.Setup(l => l.LocalConnectionFor(It.IsAny<ChannelType>()))
+                communicationLayer.Setup(l => l.LocalConnectionFor(It.IsAny<ChannelTemplate>()))
                     .Returns(new Tuple<EndpointId, Uri, Uri>(connection.Id, connection.MessageAddress, connection.DataAddress));
                 communicationLayer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
                     .Verifiable();
@@ -82,8 +82,8 @@ namespace Nuclei.Communication
                 communicationDescriptions,
                 new[]
                     {
-                        ChannelType.NamedPipe,
-                        ChannelType.TcpIP, 
+                        ChannelTemplate.NamedPipe,
+                        ChannelTemplate.TcpIP, 
                     },
                 new SystemDiagnostics((l, m) => { }, null));
 
@@ -92,7 +92,7 @@ namespace Nuclei.Communication
                 new EndpointDiscoveredEventArgs(
                     new ChannelConnectionInformation(
                         remoteEndpoint, 
-                        ChannelType.TcpIP, 
+                        ChannelTemplate.TcpIP, 
                         new Uri(remoteMessageAddress),
                         new Uri(remoteDataAddress))));
 
@@ -101,7 +101,7 @@ namespace Nuclei.Communication
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(remoteEndpoint));
 
             layer.ContinueHandshakeWith(
-                new ChannelConnectionInformation(remoteEndpoint, ChannelType.TcpIP, new Uri(remoteMessageAddress), new Uri(remoteDataAddress)),
+                new ChannelConnectionInformation(remoteEndpoint, ChannelTemplate.TcpIP, new Uri(remoteMessageAddress), new Uri(remoteDataAddress)),
                 communicationDescriptions.ToStorage(),
                 new MessageId());
 
@@ -122,7 +122,7 @@ namespace Nuclei.Communication
             var subject = new CommunicationSubject("a");
             var connection = new ChannelConnectionInformation(
                 id,
-                ChannelType.TcpIP,
+                ChannelTemplate.TcpIP,
                 new Uri(@"http://localhost"),
                 new Uri(@"http://localhost/data"));
 
@@ -148,7 +148,7 @@ namespace Nuclei.Communication
             {
                 communicationLayer.Setup(l => l.Id)
                     .Returns(id);
-                communicationLayer.Setup(l => l.LocalConnectionFor(It.IsAny<ChannelType>()))
+                communicationLayer.Setup(l => l.LocalConnectionFor(It.IsAny<ChannelTemplate>()))
                     .Returns(new Tuple<EndpointId, Uri, Uri>(connection.Id, connection.MessageAddress, connection.DataAddress));
                 communicationLayer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
                     .Verifiable();
@@ -171,13 +171,13 @@ namespace Nuclei.Communication
                 communicationDescriptions,
                 new[]
                     {
-                        ChannelType.NamedPipe,
-                        ChannelType.TcpIP, 
+                        ChannelTemplate.NamedPipe,
+                        ChannelTemplate.TcpIP, 
                     },
                 new SystemDiagnostics((l, m) => { }, null));
 
             layer.ContinueHandshakeWith(
-                new ChannelConnectionInformation(remoteEndpoint, ChannelType.TcpIP, new Uri(remoteMessageAddress), new Uri(remoteDataAddress)),
+                new ChannelConnectionInformation(remoteEndpoint, ChannelTemplate.TcpIP, new Uri(remoteMessageAddress), new Uri(remoteDataAddress)),
                 communicationDescriptions.ToStorage(),
                 new MessageId());
 
@@ -198,7 +198,7 @@ namespace Nuclei.Communication
             var subject = new CommunicationSubject("a");
             var connection = new ChannelConnectionInformation(
                 id,
-                ChannelType.TcpIP,
+                ChannelTemplate.TcpIP,
                 new Uri(@"http://localhost"),
                 new Uri(@"http://localhost/data"));
 
@@ -224,7 +224,7 @@ namespace Nuclei.Communication
             {
                 communicationLayer.Setup(l => l.Id)
                     .Returns(id);
-                communicationLayer.Setup(l => l.LocalConnectionFor(It.IsAny<ChannelType>()))
+                communicationLayer.Setup(l => l.LocalConnectionFor(It.IsAny<ChannelTemplate>()))
                     .Returns(new Tuple<EndpointId, Uri, Uri>(connection.Id, connection.MessageAddress, connection.DataAddress));
                 communicationLayer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
                     .Verifiable();
@@ -251,8 +251,8 @@ namespace Nuclei.Communication
                 communicationDescriptions,
                 new[]
                     {
-                        ChannelType.NamedPipe,
-                        ChannelType.TcpIP, 
+                        ChannelTemplate.NamedPipe,
+                        ChannelTemplate.TcpIP, 
                     },
                 new SystemDiagnostics((l, m) => { }, null));
 
@@ -262,7 +262,7 @@ namespace Nuclei.Communication
                 new EndpointDiscoveredEventArgs(
                     new ChannelConnectionInformation(
                         remoteEndpoint,
-                        ChannelType.TcpIP,
+                        ChannelTemplate.TcpIP,
                         new Uri(remoteMessageAddress),
                         new Uri(remoteDataAddress))));
 
@@ -283,7 +283,7 @@ namespace Nuclei.Communication
             var subject = new CommunicationSubject("a");
             var connection = new ChannelConnectionInformation(
                 id,
-                ChannelType.TcpIP,
+                ChannelTemplate.TcpIP,
                 new Uri(@"http://localhost"),
                 new Uri(@"http://localhost/data"));
 
@@ -309,7 +309,7 @@ namespace Nuclei.Communication
             {
                 communicationLayer.Setup(l => l.Id)
                     .Returns(id);
-                communicationLayer.Setup(l => l.LocalConnectionFor(It.IsAny<ChannelType>()))
+                communicationLayer.Setup(l => l.LocalConnectionFor(It.IsAny<ChannelTemplate>()))
                     .Returns(new Tuple<EndpointId, Uri, Uri>(connection.Id, connection.MessageAddress, connection.DataAddress));
                 communicationLayer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
                     .Verifiable();
@@ -325,13 +325,13 @@ namespace Nuclei.Communication
                 communicationDescriptions,
                 new[]
                     {
-                        ChannelType.NamedPipe,
-                        ChannelType.TcpIP, 
+                        ChannelTemplate.NamedPipe,
+                        ChannelTemplate.TcpIP, 
                     },
                 new SystemDiagnostics((l, m) => { }, null));
 
             layer.ContinueHandshakeWith(
-                new ChannelConnectionInformation(remoteEndpoint, ChannelType.TcpIP, new Uri(remoteMessageAddress), new Uri(remoteDataAddress)), 
+                new ChannelConnectionInformation(remoteEndpoint, ChannelTemplate.TcpIP, new Uri(remoteMessageAddress), new Uri(remoteDataAddress)), 
                 new CommunicationDescription(
                     communicationDescriptions.CommunicationVersion,
                     new List<CommunicationSubject>

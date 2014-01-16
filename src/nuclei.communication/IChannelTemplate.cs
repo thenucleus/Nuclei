@@ -12,7 +12,7 @@ namespace Nuclei.Communication
     /// Defines the interface for objects that provide information about a specific type of
     /// WCF channel, e.g. TCP.
     /// </summary>
-    internal interface IChannelType
+    internal interface IChannelTemplate
     {
         /// <summary>
         /// Generates a new URI for the channel.

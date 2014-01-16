@@ -17,10 +17,10 @@ using Nuclei.Configuration;
 namespace Nuclei.Communication.Protocol
 {
     /// <summary>
-    /// Defines a <see cref="IProtocolChannelType"/> that uses TCP/IP connections for communication between
+    /// Defines a <see cref="IProtocolChannelTemplate"/> that uses TCP/IP connections for communication between
     /// applications on different machines.
     /// </summary>
-    internal sealed class TcpProtocolChannelType : TcpChannelType, IProtocolChannelType
+    internal sealed class TcpProtocolChannelTemplate : TcpChannelTemplate, IProtocolChannelTemplate
     {
         /// <summary>
         /// Returns the process ID of the process that is currently executing
@@ -36,13 +36,13 @@ namespace Nuclei.Communication.Protocol
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TcpProtocolChannelType"/> class.
+        /// Initializes a new instance of the <see cref="TcpProtocolChannelTemplate"/> class.
         /// </summary>
         /// <param name="tcpConfiguration">The configuration for the WCF tcp channel.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="tcpConfiguration"/> is <see langword="null" />.
         /// </exception>
-        public TcpProtocolChannelType(IConfiguration tcpConfiguration)
+        public TcpProtocolChannelTemplate(IConfiguration tcpConfiguration)
             : base(tcpConfiguration)
         {
         }
@@ -50,11 +50,11 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Gets the type of the channel.
         /// </summary>
-        public ChannelType ChannelType
+        public ChannelTemplate ChannelTemplate
         {
             get
             {
-                return ChannelType.TcpIP;
+                return ChannelTemplate.TcpIP;
             }
         }
 

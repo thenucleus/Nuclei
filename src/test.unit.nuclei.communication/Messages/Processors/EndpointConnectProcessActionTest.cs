@@ -28,7 +28,7 @@ namespace Nuclei.Communication.Messages.Processors
             var sink = new Mock<IHandleHandshakes>();
             var channelTypes = new[] 
                 { 
-                    ChannelType.TcpIP
+                    ChannelTemplate.TcpIP
                 };
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
@@ -58,14 +58,14 @@ namespace Nuclei.Communication.Messages.Processors
 
             var channelTypes = new[] 
                 { 
-                    ChannelType.TcpIP
+                    ChannelTemplate.TcpIP
                 };
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
             var action = new EndpointConnectProcessAction(sink.Object, channelTypes, systemDiagnostics);
             
             var id = new EndpointId("id");
-            var type = ChannelType.TcpIP;
+            var type = ChannelTemplate.TcpIP;
             var messageUri = @"http://localhost";
             var dataUri = @"http://localhost/data";
             var description = new CommunicationDescription(
@@ -78,7 +78,7 @@ namespace Nuclei.Communication.Messages.Processors
 
             Assert.AreEqual(msg.Id, processedMessageId);
             Assert.AreEqual(id, processedChannel.Id);
-            Assert.AreEqual(type, processedChannel.ChannelType);
+            Assert.AreEqual(type, processedChannel.ChannelTemplate);
             Assert.AreEqual(messageUri, processedChannel.MessageAddress.OriginalString);
             Assert.AreSame(description, processedDescription);
         }

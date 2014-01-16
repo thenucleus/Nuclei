@@ -35,12 +35,12 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Gets the connection information for the channel of a given type created by the current application.
         /// </summary>
-        /// <param name="channelType">The type of channel for which the connection information is required.</param>
+        /// <param name="channelTemplate">The type of channel for which the connection information is required.</param>
         /// <returns>
         /// A tuple containing the <see cref="EndpointId"/>, the <see cref="Uri"/> of the message channel and the 
         /// <see cref="Uri"/> of the data channel; returns <see langword="null" /> if no channel of the given type exists.
         /// </returns>
-        Tuple<EndpointId, Uri, Uri> LocalConnectionFor(ChannelType channelType);
+        Tuple<EndpointId, Uri, Uri> LocalConnectionFor(ChannelTemplate channelTemplate);
 
         /// <summary>
         /// Returns a collection containing the endpoint IDs of the known remote endpoints.

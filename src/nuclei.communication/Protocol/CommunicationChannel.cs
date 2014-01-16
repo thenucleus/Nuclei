@@ -44,7 +44,7 @@ namespace Nuclei.Communication.Protocol
         /// Indicates the type of channel that we're dealing with and provides
         /// utility methods for the channel.
         /// </summary>
-        private readonly IProtocolChannelType m_Type;
+        private readonly IProtocolChannelTemplate m_Template;
 
         /// <summary>
         /// The host information for the message sending host.
@@ -107,7 +107,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="id">The ID number of the current endpoint.</param>
         /// <param name="connectionMap">The object that stores the connection information for the endpoints.</param>
-        /// <param name="channelType">The type of channel, e.g. TCP.</param>
+        /// <param name="channelTemplate">The type of channel, e.g. TCP.</param>
         /// <param name="messageHost">
         /// The object that handles the <see cref="ServiceHost"/> for the channel used to send messages on.
         /// </param>
@@ -125,7 +125,7 @@ namespace Nuclei.Communication.Protocol
         ///     Thrown if <paramref name="connectionMap"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="channelType"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="channelTemplate"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="messageHost"/> is <see langword="null" />.
@@ -148,7 +148,7 @@ namespace Nuclei.Communication.Protocol
         public CommunicationChannel(
             EndpointId id, 
             IStoreInformationAboutEndpoints connectionMap,
-            IProtocolChannelType channelType, 
+            IProtocolChannelTemplate channelTemplate, 
             IHoldServiceConnections messageHost,
             IHoldServiceConnections dataHost,
             Func<IMessagePipe> messageReceiverBuilder,
@@ -159,7 +159,7 @@ namespace Nuclei.Communication.Protocol
             {
                 Lokad.Enforce.Argument(() => id);
                 Lokad.Enforce.Argument(() => connectionMap);
-                Lokad.Enforce.Argument(() => channelType);
+                Lokad.Enforce.Argument(() => channelTemplate);
                 Lokad.Enforce.Argument(() => messageHost);
                 Lokad.Enforce.Argument(() => dataHost);
                 Lokad.Enforce.Argument(() => messageReceiverBuilder);
@@ -170,7 +170,7 @@ namespace Nuclei.Communication.Protocol
 
             m_Id = id;
             m_ChannelConnectionMap = connectionMap;
-            m_Type = channelType;
+            m_Template = channelTemplate;
             m_MessageHost = messageHost;
             m_DataHost = dataHost;
 
@@ -206,7 +206,7 @@ namespace Nuclei.Communication.Protocol
             Func<ServiceHost, ServiceEndpoint> dataEndpointBuilder =
                 host =>
                 {
-                    var dataEndpoint = m_Type.AttachDataEndpoint(host, typeof(IDataReceivingEndpoint));
+                    var dataEndpoint = m_Template.AttachDataEndpoint(host, typeof(IDataReceivingEndpoint));
                     return dataEndpoint;
                 };
             var dataUri = m_DataHost.OpenChannel(m_DataReceiver, dataEndpointBuilder);
@@ -218,12 +218,12 @@ namespace Nuclei.Communication.Protocol
             Func<ServiceHost, ServiceEndpoint> messageEndpointBuilder = 
                 host =>
                 {
-                    var messageEndpoint = m_Type.AttachMessageEndpoint(host, typeof(IMessageReceivingEndpoint), m_Id);
+                    var messageEndpoint = m_Template.AttachMessageEndpoint(host, typeof(IMessageReceivingEndpoint), m_Id);
                     return messageEndpoint;
                 };
             var messageUri = m_MessageHost.OpenChannel(m_MessageReceiver, messageEndpointBuilder);
             
-            LocalConnectionPoint = new ChannelConnectionInformation(m_Id, m_Type.ChannelType, messageUri, dataUri);
+            LocalConnectionPoint = new ChannelConnectionInformation(m_Id, m_Template.ChannelTemplate, messageUri, dataUri);
         }
 
         /// <summary>
@@ -386,8 +386,8 @@ namespace Nuclei.Communication.Protocol
 
             var endpoint = new EndpointAddress(connectionInfo.MessageAddress);
 
-            Debug.Assert(m_Type.ChannelType == connectionInfo.ChannelType, "Trying to connect to a channel with a different binding type.");
-            var binding = m_Type.GenerateMessageBinding();
+            Debug.Assert(m_Template.ChannelTemplate == connectionInfo.ChannelTemplate, "Trying to connect to a channel with a different binding type.");
+            var binding = m_Template.GenerateMessageBinding();
 
             var factory = new ChannelFactory<IMessageReceivingEndpointProxy>(binding, endpoint);
             return new RestoringMessageSendingEndpoint(factory, m_Diagnostics);
@@ -409,8 +409,8 @@ namespace Nuclei.Communication.Protocol
 
             var endpoint = new EndpointAddress(connectionInfo.DataAddress);
 
-            Debug.Assert(m_Type.ChannelType == connectionInfo.ChannelType, "Trying to connect to a channel with a different binding type.");
-            var binding = m_Type.GenerateDataBinding();
+            Debug.Assert(m_Template.ChannelTemplate == connectionInfo.ChannelTemplate, "Trying to connect to a channel with a different binding type.");
+            var binding = m_Template.GenerateDataBinding();
 
             var factory = new ChannelFactory<IDataReceivingEndpointProxy>(binding, endpoint);
             return new RestoringDataTransferingEndpoint(factory, m_Diagnostics);

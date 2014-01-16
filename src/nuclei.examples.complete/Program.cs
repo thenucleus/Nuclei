@@ -137,7 +137,7 @@ namespace Nuclei.Examples.Complete
             if (!allowChannelDiscovery)
             {
                 var hostId = EndpointIdExtensions.Deserialize(hostIdText);
-                var channelType = (ChannelType)Enum.Parse(typeof(ChannelType), channelTypeText);
+                var channelType = (ChannelTemplate)Enum.Parse(typeof(ChannelTemplate), channelTypeText);
 
                 var diagnostics = s_Container.Resolve<SystemDiagnostics>();
                 diagnostics.Log(

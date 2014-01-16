@@ -44,8 +44,8 @@ namespace Nuclei.Examples.Complete
                         subjects,
                         new[]
                             {
-                                ChannelType.NamedPipe,
-                                ChannelType.TcpIP, 
+                                ChannelTemplate.NamedPipe,
+                                ChannelTemplate.TcpIP, 
                             },
                         allowChannelDiscovery));
                 builder.RegisterModule(new UtilsModule());
