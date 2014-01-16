@@ -250,6 +250,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The translator has the wrong version to process the discovery channel on the given URI..
+        /// </summary>
+        internal static string Exceptions_Messages_IncorrectTranslatorVersion {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_IncorrectTranslatorVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The given channel type is not valid..
         /// </summary>
         internal static string Exceptions_Messages_InvalidChannelType {
@@ -583,6 +592,15 @@ namespace Nuclei.Communication.Properties {
         internal static string Log_Messages_DiscoveryFailedToConnectToEndpoint_WithUriAndError {
             get {
                 return ResourceManager.GetString("Log_Messages_DiscoveryFailedToConnectToEndpoint_WithUriAndError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to find a suitable discovery URI for process on {0}..
+        /// </summary>
+        internal static string Log_Messages_DiscoveryFailedToFindMatchingDiscoveryVersion_WithUri {
+            get {
+                return ResourceManager.GetString("Log_Messages_DiscoveryFailedToFindMatchingDiscoveryVersion_WithUri", resourceCulture);
             }
         }
         

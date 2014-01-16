@@ -1,4 +1,4 @@
-﻿using System;
+﻿ using System;
 using System.Net.Security;
 using System.ServiceModel;
 
@@ -31,6 +31,6 @@ namespace Nuclei.Communication.Discovery.V1
             IsInitiating = true,
             IsTerminating = false,
             ProtectionLevel = ProtectionLevel.None)]
-        IDiscoveryInformation ConnectionInformationForProtocol(Version version);
+        VersionedChannelInformation ConnectionInformationForProtocol(Version version);
     }
 }

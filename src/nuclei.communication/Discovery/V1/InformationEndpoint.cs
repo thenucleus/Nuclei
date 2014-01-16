@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright company="Nuclei">
+//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,27 +16,10 @@ namespace Nuclei.Communication.Discovery.V1
     internal sealed class InformationEndpoint : IInformationEndpoint
     {
         /// <summary>
-        /// Defines an discovery information object that carries information about a null, or non-existant, protocol.
-        /// </summary>
-        private sealed class NullDiscoveryInformation : IDiscoveryInformation
-        {
-            /// <summary>
-            /// Gets the version of the information object.
-            /// </summary>
-            public Version ProtocolVersion
-            {
-                get
-                {
-                    return new Version();
-                }
-            }
-        }
-
-        /// <summary>
         /// The collection containing the information about all the versions of the protocol layer.
         /// </summary>
-        private readonly SortedList<Version, IDiscoveryInformation> m_ProtocolInformation
-            = new SortedList<Version, IDiscoveryInformation>();
+        private readonly SortedList<Version, ChannelInformation> m_ProtocolInformation
+            = new SortedList<Version, ChannelInformation>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InformationEndpoint"/> class.
@@ -39,7 +28,7 @@ namespace Nuclei.Communication.Discovery.V1
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="protocolInformation"/> is <see langword="null" />.
         /// </exception>
-        public InformationEndpoint(IDiscoveryInformation[] protocolInformation)
+        public InformationEndpoint(ChannelInformation[] protocolInformation)
         {
             {
                 Lokad.Enforce.Argument(() => protocolInformation);
@@ -76,19 +65,20 @@ namespace Nuclei.Communication.Discovery.V1
         /// </summary>
         /// <param name="version">The version of the protocol for which the discovery information should be provided.</param>
         /// <returns>The discovery information for the communication protocol with the given version.</returns>
-        public IDiscoveryInformation ConnectionInformationForProtocol(Version version)
+        public VersionedChannelInformation ConnectionInformationForProtocol(Version version)
         {
             if (version == null)
             {
-                return new NullDiscoveryInformation();
+                return null;
             }
 
             if (!m_ProtocolInformation.ContainsKey(version))
             {
-                return new NullDiscoveryInformation();
+                return null;
             }
 
-            return m_ProtocolInformation[version];
+            var info = m_ProtocolInformation[version];
+            return ChannelInformationToTransportConverter.ToVersioned(info);
         }
     }
 }

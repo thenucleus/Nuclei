@@ -180,6 +180,9 @@
   <data name="Exceptions_Messages_IncorrectStreamTransferInformationObjectFound_WithTypes" xml:space="preserve">
     <value>Transferring the information from the stream requires a different set of information than provided. The method required {0} but was provided with {1}.</value>
   </data>
+  <data name="Exceptions_Messages_IncorrectTranslatorVersion" xml:space="preserve">
+    <value>The translator has the wrong version to process the discovery channel on the given URI.</value>
+  </data>
   <data name="Exceptions_Messages_InvalidChannelType" xml:space="preserve">
     <value>The given channel type is not valid.</value>
   </data>
@@ -290,6 +293,9 @@
   </data>
   <data name="Log_Messages_DiscoveryFailedToConnectToEndpoint_WithUriAndError" xml:space="preserve">
     <value>Connection to discovery URI {0} failed with error. Error was: {1}</value>
+  </data>
+  <data name="Log_Messages_DiscoveryFailedToFindMatchingDiscoveryVersion_WithUri" xml:space="preserve">
+    <value>Failed to find a suitable discovery URI for process on {0}.</value>
   </data>
   <data name="Log_Messages_FailedToStartCommunicationSystem_WithError" xml:space="preserve">
     <value>Failed to start the communication system. Error was: {0}</value>

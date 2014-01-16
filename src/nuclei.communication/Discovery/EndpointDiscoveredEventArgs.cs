@@ -22,7 +22,7 @@ namespace Nuclei.Communication.Discovery
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="channelInformation"/> is <see langword="null" />.
         /// </exception>
-        public EndpointDiscoveredEventArgs(IDiscoveryInformation channelInformation)
+        public EndpointDiscoveredEventArgs(ChannelInformation channelInformation)
         {
             {
                 Lokad.Enforce.Argument(() => channelInformation);
@@ -34,7 +34,7 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// Gets the information for the channel on which the new endpoint can be contacted.
         /// </summary>
-        public IDiscoveryInformation ConnectionInformation
+        public ChannelInformation ConnectionInformation
         {
             get;
             private set;

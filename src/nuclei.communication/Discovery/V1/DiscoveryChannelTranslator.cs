@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.ServiceModel;
@@ -15,19 +14,18 @@ using Nuclei.Communication.Properties;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication.Discovery
+namespace Nuclei.Communication.Discovery.V1
 {
     /// <summary>
-    /// The base class for classes that handle discovery of remote endpoints.
+    /// Defines the versioned translator which reads channel information for a version 1.0 discovery channel.
     /// </summary>
-    internal abstract class DiscoverySource : IDiscoverOtherServices
+    internal sealed class DiscoveryChannelTranslator : ITranslateVersionedChannelInformation
     {
         /// <summary>
         /// The collection containing the translators mapped to the version of the discovery channel
         /// they work with.
         /// </summary>
-        private readonly SortedList<Version, ITranslateVersionedChannelInformation> m_TranslatorMap
-            = new SortedList<Version, ITranslateVersionedChannelInformation>();
+        private readonly SortedSet<Version> m_ProtocolVersions;
 
         /// <summary>
         /// The channel type used for discovery purposes.
@@ -40,20 +38,15 @@ namespace Nuclei.Communication.Discovery
         private readonly SystemDiagnostics m_Diagnostics;
 
         /// <summary>
-        /// Indicates if discovery information should be passed on or not.
+        /// Initializes a new instance of the <see cref="DiscoveryChannelTranslator"/> class.
         /// </summary>
-        private volatile bool m_IsDiscoveryAllowed;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DiscoverySource"/> class.
-        /// </summary>
-        /// <param name="translatorsByVersion">
-        ///     An array containing all the supported translators mapped to the version of the discovery layer.
+        /// <param name="protocolVersions">
+        ///     The collection containing all the versions of the protocol layer.
         /// </param>
-        /// <param name="type">The channel type that is used to create WCF channels.</param>
-        /// <param name="diagnostics">The object that provides the discovery information for the application.</param>
+        /// <param name="type">The channel type used for discovery purposes.</param>
+        /// <param name="diagnostics">The object that provides the diagnostics for the application.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="translatorsByVersion"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="protocolVersions"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="type"/> is <see langword="null" />.
@@ -61,119 +54,43 @@ namespace Nuclei.Communication.Discovery
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
         /// </exception>
-        protected DiscoverySource(
-            Tuple<Version, ITranslateVersionedChannelInformation>[] translatorsByVersion, 
-            IDiscoveryChannelType type, 
+        public DiscoveryChannelTranslator(
+            Version[] protocolVersions,
+            IDiscoveryChannelType type,
             SystemDiagnostics diagnostics)
         {
             {
-                Lokad.Enforce.Argument(() => translatorsByVersion);
+                Lokad.Enforce.Argument(() => protocolVersions);
                 Lokad.Enforce.Argument(() => type);
                 Lokad.Enforce.Argument(() => diagnostics);
             }
 
-            foreach (var pair in translatorsByVersion)
-            {
-                m_TranslatorMap.Add(pair.Item1, pair.Item2);
-            }
-
+            m_ProtocolVersions = new SortedSet<Version>(protocolVersions);
             m_Type = type;
             m_Diagnostics = diagnostics;
         }
 
         /// <summary>
-        /// An event raised when a remote endpoint becomes available.
+        /// Returns channel information obtained from a specific versioned discovery channel.
         /// </summary>
-        public event EventHandler<EndpointDiscoveredEventArgs> OnEndpointBecomingAvailable;
-
-        private void RaiseOnEndpointBecomingAvailable(ChannelInformation info)
+        /// <param name="address">The address of the versioned discovery channel.</param>
+        /// <returns>The channel information.</returns>
+        public ChannelInformation FromUri(Uri address)
         {
-            var local = OnEndpointBecomingAvailable;
-            if (local != null)
-            {
-                local(this, new EndpointDiscoveredEventArgs(info));
-            }
-        }
-
-        /// <summary>
-        /// An event raised when a remote endpoint becomes unavailable.
-        /// </summary>
-        public event EventHandler<EndpointLostEventArgs> OnEndpointBecomingUnavailable;
-
-        private void RaiseOnEndpointBecomingUnavailable(EndpointId id)
-        {
-            var local = OnEndpointBecomingUnavailable;
-            if (local != null)
-            {
-                local(this, new EndpointLostEventArgs(id));
-            }
-        }
-
-        /// <summary>
-        /// Starts the endpoint discovery process.
-        /// </summary>
-        public virtual void StartDiscovery()
-        {
-            m_IsDiscoveryAllowed = true;
-        }
-
-        /// <summary>
-        /// Ends the endpoint discovery process.
-        /// </summary>
-        public virtual void EndDiscovery()
-        {
-            m_IsDiscoveryAllowed = false;
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether discovery is allowed or not.
-        /// </summary>
-        protected bool IsDiscoveryAllowed
-        {
-            get
-            {
-                return m_IsDiscoveryAllowed;
-            }
-        }
-
-        protected void LocatedRemoteEndpointOnChannel(EndpointId id, Uri address)
-        {
-            var pair = GetMostSuitableDiscoveryChannel(address);
-            if (pair == null)
-            {
-                m_Diagnostics.Log(
-                    LevelToLog.Info,
-                    CommunicationConstants.DefaultLogTextPrefix,
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            Resources.Log_Messages_DiscoveryFailedToFindMatchingDiscoveryVersion_WithUri,
-                            address));
-
-                return;
-            }
-
-            Debug.Assert(m_TranslatorMap.ContainsKey(pair.Item1));
-            var translator = m_TranslatorMap[pair.Item1];
-            var channelInformation = translator.FromUri(pair.Item2);
-            if (channelInformation == null)
-            {
-                return;
-            }
-
-            RaiseOnEndpointBecomingAvailable(channelInformation);
-        }
-
-        private Tuple<Version, Uri> GetMostSuitableDiscoveryChannel(Uri address)
-        {
-            var factory = CreateFactoryForBootstrapChannel(address);
+            var factory = CreateFactoryForDiscoveryChannel(address);
             var service = factory.CreateChannel();
             var channel = (IChannel)service;
             try
             {
-                var versions = service.DiscoveryVersions();
+                var serviceVersion = service.Version();
+                if (serviceVersion != DiscoveryVersions.V1)
+                {
+                    throw new IncorrectTranslatorVersionException();
+                }
 
+                var versions = service.ProtocolVersions();
                 var intersection = versions
-                    .Intersect(m_TranslatorMap.Keys)
+                    .Intersect(m_ProtocolVersions)
                     .OrderBy(v => v);
                 if (!intersection.Any())
                 {
@@ -181,8 +98,8 @@ namespace Nuclei.Communication.Discovery
                 }
 
                 var highestVersion = intersection.First();
-                var uri = service.UriForVersion(highestVersion);
-                return uri != null ? new Tuple<Version, Uri>(highestVersion, uri) : null;
+                var localInfo = service.ConnectionInformationForProtocol(highestVersion);
+                return ChannelInformationToTransportConverter.FromVersioned(localInfo);
             }
             catch (FaultException e)
             {
@@ -273,19 +190,12 @@ namespace Nuclei.Communication.Discovery
             return null;
         }
 
-        private ChannelFactory<IBootstrapEndpointProxy> CreateFactoryForBootstrapChannel(Uri address)
+        private ChannelFactory<IInformationEndpointProxy> CreateFactoryForDiscoveryChannel(Uri address)
         {
             var endpoint = new EndpointAddress(address);
             var binding = m_Type.GenerateBinding();
 
-            return new ChannelFactory<IBootstrapEndpointProxy>(binding, endpoint);
-        }
-
-        protected void LostRemoteEndpointWithId(EndpointId id)
-        {
-            // Don't need to verify that the channel is actually gone because the only
-            // way we should be geting this message is from the channel itself.
-            RaiseOnEndpointBecomingUnavailable(id);
+            return new ChannelFactory<IInformationEndpointProxy>(binding, endpoint);
         }
     }
 }
