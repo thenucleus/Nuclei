@@ -11,6 +11,7 @@ using System.ServiceModel;
 using System.ServiceModel.Discovery;
 using System.Xml.Linq;
 using Nuclei.Communication.Protocol;
+using Nuclei.Diagnostics;
 
 namespace Nuclei.Communication.Discovery
 {
@@ -20,7 +21,6 @@ namespace Nuclei.Communication.Discovery
     /// </summary>
     internal sealed class UdpBasedDiscoverySource : DiscoverySource, IDisposable
     {
-        // Note that the EndpointId meta data is defined by the BootstrapChannel
         private static EndpointId GetEndpointId(EndpointDiscoveryMetadata metadata)
         {
             XElement endpointElement = metadata.Extensions.Elements("EndpointId").FirstOrDefault();
@@ -31,7 +31,32 @@ namespace Nuclei.Communication.Discovery
 
             return new EndpointId(endpointElement.Value);
         }
-        
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UdpBasedDiscoverySource"/> class.
+        /// </summary>
+        /// <param name="translatorsByVersion">
+        ///     An array containing all the supported translators mapped to the version of the discovery layer.
+        /// </param>
+        /// <param name="template">The channel type that is used to create WCF channels.</param>
+        /// <param name="diagnostics">The object that provides the discovery information for the application.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="translatorsByVersion"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="template"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
+        /// </exception>
+        public UdpBasedDiscoverySource(
+            Tuple<Version, ITranslateVersionedChannelInformation>[] translatorsByVersion, 
+            IDiscoveryChannelTemplate template, 
+            SystemDiagnostics diagnostics) 
+            : base(translatorsByVersion, template, diagnostics)
+        {
+        }
+
         /// <summary>
         /// The service that handles the detection of discovery announcements.
         /// </summary>
@@ -71,6 +96,7 @@ namespace Nuclei.Communication.Discovery
                 var id = GetEndpointId(metadata);
                 var address = metadata.Address.Uri;
 
+                // Note that the EndpointId meta data is defined by the BootstrapChannel
                 // Do we want to thread this?
                 LocatedRemoteEndpointOnChannel(id, address);
             }
