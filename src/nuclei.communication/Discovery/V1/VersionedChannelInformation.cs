@@ -19,9 +19,19 @@ namespace Nuclei.Communication.Discovery.V1
     internal sealed class VersionedChannelInformation
     {
         /// <summary>
-        /// Gets the version of the information object.
+        /// Gets the ID of the endpoint.
         /// </summary>
         [ProtoMember(1, IsRequired = true)]
+        public EndpointId Id
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets the version of the information object.
+        /// </summary>
+        [ProtoMember(2, IsRequired = true)]
         public Version ProtocolVersion
         {
             get;
@@ -31,7 +41,7 @@ namespace Nuclei.Communication.Discovery.V1
         /// <summary>
         /// Gets the address of the channel.
         /// </summary>
-        [ProtoMember(2, IsRequired = true)]
+        [ProtoMember(3, IsRequired = true)]
         public Uri Address
         {
             get;

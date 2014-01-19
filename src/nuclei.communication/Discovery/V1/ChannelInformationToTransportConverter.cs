@@ -21,6 +21,7 @@ namespace Nuclei.Communication.Discovery.V1
         {
             return new VersionedChannelInformation
             {
+                Id = info.Id,
                 ProtocolVersion = info.ProtocolVersion, 
                 Address = info.Address
             };
@@ -33,7 +34,7 @@ namespace Nuclei.Communication.Discovery.V1
         /// <returns>The channel information describing the available protocol levels.</returns>
         public static ChannelInformation FromVersioned(VersionedChannelInformation info)
         {
-            return new ChannelInformation(info.ProtocolVersion, info.Address);
+            return new ChannelInformation(info.Id, info.ProtocolVersion, info.Address);
         }
     }
 }
