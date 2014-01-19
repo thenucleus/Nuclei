@@ -194,7 +194,7 @@ namespace Nuclei.Communication.Protocol
 
         private void HandleEndpointSignIn(object sender, EndpointDiscoveredEventArgs args)
         {
-            var info = args.ConnectionInformation;
+            var info = ToConnectionInformation(args.ConnectionInformation);
             if (m_Layer.Id.Equals(info.Id))
             {
                 return;
@@ -224,12 +224,21 @@ namespace Nuclei.Communication.Protocol
                         CultureInfo.InvariantCulture,
                         "New endpoint ({0}) discovered via the {1} channel. Endpoint URL: {2}.",
                         info.Id,
-                        info.ChannelType,
+                        info.ChannelTemplate,
                         info.MessageAddress));
 
                 StorePotentialEndpoint(info);
                 InitiateHandshakeWith(info);
             }
+        }
+
+        private ChannelConnectionInformation ToConnectionInformation(ChannelInformation channelInformation)
+        {
+            // NOTE: this needs to be fixed because it all depends on the protocol version etc. etc.
+            return new ChannelConnectionInformation(
+                channelInformation.Id,
+                ChannelTemplate.TcpIP,
+                channelInformation.Address);
         }
 
         private bool IsAllowedToCommunicateWithConnection(ChannelConnectionInformation info)
