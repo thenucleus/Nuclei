@@ -10,12 +10,14 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
+using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication
 {
     /// <summary>
     /// Defines a initialization method for starting the communication layer when the application
@@ -44,7 +46,9 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
         /// </exception>
-        public CommunicationLayerStarter(IComponentContext context, SystemDiagnostics diagnostics)
+        public CommunicationLayerStarter(
+            IComponentContext context, 
+            SystemDiagnostics diagnostics)
         {
             {
                 Lokad.Enforce.Argument(() => context);
@@ -101,6 +105,10 @@ namespace Nuclei.Communication.Protocol
                         // Start the communication layer so that we can actuallly use it.
                         var layer = m_Context.Resolve<ICommunicationLayer>();
                         layer.SignIn();
+
+                        // Discovery
+                        var discovery = m_Context.Resolve<IBootstrapChannel>();
+                        discovery.OpenChannel();
                     }
                     catch (Exception e)
                     {
