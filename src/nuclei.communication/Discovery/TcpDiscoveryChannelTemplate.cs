@@ -22,31 +22,6 @@ namespace Nuclei.Communication.Discovery
     internal sealed class TcpDiscoveryChannelTemplate : TcpChannelTemplate, IDiscoveryChannelTemplate
     {
         /// <summary>
-        /// Generates a new address for the entry channel endpoint.
-        /// </summary>
-        /// <returns>
-        /// The newly generated address for the entry channel endpoint.
-        /// </returns>
-        private static string GenerateNewDiscoveryEntryAddress()
-        {
-            return CommunicationConstants.DefaultDiscoveryEntryAddressTemplate;
-        }
-
-        /// <summary>
-        /// Generates a new address for the versioned channel endpoint.
-        /// </summary>
-        /// <returns>
-        /// The newly generated address for the versioned channel endpoint.
-        /// </returns>
-        private static string GenerateNewDiscoveryVersionedAddress(Version version)
-        {
-            return string.Format(
-                CultureInfo.InvariantCulture,
-                CommunicationConstants.DefaultDiscoveryVersionedAddressTemplate,
-                version.ToString(4));
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="TcpChannelTemplate"/> class.
         /// </summary>
         /// <param name="tcpConfiguration">The configuration for the WCF tcp channel.</param>
@@ -110,6 +85,19 @@ namespace Nuclei.Communication.Discovery
         }
 
         /// <summary>
+        /// Generates a new address for the entry channel endpoint.
+        /// </summary>
+        /// <returns>
+        /// The newly generated address for the entry channel endpoint.
+        /// </returns>
+        private string GenerateNewDiscoveryEntryAddress()
+        {
+            return Configuration.HasValueFor(CommunicationConfigurationKeys.TcpDiscoveryPath) ?
+                Configuration.Value<string>(CommunicationConfigurationKeys.TcpDiscoveryPath) :
+                CommunicationConstants.DefaultDiscoveryEntryAddressTemplate;
+        }
+
+        /// <summary>
         /// Attaches a new endpoint to the given host.
         /// </summary>
         /// <param name="host">The host to which the endpoint should be attached.</param>
@@ -121,6 +109,21 @@ namespace Nuclei.Communication.Discovery
             var endpoint = host.AddServiceEndpoint(implementedContract, GenerateBinding(), GenerateNewDiscoveryVersionedAddress(version));
             endpoint.Behaviors.Add(new ProtoEndpointBehavior());
             return endpoint;
+        }
+
+        /// <summary>
+        /// Generates a new address for the versioned channel endpoint.
+        /// </summary>
+        /// <returns>
+        /// The newly generated address for the versioned channel endpoint.
+        /// </returns>
+        private string GenerateNewDiscoveryVersionedAddress(Version version)
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                @"{0}/V{1}",
+                GenerateNewDiscoveryEntryAddress(),
+                version.ToString(4));
         }
     }
 }

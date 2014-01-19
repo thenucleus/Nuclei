@@ -154,8 +154,8 @@ namespace Nuclei.Communication.Protocol
 
         private string GenerateNewMessageAddress()
         {
-            return m_Configuration.HasValueFor(CommunicationConfigurationKeys.NamedPipeSubaddress) ?
-                m_Configuration.Value<string>(CommunicationConfigurationKeys.NamedPipeSubaddress) :
+            return m_Configuration.HasValueFor(CommunicationConfigurationKeys.NamedPipeProtocolPath) ?
+                m_Configuration.Value<string>(CommunicationConfigurationKeys.NamedPipeProtocolPath) :
                 string.Format(CultureInfo.InvariantCulture, CommunicationConstants.DefaultNamedPipeAddressTemplate, CurrentProcessId());
         }
 

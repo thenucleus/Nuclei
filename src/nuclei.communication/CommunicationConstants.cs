@@ -75,11 +75,6 @@ namespace Nuclei.Communication
         public const string DefaultDiscoveryEntryAddressTemplate = "Discovery";
 
         /// <summary>
-        /// The default string template for the versioned discovery address.
-        /// </summary>
-        public const string DefaultDiscoveryVersionedAddressTemplate = DefaultDiscoveryEntryAddressTemplate + @"/{0}";
-
-        /// <summary>
         /// The default maximum number of connections that a TCP/IP binding can handle.
         /// </summary>
         public const int DefaultMaximumNumberOfConnectionsForTcpIp = 25;

@@ -36,7 +36,15 @@ namespace Nuclei.Communication
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
             Justification = "ConfigurationKey is immutable")]
-        public static readonly ConfigurationKey TcpSubaddress 
+        public static readonly ConfigurationKey TcpDiscoveryPath
+            = new ConfigurationKey("TcpDiscoveryPath", typeof(string));
+
+        /// <summary>
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the TCP sub-address (string).
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
+            Justification = "ConfigurationKey is immutable")]
+        public static readonly ConfigurationKey TcpProtocolPath 
             = new ConfigurationKey("TcpSubAddress", typeof(string));
 
         /// <summary>
@@ -44,7 +52,7 @@ namespace Nuclei.Communication
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
             Justification = "ConfigurationKey is immutable")]
-        public static readonly ConfigurationKey NamedPipeSubaddress 
+        public static readonly ConfigurationKey NamedPipeProtocolPath 
             = new ConfigurationKey("NamedPipeSubAddress", typeof(string));
 
         /// <summary>
@@ -120,8 +128,8 @@ namespace Nuclei.Communication
                 {
                     TcpPort,
                     TcpBaseAddress,
-                    TcpSubaddress,
-                    NamedPipeSubaddress,
+                    TcpProtocolPath,
+                    NamedPipeProtocolPath,
                     BindingMaximumNumberOfConnections,
                     BindingReceiveTimeoutInMilliseconds,
                     BindingMaxBufferSizeForMessagesInBytes,

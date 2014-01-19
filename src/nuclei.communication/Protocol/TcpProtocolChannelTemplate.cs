@@ -135,8 +135,8 @@ namespace Nuclei.Communication.Protocol
         /// </returns>
         private string GenerateNewMessageAddress()
         {
-            return Configuration.HasValueFor(CommunicationConfigurationKeys.TcpSubaddress) ?
-                Configuration.Value<string>(CommunicationConfigurationKeys.TcpSubaddress) :
+            return Configuration.HasValueFor(CommunicationConfigurationKeys.TcpProtocolPath) ?
+                Configuration.Value<string>(CommunicationConfigurationKeys.TcpProtocolPath) :
                 string.Format(CultureInfo.InvariantCulture, CommunicationConstants.DefaultTcpIpAddressTemplate, CurrentProcessId());
         }
 
