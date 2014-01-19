@@ -104,6 +104,9 @@
     <Compile Include="..\..\build\temp\AssemblyInfo.VersionNumber.cs">
       <Link>Properties\AssemblyInfo.VersionNumber.cs</Link>
     </Compile>
+    <Compile Include="CommunicationModule.Discovery.cs" />
+    <Compile Include="CommunicationModule.Interaction.cs" />
+    <Compile Include="CommunicationModule.Protocol.cs" />
     <Compile Include="Discovery\BootstrapChannel.cs" />
     <Compile Include="Discovery\BootstrapEndpoint.cs" />
     <Compile Include="Discovery\DiscoveryVersions.cs" />
@@ -124,6 +127,8 @@
     <Compile Include="Discovery\TcpDiscoveryChannelTemplate.cs" />
     <Compile Include="Discovery\V1\ChannelInformationToTransportConverter.cs" />
     <Compile Include="Discovery\V1\VersionedChannelInformation.cs" />
+    <Compile Include="IDiscoveryVersionMetaData.cs" />
+    <Compile Include="IStoreInformationForActiveChannels.cs" />
     <Compile Include="Protocol\BuildSendingEndpoint.cs" />
     <Compile Include="Protocol\ChannelClosedEventArgs.cs" />
     <Compile Include="Protocol\ChannelConnectionInformation.cs" />
@@ -267,6 +272,7 @@
     <Compile Include="Interaction\RemoteCommandHub.cs" />
     <Compile Include="Interaction\RemoteEndpointProxyHub.cs" />
     <Compile Include="Interaction\RemoteNotificationHub.cs" />
+    <Compile Include="Protocol\ProtocolVersions.cs" />
     <Compile Include="Protocol\RestoringDataTransferingEndpoint.cs" />
     <Compile Include="Protocol\RestoringMessageSendingEndpoint.cs" />
     <Compile Include="Protocol\SendingEndpoint.cs" />
