@@ -129,12 +129,6 @@ version: {0}
   <data name="CommandLine_Options_CommunicationSubject_Key" xml:space="preserve">
     <value>c=|communicationSubject=</value>
   </data>
-  <data name="CommandLine_Param_ChannelType_Description" xml:space="preserve">
-    <value>The {TYPE} of the channel over which the connection should be made.</value>
-  </data>
-  <data name="CommandLine_Param_ChannelType_Key" xml:space="preserve">
-    <value>t:|channeltype:</value>
-  </data>
   <data name="CommandLine_Param_ChannelUri_Description" xml:space="preserve">
     <value>The {URI} of the connection that can be used to connect to the host application.</value>
   </data>

@@ -95,7 +95,6 @@ namespace Nuclei.Examples.Complete
         private static void RunApplication(string[] args, ApplicationContext context)
         {
             string hostIdText = null;
-            string channelTypeText = null;
             string channelUriText = null;
             var communicationSubjects = new List<CommunicationSubject>();
 
@@ -105,11 +104,6 @@ namespace Nuclei.Examples.Complete
                         Resources.CommandLine_Param_Host_Key, 
                         Resources.CommandLine_Param_Host_Description, 
                         v => hostIdText = v
-                    },
-                    {
-                        Resources.CommandLine_Param_ChannelType_Key,
-                        Resources.CommandLine_Param_ChannelType_Description,
-                        v => channelTypeText = v
                     },
                     {
                         Resources.CommandLine_Param_ChannelUri_Key,
@@ -131,14 +125,12 @@ namespace Nuclei.Examples.Complete
                 return;
             }
 
-            var allowChannelDiscovery = (hostIdText == null) || (channelTypeText == null) || (channelUriText == null);
+            var allowChannelDiscovery = (hostIdText == null) || (channelUriText == null);
             s_Container = DependencyInjection.CreateContainer(context, communicationSubjects, allowChannelDiscovery);
 
             if (!allowChannelDiscovery)
             {
                 var hostId = EndpointIdExtensions.Deserialize(hostIdText);
-                var channelType = (ChannelTemplate)Enum.Parse(typeof(ChannelTemplate), channelTypeText);
-
                 var diagnostics = s_Container.Resolve<SystemDiagnostics>();
                 diagnostics.Log(
                     LevelToLog.Debug,
@@ -146,11 +138,10 @@ namespace Nuclei.Examples.Complete
                         CultureInfo.InvariantCulture,
                         Resources.Log_Messages_ConnectingToHost_WithConnectionParameters,
                         hostId,
-                        channelType,
                         channelUriText));
 
                 var resolver = s_Container.Resolve<ManualEndpointConnection>();
-                resolver(hostId, channelType, channelUriText);
+                resolver(hostId, channelUriText);
             }
 
             var window = s_Container.Resolve<IInteractiveWindow>();

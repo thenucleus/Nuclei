@@ -90,24 +90,6 @@ namespace Nuclei.Examples.Complete.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The {TYPE} of the channel over which the connection should be made..
-        /// </summary>
-        internal static string CommandLine_Param_ChannelType_Description {
-            get {
-                return ResourceManager.GetString("CommandLine_Param_ChannelType_Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to t:|channeltype:.
-        /// </summary>
-        internal static string CommandLine_Param_ChannelType_Key {
-            get {
-                return ResourceManager.GetString("CommandLine_Param_ChannelType_Key", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The {URI} of the connection that can be used to connect to the host application..
         /// </summary>
         internal static string CommandLine_Param_ChannelUri_Description {
