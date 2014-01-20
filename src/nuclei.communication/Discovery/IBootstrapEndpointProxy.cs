@@ -13,7 +13,7 @@ namespace Nuclei.Communication.Discovery
     /// Defines the interface for a proxy that bootstraps the discovery process. This interface
     /// is only used by the WCF <see cref="ChannelFactory{TChannel}"/>.
     /// </summary>
-    interface IBootstrapEndpointProxy : IBootstrapEndpoint, IOutputChannel
+    internal interface IBootstrapEndpointProxy : IBootstrapEndpoint, IOutputChannel
     {
     }
 }

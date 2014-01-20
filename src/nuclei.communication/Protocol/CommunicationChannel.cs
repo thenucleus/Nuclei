@@ -386,7 +386,9 @@ namespace Nuclei.Communication.Protocol
 
             var endpoint = new EndpointAddress(connectionInfo.MessageAddress);
 
-            Debug.Assert(m_Template.ChannelTemplate == connectionInfo.ChannelTemplate, "Trying to connect to a channel with a different binding type.");
+            Debug.Assert(
+                m_Template.ChannelTemplate == connectionInfo.ChannelTemplate, 
+                "Trying to connect to a channel with a different binding type.");
             var binding = m_Template.GenerateMessageBinding();
 
             var factory = new ChannelFactory<IMessageReceivingEndpointProxy>(binding, endpoint);
@@ -409,7 +411,9 @@ namespace Nuclei.Communication.Protocol
 
             var endpoint = new EndpointAddress(connectionInfo.DataAddress);
 
-            Debug.Assert(m_Template.ChannelTemplate == connectionInfo.ChannelTemplate, "Trying to connect to a channel with a different binding type.");
+            Debug.Assert(
+                m_Template.ChannelTemplate == connectionInfo.ChannelTemplate, 
+                "Trying to connect to a channel with a different binding type.");
             var binding = m_Template.GenerateDataBinding();
 
             var factory = new ChannelFactory<IDataReceivingEndpointProxy>(binding, endpoint);

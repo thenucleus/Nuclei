@@ -22,7 +22,7 @@ namespace Nuclei.Communication.Discovery
     internal sealed class TcpDiscoveryChannelTemplate : TcpChannelTemplate, IDiscoveryChannelTemplate
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="TcpChannelTemplate"/> class.
+        /// Initializes a new instance of the <see cref="TcpDiscoveryChannelTemplate"/> class.
         /// </summary>
         /// <param name="tcpConfiguration">The configuration for the WCF tcp channel.</param>
         /// <exception cref="ArgumentNullException">
@@ -114,6 +114,7 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// Generates a new address for the versioned channel endpoint.
         /// </summary>
+        /// <param name="version">The version for which the address needs to be determined.</param>
         /// <returns>
         /// The newly generated address for the versioned channel endpoint.
         /// </returns>

@@ -33,7 +33,7 @@ namespace Nuclei.Communication.Protocol
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if <paramref name="channelTemplate"/> is <see cref="ChannelTemplate.None"/>.
+        ///     Thrown if <paramref name="channelTemplate"/> is <see cref="Protocol.ChannelTemplate.None"/>.
         /// </exception>
         public ChannelOpenedEventArgs(EndpointId endpoint, ChannelTemplate channelTemplate)
         {

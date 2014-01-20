@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright company="Nuclei">
+//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Net.Security;
 using System.ServiceModel;
 
@@ -7,7 +13,7 @@ namespace Nuclei.Communication.Discovery
     /// <summary>
     /// Defines the base interface for version specific discovery WCF endpoints.
     /// </summary>
-    interface IVersionedDiscoveryEndpoint : IDiscoveryEndpoint
+    internal interface IVersionedDiscoveryEndpoint : IDiscoveryEndpoint
     {
         /// <summary>
         /// Returns the version of the discovery protocol.

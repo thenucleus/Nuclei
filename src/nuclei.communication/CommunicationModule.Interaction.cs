@@ -12,6 +12,9 @@ using Nuclei.Diagnostics;
 
 namespace Nuclei.Communication
 {
+    /// <content>
+    /// Defines the component registrations for the interaction namespace.
+    /// </content>
     public sealed partial class CommunicationModule
     {
         private static void RegisterCommandHub(ContainerBuilder builder)

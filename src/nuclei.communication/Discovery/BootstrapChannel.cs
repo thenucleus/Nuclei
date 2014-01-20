@@ -35,7 +35,7 @@ namespace Nuclei.Communication.Discovery
         private readonly IDiscoveryChannelTemplate m_Template;
 
         /// <summary>
-        /// the function used to build discovery endpoints.
+        /// The function used to build discovery endpoints.
         /// </summary>
         private readonly Func<Version, Tuple<Type, IVersionedDiscoveryEndpoint>> m_VersionedEndpointBuilder;
 

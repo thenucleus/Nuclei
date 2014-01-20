@@ -18,6 +18,9 @@ using Nuclei.Diagnostics.Logging;
 
 namespace Nuclei.Communication
 {
+    /// <content>
+    /// Defines the component registrations for the discovery namespace.
+    /// </content>
     public sealed partial class CommunicationModule
     {
         private static void RegisterEndpointDiscoverySources(ContainerBuilder builder, bool allowChannelDiscovery)

@@ -23,6 +23,9 @@ using Nuclei.Diagnostics;
 
 namespace Nuclei.Communication
 {
+    /// <content>
+    /// Defines the component registrations for the protocol namespace.
+    /// </content>
     public sealed partial class CommunicationModule
     {
         private static void RegisterCommunicationLayer(ContainerBuilder builder, IEnumerable<ChannelTemplate> allowedChannelTemplates)

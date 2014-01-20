@@ -17,7 +17,7 @@ namespace Nuclei.Communication.Discovery
     /// </summary>
     [ServiceContract]
     [ProtoContract]
-    interface IBootstrapEndpoint : IDiscoveryEndpoint
+    internal interface IBootstrapEndpoint : IDiscoveryEndpoint
     {
         /// <summary>
         /// Returns the supported versions of the discovery layer.

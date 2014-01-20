@@ -152,7 +152,7 @@ namespace Nuclei.Communication.Discovery
                 return;
             }
 
-            Debug.Assert(m_TranslatorMap.ContainsKey(pair.Item1));
+            Debug.Assert(m_TranslatorMap.ContainsKey(pair.Item1), "There should be a translator for the given version.");
             var translator = m_TranslatorMap[pair.Item1];
             var channelInformation = translator.FromUri(pair.Item2);
             if (channelInformation == null)
