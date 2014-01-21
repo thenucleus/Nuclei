@@ -23,6 +23,11 @@ namespace Nuclei.Communication
     /// </content>
     public sealed partial class CommunicationModule
     {
+        /// <summary>
+        /// Stores the URI of the bootstrap channel for the current endpoint.
+        /// </summary>
+        private static Uri s_BootstrapChannelUri;
+
         private static void RegisterEndpointDiscoverySources(ContainerBuilder builder, bool allowChannelDiscovery)
         {
             if (allowChannelDiscovery)
@@ -138,11 +143,20 @@ namespace Nuclei.Communication
                         EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
                         channelTemplate,
                         c.Resolve<Func<Version, Tuple<Type, IVersionedDiscoveryEndpoint>>>(),
-                        () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IDiscoveryChannelTemplate), channelTemplate)));
+                        () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IDiscoveryChannelTemplate), channelTemplate)),
+                        uri => s_BootstrapChannelUri = uri);
                 })
                 .As<IBootstrapChannel>()
                 .As<IDisposable>()
                 .SingleInstance();
+        }
+
+        private static void RegisterLocalConnectionInformation(ContainerBuilder builder)
+        {
+            builder.Register(c => new LocalConnectionInformation(
+                    EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    s_BootstrapChannelUri))
+                .As<IProvideLocalConnectionInformation>();
         }
 
         private static void RegisterVersionedDiscoveryEndpointSelector(ContainerBuilder builder)

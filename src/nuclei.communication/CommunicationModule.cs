@@ -103,6 +103,7 @@ namespace Nuclei.Communication
             RegisterDiscoveryChannelTemplate(builder);
             RegisterDiscoveryEndpoints(builder);
             RegisterChannelInformationTranslators(builder);
+            RegisterLocalConnectionInformation(builder);
         }
 
         private void RegisterProtocolLayer(ContainerBuilder builder)

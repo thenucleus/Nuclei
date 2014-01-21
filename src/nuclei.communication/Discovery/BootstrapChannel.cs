@@ -45,6 +45,11 @@ namespace Nuclei.Communication.Discovery
         private readonly Func<IHoldServiceConnections> m_HostBuilder;
 
         /// <summary>
+        /// The function that is used to store the connection information for the local endpoint.
+        /// </summary>
+        private readonly Action<Uri> m_EntryChannelStorage;
+
+        /// <summary>
         /// The host for the discovery bootstrap channel.
         /// </summary>
         private IHoldServiceConnections m_BootstrapHost;
@@ -58,6 +63,9 @@ namespace Nuclei.Communication.Discovery
         /// <param name="hostBuilder">
         /// The function that returns an object which handles the <see cref="ServiceHost"/> for the channel used to communicate with.
         /// </param>
+        /// <param name="entryChannelStorage">
+        /// The function that is used to store the connection information for the local endpoint.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="id"/> is <see langword="null" />.
         /// </exception>
@@ -70,23 +78,29 @@ namespace Nuclei.Communication.Discovery
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="hostBuilder"/> is <see langword="null" />.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="entryChannelStorage"/> is <see langword="null" />.
+        /// </exception>
         public BootstrapChannel(
             EndpointId id, 
             IDiscoveryChannelTemplate template,
             Func<Version, Tuple<Type, IVersionedDiscoveryEndpoint>> versionedEndpointBuilder, 
-            Func<IHoldServiceConnections> hostBuilder)
+            Func<IHoldServiceConnections> hostBuilder,
+            Action<Uri> entryChannelStorage)
         {
             {
                 Lokad.Enforce.Argument(() => id);
                 Lokad.Enforce.Argument(() => template);
                 Lokad.Enforce.Argument(() => versionedEndpointBuilder);
                 Lokad.Enforce.Argument(() => hostBuilder);
+                Lokad.Enforce.Argument(() => entryChannelStorage);
             }
 
             m_Id = id;
             m_Template = template;
             m_VersionedEndpointBuilder = versionedEndpointBuilder;
             m_HostBuilder = hostBuilder;
+            m_EntryChannelStorage = entryChannelStorage;
         }
 
         /// <summary>
@@ -115,7 +129,8 @@ namespace Nuclei.Communication.Discovery
 
             Func<ServiceHost, ServiceEndpoint> bootstrapEndpointBuilder = 
                 h => m_Template.AttachDiscoveryEntryEndpoint(h, typeof(IBootstrapEndpoint), m_Id);
-            m_BootstrapHost.OpenChannel(bootstrapEndpoint, bootstrapEndpointBuilder);
+            var bootstrapUri = m_BootstrapHost.OpenChannel(bootstrapEndpoint, bootstrapEndpointBuilder);
+            m_EntryChannelStorage(bootstrapUri);
         }
 
         /// <summary>
