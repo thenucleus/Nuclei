@@ -33,6 +33,17 @@ namespace Nuclei.Communication.Discovery
         }
 
         /// <summary>
+        /// The service that handles the detection of discovery announcements.
+        /// </summary>
+        private ServiceHost m_Host;
+
+        /// <summary>
+        /// The object used to locate the services that are already online when the
+        /// current application comes online.
+        /// </summary>
+        private DiscoveryClient m_DiscoveryClient;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UdpBasedDiscoverySource"/> class.
         /// </summary>
         /// <param name="translatorsByVersion">
@@ -50,23 +61,12 @@ namespace Nuclei.Communication.Discovery
         ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
         /// </exception>
         public UdpBasedDiscoverySource(
-            Tuple<Version, ITranslateVersionedChannelInformation>[] translatorsByVersion, 
-            IDiscoveryChannelTemplate template, 
-            SystemDiagnostics diagnostics) 
+            Tuple<Version, ITranslateVersionedChannelInformation>[] translatorsByVersion,
+            IDiscoveryChannelTemplate template,
+            SystemDiagnostics diagnostics)
             : base(translatorsByVersion, template, diagnostics)
         {
         }
-
-        /// <summary>
-        /// The service that handles the detection of discovery announcements.
-        /// </summary>
-        private ServiceHost m_Host;
-
-        /// <summary>
-        /// The object used to locate the services that are already online when the
-        /// current application comes online.
-        /// </summary>
-        private DiscoveryClient m_DiscoveryClient;
 
         /// <summary>
         /// Starts the endpoint discovery process.
