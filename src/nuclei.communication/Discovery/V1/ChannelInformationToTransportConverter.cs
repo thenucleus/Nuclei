@@ -4,6 +4,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace Nuclei.Communication.Discovery.V1
 {
     /// <summary>
@@ -17,8 +19,15 @@ namespace Nuclei.Communication.Discovery.V1
         /// </summary>
         /// <param name="info">The channel information describing the available protocol channels.</param>
         /// <returns>A object describing the versioned channel information.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="info"/> is <see langword="null" />.
+        /// </exception>
         public static VersionedChannelInformation ToVersioned(ChannelInformation info)
         {
+            {
+                Lokad.Enforce.Argument(() => info);
+            }
+
             return new VersionedChannelInformation
             {
                 Id = info.Id,
@@ -32,8 +41,15 @@ namespace Nuclei.Communication.Discovery.V1
         /// </summary>
         /// <param name="info">The object describing the versioned channel information.</param>
         /// <returns>The channel information describing the available protocol levels.</returns>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="info"/> is <see langword="null" />.
+        /// </exception>
         public static ChannelInformation FromVersioned(VersionedChannelInformation info)
         {
+            {
+                Lokad.Enforce.Argument(() => info);
+            }
+
             return new ChannelInformation(info.Id, info.ProtocolVersion, info.Address);
         }
     }

@@ -52,7 +52,10 @@
     <Compile Include="..\..\build\temp\AssemblyInfo.VersionNumber.cs">
       <Link>Properties\AssemblyInfo.VersionNumber.cs</Link>
     </Compile>
-    <Compile Include="Discovery\ManualDiscoverySourceTest.cs" />
+    <Compile Include="Discovery\BootstrapChannelTest.cs" />
+    <Compile Include="Discovery\BootstrapEndpointTest.cs" />
+    <Compile Include="Discovery\V1\ChannelInformationToTransportConverterTest.cs" />
+    <Compile Include="Discovery\V1\InformationEndpointTest.cs" />
     <Compile Include="EndpointEventArgsTest.cs" />
     <Compile Include="EndpointIdExtensionsTest.cs" />
     <Compile Include="EndpointIdTest.cs" />
