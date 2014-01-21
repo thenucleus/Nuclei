@@ -116,6 +116,7 @@
     <Compile Include="Discovery\IncorrectTranslatorVersionException.cs" />
     <Compile Include="Discovery\ITranslateVersionedChannelInformation.cs" />
     <Compile Include="Discovery\IVersionedDiscoveryEndpoint.cs" />
+    <Compile Include="Discovery\LocalConnectionInformation.cs" />
     <Compile Include="Discovery\V1\DiscoveryChannelTranslator.cs" />
     <Compile Include="Discovery\V1\IInformationEndpointProxy.cs" />
     <Compile Include="Discovery\V1\InformationEndpoint.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Discovery\V1\ChannelInformationToTransportConverter.cs" />
     <Compile Include="Discovery\V1\VersionedChannelInformation.cs" />
     <Compile Include="IDiscoveryVersionMetaData.cs" />
+    <Compile Include="IProvideLocalConnectionInformation.cs" />
     <Compile Include="IStoreInformationForActiveChannels.cs" />
     <Compile Include="Protocol\BuildSendingEndpoint.cs" />
     <Compile Include="Protocol\ChannelClosedEventArgs.cs" />
