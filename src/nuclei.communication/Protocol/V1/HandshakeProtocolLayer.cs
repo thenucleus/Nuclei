@@ -312,7 +312,7 @@ namespace Nuclei.Communication.Protocol.V1
             var msg = t.Result;
             if (msg is FailureMessage)
             {
-                RemoveEndpoint(msg.OriginatingEndpoint);
+                RemoveEndpoint(msg.Sender);
                 return;
             }
 
@@ -320,12 +320,12 @@ namespace Nuclei.Communication.Protocol.V1
             {
                 lock (m_Lock)
                 {
-                    Debug.Assert(m_EndpointMessages.ContainsKey(msg.OriginatingEndpoint), "The endpoint tick list is not stored.");
-                    m_EndpointMessages[msg.OriginatingEndpoint].HaveReceivedConnectResponse = true;
+                    Debug.Assert(m_EndpointMessages.ContainsKey(msg.Sender), "The endpoint tick list is not stored.");
+                    m_EndpointMessages[msg.Sender].HaveReceivedConnectResponse = true;
 
-                    if (m_EndpointMessages[msg.OriginatingEndpoint].IsComplete())
+                    if (m_EndpointMessages[msg.Sender].IsComplete())
                     {
-                        ApproveConnection(msg.OriginatingEndpoint);
+                        ApproveConnection(msg.Sender);
                     }
                 }
             }
