@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Protocol
     /// <summary>
     /// Defines the methods needed to communicate with one or more remote applications.
     /// </summary>
-    internal sealed class CommunicationLayer : ISendDataViaChannels, IDisposable
+    internal sealed class CommunicationLayer : IDisposable
     {
         /// <summary>
         /// The object used to lock on.
@@ -459,9 +459,7 @@ namespace Nuclei.Communication.Protocol
             {
                 Lokad.Enforce.Argument(() => endpoint);
                 Lokad.Enforce.With<EndpointNotContactableException>(
-                    m_Endpoints.CanCommunicateWithEndpoint(endpoint) 
-                        || m_Endpoints.IsWaitingForApproval(endpoint)
-                        || m_Endpoints.HasBeenContacted(endpoint),
+                    m_Endpoints.CanCommunicateWithEndpoint(endpoint),
                     Resources.Exceptions_Messages_EndpointNotContactable_WithEndpoint,
                     endpoint);
 
@@ -521,9 +519,7 @@ namespace Nuclei.Communication.Protocol
             {
                 Lokad.Enforce.Argument(() => endpoint);
                 Lokad.Enforce.With<EndpointNotContactableException>(
-                    m_Endpoints.CanCommunicateWithEndpoint(endpoint) 
-                        || m_Endpoints.IsWaitingForApproval(endpoint)
-                        || m_Endpoints.HasBeenContacted(endpoint),
+                    m_Endpoints.CanCommunicateWithEndpoint(endpoint),
                     Resources.Exceptions_Messages_EndpointNotContactable_WithEndpoint,
                     endpoint);
 
