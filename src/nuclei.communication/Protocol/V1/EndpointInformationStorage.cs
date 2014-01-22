@@ -15,7 +15,7 @@ namespace Nuclei.Communication.Protocol.V1
     /// <summary>
     /// Stores information about all known endpoints.
     /// </summary>
-    internal sealed class EndpointInformationStorage : IStoreInformationAboutEndpoints
+    internal sealed class EndpointInformationStorage : IStoreEndpointApprovalState
     {
         /// <summary>
         /// The object used to lock on.
