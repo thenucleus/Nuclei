@@ -24,7 +24,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var methodInvocation = ProxyExtensions.FromMethodInfo(MethodInfo.GetCurrentMethod(), new object[0]);
             var msg = new CommandInvokedMessage(id, methodInvocation);
 
-            Assert.AreSame(id, msg.OriginatingEndpoint);
+            Assert.AreSame(id, msg.Sender);
             Assert.AreSame(methodInvocation, msg.Invocation);
         }
 
@@ -36,7 +36,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var msg = new CommandInvokedMessage(id, methodInvocation);
             var otherMsg = AssertExtensions.RoundTripSerialize(msg);
 
-            Assert.AreEqual(id, otherMsg.OriginatingEndpoint);
+            Assert.AreEqual(id, otherMsg.Sender);
             Assert.AreEqual(msg.Id, otherMsg.Id);
             Assert.AreEqual(MessageId.None, otherMsg.InResponseTo);
             Assert.That(

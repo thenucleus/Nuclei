@@ -61,7 +61,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                 return;
             }
 
-            m_NotificationSender.RegisterForNotification(msg.OriginatingEndpoint, msg.Notification);
+            m_NotificationSender.RegisterForNotification(msg.Sender, msg.Notification);
         }
     }
 }

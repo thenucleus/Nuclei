@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var msg = new SuccessMessage(id, response);
             var otherMsg = AssertExtensions.RoundTripSerialize(msg);
 
-            Assert.AreEqual(id, otherMsg.OriginatingEndpoint);
+            Assert.AreEqual(id, otherMsg.Sender);
             Assert.AreEqual(response, otherMsg.InResponseTo);
         }
     }

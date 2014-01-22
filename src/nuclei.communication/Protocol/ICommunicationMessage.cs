@@ -32,7 +32,7 @@ namespace Nuclei.Communication.Protocol
         /// Gets a value indicating the ID number of the endpoint that 
         /// send the current message.
         /// </summary>
-        EndpointId OriginatingEndpoint
+        EndpointId Sender
         {
             get;
         }

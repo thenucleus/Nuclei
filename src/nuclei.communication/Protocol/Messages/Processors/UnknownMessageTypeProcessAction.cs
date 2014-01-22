@@ -97,7 +97,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             try
             {
                 var returnMessage = new UnknownMessageTypeMessage(m_Current, message.Id);
-                m_SendMessage(message.OriginatingEndpoint, returnMessage);
+                m_SendMessage(message.Sender, returnMessage);
             }
             catch (Exception e)
             {
@@ -110,7 +110,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                             CultureInfo.InvariantCulture,
                             "Error while sending a message indicating that received message was of an unknown type. Exception is: {0}",
                             e));
-                    m_SendMessage(message.OriginatingEndpoint, new FailureMessage(m_Current, message.Id));
+                    m_SendMessage(message.Sender, new FailureMessage(m_Current, message.Id));
                 }
                 catch (Exception errorSendingException)
                 {

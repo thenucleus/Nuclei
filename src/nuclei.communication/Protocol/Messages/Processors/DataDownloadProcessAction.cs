@@ -123,7 +123,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                     CultureInfo.InvariantCulture,
                     "Transferring file: {0}",
                     filePath));
-            var task = m_Layer.UploadData(msg.OriginatingEndpoint, filePath, tokenSource.Token, m_Scheduler);
+            var task = m_Layer.UploadData(msg.Sender, filePath, tokenSource.Token, m_Scheduler);
 
             ICommunicationMessage returnMsg;
             try
@@ -155,7 +155,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         {
             try
             {
-                m_Layer.SendMessageTo(msg.OriginatingEndpoint, returnMsg);
+                m_Layer.SendMessageTo(msg.Sender, returnMsg);
             }
             catch (Exception e)
             {
@@ -176,7 +176,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                         CultureInfo.InvariantCulture,
                         "Error while sending endpoint information. Exception is: {0}",
                         e));
-                m_Layer.SendMessageTo(msg.OriginatingEndpoint, new FailureMessage(m_Layer.Id, msg.Id));
+                m_Layer.SendMessageTo(msg.Sender, new FailureMessage(m_Layer.Id, msg.Id));
             }
             catch (Exception errorSendingException)
             {

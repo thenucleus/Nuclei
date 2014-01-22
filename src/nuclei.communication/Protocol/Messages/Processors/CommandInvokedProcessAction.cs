@@ -234,10 +234,10 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                             "Command invokation was requested for {0}.{1} from {2} but this command was not registered.",
                             invocation.Type.FullName,
                             invocation.MemberName,
-                            msg.OriginatingEndpoint));
+                            msg.Sender));
 
                     var failureResult = new FailureMessage(m_Current, msg.Id);
-                    m_SendMessage(msg.OriginatingEndpoint, failureResult);
+                    m_SendMessage(msg.Sender, failureResult);
                     return;
                 }
 
@@ -286,7 +286,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                     returnMsg = (ICommunicationMessage)taskBuilder.HandleTaskReturnValue(m_Current, msg, (dynamic)result);
                 }
 
-                m_SendMessage(msg.OriginatingEndpoint, returnMsg);
+                m_SendMessage(msg.Sender, returnMsg);
             }
             catch (Exception e)
             {
@@ -309,7 +309,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                         msg.Invocation.Type.FullName,
                         msg.Invocation.MemberName,
                         e));
-                m_SendMessage(msg.OriginatingEndpoint, new FailureMessage(m_Current, msg.Id));
+                m_SendMessage(msg.Sender, new FailureMessage(m_Current, msg.Id));
             }
             catch (Exception errorSendingException)
             {

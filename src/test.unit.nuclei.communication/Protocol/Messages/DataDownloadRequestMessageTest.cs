@@ -22,7 +22,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var token = new UploadToken();
             var msg = new DataDownloadRequestMessage(id, token);
 
-            Assert.AreSame(id, msg.OriginatingEndpoint);
+            Assert.AreSame(id, msg.Sender);
             Assert.AreSame(token, msg.Token);
         }
 
@@ -34,7 +34,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var msg = new DataDownloadRequestMessage(id, token);
             var otherMsg = AssertExtensions.RoundTripSerialize(msg);
 
-            Assert.AreEqual(id, otherMsg.OriginatingEndpoint);
+            Assert.AreEqual(id, otherMsg.Sender);
             Assert.AreEqual(msg.Id, otherMsg.Id);
             Assert.AreEqual(MessageId.None, otherMsg.InResponseTo);
             Assert.AreEqual(token, otherMsg.Token);

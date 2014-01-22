@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var notification = new SerializedEvent(new SerializedType("a", "a"), "b");
             var msg = new RegisterForNotificationMessage(id, notification);
 
-            Assert.AreSame(id, msg.OriginatingEndpoint);
+            Assert.AreSame(id, msg.Sender);
             Assert.AreSame(notification, msg.Notification);
         }
 
@@ -35,7 +35,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var msg = new RegisterForNotificationMessage(id, notification);
             var otherMsg = AssertExtensions.RoundTripSerialize(msg);
 
-            Assert.AreEqual(id, otherMsg.OriginatingEndpoint);
+            Assert.AreEqual(id, otherMsg.Sender);
             Assert.AreEqual(notification, otherMsg.Notification);
         }
     }

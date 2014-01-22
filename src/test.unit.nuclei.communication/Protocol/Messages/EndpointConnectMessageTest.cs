@@ -43,7 +43,7 @@ namespace Nuclei.Communication.Protocol.Messages
                 new List<ISerializedType>());
             var msg = new EndpointConnectMessage(id, channelType, messageAddress, dataAddress, description);
 
-            Assert.AreSame(id, msg.OriginatingEndpoint);
+            Assert.AreSame(id, msg.Sender);
             Assert.AreSame(messageAddress, msg.MessageAddress);
             Assert.AreEqual(channelType, msg.ChannelTemplate);
             Assert.AreSame(description, msg.Information);
@@ -73,7 +73,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var msg = new EndpointConnectMessage(id, channelType, messageAddress, dataAddress, description);
             var otherMsg = AssertExtensions.RoundTripSerialize(msg);
 
-            Assert.AreEqual(id, otherMsg.OriginatingEndpoint);
+            Assert.AreEqual(id, otherMsg.Sender);
             Assert.AreEqual(msg.Id, otherMsg.Id);
             Assert.AreEqual(MessageId.None, otherMsg.InResponseTo);
             Assert.AreEqual(messageAddress, otherMsg.MessageAddress);

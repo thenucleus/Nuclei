@@ -46,7 +46,7 @@ namespace Nuclei.Communication.Protocol.Messages
 
             Id = new MessageId();
             InResponseTo = inResponseTo;
-            OriginatingEndpoint = origin;
+            Sender = origin;
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace Nuclei.Communication.Protocol.Messages
         /// Gets a value indicating the ID number of the endpoint that 
         /// send the current message.
         /// </summary>
-        public EndpointId OriginatingEndpoint
+        public EndpointId Sender
         {
             get;
             private set;

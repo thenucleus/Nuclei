@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var msg = new EndpointDisconnectMessage(id, reason);
             var otherMsg = AssertExtensions.RoundTripSerialize(msg);
 
-            Assert.AreEqual(id, otherMsg.OriginatingEndpoint);
+            Assert.AreEqual(id, otherMsg.Sender);
             Assert.AreEqual(reason, otherMsg.ClosingReason);
             Assert.AreEqual(msg.Id, otherMsg.Id);
             Assert.AreEqual(MessageId.None, otherMsg.InResponseTo);

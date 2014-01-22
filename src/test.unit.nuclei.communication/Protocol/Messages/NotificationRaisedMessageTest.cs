@@ -40,7 +40,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var args = new MockEventArgs(1);
             var msg = new NotificationRaisedMessage(id, notification, args);
 
-            Assert.AreSame(id, msg.OriginatingEndpoint);
+            Assert.AreSame(id, msg.Sender);
             Assert.AreSame(notification, msg.Notification);
             Assert.AreSame(args, msg.Arguments);
         }
@@ -54,7 +54,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var msg = new NotificationRaisedMessage(id, notification, args);
             var otherMsg = AssertExtensions.RoundTripSerialize(msg);
 
-            Assert.AreEqual(id, otherMsg.OriginatingEndpoint);
+            Assert.AreEqual(id, otherMsg.Sender);
             Assert.AreEqual(notification, otherMsg.Notification);
             Assert.AreEqual(args.GetType(), otherMsg.Arguments.GetType());
             Assert.AreEqual(args.Value, ((MockEventArgs)otherMsg.Arguments).Value);

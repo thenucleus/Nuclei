@@ -268,7 +268,7 @@ namespace Nuclei.Communication.Protocol
                 // that the rest of the system can be notified.
                 if (IsMessageIndicatingEndpointDisconnect(message))
                 {
-                    TerminateWaitingResponsesForEndpoint(message.OriginatingEndpoint);
+                    TerminateWaitingResponsesForEndpoint(message.Sender);
                     return;
                 }
 
@@ -282,7 +282,7 @@ namespace Nuclei.Communication.Protocol
 
         private bool ShouldProcessMessage(ICommunicationMessage message)
         {
-            return m_Endpoints.CanCommunicateWithEndpoint(message.OriginatingEndpoint)
+            return m_Endpoints.CanCommunicateWithEndpoint(message.Sender)
                 || (message.IsHandshake() || IsMessageIndicatingEndpointDisconnect(message));
         }
 

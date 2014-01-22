@@ -108,7 +108,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             {
                 m_HandShakeHandler.ContinueHandshakeWith(
                     new ChannelConnectionInformation(
-                        msg.OriginatingEndpoint, 
+                        msg.Sender, 
                         msg.ChannelTemplate, 
                         new Uri(msg.MessageAddress), 
                         new Uri(msg.DataAddress)),

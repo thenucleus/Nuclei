@@ -96,7 +96,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                 using (var interval = m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Raise notification"))
                 {
                     var type = ProxyExtensions.ToType(invocation.Type);
-                    var notificationSet = m_AvailableProxies.NotificationsFor(msg.OriginatingEndpoint, type);
+                    var notificationSet = m_AvailableProxies.NotificationsFor(msg.Sender, type);
                     Debug.Assert(notificationSet != null, "There should be a proxy for this notification set.");
 
                     var proxyObj = notificationSet as NotificationSetProxy;

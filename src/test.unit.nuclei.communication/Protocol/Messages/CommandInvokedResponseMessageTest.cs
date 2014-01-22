@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var result = 10;
             var msg = new CommandInvokedResponseMessage(id, response, result);
 
-            Assert.AreSame(id, msg.OriginatingEndpoint);
+            Assert.AreSame(id, msg.Sender);
             Assert.AreSame(response, msg.InResponseTo);
             Assert.AreEqual(result, (int)msg.Result);
         }
@@ -37,7 +37,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var msg = new CommandInvokedResponseMessage(id, response, result);
             var otherMsg = AssertExtensions.RoundTripSerialize(msg);
 
-            Assert.AreEqual(id, otherMsg.OriginatingEndpoint);
+            Assert.AreEqual(id, otherMsg.Sender);
             Assert.AreEqual(response, otherMsg.InResponseTo);
             Assert.AreEqual(msg.Id, otherMsg.Id);
             Assert.AreEqual(result, (int)otherMsg.Result);
