@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication.Protocol.V1
 {
     /// <summary>
     /// An <see cref="EventArgs"/> object that carries a data message.
