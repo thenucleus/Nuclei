@@ -7,7 +7,7 @@
 using System.Net.Security;
 using System.ServiceModel;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication.Protocol.V1
 {
     /// <summary>
     /// Defines the methods for receiving messages on the receiving side of the communication channel.

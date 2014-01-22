@@ -16,7 +16,7 @@ using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication.Protocol.V1
 {
     /// <summary>
     /// Defines the protocol for connection handshake behavior.

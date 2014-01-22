@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication.Protocol.V1
 {
     /// <summary>
     /// Defines the interface for sending messages through a WCF channel.

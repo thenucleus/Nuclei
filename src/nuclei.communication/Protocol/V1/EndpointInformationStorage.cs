@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication.Protocol.V1
 {
     /// <summary>
     /// Stores information about all known endpoints.

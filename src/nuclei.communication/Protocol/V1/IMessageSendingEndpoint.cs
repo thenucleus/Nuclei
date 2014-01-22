@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication.Protocol.V1
 {
     /// <summary>
     /// Defines the interface for the self-resurrecting WCF channel.

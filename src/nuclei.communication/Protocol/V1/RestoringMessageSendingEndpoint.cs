@@ -12,7 +12,7 @@ using Nuclei.Communication.Properties;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication.Protocol.V1
 {
     /// <summary>
     /// Defines the sending end of a WCF message channel which can resurrect the channel if it faults.

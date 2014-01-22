@@ -9,7 +9,7 @@ namespace Nuclei.Communication.Protocol
     /// <summary>
     /// Defines the interface for objects that handle handshake protocols.
     /// </summary>
-    internal interface IHandleHandshakes
+    internal interface IHandleHandshakes.V1
     {
         /// <summary>
         /// Continues the handshake process between the current endpoint and the specified endpoint.
