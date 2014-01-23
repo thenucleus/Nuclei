@@ -10,8 +10,6 @@ using System.Globalization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
-using System.ServiceModel.Discovery;
-using System.Xml.Linq;
 using Nuclei.Configuration;
 
 namespace Nuclei.Communication.Protocol

@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Protocol
     /// </summary>
     /// <remarks>
     /// The design of this class assumes that there is only one of these active for a given
-    /// channel address (e.g. net.tcp://my_machine:7000/apollo) at any given time.
+    /// channel template (e.g. TCP) at any given time.
     /// This is because the current class has a receiving endpoint of which there can only 
     /// be one. If there are multiple communication channels sharing the receiving endpoint then
     /// we don't know which channel should get the messages.

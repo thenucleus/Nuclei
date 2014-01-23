@@ -12,7 +12,6 @@ namespace Nuclei.Communication.Protocol
     /// <summary>
     /// Stores the information required to contact a given WCF endpoint on a specific machine.
     /// </summary>
-    [Serializable]
     internal sealed class ChannelConnectionInformation
     {
         /// <summary>
