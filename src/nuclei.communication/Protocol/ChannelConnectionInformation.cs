@@ -24,6 +24,7 @@ namespace Nuclei.Communication.Protocol
         /// Initializes a new instance of the <see cref="ChannelConnectionInformation"/> class.
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint for which this connection information is valid.</param>
+        /// <param name="protocolVersion">The version of the protocol that is being used to communicate with the given endpoint.</param>
         /// <param name="channelTemplate">
         ///     The type of the <see cref="IChannelTemplate"/> which indicates which kind of channel this connection
         ///     information describes.
@@ -32,14 +33,17 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="protocolVersion"/> is <see langword="null" />.
+        /// </exception>
         /// <exception cref="InvalidChannelTypeException">
         ///     Thrown if <paramref name="channelTemplate"/> is <see cref="Protocol.ChannelTemplate.None"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="messageAddress"/> is <see langword="null" />.
         /// </exception>
-        public ChannelConnectionInformation(EndpointId endpoint, ChannelTemplate channelTemplate, Uri messageAddress)
-            : this(endpoint, channelTemplate, messageAddress, s_InvalidUri)
+        public ChannelConnectionInformation(EndpointId endpoint, Version protocolVersion, ChannelTemplate channelTemplate, Uri messageAddress)
+            : this(endpoint, protocolVersion, channelTemplate, messageAddress, s_InvalidUri)
         {
         }
 
@@ -47,6 +51,7 @@ namespace Nuclei.Communication.Protocol
         /// Initializes a new instance of the <see cref="ChannelConnectionInformation"/> class.
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint for which this connection information is valid.</param>
+        /// <param name="protocolVersion">The version of the protocol that is being used to communicate with the given endpoint.</param>
         /// <param name="channelTemplate">
         ///     The type of the <see cref="IChannelTemplate"/> which indicates which kind of channel this connection
         ///     information describes.
@@ -55,6 +60,9 @@ namespace Nuclei.Communication.Protocol
         /// <param name="dataAddress">The full URI for the data receiving channel.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="protocolVersion"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="InvalidChannelTypeException">
         ///     Thrown if <paramref name="channelTemplate"/> is <see cref="Protocol.ChannelTemplate.None"/>.
@@ -65,10 +73,16 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="dataAddress"/> is <see langword="null" />.
         /// </exception>
-        public ChannelConnectionInformation(EndpointId endpoint, ChannelTemplate channelTemplate, Uri messageAddress, Uri dataAddress)
+        public ChannelConnectionInformation(
+            EndpointId endpoint, 
+            Version protocolVersion,
+            ChannelTemplate channelTemplate, 
+            Uri messageAddress, 
+            Uri dataAddress)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
+                Lokad.Enforce.Argument(() => protocolVersion);
                 Lokad.Enforce.With<InvalidChannelTypeException>(
                     channelTemplate != ChannelTemplate.None, 
                     Resources.Exceptions_Messages_AChannelTypeMustBeDefined);
@@ -78,6 +92,7 @@ namespace Nuclei.Communication.Protocol
             }
 
             Id = endpoint;
+            ProtocolVersion = protocolVersion;
             ChannelTemplate = channelTemplate;
             MessageAddress = messageAddress;
             DataAddress = dataAddress;
@@ -99,6 +114,16 @@ namespace Nuclei.Communication.Protocol
         /// is valid.
         /// </summary>
         public EndpointId Id
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Gets the version of the protocol that is being used to communicate with the
+        /// given endpoint.
+        /// </summary>
+        public Version ProtocolVersion
         {
             get;
             private set;

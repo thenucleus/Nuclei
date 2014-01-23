@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,9 +17,9 @@ namespace Nuclei.Communication.Protocol
     internal interface ICommunicationChannel
     {
         /// <summary>
-        /// Gets the connection information that describes the local endpoint.
+        /// Gets the connection information for each of the available channels.
         /// </summary>
-        ChannelConnectionInformation LocalConnectionPoint
+        IEnumerable<ChannelConnectionInformation> LocalConnectionPoints
         {
             get;
         }

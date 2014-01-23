@@ -8,12 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
 using System.Threading.Tasks;
 using Nuclei.Communication.Protocol.Messages;
-using Nuclei.Diagnostics;
 
 namespace Nuclei.Communication.Protocol
 {
@@ -31,6 +31,52 @@ namespace Nuclei.Communication.Protocol
     internal sealed class CommunicationChannel : ICommunicationChannel, IDisposable
     {
         /// <summary>
+        /// The object used to lock on.
+        /// </summary>
+        private readonly object m_Lock = new object();
+
+        /// <summary>
+        /// The collection that stores the hosts based on the version of the 
+        /// protocol layer they provide.
+        /// </summary>
+        private readonly Dictionary<Version, IHoldServiceConnections> m_MessageHostsByVersion
+            = new Dictionary<Version, IHoldServiceConnections>();
+
+        /// <summary>
+        /// The collection that stores the hosts based on the version of the 
+        /// protocol layer they provide.
+        /// </summary>
+        private readonly Dictionary<Version, IHoldServiceConnections> m_DataHostsByVersion
+            = new Dictionary<Version, IHoldServiceConnections>();
+
+        /// <summary>
+        /// The collection that stores the message pipes based on the version of the 
+        /// protocol layer that they handle.
+        /// </summary>
+        private readonly Dictionary<Version, Tuple<IMessagePipe, EventHandler<MessageEventArgs>>> m_MessagePipesByVersion
+            = new Dictionary<Version, Tuple<IMessagePipe, EventHandler<MessageEventArgs>>>();
+
+        /// <summary>
+        /// The collection that stores the data pipes based on the version of the 
+        /// protocol layer that they handle.
+        /// </summary>
+        private readonly Dictionary<Version, Tuple<IDataPipe, EventHandler<DataTransferEventArgs>>> m_DataPipesByVersion
+            = new Dictionary<Version, Tuple<IDataPipe, EventHandler<DataTransferEventArgs>>>();
+
+        /// <summary>
+        /// The collection that contains the sending endpoints based on the version of the protocol layer that
+        /// they handle.
+        /// </summary>
+        private readonly Dictionary<Version, ISendingEndpoint> m_SendingEndpoints
+            = new Dictionary<Version, ISendingEndpoint>();
+
+        /// <summary>
+        /// The collection that contains the connection information for all the local channels.
+        /// </summary>
+        private readonly List<ChannelConnectionInformation> m_LocalConnectionPoints
+            = new List<ChannelConnectionInformation>();
+
+        /// <summary>
         /// The ID number of the current endpoint.
         /// </summary>
         private readonly EndpointId m_Id;
@@ -47,24 +93,31 @@ namespace Nuclei.Communication.Protocol
         private readonly IProtocolChannelTemplate m_Template;
 
         /// <summary>
-        /// The host information for the message sending host.
+        /// The function that creates the host information for the discovery host.
         /// </summary>
-        private readonly IHoldServiceConnections m_MessageHost;
-
-        /// <summary>
-        /// The host information for the data transferring host.
-        /// </summary>
-        private readonly IHoldServiceConnections m_DataHost;
+        private readonly Func<IHoldServiceConnections> m_HostBuilder;
 
         /// <summary>
         /// The function used to build message pipes.
         /// </summary>
-        private readonly Func<IMessagePipe> m_MessageMessageReceiverBuilder;
+        private readonly Func<Version, Tuple<Type, IMessagePipe>> m_MessageMessageReceiverBuilder;
 
         /// <summary>
         /// The function used to build data pipes.
         /// </summary>
-        private readonly Func<IDataPipe> m_DataReceiverBuilder;
+        private readonly Func<Version, Tuple<Type, IDataPipe>> m_DataReceiverBuilder;
+
+        /// <summary>
+        /// The function that is used to create a specific version of the the message sending endpoint 
+        /// to connect to a given URL.
+        /// </summary>
+        private readonly Func<Version, Uri, IMessageSendingEndpoint> m_VersionedMessageSenderBuilder;
+
+        /// <summary>
+        /// The function that is used to create a specific version of the the data transfering endpoint 
+        /// to connect to a given URL.
+        /// </summary>
+        private readonly Func<Version, Uri, IDataTransferingEndpoint> m_VersionedDataSenderBuilder;
 
         /// <summary>
         /// The function that generates sending endpoints.
@@ -72,52 +125,23 @@ namespace Nuclei.Communication.Protocol
         private readonly BuildSendingEndpoint m_SenderBuilder;
 
         /// <summary>
-        /// The object that provides the diagnostics methods for the system.
-        /// </summary>
-        private readonly SystemDiagnostics m_Diagnostics;
-
-        /// <summary>
-        /// The object used to send messages over the network.
-        /// </summary>
-        private ISendingEndpoint m_Sender;
-
-        /// <summary>
-        /// The receiving endpoint used to receive messages.
-        /// </summary>
-        private IMessagePipe m_MessageReceiver;
-
-        /// <summary>
-        /// The receiving endpoint used to receive data.
-        /// </summary>
-        private IDataPipe m_DataReceiver;
-
-        /// <summary>
-        /// The message handler that is used to receive messages from the
-        /// receiving endpoint.
-        /// </summary>
-        private EventHandler<MessageEventArgs> m_MessageReceivingHandler;
-
-        /// <summary>
-        /// The event handler that is used to receive data from the receiving endpoint.
-        /// </summary>
-        private EventHandler<DataTransferEventArgs> m_DataReceivingHandler;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="CommunicationChannel"/> class.
         /// </summary>
         /// <param name="id">The ID number of the current endpoint.</param>
         /// <param name="connectionMap">The object that stores the connection information for the endpoints.</param>
         /// <param name="channelTemplate">The type of channel, e.g. TCP.</param>
-        /// <param name="messageHost">
-        /// The object that handles the <see cref="ServiceHost"/> for the channel used to send messages on.
-        /// </param>
-        /// <param name="dataHost">
-        /// The object that handles the <see cref="ServiceHost"/> for the channel used to send data on.
+        /// <param name="hostBuilder">
+        /// The function that returns an object which handles the <see cref="ServiceHost"/> for the channel used to communicate with.
         /// </param>
         /// <param name="messageReceiverBuilder">The function that builds message receiving endpoints.</param>
         /// <param name="dataReceiverBuilder">The function that builds data receiving endpoints.</param>
         /// <param name="senderBuilder">The function that builds sending endpoints.</param>
-        /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
+        /// <param name="versionedMessageSenderBuilder">
+        /// The function that creates a specific version of the message sender used to connect to a given URL.
+        /// </param>
+        /// <param name="versionedDataSenderBuilder">
+        /// The function that creates a specific version of the data sender used to connect to a given URL.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="id"/> is <see langword="null" />.
         /// </exception>
@@ -128,10 +152,7 @@ namespace Nuclei.Communication.Protocol
         ///     Thrown if <paramref name="channelTemplate"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="messageHost"/> is <see langword="null" />.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="dataHost"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="hostBuilder"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="messageReceiverBuilder"/> is <see langword="null" />.
@@ -143,50 +164,59 @@ namespace Nuclei.Communication.Protocol
         ///     Thrown if <paramref name="senderBuilder"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="versionedMessageSenderBuilder"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="versionedDataSenderBuilder"/> is <see langword="null" />.
         /// </exception>
         public CommunicationChannel(
             EndpointId id, 
             IStoreInformationAboutEndpoints connectionMap,
-            IProtocolChannelTemplate channelTemplate, 
-            IHoldServiceConnections messageHost,
-            IHoldServiceConnections dataHost,
-            Func<IMessagePipe> messageReceiverBuilder,
-            Func<IDataPipe> dataReceiverBuilder,
+            IProtocolChannelTemplate channelTemplate,
+            Func<IHoldServiceConnections> hostBuilder,
+            Func<Version, Tuple<Type, IMessagePipe>> messageReceiverBuilder,
+            Func<Version, Tuple<Type, IDataPipe>> dataReceiverBuilder,
             BuildSendingEndpoint senderBuilder,
-            SystemDiagnostics systemDiagnostics)
+            Func<Version, Uri, IMessageSendingEndpoint> versionedMessageSenderBuilder,
+            Func<Version, Uri, IDataTransferingEndpoint> versionedDataSenderBuilder)
         {
             {
                 Lokad.Enforce.Argument(() => id);
                 Lokad.Enforce.Argument(() => connectionMap);
                 Lokad.Enforce.Argument(() => channelTemplate);
-                Lokad.Enforce.Argument(() => messageHost);
-                Lokad.Enforce.Argument(() => dataHost);
+                Lokad.Enforce.Argument(() => hostBuilder);
                 Lokad.Enforce.Argument(() => messageReceiverBuilder);
                 Lokad.Enforce.Argument(() => dataReceiverBuilder);
                 Lokad.Enforce.Argument(() => senderBuilder);
-                Lokad.Enforce.Argument(() => systemDiagnostics);
+                Lokad.Enforce.Argument(() => versionedMessageSenderBuilder);
+                Lokad.Enforce.Argument(() => versionedDataSenderBuilder);
             }
 
             m_Id = id;
             m_ChannelConnectionMap = connectionMap;
             m_Template = channelTemplate;
-            m_MessageHost = messageHost;
-            m_DataHost = dataHost;
+            m_HostBuilder = hostBuilder;
 
             m_MessageMessageReceiverBuilder = messageReceiverBuilder;
             m_DataReceiverBuilder = dataReceiverBuilder;
+            
             m_SenderBuilder = senderBuilder;
-            m_Diagnostics = systemDiagnostics;
+            m_VersionedMessageSenderBuilder = versionedMessageSenderBuilder;
+            m_VersionedDataSenderBuilder = versionedDataSenderBuilder;
         }
 
         /// <summary>
-        /// Gets the connection information that describes the local endpoint.
+        /// Gets the connection information for each of the available channels.
         /// </summary>
-        public ChannelConnectionInformation LocalConnectionPoint
+        public IEnumerable<ChannelConnectionInformation> LocalConnectionPoints
         {
-            get;
-            private set;
+            get
+            {
+                lock(m_Lock)
+                {
+                    return m_LocalConnectionPoints;
+                }
+            }
         }
 
         /// <summary>
@@ -194,36 +224,66 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         public void OpenChannel()
         {
-            if ((m_MessageReceivingHandler != null) || (m_DataReceivingHandler != null))
+            lock(m_Lock)
             {
-                CloseChannel();
-            }
+                foreach (var version in ProtocolVersions.SupportedVersions())
+                {
+                    if (m_MessagePipesByVersion.ContainsKey(version) || m_DataPipesByVersion.ContainsKey(version))
+                    {
+                        CloseChannel(version);
+                    }
 
-            m_DataReceivingHandler = (s, e) => RaiseOnDataReception(e.Data);
-            m_DataReceiver = m_DataReceiverBuilder();
-            m_DataReceiver.OnNewData += m_DataReceivingHandler;
+                    var dataUri = CreateAndStoreDataChannelForProtocolVersion(version);
+                    var messageUri = CreateAndStoreMessageChannelForProtocolVersion(version);
+
+                    var localConnection = new ChannelConnectionInformation(m_Id, version, m_Template.ChannelTemplate, messageUri, dataUri);
+                    m_LocalConnectionPoints.Add(localConnection);
+                }
+            }
+        }
+
+        private Uri CreateAndStoreDataChannelForProtocolVersion(Version version)
+        {
+            var dataPair = m_DataReceiverBuilder(version);
+            var dataType = dataPair.Item1;
+            var dataPipe = dataPair.Item2;
+
+            EventHandler<DataTransferEventArgs> dataHandler = (s, e) => RaiseOnDataReception(e.Data);
+            dataPipe.OnNewData += dataHandler;
+            m_DataPipesByVersion.Add(version, new Tuple<IDataPipe, EventHandler<DataTransferEventArgs>>(dataPipe, dataHandler));
 
             Func<ServiceHost, ServiceEndpoint> dataEndpointBuilder =
-                host =>
+                h =>
                 {
-                    var dataEndpoint = m_Template.AttachDataEndpoint(host, typeof(IDataReceivingEndpoint));
+                    var dataEndpoint = m_Template.AttachDataEndpoint(h, dataType);
                     return dataEndpoint;
                 };
-            var dataUri = m_DataHost.OpenChannel(m_DataReceiver, dataEndpointBuilder);
+            var host = m_HostBuilder();
+            m_DataHostsByVersion.Add(version, host);
 
-            m_MessageReceivingHandler = (s, e) => RaiseOnMessageReception(e.Message);
-            m_MessageReceiver = m_MessageMessageReceiverBuilder();
-            m_MessageReceiver.OnNewMessage += m_MessageReceivingHandler;
+            return host.OpenChannel(dataPipe, dataEndpointBuilder);
+        }
 
-            Func<ServiceHost, ServiceEndpoint> messageEndpointBuilder = 
-                host =>
+        private Uri CreateAndStoreMessageChannelForProtocolVersion(Version version)
+        {
+            var messagePair = m_MessageMessageReceiverBuilder(version);
+            var messageType = messagePair.Item1;
+            var messagePipe = messagePair.Item2;
+
+            EventHandler<MessageEventArgs> messageHandler = (s, e) => RaiseOnMessageReception(e.Message);
+            messagePipe.OnNewMessage += messageHandler;
+            m_MessagePipesByVersion.Add(version, new Tuple<IMessagePipe, EventHandler<MessageEventArgs>>(messagePipe, messageHandler));
+
+            Func<ServiceHost, ServiceEndpoint> messageEndpointBuilder =
+                h =>
                 {
-                    var messageEndpoint = m_Template.AttachMessageEndpoint(host, typeof(IMessageReceivingEndpoint), m_Id);
+                    var messageEndpoint = m_Template.AttachMessageEndpoint(h, messageType, m_Id);
                     return messageEndpoint;
                 };
-            var messageUri = m_MessageHost.OpenChannel(m_MessageReceiver, messageEndpointBuilder);
-            
-            LocalConnectionPoint = new ChannelConnectionInformation(m_Id, m_Template.ChannelTemplate, messageUri, dataUri);
+            var host = m_HostBuilder();
+            m_MessageHostsByVersion.Add(version, host);
+
+            return host.OpenChannel(messagePipe, messageEndpointBuilder);
         }
 
         /// <summary>
@@ -231,56 +291,81 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         public void CloseChannel()
         {
-            if (m_Sender != null)
+            lock(m_Lock)
             {
-                // First notify the recipients that we're closing the channel.
-                var knownEndpoints = new List<EndpointId>(m_Sender.KnownEndpoints());
-                foreach (var key in knownEndpoints)
+                var versions = m_MessageHostsByVersion.Keys.ToList();
+                foreach (var version in versions)
                 {
-                    var msg = new EndpointDisconnectMessage(m_Id);
-                    try
-                    {
-                        m_Sender.Send(key, msg);
-                    }
-                    catch (FailedToSendMessageException)
-                    {
-                        // For some reason the message didn't arrive. Honestly we don't
-                        // care, we're about to quit, not our problem anymore.
-                    }
-                }
-
-                // Then close the channel. We'll do this in a different
-                // loop to give the channels time to process the messages.
-                foreach (var key in knownEndpoints)
-                {
-                    m_Sender.CloseChannelTo(key);
+                    CloseChannel(version);
                 }
             }
 
-            CleanupHost();
-
-            if (m_MessageReceiver != null)
-            {
-                m_MessageReceiver.OnNewMessage -= m_MessageReceivingHandler;
-                m_MessageReceivingHandler = null;
-                m_MessageReceiver = null;
-            }
-
-            if (m_DataReceiver != null)
-            {
-                m_DataReceiver.OnNewData -= m_DataReceivingHandler;
-                m_DataReceivingHandler = null;
-                m_DataReceiver = null;
-            }
-
-            LocalConnectionPoint = null;
             RaiseOnClosed();
         }
 
-        private void CleanupHost()
+        private void CloseChannel(Version version)
         {
-            m_MessageHost.CloseConnection();
-            m_DataHost.CloseConnection();
+            lock(m_Lock)
+            {
+                if (m_SendingEndpoints.ContainsKey(version))
+                {
+                    var sender = m_SendingEndpoints[version];
+                    m_SendingEndpoints.Remove(version);
+
+                    // First notify the recipients that we're closing the channel.
+                    var knownEndpoints = new List<EndpointId>(sender.KnownEndpoints());
+                    foreach (var key in knownEndpoints)
+                    {
+                        var msg = new EndpointDisconnectMessage(m_Id);
+                        try
+                        {
+                            sender.Send(key, msg);
+                        }
+                        catch (FailedToSendMessageException)
+                        {
+                            // For some reason the message didn't arrive. Honestly we don't
+                            // care, we're about to quit, not our problem anymore.
+                        }
+                    }
+
+                    // Then close the channel. We'll do this in a different
+                    // loop to give the channels time to process the messages.
+                    foreach (var key in knownEndpoints)
+                    {
+                        sender.CloseChannelTo(key);
+                    }
+                }
+
+                if (m_MessageHostsByVersion.ContainsKey(version))
+                {
+                    var host = m_MessageHostsByVersion[version];
+                    m_MessageHostsByVersion.Remove(version);
+                    host.CloseConnection();
+                }
+
+                if (m_MessagePipesByVersion.ContainsKey(version))
+                {
+                    var pair = m_MessagePipesByVersion[version];
+                    m_MessagePipesByVersion.Remove(version);
+                    pair.Item1.OnNewMessage -= pair.Item2;
+                }
+
+                if (m_DataHostsByVersion.ContainsKey(version))
+                {
+                    var host = m_DataHostsByVersion[version];
+                    m_DataHostsByVersion.Remove(version);
+                    host.CloseConnection();
+                }
+
+                if (m_DataPipesByVersion.ContainsKey(version))
+                {
+                    var pair = m_DataPipesByVersion[version];
+                    m_DataPipesByVersion.Remove(version);
+                    pair.Item1.OnNewData -= pair.Item2;
+                }
+
+                m_LocalConnectionPoints.RemoveAll(c => c.ProtocolVersion.Equals(version));
+            }
         }
 
         /// <summary>
@@ -289,11 +374,22 @@ namespace Nuclei.Communication.Protocol
         /// <param name="endpoint">The ID number of the endpoint that has disconnected.</param>
         public void EndpointDisconnected(EndpointId endpoint)
         {
-            if (m_ChannelConnectionMap.CanCommunicateWithEndpoint(endpoint))
+            lock(m_Lock)
             {
-                if (m_Sender != null)
+                if (m_ChannelConnectionMap.CanCommunicateWithEndpoint(endpoint))
                 {
-                    m_Sender.CloseChannelTo(endpoint);
+                    ChannelConnectionInformation channelInfo;
+                    if (!m_ChannelConnectionMap.TryGetConnectionFor(endpoint, out channelInfo))
+                    {
+                        return;
+                    }
+
+                    var version = channelInfo.ProtocolVersion;
+                    if (m_SendingEndpoints.ContainsKey(version))
+                    {
+                        var sender = m_SendingEndpoints[version];
+                        sender.CloseChannelTo(endpoint);
+                    }
                 }
             }
         }
@@ -314,6 +410,9 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentException">
         ///     Thrown if <paramref name="filePath"/> is <see langword="null" />.
         /// </exception>
+        /// <exception cref="EndpointNotContactableException">
+        ///     Thrown if no contact information is available for <paramref name="receivingEndpoint"/>.
+        /// </exception>
         public Task TransferData(
             EndpointId receivingEndpoint,
             string filePath,
@@ -325,23 +424,46 @@ namespace Nuclei.Communication.Protocol
                 Lokad.Enforce.Argument(() => filePath, Lokad.Rules.StringIs.NotEmpty);
             }
 
-            if (m_Sender == null)
-            {
-                m_Sender = m_SenderBuilder(m_Id, BuildMessageSendingProxy, BuildDataTransferProxy);
-            }
-
+            var sender = SenderForEndpoint(receivingEndpoint);
             return Task.Factory.StartNew(
                 () =>
                 {
                     // Don't catch any exception because the task will store them if we don't catch them.
                     using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
-                        m_Sender.Send(receivingEndpoint, file);
+                        sender.Send(receivingEndpoint, file);
                     }
                 },
                 token,
                 TaskCreationOptions.LongRunning,
                 scheduler ?? TaskScheduler.Default);
+        }
+
+        private ISendingEndpoint SenderForEndpoint(EndpointId receivingEndpoint)
+        {
+            ISendingEndpoint sender = null;
+            if (m_ChannelConnectionMap.CanCommunicateWithEndpoint(receivingEndpoint))
+            {
+                ChannelConnectionInformation channelInfo;
+                if (!m_ChannelConnectionMap.TryGetConnectionFor(receivingEndpoint, out channelInfo))
+                {
+                    throw new EndpointNotContactableException();
+                }
+
+                var protocolVersion = channelInfo.ProtocolVersion;
+                lock(m_Lock)
+                {
+                    if (!m_SendingEndpoints.ContainsKey(protocolVersion))
+                    {
+                        var newSender = m_SenderBuilder(m_Id, protocolVersion, BuildMessageSendingProxy, BuildDataTransferProxy);
+                        m_SendingEndpoints.Add(protocolVersion, newSender);
+                    }
+
+                    sender = m_SendingEndpoints[protocolVersion];
+                }
+            }
+
+            return sender;
         }
 
         /// <summary>
@@ -362,46 +484,35 @@ namespace Nuclei.Communication.Protocol
                 Lokad.Enforce.Argument(() => message);
             }
 
-            if (m_Sender == null)
-            {
-                m_Sender = m_SenderBuilder(m_Id, BuildMessageSendingProxy, BuildDataTransferProxy);
-            }
-
-            m_Sender.Send(endpoint, message);
+            var sender = SenderForEndpoint(endpoint);
+            sender.Send(endpoint, message);
         }
 
         private IMessageSendingEndpoint BuildMessageSendingProxy(EndpointId id)
         {
-            Debug.Assert(
-                m_ChannelConnectionMap.CanCommunicateWithEndpoint(id) 
-                    || m_ChannelConnectionMap.IsWaitingForApproval(id)
-                    || m_ChannelConnectionMap.HasBeenContacted(id), 
-                "Trying to send a message to an unknown endpoint.");
+            Debug.Assert(m_ChannelConnectionMap.CanCommunicateWithEndpoint(id), "Trying to send a message to an unknown endpoint.");
             ChannelConnectionInformation connectionInfo;
-            var success = m_ChannelConnectionMap.TryGetConnectionFor(id, out connectionInfo);
-            if (!success)
+            if (!m_ChannelConnectionMap.TryGetConnectionFor(id, out connectionInfo))
             {
                 throw new EndpointNotContactableException();
             }
 
-            var endpoint = new EndpointAddress(connectionInfo.MessageAddress);
+            /*
+                var endpoint = new EndpointAddress(connectionInfo.MessageAddress);
+                Debug.Assert(
+                    m_Template.ChannelTemplate == connectionInfo.ChannelTemplate, 
+                    "Trying to connect to a channel with a different binding type.");
+                var binding = m_Template.GenerateMessageBinding();
 
-            Debug.Assert(
-                m_Template.ChannelTemplate == connectionInfo.ChannelTemplate, 
-                "Trying to connect to a channel with a different binding type.");
-            var binding = m_Template.GenerateMessageBinding();
-
-            var factory = new ChannelFactory<IMessageReceivingEndpointProxy>(binding, endpoint);
-            return new RestoringMessageSendingEndpoint(factory, m_Diagnostics);
+                var factory = new ChannelFactory<IMessageReceivingEndpointProxy>(binding, endpoint);
+                return new RestoringMessageSendingEndpoint(factory, m_Diagnostics);
+             */
+            return m_VersionedMessageSenderBuilder(connectionInfo.ProtocolVersion, connectionInfo.MessageAddress);
         }
 
         private IDataTransferingEndpoint BuildDataTransferProxy(EndpointId id)
         {
-            Debug.Assert(
-                m_ChannelConnectionMap.CanCommunicateWithEndpoint(id)
-                    || m_ChannelConnectionMap.IsWaitingForApproval(id)
-                    || m_ChannelConnectionMap.HasBeenContacted(id),
-                "Trying to send data to an unknown endpoint.");
+            Debug.Assert(m_ChannelConnectionMap.CanCommunicateWithEndpoint(id), "Trying to send data to an unknown endpoint.");
             ChannelConnectionInformation connectionInfo;
             var success = m_ChannelConnectionMap.TryGetConnectionFor(id, out connectionInfo);
             if (!success)
@@ -409,6 +520,7 @@ namespace Nuclei.Communication.Protocol
                 throw new EndpointNotContactableException();
             }
 
+            /*
             var endpoint = new EndpointAddress(connectionInfo.DataAddress);
 
             Debug.Assert(
@@ -418,6 +530,8 @@ namespace Nuclei.Communication.Protocol
 
             var factory = new ChannelFactory<IDataReceivingEndpointProxy>(binding, endpoint);
             return new RestoringDataTransferingEndpoint(factory, m_Diagnostics);
+             * */
+            return m_VersionedDataSenderBuilder(connectionInfo.ProtocolVersion, connectionInfo.DataAddress);
         }
 
         /// <summary>

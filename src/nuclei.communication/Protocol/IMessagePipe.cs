@@ -11,7 +11,7 @@ namespace Nuclei.Communication.Protocol
     /// <summary>
     /// Defines the interface for objects that pipe messages from one object to another object.
     /// </summary>
-    internal interface IMessagePipe : IMessageReceivingEndpoint
+    internal interface IMessagePipe : IReceiveInformationFromRemoteEndpoints
     {
         /// <summary>
         /// An event raised when a new message is available in the pipe.
