@@ -11,7 +11,8 @@ using Nuclei.Communication.Properties;
 namespace Nuclei.Communication.Protocol.V1
 {
     /// <summary>
-    /// An exception thrown when a communication channel has been restarted too many times inside a given timespan.
+    /// An exception thrown when no communication subjects have been registered, potentially resulting in
+    /// connection rejection from all remote endpoints.
     /// </summary>
     [Serializable]
     public sealed class NoCommunicationSubjectsRegisteredException : Exception
