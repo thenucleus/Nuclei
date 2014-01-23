@@ -24,7 +24,7 @@ namespace Nuclei.Communication.Protocol.V1
     [ServiceBehavior(
         ConcurrencyMode = ConcurrencyMode.Multiple,
         InstanceContextMode = InstanceContextMode.Single)]
-    internal sealed class MessageReceivingEndpoint : IMessagePipe
+    internal sealed class MessageReceivingEndpoint : IMessagePipe, IMessageReceivingEndpoint
     {
         /// <summary>
         /// The object that provides the diagnostics methods for the system.

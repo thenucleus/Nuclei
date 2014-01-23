@@ -12,6 +12,10 @@ namespace Nuclei.Communication.Protocol.V1
     /// <summary>
     /// Defines the methods for receiving messages on the receiving side of the communication channel.
     /// </summary>
+    /// <design>
+    /// Note that this interface is NOT an <c>IMessagePipe</c> because we only want to share the
+    /// members defined below with the remote endpoint.
+    /// </design>
     [ServiceContract]
     internal interface IMessageReceivingEndpoint : IReceiveInformationFromRemoteEndpoints
     {
