@@ -6,17 +6,17 @@
 
 using System;
 
-namespace Nuclei.Communication.Protocol.V1
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
-    /// Defines the interface for the self-resurrecting WCF channel.
+    /// Defines the interface for the self-resurrecting WCF data transfer channel.
     /// </summary>
-    internal interface IMessageSendingEndpoint : IDisposable
+    internal interface IDataTransferingEndpoint : IDisposable
     {
         /// <summary>
         /// Sends the given message.
         /// </summary>
         /// <param name="message">The message to be send.</param>
-        void Send(ICommunicationMessage message);
+        void Send(DataTransferMessage message);
     }
 }
