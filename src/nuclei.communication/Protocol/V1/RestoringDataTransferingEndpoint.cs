@@ -9,6 +9,7 @@ using System.Globalization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol.V1.DataObjects;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
@@ -82,6 +83,24 @@ namespace Nuclei.Communication.Protocol.V1
         /// <param name="message">The message to be send.</param>
         public void Send(DataTransferMessage message)
         {
+            var v1Message = TranslateMessage(message);
+            SendMessage(v1Message);
+        }
+
+        private StreamData TranslateMessage(DataTransferMessage message)
+        {
+            var result = new StreamData
+            {
+                SendingEndpoint = message.SendingEndpoint,
+                ReceivingEndpoint = message.ReceivingEndpoint,
+                Data = message.Data,
+            };
+
+            return result;
+        }
+
+        private void SendMessage(StreamData message)
+        {
             EnsureChannelIsAvailable();
 
             try
@@ -114,14 +133,14 @@ namespace Nuclei.Communication.Protocol.V1
                 {
                     throw new FailedToSendMessageException(Resources.Exceptions_Messages_FailedToSendMessage, e.InnerException);
                 }
-                
+
                 // There is no point in keeping the original call stack. The original
                 // exception orginates on the other side of the channel. There is no
                 // useful stack trace to keep!
                 throw new FailedToSendMessageException();
             }
             catch (CommunicationException e)
-            { 
+            {
                 // Either the connection was aborted or faulted (although it shouldn't be)
                 // or something else nasty went wrong.
                 throw new FailedToSendMessageException(Resources.Exceptions_Messages_FailedToSendMessage, e);

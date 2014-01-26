@@ -5,17 +5,20 @@
 //-----------------------------------------------------------------------
 
 using System.IO;
+using System.ServiceModel;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication.Protocol.V1.DataObjects
 {
     /// <summary>
     /// Contains information describing a data stream that is transferred between two endpoints.
     /// </summary>
-    internal sealed class DataTransferMessage
+    [MessageContract]
+    internal sealed class StreamData
     {
         /// <summary>
         /// Gets or sets the ID of the sending endpoint.
         /// </summary>
+        [MessageHeader]
         public EndpointId SendingEndpoint
         {
             get;
@@ -25,6 +28,7 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Gets or sets the ID of the receiving endpoint.
         /// </summary>
+        [MessageHeader]
         public EndpointId ReceivingEndpoint
         {
             get;
@@ -34,6 +38,7 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Gets or sets the data stream.
         /// </summary>
+        [MessageBodyMember]
         public Stream Data
         {
             get;

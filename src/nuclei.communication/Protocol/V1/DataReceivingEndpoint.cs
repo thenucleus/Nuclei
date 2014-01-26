@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.ServiceModel;
+using Nuclei.Communication.Protocol.V1.DataObjects;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
@@ -53,7 +54,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// <param name="data">The data message that allows a data stream to be transferred.</param>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
             Justification = "We don't really want the channel to die just because the other side didn't behave properly.")]
-        public void AcceptStream(DataTransferMessage data)
+        public void AcceptStream(StreamData data)
         {
             try
             {
@@ -65,7 +66,8 @@ namespace Nuclei.Communication.Protocol.V1
                         "Received data from {0}.",
                         data.SendingEndpoint));
 
-                RaiseOnNewData(data);
+                var translatedData = TranslateMessage(data);
+                RaiseOnNewData(translatedData);
             }
             catch (Exception e)
             {
@@ -78,6 +80,18 @@ namespace Nuclei.Communication.Protocol.V1
                         data.SendingEndpoint,
                         e));
             }
+        }
+
+        private DataTransferMessage TranslateMessage(StreamData data)
+        {
+            var result = new DataTransferMessage
+                {
+                    SendingEndpoint = data.SendingEndpoint,
+                    ReceivingEndpoint = data.ReceivingEndpoint,
+                    Data = data.Data,
+                };
+
+            return result;
         }
 
         /// <summary>
