@@ -560,6 +560,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The given communication message is unknown and cannot be handled..
+        /// </summary>
+        internal static string Exceptions_Messages_UnknownMessageType {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_UnknownMessageType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The requested notification set has not been registered..
         /// </summary>
         internal static string Exceptions_Messages_UnknownNotificationSet {

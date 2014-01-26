@@ -282,6 +282,9 @@
   <data name="Exceptions_Messages_UnknownEndpointIdFormat" xml:space="preserve">
     <value>The given endpoint had an unsupported format.</value>
   </data>
+  <data name="Exceptions_Messages_UnknownMessageType" xml:space="preserve">
+    <value>The given communication message is unknown and cannot be handled.</value>
+  </data>
   <data name="Exceptions_Messages_UnknownNotificationSet" xml:space="preserve">
     <value>The requested notification set has not been registered.</value>
   </data>

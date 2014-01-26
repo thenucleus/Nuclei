@@ -135,7 +135,6 @@
     <Compile Include="Protocol\BuildSendingEndpoint.cs" />
     <Compile Include="Protocol\ChannelClosedEventArgs.cs" />
     <Compile Include="Protocol\ChannelConnectionInformation.cs" />
-    <Compile Include="Protocol\ChannelOpenedEventArgs.cs" />
     <Compile Include="Protocol\ChannelTemplate.cs" />
     <Compile Include="Interaction\CommandAlreadyRegisteredException.cs" />
     <Compile Include="Interaction\CommandInformationPerEndpoint.cs" />
@@ -215,8 +214,8 @@
     <Compile Include="Protocol\MessageEventArgs.cs" />
     <Compile Include="Protocol\MessageHandler.cs" />
     <Compile Include="Protocol\MessageKindFilter.cs" />
+    <Compile Include="Protocol\Messages\UnknownMessageTypeException.cs" />
     <Compile Include="Protocol\NamedPipeProtocolChannelTemplate.cs" />
-    <Compile Include="Protocol\NetDataContractOperationBehavior.cs" />
     <Compile Include="Interaction\NotificationEventAddMethodInterceptor.cs" />
     <Compile Include="Interaction\NotificationEventRemoveMethodInterceptor.cs" />
     <Compile Include="Interaction\NotificationInformationEventArgs.cs" />
@@ -239,7 +238,6 @@
     <Compile Include="Interaction\RemoteEndpointProxyHub.cs" />
     <Compile Include="Interaction\RemoteNotificationHub.cs" />
     <Compile Include="Protocol\ProtocolVersions.cs" />
-    <Compile Include="Protocol\RestoringDataTransferingEndpoint.cs" />
     <Compile Include="Protocol\SendingEndpoint.cs" />
     <Compile Include="Interaction\SerializedEvent.cs" />
     <Compile Include="Interaction\SerializedMethodInvocation.cs" />
@@ -247,15 +245,18 @@
     <Compile Include="Protocol\V1\CommunicationDescription.cs" />
     <Compile Include="Protocol\V1\CommunicationDescriptionStorage.cs" />
     <Compile Include="Protocol\V1\CommunicationSubject.cs" />
+    <Compile Include="Protocol\V1\DataObjects\StreamData.cs" />
     <Compile Include="Protocol\V1\DataReceivingEndpoint.cs" />
     <Compile Include="Protocol\V1\EndpointInformationStorage.cs" />
     <Compile Include="Protocol\V1\HandshakeProtocolLayer.cs" />
     <Compile Include="Protocol\ICommunicationMessage.cs" />
+    <Compile Include="Protocol\V1\IConvertCommunicationMessages.cs" />
     <Compile Include="Protocol\V1\IDataReceivingEndpoint.cs" />
     <Compile Include="Protocol\V1\IDataReceivingEndpointProxy.cs" />
     <Compile Include="Protocol\V1\IHandleHandshakes.cs" />
     <Compile Include="Protocol\V1\IMessageReceivingEndpoint.cs" />
     <Compile Include="Protocol\V1\IMessageReceivingEndpointProxy.cs" />
+    <Compile Include="Protocol\V1\IStoreV1CommunicationData.cs" />
     <Compile Include="Protocol\V1\IStoreCommunicationDescriptions.cs" />
     <Compile Include="Protocol\MessageId.cs" />
     <Compile Include="Protocol\V1\IStoreEndpointApprovalState.cs" />
@@ -268,7 +269,6 @@
     <Compile Include="Protocol\Messages\EndpointConnectMessage.cs" />
     <Compile Include="Protocol\Messages\EndpointDisconnectMessage.cs" />
     <Compile Include="Protocol\Messages\FailureMessage.cs" />
-    <Compile Include="Protocol\Messages\MessageKindFilter.cs" />
     <Compile Include="Protocol\Messages\NotificationRaisedMessage.cs" />
     <Compile Include="Protocol\Messages\Processors\CommandInvokedProcessAction.cs" />
     <Compile Include="Protocol\Messages\Processors\DataDownloadProcessAction.cs" />
@@ -282,6 +282,7 @@
     <Compile Include="Protocol\Messages\UnknownMessageTypeMessage.cs" />
     <Compile Include="Protocol\Messages\UnregisterFromNotificationMessage.cs" />
     <Compile Include="Protocol\V1\NoCommunicationSubjectsRegisteredException.cs" />
+    <Compile Include="Protocol\V1\RestoringDataTransferingEndpoint.cs" />
     <Compile Include="Protocol\V1\RestoringMessageSendingEndpoint.cs" />
     <Compile Include="ServiceConnectionHolder.cs" />
     <Compile Include="Discovery\UdpBasedDiscoverySource.cs" />
@@ -296,7 +297,6 @@
     <Compile Include="Interaction\UnknownNotificationSetException.cs" />
     <Compile Include="Protocol\UploadNotDeregisteredException.cs" />
     <Compile Include="Protocol\UploadToken.cs" />
-    <Compile Include="Protocol\UseNetDataContractSerializerAttribute.cs" />
     <Compile Include="Protocol\WaitingUploads.cs" />
   </ItemGroup>
   <!-- Indicate that we depend on the SolutionLevel build projects -->
