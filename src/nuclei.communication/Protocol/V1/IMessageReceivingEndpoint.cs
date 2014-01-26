@@ -6,6 +6,7 @@
 
 using System.Net.Security;
 using System.ServiceModel;
+using ProtoBuf;
 
 namespace Nuclei.Communication.Protocol.V1
 {
@@ -17,24 +18,18 @@ namespace Nuclei.Communication.Protocol.V1
     /// members defined below with the remote endpoint.
     /// </design>
     [ServiceContract]
+    [ProtoContract]
     internal interface IMessageReceivingEndpoint : IReceiveInformationFromRemoteEndpoints
     {
         /// <summary>
         /// Accepts the messages.
         /// </summary>
         /// <param name="message">The message.</param>
-        /// <design>
-        /// At the moment we use a binary serializer. At some point we should switch this over to 
-        /// use the 'Protocol Buffers' approach provided here: http://code.google.com/p/protobuf-net/
-        /// Using the Protocol Buffers should provide us with a better way of providing versioning
-        /// etc. of messages and data.
-        /// </design>
-        [UseNetDataContractSerializer]
         [OperationContract(
             IsOneWay = true, 
             IsInitiating = true, 
             IsTerminating = false, 
             ProtectionLevel = ProtectionLevel.None)]
-        void AcceptMessage(ICommunicationMessage message);
+        void AcceptMessage(IStoreV1CommunicationData message);
     }
 }

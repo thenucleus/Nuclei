@@ -5,9 +5,11 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.ServiceModel;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
@@ -27,6 +29,13 @@ namespace Nuclei.Communication.Protocol.V1
     internal sealed class MessageReceivingEndpoint : IMessagePipe, IMessageReceivingEndpoint
     {
         /// <summary>
+        /// The collection that contains the converters which convert between <see cref="ICommunicationMessage"/> objects
+        /// and <see cref="IStoreV1CommunicationData"/> objects.
+        /// </summary>
+        private readonly Dictionary<Type, IConvertCommunicationMessages> m_Converters
+            = new Dictionary<Type, IConvertCommunicationMessages>();
+
+        /// <summary>
         /// The object that provides the diagnostics methods for the system.
         /// </summary>
         private readonly SystemDiagnostics m_Diagnostics;
@@ -34,17 +43,29 @@ namespace Nuclei.Communication.Protocol.V1
         /// <summary>
         /// Initializes a new instance of the <see cref="MessageReceivingEndpoint"/> class.
         /// </summary>
+        /// <param name="messageConverters">The collection that contains all the message converters.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="messageConverters"/> is <see langword="null" />.
+        /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
-        public MessageReceivingEndpoint(SystemDiagnostics systemDiagnostics)
+        public MessageReceivingEndpoint(
+            IEnumerable<IConvertCommunicationMessages> messageConverters,
+            SystemDiagnostics systemDiagnostics)
         {
             {
+                Lokad.Enforce.Argument(() => messageConverters);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
 
             m_Diagnostics = systemDiagnostics;
+
+            foreach (var converter in messageConverters)
+            {
+                m_Converters.Add(converter.DataTypeToTranslate, converter);
+            }
         }
 
         /// <summary>
@@ -53,7 +74,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// <param name="message">The message.</param>
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
             Justification = "We don't really want the channel to die just because the other side didn't behave properly.")]
-        public void AcceptMessage(ICommunicationMessage message)
+        public void AcceptMessage(IStoreV1CommunicationData message)
         {
             try
             {
@@ -65,7 +86,8 @@ namespace Nuclei.Communication.Protocol.V1
                         "Received message of type {0}.",
                         message.GetType()));
 
-                RaiseOnNewMessage(message);
+                var translatedMessage = TranslateMessage(message);
+                RaiseOnNewMessage(translatedMessage);
             }
             catch (Exception e)
             {
@@ -78,6 +100,17 @@ namespace Nuclei.Communication.Protocol.V1
                         message.GetType(),
                         e));
             }
+        }
+
+        private ICommunicationMessage TranslateMessage(IStoreV1CommunicationData message)
+        {
+            if (!m_Converters.ContainsKey(message.GetType()))
+            {
+                return new UnknownMessageTypeMessage(message.Sender, message.InResponseTo);
+            }
+
+            var converter = m_Converters[message.GetType()];
+            return converter.ToMessage(message);
         }
 
         /// <summary>

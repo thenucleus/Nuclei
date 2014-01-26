@@ -5,10 +5,12 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
@@ -26,6 +28,13 @@ namespace Nuclei.Communication.Protocol.V1
         /// The lock object used for getting locks on.
         /// </summary>
         private readonly object m_Lock = new object();
+
+        /// <summary>
+        /// The collection that contains the converters which convert between <see cref="ICommunicationMessage"/> objects
+        /// and <see cref="IStoreV1CommunicationData"/> objects.
+        /// </summary>
+        private readonly Dictionary<Type, IConvertCommunicationMessages> m_Converters
+            = new Dictionary<Type, IConvertCommunicationMessages>();
 
         /// <summary>
         /// The factory which creates new WCF channels.
@@ -55,8 +64,12 @@ namespace Nuclei.Communication.Protocol.V1
         /// <summary>
         /// Initializes a new instance of the <see cref="RestoringMessageSendingEndpoint"/> class.
         /// </summary>
+        /// <param name="messageConverters">The collection that contains all the message converters.</param>
         /// <param name="channelFactory">The factory that is used to create new channels.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostic methods for the system.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="messageConverters"/> is <see langword="null" />.
+        /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="channelFactory"/> is <see langword="null" />.
         /// </exception>
@@ -64,16 +77,23 @@ namespace Nuclei.Communication.Protocol.V1
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public RestoringMessageSendingEndpoint(
+            IEnumerable<IConvertCommunicationMessages> messageConverters,
             ChannelFactory<IMessageReceivingEndpointProxy> channelFactory,
             SystemDiagnostics systemDiagnostics)
         {
             {
+                Lokad.Enforce.Argument(() => messageConverters);
                 Lokad.Enforce.Argument(() => channelFactory);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
 
             m_Factory = channelFactory;
             m_Diagnostics = systemDiagnostics;
+
+            foreach (var converter in messageConverters)
+            {
+                m_Converters.Add(converter.MessageTypeToTranslate, converter);
+            }
         }
 
         /// <summary>
@@ -81,6 +101,23 @@ namespace Nuclei.Communication.Protocol.V1
         /// </summary>
         /// <param name="message">The message to be send.</param>
         public void Send(ICommunicationMessage message)
+        {
+            var v1Message = TranslateMessage(message);
+            SendMessage(v1Message);
+        }
+
+        private IStoreV1CommunicationData TranslateMessage(ICommunicationMessage message)
+        {
+            if (!m_Converters.ContainsKey(message.GetType()))
+            {
+                throw new UnknownMessageTypeException();
+            }
+
+            var converter = m_Converters[message.GetType()];
+            return converter.FromMessage(message);
+        }
+
+        private void SendMessage(IStoreV1CommunicationData message)
         {
             EnsureChannelIsAvailable();
 
@@ -116,14 +153,14 @@ namespace Nuclei.Communication.Protocol.V1
                 {
                     throw new FailedToSendMessageException(Resources.Exceptions_Messages_FailedToSendMessage, e.InnerException);
                 }
-                
+
                 // There is no point in keeping the original call stack. The original
                 // exception orginates on the other side of the channel. There is no
                 // useful stack trace to keep!
                 throw new FailedToSendMessageException();
             }
             catch (CommunicationException e)
-            { 
+            {
                 // Either the connection was aborted or faulted (although it shouldn't be)
                 // or something else nasty went wrong.
                 throw new FailedToSendMessageException(Resources.Exceptions_Messages_FailedToSendMessage, e);
@@ -139,7 +176,7 @@ namespace Nuclei.Communication.Protocol.V1
                     if (ShouldCreateChannel)
                     {
                         if (m_Channel != null)
-                        { 
+                        {
                             // The channel is probably faulted so terminate it.
                             m_Diagnostics.Log(
                                 LevelToLog.Info,
