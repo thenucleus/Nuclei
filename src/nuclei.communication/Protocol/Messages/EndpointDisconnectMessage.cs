@@ -12,7 +12,6 @@ namespace Nuclei.Communication.Protocol.Messages
     /// Defines a message that indicates that the sending endpoint is about to disconnect
     /// from the network.
     /// </summary>
-    [Serializable]
     internal sealed class EndpointDisconnectMessage : CommunicationMessage
     {
         /// <summary>

@@ -11,7 +11,6 @@ namespace Nuclei.Communication.Protocol.Messages
     /// <summary>
     /// Defines a message that requests the download of a specific file from the receiver.
     /// </summary>
-    [Serializable]
     internal sealed class UnknownMessageTypeMessage : CommunicationMessage
     {
         /// <summary>

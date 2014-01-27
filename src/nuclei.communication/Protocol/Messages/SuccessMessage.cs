@@ -11,7 +11,6 @@ namespace Nuclei.Communication.Protocol.Messages
     /// <summary>
     /// Defines a message that indicates that a certain action has succeeded.
     /// </summary>
-    [Serializable]
     internal sealed class SuccessMessage : CommunicationMessage
     {
         /// <summary>

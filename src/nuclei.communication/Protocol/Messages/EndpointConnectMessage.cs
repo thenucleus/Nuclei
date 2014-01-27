@@ -13,7 +13,6 @@ namespace Nuclei.Communication.Protocol.Messages
     /// Defines a message that indicates that the sending endpoint has connected to
     /// the current endpoint.
     /// </summary>
-    [Serializable]
     internal sealed class EndpointConnectMessage : CommunicationMessage
     {
         /// <summary>

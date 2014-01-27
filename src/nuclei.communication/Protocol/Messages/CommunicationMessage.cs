@@ -11,7 +11,6 @@ namespace Nuclei.Communication.Protocol.Messages
     /// <summary>
     /// Defines the base methods for <see cref="ICommunicationMessage"/> objects.
     /// </summary>
-    [Serializable]
     internal abstract class CommunicationMessage : ICommunicationMessage
     {
         /// <summary>
