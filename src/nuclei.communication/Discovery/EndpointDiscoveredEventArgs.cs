@@ -18,23 +18,23 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// Initializes a new instance of the <see cref="EndpointDiscoveredEventArgs"/> class.
         /// </summary>
-        /// <param name="channelInformation">The connection information for the new endpoint.</param>
+        /// <param name="endpointInformation">The connection information for the new endpoint.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="channelInformation"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="endpointInformation"/> is <see langword="null" />.
         /// </exception>
-        public EndpointDiscoveredEventArgs(ChannelInformation channelInformation)
+        public EndpointDiscoveredEventArgs(EndpointInformation endpointInformation)
         {
             {
-                Lokad.Enforce.Argument(() => channelInformation);
+                Lokad.Enforce.Argument(() => endpointInformation);
             }
 
-            ConnectionInformation = channelInformation;
+            ConnectionInformation = endpointInformation;
         }
 
         /// <summary>
         /// Gets the information for the channel on which the new endpoint can be contacted.
         /// </summary>
-        public ChannelInformation ConnectionInformation
+        public EndpointInformation ConnectionInformation
         {
             get;
             private set;

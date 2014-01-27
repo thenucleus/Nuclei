@@ -17,6 +17,6 @@ namespace Nuclei.Communication
         /// Returns a collection containing information describing all the active channels.
         /// </summary>
         /// <returns>The collection containing information describing all the active channels.</returns>
-        IEnumerable<ChannelInformation> ActiveChannels();
+        IEnumerable<EndpointInformation> ActiveChannels();
     }
 }

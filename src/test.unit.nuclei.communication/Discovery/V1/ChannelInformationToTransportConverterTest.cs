@@ -18,22 +18,22 @@ namespace Nuclei.Communication.Discovery.V1
         [Test]
         public void ToVersioned()
         {
-            var input = new ChannelInformation(
+            var input = new EndpointInformation(
                 EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
                 new Version(1, 2, 3, 4),
                 new Uri("http://localhost/invalid"));
 
-            var output = ChannelInformationToTransportConverter.ToVersioned(input);
+            var output = ChannelInformationToTransportConverter.ToVersioned();
 
             Assert.AreSame(input.Id, output.Id);
             Assert.AreSame(input.ProtocolVersion, output.ProtocolVersion);
-            Assert.AreSame(input.Address, output.Address);
+            Assert.AreSame(input.ProtocolAddress, output.Address);
         }
 
         [Test]
         public void ToVersionedWithNullObject()
         {
-            Assert.Throws<ArgumentNullException>(() => ChannelInformationToTransportConverter.ToVersioned(null));
+            Assert.Throws<ArgumentNullException>(() => ChannelInformationToTransportConverter.ToVersioned());
         }
 
         [Test]
@@ -50,7 +50,7 @@ namespace Nuclei.Communication.Discovery.V1
 
             Assert.AreSame(input.Id, output.Id);
             Assert.AreSame(input.ProtocolVersion, output.ProtocolVersion);
-            Assert.AreSame(input.Address, output.Address);
+            Assert.AreSame(input.Address, output.ProtocolAddress);
         }
 
         [Test]

@@ -88,7 +88,7 @@ namespace Nuclei.Communication.Protocol
             discovery.Raise(
                 d => d.OnEndpointBecomingAvailable += null, 
                 new EndpointDiscoveredEventArgs(
-                    new ChannelInformation(
+                    new EndpointInformation(
                         remoteEndpoint, 
                         new Version(1, 0), 
                         new Uri(remoteMessageAddress))));
@@ -256,7 +256,7 @@ namespace Nuclei.Communication.Protocol
             discovery.Raise(
                 d => d.OnEndpointBecomingAvailable += null,
                 new EndpointDiscoveredEventArgs(
-                    new ChannelInformation(
+                    new EndpointInformation(
                         remoteEndpoint,
                         new Version(1, 0), 
                         new Uri(remoteMessageAddress))));

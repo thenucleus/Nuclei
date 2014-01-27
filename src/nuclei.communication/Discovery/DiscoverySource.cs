@@ -86,7 +86,7 @@ namespace Nuclei.Communication.Discovery
         /// </summary>
         public event EventHandler<EndpointDiscoveredEventArgs> OnEndpointBecomingAvailable;
 
-        private void RaiseOnEndpointBecomingAvailable(ChannelInformation info)
+        private void RaiseOnEndpointBecomingAvailable(EndpointInformation info)
         {
             var local = OnEndpointBecomingAvailable;
             if (local != null)
@@ -154,13 +154,15 @@ namespace Nuclei.Communication.Discovery
 
             Debug.Assert(m_TranslatorMap.ContainsKey(pair.Item1), "There should be a translator for the given version.");
             var translator = m_TranslatorMap[pair.Item1];
-            var channelInformation = translator.FromUri(pair.Item2);
-            if (channelInformation == null)
+            var protocol = translator.FromUri(pair.Item2);
+            if (protocol == null)
             {
                 return;
             }
 
-            RaiseOnEndpointBecomingAvailable(channelInformation);
+            var discoveryInfo = new DiscoveryInformation(pair.Item1, address);
+            var info = new EndpointInformation(id, discoveryInfo, protocol);
+            RaiseOnEndpointBecomingAvailable(info);
         }
 
         private Tuple<Version, Uri> GetMostSuitableDiscoveryChannel(Uri address)

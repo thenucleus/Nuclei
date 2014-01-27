@@ -73,11 +73,11 @@ namespace Nuclei.Communication.Discovery.V1
         /// <summary>
         /// Returns channel information obtained from a specific versioned discovery channel.
         /// </summary>
-        /// <param name="address">The address of the versioned discovery channel.</param>
-        /// <returns>The channel information.</returns>
-        public ChannelInformation FromUri(Uri address)
+        /// <param name="versionSpecificDiscoveryAddress">The address of the versioned discovery channel.</param>
+        /// <returns>The information describing the protocol channel used by the remote endpoint.</returns>
+        public ProtocolInformation FromUri(Uri versionSpecificDiscoveryAddress)
         {
-            var factory = CreateFactoryForDiscoveryChannel(address);
+            var factory = CreateFactoryForDiscoveryChannel(versionSpecificDiscoveryAddress);
             var service = factory.CreateChannel();
             var channel = (IChannel)service;
             try
@@ -109,7 +109,7 @@ namespace Nuclei.Communication.Discovery.V1
                     string.Format(
                         CultureInfo.InvariantCulture,
                         Resources.Log_Messages_DiscoveryFailedToConnectToEndpoint_WithUriAndError,
-                        address,
+                        versionSpecificDiscoveryAddress,
                         e));
             }
             catch (CommunicationException e)
@@ -120,7 +120,7 @@ namespace Nuclei.Communication.Discovery.V1
                     string.Format(
                         CultureInfo.InvariantCulture,
                         Resources.Log_Messages_DiscoveryFailedToConnectToEndpoint_WithUriAndError,
-                        address,
+                        versionSpecificDiscoveryAddress,
                         e));
             }
             finally

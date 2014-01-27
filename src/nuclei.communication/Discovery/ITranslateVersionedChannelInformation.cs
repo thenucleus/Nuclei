@@ -16,8 +16,8 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// Returns channel information obtained from a specific versioned discovery channel.
         /// </summary>
-        /// <param name="address">The address of the versioned discovery channel.</param>
-        /// <returns>The channel information.</returns>
-        ChannelInformation FromUri(Uri address);
+        /// <param name="versionSpecificDiscoveryAddress">The address of the versioned discovery channel.</param>
+        /// <returns>The information describing the protocol channel used by the remote endpoint.</returns>
+        ProtocolInformation FromUri(Uri versionSpecificDiscoveryAddress);
     }
 }

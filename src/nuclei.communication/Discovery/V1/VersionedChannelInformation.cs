@@ -19,16 +19,6 @@ namespace Nuclei.Communication.Discovery.V1
     internal sealed class VersionedChannelInformation
     {
         /// <summary>
-        /// Gets or sets the ID of the endpoint.
-        /// </summary>
-        [DataMember]
-        public EndpointId Id
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets or sets the version of the information object.
         /// </summary>
         [DataMember]

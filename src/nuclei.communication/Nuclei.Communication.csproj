@@ -105,6 +105,7 @@
     <Compile Include="CommunicationModule.Interaction.cs" />
     <Compile Include="CommunicationModule.Protocol.cs" />
     <Compile Include="CommunicationModule.Protocol.V1.cs" />
+    <Compile Include="DiscoveryInformation.cs" />
     <Compile Include="Discovery\BootstrapChannel.cs" />
     <Compile Include="Discovery\BootstrapEndpoint.cs" />
     <Compile Include="Discovery\DiscoveryVersions.cs" />
@@ -122,7 +123,7 @@
     <Compile Include="Discovery\IBootstrapChannel.cs" />
     <Compile Include="Discovery\IDiscoveryChannelTemplate.cs" />
     <Compile Include="Discovery\V1\IInformationEndpoint.cs" />
-    <Compile Include="ChannelInformation.cs" />
+    <Compile Include="EndpointInformation.cs" />
     <Compile Include="Discovery\TcpDiscoveryChannelTemplate.cs" />
     <Compile Include="Discovery\V1\ChannelInformationToTransportConverter.cs" />
     <Compile Include="Discovery\V1\VersionedChannelInformation.cs" />
@@ -130,9 +131,9 @@
     <Compile Include="IDiscoveryVersionMetaData.cs" />
     <Compile Include="IProvideLocalConnectionInformation.cs" />
     <Compile Include="IStoreInformationForActiveChannels.cs" />
+    <Compile Include="ProtocolInformation.cs" />
     <Compile Include="Protocol\BuildSendingEndpoint.cs" />
     <Compile Include="Protocol\ChannelClosedEventArgs.cs" />
-    <Compile Include="Protocol\ChannelConnectionInformation.cs" />
     <Compile Include="Protocol\ChannelTemplate.cs" />
     <Compile Include="Interaction\CommandAlreadyRegisteredException.cs" />
     <Compile Include="Interaction\CommandInformationPerEndpoint.cs" />

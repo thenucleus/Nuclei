@@ -22,8 +22,8 @@ namespace Nuclei.Communication.Discovery.V1
         /// <summary>
         /// The collection containing the information about all the versions of the protocol layer.
         /// </summary>
-        private readonly SortedList<Version, ChannelInformation> m_ProtocolInformation
-            = new SortedList<Version, ChannelInformation>();
+        private readonly SortedList<Version, ProtocolInformation> m_ProtocolInformation
+            = new SortedList<Version, ProtocolInformation>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InformationEndpoint"/> class.
@@ -32,7 +32,7 @@ namespace Nuclei.Communication.Discovery.V1
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="protocolInformation"/> is <see langword="null" />.
         /// </exception>
-        public InformationEndpoint(ChannelInformation[] protocolInformation)
+        public InformationEndpoint(ProtocolInformation[] protocolInformation)
         {
             {
                 Lokad.Enforce.Argument(() => protocolInformation);
@@ -40,7 +40,7 @@ namespace Nuclei.Communication.Discovery.V1
 
             foreach (var entry in protocolInformation)
             {
-                m_ProtocolInformation.Add(entry.ProtocolVersion, entry);
+                m_ProtocolInformation.Add(entry.Version, entry);
             }
         }
 
