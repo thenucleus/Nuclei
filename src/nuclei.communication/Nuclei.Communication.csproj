@@ -51,9 +51,6 @@
       <HintPath>..\..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
-    <Reference Include="protobuf-net">
-      <HintPath>..\..\packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -107,6 +104,7 @@
     <Compile Include="CommunicationModule.Discovery.cs" />
     <Compile Include="CommunicationModule.Interaction.cs" />
     <Compile Include="CommunicationModule.Protocol.cs" />
+    <Compile Include="CommunicationModule.Protocol.V1.cs" />
     <Compile Include="Discovery\BootstrapChannel.cs" />
     <Compile Include="Discovery\BootstrapEndpoint.cs" />
     <Compile Include="Discovery\DiscoveryVersions.cs" />
@@ -245,7 +243,14 @@
     <Compile Include="Protocol\V1\CommunicationDescription.cs" />
     <Compile Include="Protocol\V1\CommunicationDescriptionStorage.cs" />
     <Compile Include="Protocol\V1\CommunicationSubject.cs" />
+    <Compile Include="Protocol\V1\DataObjects\DataObjectBase.cs" />
+    <Compile Include="Protocol\V1\DataObjects\DownloadRequestData.cs" />
+    <Compile Include="Protocol\V1\DataObjects\EndpointConnectData.cs" />
+    <Compile Include="Protocol\V1\DataObjects\EndpointDisconnectData.cs" />
+    <Compile Include="Protocol\V1\DataObjects\FailureData.cs" />
     <Compile Include="Protocol\V1\DataObjects\StreamData.cs" />
+    <Compile Include="Protocol\V1\DataObjects\SuccessData.cs" />
+    <Compile Include="Protocol\V1\DataObjects\UnknownMessageTypeData.cs" />
     <Compile Include="Protocol\V1\DataReceivingEndpoint.cs" />
     <Compile Include="Protocol\V1\EndpointInformationStorage.cs" />
     <Compile Include="Protocol\V1\HandshakeProtocolLayer.cs" />
@@ -322,7 +327,9 @@
       <Name>Nuclei</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Protocol\V1\DataObjects\Converters\" />
+  </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- 
        To modify your build process, add your task inside one of the targets below and uncomment it. 

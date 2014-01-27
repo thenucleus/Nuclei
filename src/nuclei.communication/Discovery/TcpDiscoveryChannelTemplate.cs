@@ -12,7 +12,6 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Discovery;
 using System.Xml.Linq;
 using Nuclei.Configuration;
-using ProtoBuf.ServiceModel;
 
 namespace Nuclei.Communication.Discovery
 {

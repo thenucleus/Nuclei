@@ -15,7 +15,6 @@ namespace Nuclei.Communication.Discovery.V1
     /// Defines the interface for objects that provide the methods that can be called on the discovery channel.
     /// </summary>
     [ServiceContract]
-    [ProtoContract]
     internal interface IInformationEndpoint : IVersionedDiscoveryEndpoint
     {
         /// <summary>

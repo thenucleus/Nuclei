@@ -7,7 +7,6 @@
 using System;
 using System.Net.Security;
 using System.ServiceModel;
-using ProtoBuf;
 
 namespace Nuclei.Communication.Discovery
 {
@@ -16,7 +15,6 @@ namespace Nuclei.Communication.Discovery
     /// for the discovery process.
     /// </summary>
     [ServiceContract]
-    [ProtoContract]
     internal interface IBootstrapEndpoint : IDiscoveryEndpoint
     {
         /// <summary>

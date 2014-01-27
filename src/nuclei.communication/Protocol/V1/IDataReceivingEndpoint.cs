@@ -19,7 +19,6 @@ namespace Nuclei.Communication.Protocol.V1
     /// members defined below with the remote endpoint.
     /// </design>
     [ServiceContract]
-    [ProtoContract]
     internal interface IDataReceivingEndpoint : IReceiveInformationFromRemoteEndpoints
     {
         /// <summary>

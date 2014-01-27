@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using ProtoBuf;
+using System.Runtime.Serialization;
 
 namespace Nuclei.Communication.Discovery.V1
 {
@@ -15,13 +15,13 @@ namespace Nuclei.Communication.Discovery.V1
     /// <remarks>
     /// This class should never be changed so that it is always backwards compatible.
     /// </remarks>
-    [ProtoContract]
+    [DataContract]
     internal sealed class VersionedChannelInformation
     {
         /// <summary>
         /// Gets or sets the ID of the endpoint.
         /// </summary>
-        [ProtoMember(1, IsRequired = true)]
+        [DataMember]
         public EndpointId Id
         {
             get;
@@ -31,7 +31,7 @@ namespace Nuclei.Communication.Discovery.V1
         /// <summary>
         /// Gets or sets the version of the information object.
         /// </summary>
-        [ProtoMember(2, IsRequired = true)]
+        [DataMember]
         public Version ProtocolVersion
         {
             get;
@@ -41,7 +41,7 @@ namespace Nuclei.Communication.Discovery.V1
         /// <summary>
         /// Gets or sets the address of the channel.
         /// </summary>
-        [ProtoMember(3, IsRequired = true)]
+        [DataMember]
         public Uri Address
         {
             get;
