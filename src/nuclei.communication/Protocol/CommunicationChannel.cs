@@ -73,8 +73,8 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// The collection that contains the connection information for all the local channels.
         /// </summary>
-        private readonly List<ChannelConnectionInformation> m_LocalConnectionPoints
-            = new List<ChannelConnectionInformation>();
+        private readonly List<ProtocolInformation> m_LocalConnectionPoints
+            = new List<ProtocolInformation>();
 
         /// <summary>
         /// The ID number of the current endpoint.
@@ -208,7 +208,7 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Gets the connection information for each of the available channels.
         /// </summary>
-        public IEnumerable<ChannelConnectionInformation> LocalConnectionPoints
+        public IEnumerable<ProtocolInformation> LocalConnectionPoints
         {
             get
             {
@@ -236,7 +236,7 @@ namespace Nuclei.Communication.Protocol
                     var dataUri = CreateAndStoreDataChannelForProtocolVersion(version);
                     var messageUri = CreateAndStoreMessageChannelForProtocolVersion(version);
 
-                    var localConnection = new ChannelConnectionInformation(m_Id, version, m_Template.ChannelTemplate, messageUri, dataUri);
+                    var localConnection = new ProtocolInformation(version, messageUri, dataUri);
                     m_LocalConnectionPoints.Add(localConnection);
                 }
             }
@@ -364,7 +364,7 @@ namespace Nuclei.Communication.Protocol
                     pair.Item1.OnNewData -= pair.Item2;
                 }
 
-                m_LocalConnectionPoints.RemoveAll(c => c.ProtocolVersion.Equals(version));
+                m_LocalConnectionPoints.RemoveAll(c => c.Version.Equals(version));
             }
         }
 
@@ -378,13 +378,13 @@ namespace Nuclei.Communication.Protocol
             {
                 if (m_ChannelConnectionMap.CanCommunicateWithEndpoint(endpoint))
                 {
-                    ChannelConnectionInformation channelInfo;
+                    EndpointInformation channelInfo;
                     if (!m_ChannelConnectionMap.TryGetConnectionFor(endpoint, out channelInfo))
                     {
                         return;
                     }
 
-                    var version = channelInfo.ProtocolVersion;
+                    var version = channelInfo.ProtocolInformation.Version;
                     if (m_SendingEndpoints.ContainsKey(version))
                     {
                         var sender = m_SendingEndpoints[version];
@@ -444,13 +444,13 @@ namespace Nuclei.Communication.Protocol
             ISendingEndpoint sender = null;
             if (m_ChannelConnectionMap.CanCommunicateWithEndpoint(receivingEndpoint))
             {
-                ChannelConnectionInformation channelInfo;
+                EndpointInformation channelInfo;
                 if (!m_ChannelConnectionMap.TryGetConnectionFor(receivingEndpoint, out channelInfo))
                 {
                     throw new EndpointNotContactableException();
                 }
 
-                var protocolVersion = channelInfo.ProtocolVersion;
+                var protocolVersion = channelInfo.ProtocolInformation.Version;
                 lock(m_Lock)
                 {
                     if (!m_SendingEndpoints.ContainsKey(protocolVersion))
@@ -491,7 +491,7 @@ namespace Nuclei.Communication.Protocol
         private IMessageSendingEndpoint BuildMessageSendingProxy(EndpointId id)
         {
             Debug.Assert(m_ChannelConnectionMap.CanCommunicateWithEndpoint(id), "Trying to send a message to an unknown endpoint.");
-            ChannelConnectionInformation connectionInfo;
+            EndpointInformation connectionInfo;
             if (!m_ChannelConnectionMap.TryGetConnectionFor(id, out connectionInfo))
             {
                 throw new EndpointNotContactableException();
@@ -507,13 +507,13 @@ namespace Nuclei.Communication.Protocol
                 var factory = new ChannelFactory<IMessageReceivingEndpointProxy>(binding, endpoint);
                 return new RestoringMessageSendingEndpoint(factory, m_Diagnostics);
              */
-            return m_VersionedMessageSenderBuilder(connectionInfo.ProtocolVersion, connectionInfo.MessageAddress);
+            return m_VersionedMessageSenderBuilder(connectionInfo.ProtocolInformation.Version, connectionInfo.ProtocolInformation.MessageAddress);
         }
 
         private IDataTransferingEndpoint BuildDataTransferProxy(EndpointId id)
         {
             Debug.Assert(m_ChannelConnectionMap.CanCommunicateWithEndpoint(id), "Trying to send data to an unknown endpoint.");
-            ChannelConnectionInformation connectionInfo;
+            EndpointInformation connectionInfo;
             var success = m_ChannelConnectionMap.TryGetConnectionFor(id, out connectionInfo);
             if (!success)
             {
@@ -531,7 +531,7 @@ namespace Nuclei.Communication.Protocol
             var factory = new ChannelFactory<IDataReceivingEndpointProxy>(binding, endpoint);
             return new RestoringDataTransferingEndpoint(factory, m_Diagnostics);
              * */
-            return m_VersionedDataSenderBuilder(connectionInfo.ProtocolVersion, connectionInfo.DataAddress);
+            return m_VersionedDataSenderBuilder(connectionInfo.ProtocolInformation.Version, connectionInfo.ProtocolInformation.DataAddress);
         }
 
         /// <summary>

@@ -19,7 +19,7 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Gets the connection information for each of the available channels.
         /// </summary>
-        IEnumerable<ChannelConnectionInformation> LocalConnectionPoints
+        IEnumerable<ProtocolInformation> LocalConnectionPoints
         {
             get;
         }
