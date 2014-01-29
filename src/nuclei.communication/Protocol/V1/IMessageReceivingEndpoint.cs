@@ -6,7 +6,6 @@
 
 using System.Net.Security;
 using System.ServiceModel;
-using ProtoBuf;
 
 namespace Nuclei.Communication.Protocol.V1
 {
@@ -18,7 +17,6 @@ namespace Nuclei.Communication.Protocol.V1
     /// members defined below with the remote endpoint.
     /// </design>
     [ServiceContract]
-    [ProtoContract]
     internal interface IMessageReceivingEndpoint : IReceiveInformationFromRemoteEndpoints
     {
         /// <summary>
