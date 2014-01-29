@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using Nuclei.Communication.Properties;
 
 namespace Nuclei.Communication.Protocol.Messages
 {
@@ -19,11 +18,8 @@ namespace Nuclei.Communication.Protocol.Messages
         /// Initializes a new instance of the <see cref="EndpointConnectMessage"/> class.
         /// </summary>
         /// <param name="origin">The ID of the endpoint that send the message.</param>
-        /// <param name="channelTemplate">
-        ///     The <see cref="IChannelTemplate"/> of the channel that was used to send this message.
-        /// </param>
-        /// <param name="originatingMessageAddress">The address of the originating endpoint that is used for message reception.</param>
-        /// <param name="originatingDataAddres">The address of the originating endpoint that is used for data reception.</param>
+        /// <param name="discoveryInformation">The object containing the information about the discovery channel for the remote endpoint.</param>
+        /// <param name="protocolInformation">The object containing the information about the protocol channels for the remote endpoint.</param>
         /// <param name="information">
         ///     The information describing the version of the communication protocol
         ///     used by the sender, the desired communication API's for the sender and 
@@ -32,79 +28,46 @@ namespace Nuclei.Communication.Protocol.Messages
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
         /// </exception>
-        /// <exception cref="InvalidChannelTypeException">
-        ///     Thrown if <paramref name="channelTemplate"/> is <see cref="Protocol.ChannelTemplate.None"/>.
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="discoveryInformation"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="originatingMessageAddress"/> is <see langword="null" />.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        ///     Thrown if <paramref name="originatingMessageAddress"/> is an empty string.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="originatingDataAddres"/> is <see langword="null" />.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        ///     Thrown if <paramref name="originatingDataAddres"/> is an empty string.
+        ///     Thrown if <paramref name="protocolInformation"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="information"/> is <see langword="null" />.
         /// </exception>
         public EndpointConnectMessage(
-            EndpointId origin, 
-            ChannelTemplate channelTemplate, 
-            string originatingMessageAddress, 
-            string originatingDataAddres,
+            EndpointId origin,
+            DiscoveryInformation discoveryInformation,
+            ProtocolInformation protocolInformation,
             CommunicationDescription information)
             : base(origin)
         {
             {
-                Lokad.Enforce.With<InvalidChannelTypeException>(
-                    channelTemplate != ChannelTemplate.None, 
-                    Resources.Exceptions_Messages_AChannelTypeMustBeDefined);
-
-                Lokad.Enforce.Argument(() => originatingMessageAddress);
-                Lokad.Enforce.With<ArgumentException>(
-                    !string.IsNullOrWhiteSpace(originatingMessageAddress),
-                    Resources.Exceptions_Messages_ChannelAddresssMustBeDefined);
-
-                Lokad.Enforce.Argument(() => originatingDataAddres);
-                Lokad.Enforce.With<ArgumentException>(
-                    !string.IsNullOrWhiteSpace(originatingDataAddres),
-                    Resources.Exceptions_Messages_ChannelAddresssMustBeDefined);
-
+                Lokad.Enforce.Argument(() => discoveryInformation);
+                Lokad.Enforce.Argument(() => protocolInformation);
                 Lokad.Enforce.Argument(() => information);
             }
 
-            ChannelTemplate = channelTemplate;
-            MessageAddress = originatingMessageAddress;
-            DataAddress = originatingDataAddres;
+            DiscoveryInformation = discoveryInformation;
+            ProtocolInformation = protocolInformation;
             Information = information;
         }
 
         /// <summary>
-        /// Gets a value indicating what kind of channel was used
-        /// to send this message.
+        /// Gets a value describing the discovery channel for the remote endpoint.
         /// </summary>
-        public ChannelTemplate ChannelTemplate
+        public DiscoveryInformation DiscoveryInformation
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// Gets a value indicating the URI of the channel that is used for message reception.
+        /// Gets a value describing the protocol channel for the remote endpoint.
         /// </summary>
-        public string MessageAddress
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets a value indicating the URI of the channel that is used for data reception.
-        /// </summary>
-        public string DataAddress
+        public ProtocolInformation ProtocolInformation
         {
             get;
             private set;

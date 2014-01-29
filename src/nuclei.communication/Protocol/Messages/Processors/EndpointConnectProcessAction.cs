@@ -107,11 +107,10 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Endpoint trying to connect"))
             {
                 m_HandShakeHandler.ContinueHandshakeWith(
-                    new ChannelConnectionInformation(
+                    new EndpointInformation(
                         msg.Sender, 
-                        msg.ChannelTemplate, 
-                        new Uri(msg.MessageAddress), 
-                        new Uri(msg.DataAddress)),
+                        msg.DiscoveryInformation, 
+                        msg.ProtocolInformation),
                     msg.Information,
                     msg.Id);
             }
