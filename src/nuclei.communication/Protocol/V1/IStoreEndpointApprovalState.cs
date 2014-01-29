@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        bool TryAdd(EndpointId endpoint, ChannelConnectionInformation connection);
+        bool TryAdd(EndpointId endpoint, EndpointInformation connection);
 
         /// <summary>
         /// Starts the approval process.
@@ -57,7 +57,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        bool TryUpdate(ChannelConnectionInformation connectionInformation);
+        bool TryUpdate(EndpointInformation connectionInformation);
 
         /// <summary>
         /// Indicates if the endpoint has been contacted, but the approval process hasn't been started yet.

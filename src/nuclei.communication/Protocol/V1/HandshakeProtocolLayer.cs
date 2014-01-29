@@ -82,7 +82,7 @@ namespace Nuclei.Communication.Protocol.V1
             }
         }
 
-        private static bool CanReachEndpointWithGivenConnection(ChannelConnectionInformation info)
+        private static bool CanReachEndpointWithGivenConnection(EndpointInformation info)
         {
             if (info.Id.IsOnLocalMachine())
             {
@@ -106,7 +106,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// <summary>
         /// The collection of endpoints that have been discovered.
         /// </summary>
-        private readonly IStoreInformationAboutEndpoints m_PotentialEndpoints;
+        private readonly IStoreEndpointApprovalState m_PotentialEndpoints;
 
         /// <summary>
         /// The collection of endpoint discovery objects.
@@ -116,7 +116,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// <summary>
         /// The object responsible for sending messages to remote endpoints.
         /// </summary>
-        private readonly ISendDataViaChannels m_Layer;
+        private readonly ICommunicationLayer m_Layer;
 
         /// <summary>
         /// The object that stores information about the available communication APIs.
@@ -161,9 +161,9 @@ namespace Nuclei.Communication.Protocol.V1
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public HandshakeProtocolLayer(
-            IStoreInformationAboutEndpoints potentialEndpoints,
+            IStoreEndpointApprovalState potentialEndpoints,
             IEnumerable<IDiscoverOtherServices> discoverySources,
-            ISendDataViaChannels layer,
+            ICommunicationLayer layer,
             IStoreCommunicationDescriptions descriptions,
             IEnumerable<ChannelTemplate> allowedChannelTypes,
             SystemDiagnostics systemDiagnostics)
@@ -185,6 +185,10 @@ namespace Nuclei.Communication.Protocol.V1
             m_Diagnostics = systemDiagnostics;
 
             // Initiate discovery of other services. 
+
+            // We should only get the sign-on notifications for those endpoints that
+            // use our version of the protocol ......
+            foobar();
             foreach (var source in m_DiscoverySources)
             {
                 source.OnEndpointBecomingAvailable += HandleEndpointSignIn;
@@ -194,7 +198,7 @@ namespace Nuclei.Communication.Protocol.V1
 
         private void HandleEndpointSignIn(object sender, EndpointDiscoveredEventArgs args)
         {
-            var info = ToConnectionInformation(args.ConnectionInformation);
+            var info = args.ConnectionInformation;
             if (m_Layer.Id.Equals(info.Id))
             {
                 return;
@@ -225,23 +229,14 @@ namespace Nuclei.Communication.Protocol.V1
                         "New endpoint ({0}) discovered via the {1} channel. Endpoint URL: {2}.",
                         info.Id,
                         info.ChannelTemplate,
-                        info.MessageAddress));
+                        info.ProtocolInformation.MessageAddress));
 
                 StorePotentialEndpoint(info);
                 InitiateHandshakeWith(info);
             }
         }
 
-        private ChannelConnectionInformation ToConnectionInformation(ChannelInformation channelInformation)
-        {
-            // NOTE: this needs to be fixed because it all depends on the protocol version etc. etc.
-            return new ChannelConnectionInformation(
-                channelInformation.Id,
-                ChannelTemplate.TcpIP,
-                channelInformation.Address);
-        }
-
-        private bool IsAllowedToCommunicateWithConnection(ChannelConnectionInformation info)
+        private bool IsAllowedToCommunicateWithConnection(EndpointInformation info)
         {
             return m_AllowedChannelTypes.Contains(info.ChannelTemplate);
         }
@@ -280,7 +275,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// Initiates the handshake process between the current endpoint and the specified endpoint.
         /// </summary>
         /// <param name="information">The connection information for the endpoint.</param>
-        private void InitiateHandshakeWith(ChannelConnectionInformation information)
+        private void InitiateHandshakeWith(EndpointInformation information)
         {
             var connectionInfo = m_Layer.LocalConnectionFor(information.ChannelTemplate);
             if (connectionInfo != null)
@@ -331,7 +326,7 @@ namespace Nuclei.Communication.Protocol.V1
             }
         }
 
-        private void StorePotentialEndpoint(ChannelConnectionInformation information)
+        private void StorePotentialEndpoint(EndpointInformation information)
         {
             lock (m_Lock)
             {
@@ -359,7 +354,7 @@ namespace Nuclei.Communication.Protocol.V1
                 }
                 else
                 {
-                    ChannelConnectionInformation storedInformation;
+                    EndpointInformation storedInformation;
                     if (m_PotentialEndpoints.TryGetConnectionFor(information.Id, out storedInformation))
                     {
                         if (!storedInformation.IsComplete && information.IsComplete)
@@ -386,7 +381,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// <param name="information">The handshake information for the endpoint.</param>
         /// <param name="messageId">The ID of the message that carried the handshake information.</param>
         public void ContinueHandshakeWith(
-            ChannelConnectionInformation connection,
+            EndpointInformation connection,
             CommunicationDescription information,
             MessageId messageId)
         {
@@ -435,7 +430,7 @@ namespace Nuclei.Communication.Protocol.V1
         {
             if (m_PotentialEndpoints.IsWaitingForApproval(connection))
             {
-                ChannelConnectionInformation info;
+                EndpointInformation info;
                 var connectionSuccess = m_PotentialEndpoints.TryGetConnectionFor(connection, out info);
                 if (!connectionSuccess)
                 {
@@ -473,8 +468,8 @@ namespace Nuclei.Communication.Protocol.V1
                             "New endpoint ({0}) approved for communication via the {1} channel. Message URL: {2}. Data URL: {3}",
                             info.Id,
                             info.ChannelTemplate,
-                            info.MessageAddress,
-                            info.DataAddress));
+                            info.ProtocolInformation.MessageAddress,
+                            info.ProtocolInformation.DataAddress));
                 }
             }
 
