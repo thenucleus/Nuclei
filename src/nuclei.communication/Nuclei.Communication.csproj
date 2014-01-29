@@ -254,6 +254,7 @@
     <Compile Include="Protocol\V1\DataObjects\SuccessData.cs" />
     <Compile Include="Protocol\V1\DataObjects\UnknownMessageTypeData.cs" />
     <Compile Include="Protocol\V1\DataReceivingEndpoint.cs" />
+    <Compile Include="Protocol\V1\EndpointConnectionApprover.cs" />
     <Compile Include="Protocol\V1\EndpointInformationStorage.cs" />
     <Compile Include="Protocol\HandshakeProtocolLayer.cs" />
     <Compile Include="Protocol\ICommunicationMessage.cs" />
