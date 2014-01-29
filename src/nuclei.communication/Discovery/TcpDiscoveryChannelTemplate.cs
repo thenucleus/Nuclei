@@ -78,7 +78,6 @@ namespace Nuclei.Communication.Discovery
             var endpointDiscoveryBehavior = new EndpointDiscoveryBehavior();
             endpointDiscoveryBehavior.Extensions.Add(new XElement("root", new XElement("EndpointId", localEndpoint.ToString())));
             endpoint.Behaviors.Add(endpointDiscoveryBehavior);
-            endpoint.Behaviors.Add(new ProtoEndpointBehavior());
 
             return endpoint;
         }
@@ -106,7 +105,6 @@ namespace Nuclei.Communication.Discovery
         public ServiceEndpoint AttachVersionedDiscoveryEndpoint(ServiceHost host, Type implementedContract, Version version)
         {
             var endpoint = host.AddServiceEndpoint(implementedContract, GenerateBinding(), GenerateNewDiscoveryVersionedAddress(version));
-            endpoint.Behaviors.Add(new ProtoEndpointBehavior());
             return endpoint;
         }
 
