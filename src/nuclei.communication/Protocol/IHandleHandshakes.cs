@@ -4,8 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
-
 namespace Nuclei.Communication.Protocol
 {
     /// <summary>
@@ -13,15 +11,6 @@ namespace Nuclei.Communication.Protocol
     /// </summary>
     internal interface IHandleHandshakes
     {
-        /// <summary>
-        /// Gets the version of the protocol that is supported by the current
-        /// handshake handler.
-        /// </summary>
-        Version SupportedProtocolVersion
-        {
-            get;
-        }
-
         /// <summary>
         /// Continues the handshake process between the current endpoint and the specified endpoint.
         /// </summary>
