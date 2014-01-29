@@ -126,7 +126,7 @@ namespace Nuclei.Communication.Protocol
                         m_EndpointsWaitingForApproval.Remove(endpoint);
                         m_ApprovedEndpoints.Add(endpoint, pair.Item1);
 
-                        RaiseOnEndpointConnected(pair.Item1, pair.Item2);
+                        RaiseOnEndpointConnected(pair.Item1);
 
                         return true;
                     }
@@ -173,14 +173,14 @@ namespace Nuclei.Communication.Protocol
             return false;
         }
 
-        public event EventHandler<EndpointSignInEventArgs> OnEndpointConnected;
+        public event EventHandler<EndpointEventArgs> OnEndpointConnected;
 
-        private void RaiseOnEndpointConnected(EndpointInformation info, CommunicationDescription description)
+        private void RaiseOnEndpointConnected(EndpointInformation info)
         {
             var local = OnEndpointConnected;
             if (local != null)
             {
-                local(this, new EndpointSignInEventArgs(info, description));
+                local(this, new EndpointEventArgs(info.Id));
             }
         }
 
