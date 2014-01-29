@@ -21,15 +21,33 @@ namespace Nuclei.Communication.Protocol
         None,
 
         /// <summary>
-        /// The channel uses named pipes to communicate.
+        /// The channel uses a named pipe channel to communicate.
         /// </summary>
         [EnumMember]
         NamedPipe,
 
         /// <summary>
-        /// The channel uses TCP/IP to communicate.
+        /// The channel uses a TCP/IP channel to communicate.
         /// </summary>
         [EnumMember]
         TcpIP,
+
+        /// <summary>
+        /// The channel uses an HTTP connection to communicate.
+        /// </summary>
+        [EnumMember]
+        Http,
+
+        /// <summary>
+        /// The channel uses an HTTPS connection to communicate.
+        /// </summary>
+        [EnumMember]
+        Https,
+
+        /// <summary>
+        /// The channel uses an unknown method to communicate.
+        /// </summary>
+        [EnumMember]
+        Unknown,
     }
 }

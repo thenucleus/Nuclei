@@ -206,16 +206,32 @@ namespace Nuclei.Communication.Protocol
         }
 
         /// <summary>
-        /// Gets the connection information for each of the available channels.
+        /// Returns a collection containing the connection information for each of the available channels.
         /// </summary>
-        public IEnumerable<ProtocolInformation> LocalConnectionPoints
+        /// <returns>The collection that contains the connection information for each of the available channels.</returns>
+        public IEnumerable<ProtocolInformation> LocalConnectionPoints()
         {
-            get
+            lock(m_Lock)
             {
-                lock(m_Lock)
-                {
-                    return m_LocalConnectionPoints;
-                }
+                return m_LocalConnectionPoints.ToList();
+            }
+        }
+
+        /// <summary>
+        /// Returns the connection information for the channel that handles messages for the given version
+        /// of the protocol.
+        /// </summary>
+        /// <returns>The connection information for the channel that handles messages for the given version of the protocol.</returns>
+        public ProtocolInformation LocalConnectionPointForVersion(Version protocolVersion)
+        {
+            {
+                Lokad.Enforce.Argument(() => protocolVersion);
+            }
+
+            lock(m_Lock)
+            {
+                var result = m_LocalConnectionPoints.Find(p => p.Version == protocolVersion);
+                return result;
             }
         }
 

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Nuclei.Communication.Protocol.V1
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Stores information about all known endpoints.
@@ -25,20 +25,20 @@ namespace Nuclei.Communication.Protocol.V1
         /// <summary>
         /// The collection of endpoints that have been contacted.
         /// </summary>
-        private readonly Dictionary<EndpointId, ChannelConnectionInformation> m_ContactedEndpoints
-            = new Dictionary<EndpointId, ChannelConnectionInformation>();
+        private readonly Dictionary<EndpointId, EndpointInformation> m_ContactedEndpoints
+            = new Dictionary<EndpointId, EndpointInformation>();
 
         /// <summary>
         /// The collection of endpoints that have been discovered but have not been approved for connection.
         /// </summary>
-        private readonly Dictionary<EndpointId, Tuple<ChannelConnectionInformation, CommunicationDescription>> m_EndpointsWaitingForApproval
-            = new Dictionary<EndpointId, Tuple<ChannelConnectionInformation, CommunicationDescription>>();
+        private readonly Dictionary<EndpointId, Tuple<EndpointInformation, CommunicationDescription>> m_EndpointsWaitingForApproval
+            = new Dictionary<EndpointId, Tuple<EndpointInformation, CommunicationDescription>>();
 
         /// <summary>
         /// The collection of endpoints that have been discovered and approved for connection.
         /// </summary>
-        private readonly Dictionary<EndpointId, ChannelConnectionInformation> m_ApprovedEndpoints
-            = new Dictionary<EndpointId, ChannelConnectionInformation>();
+        private readonly Dictionary<EndpointId, EndpointInformation> m_ApprovedEndpoints
+            = new Dictionary<EndpointId, EndpointInformation>();
 
         /// <summary>
         /// Add a newly discovered endpoint to the collection.
@@ -48,7 +48,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// <returns>
         /// <see langword="true" /> if the endpoint was added; otherwise, <see langword="false" />.
         /// </returns>
-        public bool TryAdd(EndpointId endpoint, ChannelConnectionInformation connection)
+        public bool TryAdd(EndpointId endpoint, EndpointInformation connection)
         {
             if ((endpoint != null) && (connection != null))
             {
@@ -91,8 +91,8 @@ namespace Nuclei.Communication.Protocol.V1
                         m_ContactedEndpoints.Remove(endpoint);
                         
                         m_EndpointsWaitingForApproval.Add(
-                            endpoint, 
-                            new Tuple<ChannelConnectionInformation, CommunicationDescription>(
+                            endpoint,
+                            new Tuple<EndpointInformation, CommunicationDescription>(
                                 info, 
                                 description));
                         return true;
@@ -145,7 +145,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        public bool TryUpdate(ChannelConnectionInformation connectionInformation)
+        public bool TryUpdate(EndpointInformation connectionInformation)
         {
             if (connectionInformation != null)
             {
@@ -163,7 +163,7 @@ namespace Nuclei.Communication.Protocol.V1
                         m_EndpointsWaitingForApproval.Remove(connectionInformation.Id);
                         m_EndpointsWaitingForApproval.Add(
                             connectionInformation.Id,
-                            new Tuple<ChannelConnectionInformation, CommunicationDescription>(connectionInformation, tuple.Item2));
+                            new Tuple<EndpointInformation, CommunicationDescription>(connectionInformation, tuple.Item2));
 
                         return true;
                     }
@@ -175,7 +175,7 @@ namespace Nuclei.Communication.Protocol.V1
 
         public event EventHandler<EndpointSignInEventArgs> OnEndpointConnected;
 
-        private void RaiseOnEndpointConnected(ChannelConnectionInformation info, CommunicationDescription description)
+        private void RaiseOnEndpointConnected(EndpointInformation info, CommunicationDescription description)
         {
             var local = OnEndpointConnected;
             if (local != null)
@@ -184,14 +184,14 @@ namespace Nuclei.Communication.Protocol.V1
             }
         }
 
-        public event EventHandler<EndpointSignedOutEventArgs> OnEndpointDisconnected;
+        public event EventHandler<EndpointEventArgs> OnEndpointDisconnected;
 
-        private void RaiseOnEndpointDisconnected(ChannelConnectionInformation info)
+        private void RaiseOnEndpointDisconnected(EndpointInformation info)
         {
             var local = OnEndpointDisconnected;
             if (local != null)
             {
-                local(this, new EndpointSignedOutEventArgs(info.Id, info.ChannelTemplate));
+                local(this, new EndpointEventArgs(info.Id));
             }
         }
 
@@ -256,7 +256,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// <returns>
         /// <see langword="true" /> if the endpoint was approved successfully; otherwise, <see langword="false" />.
         /// </returns>
-        public bool TryGetConnectionFor(EndpointId endpoint, out ChannelConnectionInformation information)
+        public bool TryGetConnectionFor(EndpointId endpoint, out EndpointInformation information)
         {
             information = null;
             if (endpoint != null)

@@ -17,12 +17,17 @@ namespace Nuclei.Communication.Protocol
     internal interface ICommunicationChannel
     {
         /// <summary>
-        /// Gets the connection information for each of the available channels.
+        /// Returns a collection containing the connection information for each of the available channels.
         /// </summary>
-        IEnumerable<ProtocolInformation> LocalConnectionPoints
-        {
-            get;
-        }
+        /// <returns>The collection that contains the connection information for each of the available channels.</returns>
+        IEnumerable<ProtocolInformation> LocalConnectionPoints();
+
+        /// <summary>
+        /// Returns the connection information for the channel that handles messages for the given version
+        /// of the protocol.
+        /// </summary>
+        /// <returns>The connection information for the channel that handles messages for the given version of the protocol.</returns>
+        ProtocolInformation LocalConnectionPointForVersion(Version protocolVersion);
 
         /// <summary>
         /// Opens the channel and provides information on how to connect to the given channel.

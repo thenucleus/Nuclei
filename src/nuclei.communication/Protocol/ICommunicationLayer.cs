@@ -15,7 +15,7 @@ namespace Nuclei.Communication.Protocol
     /// <summary>
     /// Defines the methods for communicating with a remote endpoint.
     /// </summary>
-    internal interface ICommunicationLayer
+    internal interface ICommunicationLayer : IStoreInformationForActiveChannels, INotifyOfEndpointStateChange, IDisposable
     {
         /// <summary>
         /// Gets the endpoint ID of the local endpoint.
@@ -37,12 +37,13 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Gets the connection information for the channel of a given type created by the current application.
         /// </summary>
+        /// <param name="protocolVersion">The version of the protocol for which the connection information is required.</param>
         /// <param name="channelTemplate">The type of channel for which the connection information is required.</param>
         /// <returns>
         /// A tuple containing the <see cref="EndpointId"/>, the <see cref="Uri"/> of the message channel and the 
         /// <see cref="Uri"/> of the data channel; returns <see langword="null" /> if no channel of the given type exists.
         /// </returns>
-        Tuple<EndpointId, Uri, Uri> LocalConnectionFor(ChannelTemplate channelTemplate);
+        Tuple<EndpointId, Uri, Uri> LocalConnectionFor(Version protocolVersion, ChannelTemplate channelTemplate);
 
         /// <summary>
         /// Returns a collection containing the endpoint IDs of the known remote endpoints.
@@ -73,16 +74,6 @@ namespace Nuclei.Communication.Protocol
         event EventHandler<EventArgs> OnSignedOut;
 
         /// <summary>
-        /// An event raised when an endpoint has joined the network.
-        /// </summary>
-        event EventHandler<EndpointEventArgs> OnEndpointSignedIn;
-
-        /// <summary>
-        /// An event raised when an endpoint has left the network.
-        /// </summary>
-        event EventHandler<EndpointEventArgs> OnEndpointSignedOut;
-
-        /// <summary>
         /// Returns a value indicating if the given endpoint has provided the information required to
         /// contact it if it isn't offline.
         /// </summary>
@@ -94,14 +85,6 @@ namespace Nuclei.Communication.Protocol
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
         bool IsEndpointContactable(EndpointId endpoint);
-
-        /// <summary>
-        /// Returns a collection containing information about the local connection points.
-        /// </summary>
-        /// <returns>
-        /// The collection that describes the local connection points.
-        /// </returns>
-        IEnumerable<ChannelConnectionInformation> LocalConnectionPoints();
 
         /// <summary>
         /// Sends the given message to the specified endpoint.

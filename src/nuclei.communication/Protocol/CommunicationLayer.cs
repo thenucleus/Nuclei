@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Protocol
     /// <summary>
     /// Defines the methods needed to communicate with one or more remote applications.
     /// </summary>
-    internal sealed class CommunicationLayer : IDisposable
+    internal sealed class CommunicationLayer : ICommunicationLayer
     {
         /// <summary>
         /// The object used to lock on.
@@ -124,10 +124,9 @@ namespace Nuclei.Communication.Protocol
             m_Endpoints.OnEndpointDisconnected += HandleEndpointDisconnected;
         }
 
-        private void HandleOnEndpointApproved(object sender, EndpointSignInEventArgs e)
+        private void HandleOnEndpointApproved(object sender, EndpointEventArgs e)
         {
-            var info = e.ConnectionInformation;
-            RaiseOnEndpointSignIn(info.Id);
+            RaiseOnEndpointConnected(e.Endpoint);
         }
 
         // How do we handle endpoints disappearing and then reappearing. If the remote process
@@ -138,19 +137,18 @@ namespace Nuclei.Communication.Protocol
         // Also note that it is quite easily possible to fake being another endpoint. All you have
         // to do is send a message saying that you're a different endpoint and then the evil is
         // done. Not quite sure how to make that not happen though ...
-        private void HandleEndpointDisconnected(object sender, EndpointSignedOutEventArgs args)
+        private void HandleEndpointDisconnected(object sender, EndpointEventArgs args)
         {
             if (m_Id.Equals(args.Endpoint))
             {
                 return;
             }
 
-            RaiseOnEndpointSignedOut(args.Endpoint);
+            RaiseOnEndpointDisconnected(args.Endpoint);
 
-            var channel = ChannelForChannelType(args.ChannelTemplate);
-            if (channel != null)
+            foreach (var pair in m_OpenConnections)
             {
-                channel.EndpointDisconnected(args.Endpoint);
+                pair.Value.Item1.EndpointDisconnected(args.Endpoint);
             }
         }
 
@@ -178,37 +176,26 @@ namespace Nuclei.Communication.Protocol
         }
 
         /// <summary>
-        /// Returns a collection containing information about the local connection points.
-        /// </summary>
-        /// <returns>
-        /// The collection that describes the local connection points.
-        /// </returns>
-        public IEnumerable<ChannelConnectionInformation> LocalConnectionPoints()
-        {
-            var list = new List<ChannelConnectionInformation>();
-            lock (m_Lock)
-            {
-                list.AddRange(from tuple in m_OpenConnections.Values select tuple.Item1.LocalConnectionPoint);
-            }
-
-            return list;
-        }
-
-        /// <summary>
         /// Gets the connection information for the channel of a given type created by the current application.
         /// </summary>
+        /// <param name="protocolVersion">The version of the protocol for which the connection information is required.</param>
         /// <param name="channelTemplate">The type of channel for which the connection information is required.</param>
         /// <returns>
         /// A tuple containing the <see cref="EndpointId"/>, the <see cref="Uri"/> of the message channel and the 
         /// <see cref="Uri"/> of the data channel; returns <see langword="null" /> if no channel of the given type exists.
         /// </returns>
-        public Tuple<EndpointId, Uri, Uri> LocalConnectionFor(ChannelTemplate channelTemplate)
+        public Tuple<EndpointId, Uri, Uri> LocalConnectionFor(Version protocolVersion, ChannelTemplate channelTemplate)
         {
             Tuple<EndpointId, Uri, Uri> result = null;
             if (m_OpenConnections.ContainsKey(channelTemplate))
             {
-                var connection = m_OpenConnections[channelTemplate].Item1.LocalConnectionPoint;
-                result = new Tuple<EndpointId, Uri, Uri>(connection.Id, connection.MessageAddress, connection.DataAddress);
+                var connection = m_OpenConnections[channelTemplate].Item1.LocalConnectionPointForVersion(protocolVersion);
+                if (connection == null)
+                {
+                    return null;
+                }
+
+                result = new Tuple<EndpointId, Uri, Uri>(m_Id, connection.MessageAddress, connection.DataAddress);
             }
 
             return result;
@@ -299,11 +286,6 @@ namespace Nuclei.Communication.Protocol
             }
         }
 
-        private ICommunicationChannel ChannelForChannelType(ChannelTemplate connection)
-        {
-            return ChannelInformationForType(connection).Item1;
-        }
-
         private Tuple<ICommunicationChannel, IDirectIncomingMessages> ChannelInformationForType(ChannelTemplate connection)
         {
             Tuple<ICommunicationChannel, IDirectIncomingMessages> channel = null;
@@ -389,34 +371,6 @@ namespace Nuclei.Communication.Protocol
         }
 
         /// <summary>
-        /// An event raised when an endpoint joined the network.
-        /// </summary>
-        public event EventHandler<EndpointEventArgs> OnEndpointSignedIn;
-
-        private void RaiseOnEndpointSignIn(EndpointId id)
-        {
-            var local = OnEndpointSignedIn;
-            if (local != null)
-            {
-                local(this, new EndpointEventArgs(id));
-            }
-        }
-
-        /// <summary>
-        /// An event raised when an endpoint has left the network.
-        /// </summary>
-        public event EventHandler<EndpointEventArgs> OnEndpointSignedOut;
-
-        private void RaiseOnEndpointSignedOut(EndpointId endpoint)
-        {
-            var local = OnEndpointSignedOut;
-            if (local != null)
-            {
-                local(this, new EndpointEventArgs(endpoint));
-            }
-        }
-
-        /// <summary>
         /// Returns a value indicating if the given endpoint has provided the information required to
         /// contact it if it isn't offline.
         /// </summary>
@@ -432,9 +386,9 @@ namespace Nuclei.Communication.Protocol
             return (endpoint != null) && m_Endpoints.CanCommunicateWithEndpoint(endpoint);
         }
 
-        private ChannelConnectionInformation RetrieveEndpointConnection(EndpointId endpoint)
+        private EndpointInformation RetrieveEndpointConnection(EndpointId endpoint)
         {
-            ChannelConnectionInformation information;
+            EndpointInformation information;
             m_Endpoints.TryGetConnectionFor(endpoint, out information);
 
             return information;
@@ -476,26 +430,40 @@ namespace Nuclei.Communication.Protocol
                     throw new EndpointNotContactableException(endpoint);
                 }
 
-                if (!HasChannelFor(connection.ChannelTemplate))
-                {
-                    OpenChannel(connection.ChannelTemplate);
-                }
-
-                var channel = ChannelForChannelType(connection.ChannelTemplate);
-                Debug.Assert(channel != null, "The channel should exist.");
-
+                var channel = ChannelFor(connection);
                 m_Diagnostics.Log(
                     LevelToLog.Trace,
                     CommunicationConstants.DefaultLogTextPrefix,
                     string.Format(
                         CultureInfo.InvariantCulture,
-                        "Sending msg of type {0} to endpoint ({1}) via the {2} channel without waiting for the response.",
+                        "Sending msg of type {0} to endpoint ({1}) without waiting for the response.",
                         message.GetType(),
-                        endpoint,
-                        connection.ChannelTemplate));
+                        endpoint));
 
                 channel.Send(endpoint, message);
             }
+        }
+
+        private ICommunicationChannel ChannelFor(EndpointInformation connection)
+        {
+            return ChannelPairFor(connection).Item1;
+        }
+
+        private Tuple<ICommunicationChannel, IDirectIncomingMessages> ChannelPairFor(EndpointInformation connection)
+        {
+            var template = connection.ProtocolInformation.MessageAddress.ToChannelTemplate();
+            Debug.Assert(
+                template != ChannelTemplate.None && template != ChannelTemplate.Unknown,
+                "The channel template should be a known type.");
+
+            if (!HasChannelFor(template))
+            {
+                OpenChannel(template);
+            }
+
+            var pair = ChannelInformationForType(template);
+            Debug.Assert(pair != null, "The channel should exist.");
+            return pair;
         }
 
         /// <summary>
@@ -534,14 +502,7 @@ namespace Nuclei.Communication.Protocol
                     throw new EndpointNotContactableException(endpoint);
                 }
 
-                if (!HasChannelFor(connection.ChannelTemplate))
-                {
-                    OpenChannel(connection.ChannelTemplate);
-                }
-
-                var pair = ChannelInformationForType(connection.ChannelTemplate);
-                Debug.Assert(pair != null, "The channel should exist.");
-
+                var pair = ChannelPairFor(connection);
                 var result = pair.Item2.ForwardResponse(endpoint, message.Id);
 
                 m_Diagnostics.Log(
@@ -549,10 +510,9 @@ namespace Nuclei.Communication.Protocol
                     CommunicationConstants.DefaultLogTextPrefix,
                     string.Format(
                         CultureInfo.InvariantCulture,
-                        "Sending msg of type {0} to endpoint ({1}) via the {2} channel while waiting for the response.",
+                        "Sending msg of type {0} to endpoint ({1}) while waiting for the response.",
                         message.GetType(),
-                        endpoint,
-                        connection.ChannelTemplate));
+                        endpoint));
 
                 pair.Item1.Send(endpoint, message);
                 return result;
@@ -585,15 +545,51 @@ namespace Nuclei.Communication.Protocol
                 throw new EndpointNotContactableException(receivingEndpoint);
             }
 
-            if (!HasChannelFor(connection.ChannelTemplate))
+            var channel = ChannelFor(connection);
+            return channel.TransferData(receivingEndpoint, filePath, token, scheduler);
+        }
+
+        /// <summary>
+        /// Returns a collection containing information describing all the active channels.
+        /// </summary>
+        /// <returns>The collection containing information describing all the active channels.</returns>
+        public IEnumerable<ProtocolInformation> ActiveChannels()
+        {
+            var list = new List<ProtocolInformation>();
+            lock (m_Lock)
             {
-                OpenChannel(connection.ChannelTemplate);
+                list.AddRange(m_OpenConnections.Values.SelectMany(t => t.Item1.LocalConnectionPoints()));
             }
 
-            var channel = ChannelForChannelType(connection.ChannelTemplate);
-            Debug.Assert(channel != null, "The channel should exist.");
+            return list;
+        }
 
-            return channel.TransferData(receivingEndpoint, filePath, token, scheduler);
+        /// <summary>
+        /// An event raised when an endpoint has signed in.
+        /// </summary>
+        public event EventHandler<EndpointEventArgs> OnEndpointConnected;
+
+        private void RaiseOnEndpointConnected(EndpointId id)
+        {
+            var local = OnEndpointConnected;
+            if (local != null)
+            {
+                local(this, new EndpointEventArgs(id));
+            }
+        }
+
+        /// <summary>
+        /// An event raised when an endpoint has signed out.
+        /// </summary>
+        public event EventHandler<EndpointEventArgs> OnEndpointDisconnected;
+
+        private void RaiseOnEndpointDisconnected(EndpointId endpoint)
+        {
+            var local = OnEndpointDisconnected;
+            if (local != null)
+            {
+                local(this, new EndpointEventArgs(endpoint));
+            }
         }
 
         /// <summary>

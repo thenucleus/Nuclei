@@ -156,13 +156,11 @@
     <Compile Include="Protocol\DataTransferMessage.cs" />
     <Compile Include="Discovery\EndpointDiscoveredEventArgs.cs" />
     <Compile Include="Discovery\EndpointLostEventArgs.cs" />
-    <Compile Include="Protocol\EndpointSignInEventArgs.cs" />
     <Compile Include="Protocol\DownloadDataFromRemoteEndpoints.cs" />
     <Compile Include="EndpointEventArgs.cs" />
     <Compile Include="EndpointId.cs" />
     <Compile Include="EndpointIdExtensions.cs" />
     <Compile Include="Protocol\EndpointNotContactableException.cs" />
-    <Compile Include="Protocol\EndpointSignedOutEventArgs.cs" />
     <Compile Include="Protocol\FailedToSendMessageException.cs" />
     <Compile Include="Protocol\FileRegistrationNotFoundException.cs" />
     <Compile Include="Discovery\IAcceptExternalEndpointInformation.cs" />
@@ -184,7 +182,7 @@
     <Compile Include="Protocol\IMessagePipe.cs" />
     <Compile Include="Protocol\IMessageProcessAction.cs" />
     <Compile Include="Protocol\IMessageSendingEndpoint.cs" />
-    <Compile Include="Protocol\INotifyOfEndpointStateChange.cs" />
+    <Compile Include="INotifyOfEndpointStateChange.cs" />
     <Compile Include="Interaction\INotifyOfRemoteEndpointEvents.cs" />
     <Compile Include="Interaction\InternalCommandAttribute.cs" />
     <Compile Include="Interaction\InternalNotificationAttribute.cs" />
@@ -245,6 +243,7 @@
     <Compile Include="Protocol\CommunicationDescription.cs" />
     <Compile Include="Protocol\CommunicationDescriptionStorage.cs" />
     <Compile Include="Protocol\CommunicationSubject.cs" />
+    <Compile Include="Protocol\UriExtensions.cs" />
     <Compile Include="Protocol\V1\DataObjects\DataObjectBase.cs" />
     <Compile Include="Protocol\V1\DataObjects\DownloadRequestData.cs" />
     <Compile Include="Protocol\V1\DataObjects\EndpointConnectData.cs" />
@@ -255,7 +254,7 @@
     <Compile Include="Protocol\V1\DataObjects\UnknownMessageTypeData.cs" />
     <Compile Include="Protocol\V1\DataReceivingEndpoint.cs" />
     <Compile Include="Protocol\V1\EndpointConnectionApprover.cs" />
-    <Compile Include="Protocol\V1\EndpointInformationStorage.cs" />
+    <Compile Include="Protocol\EndpointInformationStorage.cs" />
     <Compile Include="Protocol\HandshakeProtocolLayer.cs" />
     <Compile Include="Protocol\ICommunicationMessage.cs" />
     <Compile Include="Protocol\V1\IConvertCommunicationMessages.cs" />

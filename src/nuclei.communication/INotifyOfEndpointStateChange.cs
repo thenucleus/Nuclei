@@ -6,21 +6,21 @@
 
 using System;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication
 {
     /// <summary>
     /// Defines the interface for objects that provide notification of remote endpoint sign in and sign out.
     /// </summary>
-    internal interface INotifyOfEndpointStateChange
+    public interface INotifyOfEndpointStateChange
     {
         /// <summary>
         /// An event raised when an endpoint has signed in.
         /// </summary>
-        event EventHandler<EndpointSignInEventArgs> OnEndpointConnected;
+        event EventHandler<EndpointEventArgs> OnEndpointConnected;
 
         /// <summary>
         /// An event raised when an endpoint has signed out.
         /// </summary>
-        event EventHandler<EndpointSignedOutEventArgs> OnEndpointDisconnected;
+        event EventHandler<EndpointEventArgs> OnEndpointDisconnected;
     }
 }
