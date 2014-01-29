@@ -10,7 +10,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.ServiceModel;
 using Nuclei.Communication.Protocol.Messages;
-using Nuclei.Communication.Protocol.V1.DataObjects;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
