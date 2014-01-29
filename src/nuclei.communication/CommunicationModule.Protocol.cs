@@ -53,7 +53,7 @@ namespace Nuclei.Communication
         private static void RegisterHandshakeLayer(ContainerBuilder builder, IEnumerable<ChannelTemplate> allowedChannelTemplates)
         {
             builder.Register(
-                c => new HandshakeProtocolLayer(
+                c => new HandshakeConductor(
                     c.Resolve<IStoreInformationAboutEndpoints>(),
                     c.Resolve<IEnumerable<IDiscoverOtherServices>>(),
                     c.Resolve<ISendDataViaChannels>(),

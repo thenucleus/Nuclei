@@ -21,7 +21,7 @@ namespace Nuclei.Communication.Protocol
     /// <summary>
     /// Defines the protocol for connection handshake behavior.
     /// </summary>
-    internal sealed class HandshakeProtocolLayer : IHandleHandshakes
+    internal sealed class HandshakeConductor : IHandleHandshakes
     {
         /// <summary>
         /// Stores information about the messages that have been send and received.
@@ -138,7 +138,7 @@ namespace Nuclei.Communication.Protocol
         private readonly SystemDiagnostics m_Diagnostics;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HandshakeProtocolLayer"/> class.
+        /// Initializes a new instance of the <see cref="HandshakeConductor"/> class.
         /// </summary>
         /// <param name="potentialEndpoints">The collection of endpoints that have been discovered.</param>
         /// <param name="discoverySources">The object that handles the discovery of remote endpoints.</param>
@@ -170,7 +170,7 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
-        public HandshakeProtocolLayer(
+        public HandshakeConductor(
             IStoreEndpointApprovalState potentialEndpoints,
             IEnumerable<IDiscoverOtherServices> discoverySources,
             ICommunicationLayer layer,
