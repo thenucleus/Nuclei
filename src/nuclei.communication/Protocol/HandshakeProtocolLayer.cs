@@ -84,12 +84,13 @@ namespace Nuclei.Communication.Protocol
 
         private static bool CanReachEndpointWithGivenConnection(EndpointInformation info)
         {
+            var endpointChannelTemplate = info.ProtocolInformation.MessageAddress.ToChannelTemplate();
             if (info.Id.IsOnLocalMachine())
             {
-                return info.ChannelTemplate == ChannelTemplate.NamedPipe;
+                return  endpointChannelTemplate == ChannelTemplate.NamedPipe;
             }
 
-            return info.ChannelTemplate == ChannelTemplate.TcpIP;
+            return endpointChannelTemplate == ChannelTemplate.TcpIP;
         }
 
         /// <summary>
@@ -143,6 +144,9 @@ namespace Nuclei.Communication.Protocol
         /// <param name="discoverySources">The object that handles the discovery of remote endpoints.</param>
         /// <param name="layer">The object responsible for sending messages with remote endpoints.</param>
         /// <param name="descriptions">The object that stores information about the available communication descriptions.</param>
+        /// <param name="connectionApprovers">
+        /// The collection that contains all the objects that are able to approve connections between the current endpoint and a remote endpoint.
+        /// </param>
         /// <param name="allowedChannelTypes">The collection that contains all the channel types for which a channel should be opened.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
         /// <exception cref="ArgumentNullException">
@@ -158,6 +162,9 @@ namespace Nuclei.Communication.Protocol
         ///     Thrown if <paramref name="descriptions"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="connectionApprovers"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="allowedChannelTypes"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
@@ -168,6 +175,7 @@ namespace Nuclei.Communication.Protocol
             IEnumerable<IDiscoverOtherServices> discoverySources,
             ICommunicationLayer layer,
             IStoreCommunicationDescriptions descriptions,
+            IEnumerable<IApproveEndpointConnections> connectionApprovers,
             IEnumerable<ChannelTemplate> allowedChannelTypes,
             SystemDiagnostics systemDiagnostics)
         {
@@ -176,6 +184,7 @@ namespace Nuclei.Communication.Protocol
                 Lokad.Enforce.Argument(() => discoverySources);
                 Lokad.Enforce.Argument(() => layer);
                 Lokad.Enforce.Argument(() => descriptions);
+                Lokad.Enforce.Argument(() => connectionApprovers);
                 Lokad.Enforce.Argument(() => allowedChannelTypes);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
@@ -186,6 +195,11 @@ namespace Nuclei.Communication.Protocol
             m_Descriptions = descriptions;
             m_AllowedChannelTypes = allowedChannelTypes;
             m_Diagnostics = systemDiagnostics;
+
+            foreach (var approver in connectionApprovers)
+            {
+                m_ConnectionApprovers.Add(approver.ProtocolVersion, approver);
+            }
 
             foreach (var source in m_DiscoverySources)
             {
@@ -235,7 +249,7 @@ namespace Nuclei.Communication.Protocol
 
         private bool IsAllowedToCommunicateWithConnection(EndpointInformation info)
         {
-            return m_AllowedChannelTypes.Contains(info.ChannelTemplate);
+            return m_AllowedChannelTypes.Contains(info.ProtocolInformation.MessageAddress.ToChannelTemplate());
         }
 
         // How do we handle endpoints disappearing and then reappearing. If the remote process
@@ -274,7 +288,9 @@ namespace Nuclei.Communication.Protocol
         /// <param name="information">The connection information for the endpoint.</param>
         private void InitiateHandshakeWith(EndpointInformation information)
         {
-            var connectionInfo = m_Layer.LocalConnectionFor(information.ChannelTemplate);
+            var connectionInfo = m_Layer.LocalConnectionFor(
+                information.ProtocolInformation.Version, 
+                information.ProtocolInformation.MessageAddress.ToChannelTemplate());
             if (connectionInfo != null)
             {
                 lock (m_Lock)
