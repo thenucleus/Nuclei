@@ -10,7 +10,6 @@ using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Discovery;
 using System.Xml.Linq;
-using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 
 namespace Nuclei.Communication.Discovery
@@ -91,7 +90,7 @@ namespace Nuclei.Communication.Discovery
         private void HandleOnlineAnnouncementReceived(EndpointDiscoveryMetadata metadata)
         {
             // Only acknowledge service contracts that we actually know about.
-            if (metadata.ContractTypeNames.FirstOrDefault(x => x.Name == typeof(IMessageReceivingEndpoint).Name) != null)
+            if (metadata.ContractTypeNames.FirstOrDefault(x => x.Name == typeof(IBootstrapEndpoint).Name) != null)
             {
                 var id = GetEndpointId(metadata);
                 var address = metadata.Address.Uri;
@@ -105,7 +104,7 @@ namespace Nuclei.Communication.Discovery
         private void HandleOfflineAnnouncementReceived(EndpointDiscoveryMetadata metadata)
         {
             // Only acknowledge service contracts that we actually know about.
-            if (metadata.ContractTypeNames.FirstOrDefault(x => x.Name == typeof(IMessageReceivingEndpoint).Name) != null)
+            if (metadata.ContractTypeNames.FirstOrDefault(x => x.Name == typeof(IBootstrapEndpoint).Name) != null)
             {
                 var id = GetEndpointId(metadata);
                 LostRemoteEndpointWithId(id);
@@ -118,7 +117,7 @@ namespace Nuclei.Communication.Discovery
             m_DiscoveryClient.FindProgressChanged += (s, e) => HandleOnlineAnnouncementReceived(e.EndpointDiscoveryMetadata);
             m_DiscoveryClient.FindCompleted += OnFindCompleted;
 
-            m_DiscoveryClient.FindAsync(new FindCriteria(typeof(IMessageReceivingEndpoint)));
+            m_DiscoveryClient.FindAsync(new FindCriteria(typeof(IBootstrapEndpoint)));
         }
 
         private void OnFindCompleted(object sender, AsyncCompletedEventArgs e)
