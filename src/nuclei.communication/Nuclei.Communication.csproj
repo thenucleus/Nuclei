@@ -241,9 +241,9 @@
     <Compile Include="Interaction\SerializedEvent.cs" />
     <Compile Include="Interaction\SerializedMethodInvocation.cs" />
     <Compile Include="Interaction\SerializedType.cs" />
-    <Compile Include="Protocol\V1\CommunicationDescription.cs" />
-    <Compile Include="Protocol\V1\CommunicationDescriptionStorage.cs" />
-    <Compile Include="Protocol\V1\CommunicationSubject.cs" />
+    <Compile Include="Protocol\CommunicationDescription.cs" />
+    <Compile Include="Protocol\CommunicationDescriptionStorage.cs" />
+    <Compile Include="Protocol\CommunicationSubject.cs" />
     <Compile Include="Protocol\V1\DataObjects\DataObjectBase.cs" />
     <Compile Include="Protocol\V1\DataObjects\DownloadRequestData.cs" />
     <Compile Include="Protocol\V1\DataObjects\EndpointConnectData.cs" />
@@ -259,11 +259,11 @@
     <Compile Include="Protocol\V1\IConvertCommunicationMessages.cs" />
     <Compile Include="Protocol\V1\IDataReceivingEndpoint.cs" />
     <Compile Include="Protocol\V1\IDataReceivingEndpointProxy.cs" />
-    <Compile Include="Protocol\V1\IHandleHandshakes.cs" />
+    <Compile Include="Protocol\IHandleHandshakes.cs" />
     <Compile Include="Protocol\V1\IMessageReceivingEndpoint.cs" />
     <Compile Include="Protocol\V1\IMessageReceivingEndpointProxy.cs" />
     <Compile Include="Protocol\V1\IStoreV1CommunicationData.cs" />
-    <Compile Include="Protocol\V1\IStoreCommunicationDescriptions.cs" />
+    <Compile Include="Protocol\IStoreCommunicationDescriptions.cs" />
     <Compile Include="Protocol\MessageId.cs" />
     <Compile Include="Protocol\V1\IStoreEndpointApprovalState.cs" />
     <Compile Include="Protocol\V1\MessageReceivingEndpoint.cs" />
@@ -287,7 +287,7 @@
     <Compile Include="Protocol\Messages\SuccessMessage.cs" />
     <Compile Include="Protocol\Messages\UnknownMessageTypeMessage.cs" />
     <Compile Include="Protocol\Messages\UnregisterFromNotificationMessage.cs" />
-    <Compile Include="Protocol\V1\NoCommunicationSubjectsRegisteredException.cs" />
+    <Compile Include="Protocol\NoCommunicationSubjectsRegisteredException.cs" />
     <Compile Include="Protocol\V1\RestoringDataTransferingEndpoint.cs" />
     <Compile Include="Protocol\V1\RestoringMessageSendingEndpoint.cs" />
     <Compile Include="ServiceConnectionHolder.cs" />

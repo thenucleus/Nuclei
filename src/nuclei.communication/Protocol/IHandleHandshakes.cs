@@ -4,13 +4,24 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+
 namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the interface for objects that handle handshake protocols.
     /// </summary>
-    internal interface IHandleHandshakes.V1
+    internal interface IHandleHandshakes
     {
+        /// <summary>
+        /// Gets the version of the protocol that is supported by the current
+        /// handshake handler.
+        /// </summary>
+        Version SupportedProtocolVersion
+        {
+            get;
+        }
+
         /// <summary>
         /// Continues the handshake process between the current endpoint and the specified endpoint.
         /// </summary>
@@ -18,7 +29,7 @@ namespace Nuclei.Communication.Protocol
         /// <param name="information">The handshake information for the endpoint.</param>
         /// <param name="messageId">The ID of the message that carried the handshake information.</param>
         void ContinueHandshakeWith(
-            ChannelConnectionInformation connection, 
+            EndpointInformation connection, 
             CommunicationDescription information, 
             MessageId messageId);
     }

@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using Nuclei.Communication.Interaction;
 
-namespace Nuclei.Communication.Protocol.V1
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Stores the communication subjects, commands and notifications for the application.

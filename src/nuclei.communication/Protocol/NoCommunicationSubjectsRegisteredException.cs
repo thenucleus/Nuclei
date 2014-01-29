@@ -8,7 +8,7 @@ using System;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication.Protocol.V1
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// An exception thrown when no communication subjects have been registered, potentially resulting in

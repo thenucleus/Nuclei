@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using Nuclei.Communication.Interaction;
 
-namespace Nuclei.Communication.Protocol.V1
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the interface for objects that store information about the API's that are available for the
@@ -33,14 +33,6 @@ namespace Nuclei.Communication.Protocol.V1
         /// </summary>
         /// <param name="notificationType">The <see cref="INotificationSet"/> type.</param>
         void RegisterNotificationType(Type notificationType);
-
-        /// <summary>
-        /// Gets the version of the communication layer used in the application.
-        /// </summary>
-        Version CommunicationVersion
-        {
-            get;
-        }
 
         /// <summary>
         /// Returns a collection containing all the subjects registered for the current application.
