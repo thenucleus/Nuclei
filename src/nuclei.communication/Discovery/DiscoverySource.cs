@@ -160,7 +160,7 @@ namespace Nuclei.Communication.Discovery
                 return;
             }
 
-            var discoveryInfo = new DiscoveryInformation(pair.Item1, address);
+            var discoveryInfo = new DiscoveryInformation(address);
             var info = new EndpointInformation(id, discoveryInfo, protocol);
             RaiseOnEndpointBecomingAvailable(info);
         }

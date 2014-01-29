@@ -113,6 +113,11 @@ namespace Nuclei.Communication.Protocol
         private readonly IStoreEndpointApprovalState m_PotentialEndpoints;
 
         /// <summary>
+        /// Provides the information describing the entry discovery channel.
+        /// </summary>
+        private readonly IProvideLocalConnectionInformation m_DiscoveryChannel;
+
+        /// <summary>
         /// The collection of endpoint discovery objects.
         /// </summary>
         private readonly IEnumerable<IDiscoverOtherServices> m_DiscoverySources;
@@ -141,6 +146,7 @@ namespace Nuclei.Communication.Protocol
         /// Initializes a new instance of the <see cref="HandshakeConductor"/> class.
         /// </summary>
         /// <param name="potentialEndpoints">The collection of endpoints that have been discovered.</param>
+        /// <param name="discoveryChannel">The object that provides the information about the entry discovery channel for the application.</param>
         /// <param name="discoverySources">The object that handles the discovery of remote endpoints.</param>
         /// <param name="layer">The object responsible for sending messages with remote endpoints.</param>
         /// <param name="descriptions">The object that stores information about the available communication descriptions.</param>
@@ -151,6 +157,9 @@ namespace Nuclei.Communication.Protocol
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="potentialEndpoints"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="discoveryChannel"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="discoverySources"/> is <see langword="null" />.
@@ -172,6 +181,7 @@ namespace Nuclei.Communication.Protocol
         /// </exception>
         public HandshakeConductor(
             IStoreEndpointApprovalState potentialEndpoints,
+            IProvideLocalConnectionInformation discoveryChannel,
             IEnumerable<IDiscoverOtherServices> discoverySources,
             ICommunicationLayer layer,
             IStoreCommunicationDescriptions descriptions,
@@ -181,6 +191,7 @@ namespace Nuclei.Communication.Protocol
         {
             {
                 Lokad.Enforce.Argument(() => potentialEndpoints);
+                Lokad.Enforce.Argument(() => discoveryChannel);
                 Lokad.Enforce.Argument(() => discoverySources);
                 Lokad.Enforce.Argument(() => layer);
                 Lokad.Enforce.Argument(() => descriptions);
@@ -190,6 +201,7 @@ namespace Nuclei.Communication.Protocol
             }
 
             m_PotentialEndpoints = potentialEndpoints;
+            m_DiscoveryChannel = discoveryChannel;
             m_DiscoverySources = discoverySources;
             m_Layer = layer;
             m_Descriptions = descriptions;
@@ -304,11 +316,9 @@ namespace Nuclei.Communication.Protocol
 
                         var message = new EndpointConnectMessage(
                             m_Layer.Id,
-                            new DiscoveryInformation(
-                                foobar(),
-                                foobar()), 
+                            new DiscoveryInformation(m_DiscoveryChannel.EntryChannel), 
                             new ProtocolInformation(
-                                foobar(),
+                                information.ProtocolInformation.Version,
                                 connectionInfo.Item2,
                                 connectionInfo.Item3), 
                             m_Descriptions.ToStorage());
@@ -373,6 +383,10 @@ namespace Nuclei.Communication.Protocol
                     EndpointInformation storedInformation;
                     if (m_PotentialEndpoints.TryGetConnectionFor(information.Id, out storedInformation))
                     {
+                        /*
+                         * For the moment we don't need this, but it may come back when we need to handle
+                         * Description information stuff ...
+                         * 
                         if (!storedInformation.IsComplete && information.IsComplete)
                         {
                             m_PotentialEndpoints.TryUpdate(information);
@@ -385,6 +399,7 @@ namespace Nuclei.Communication.Protocol
                                     "Endpoint information for {0} updated.",
                                     information.Id));
                         }
+                        */
                     }
                 }
             }
@@ -461,6 +476,7 @@ namespace Nuclei.Communication.Protocol
                     return;
                 }
 
+                /*
                 if (!info.IsComplete)
                 {
                     m_Diagnostics.Log(
@@ -473,6 +489,7 @@ namespace Nuclei.Communication.Protocol
 
                     return;
                 }
+                 */
 
                 if (m_PotentialEndpoints.TryCompleteApproval(connection))
                 {

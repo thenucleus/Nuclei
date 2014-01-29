@@ -70,7 +70,7 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
 
-            var layer = new HandshakeProtocolLayer(
+            var layer = new HandshakeConductor(
                 storage,
                 new[]
                     {
@@ -158,7 +158,7 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
 
-            var layer = new HandshakeProtocolLayer(
+            var layer = new HandshakeConductor(
                 storage,
                 new[]
                     {
@@ -237,7 +237,7 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
 
-            var layer = new HandshakeProtocolLayer(
+            var layer = new HandshakeConductor(
                 storage,
                 new[]
                     {
@@ -310,7 +310,7 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
 
-            var layer = new HandshakeProtocolLayer(
+            var layer = new HandshakeConductor(
                 storage,
                 new[]
                     {

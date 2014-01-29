@@ -255,7 +255,7 @@
     <Compile Include="Protocol\V1\DataReceivingEndpoint.cs" />
     <Compile Include="Protocol\V1\EndpointConnectionApprover.cs" />
     <Compile Include="Protocol\EndpointInformationStorage.cs" />
-    <Compile Include="Protocol\HandshakeProtocolLayer.cs" />
+    <Compile Include="Protocol\HandshakeConductor.cs" />
     <Compile Include="Protocol\ICommunicationMessage.cs" />
     <Compile Include="Protocol\V1\IConvertCommunicationMessages.cs" />
     <Compile Include="Protocol\V1\IDataReceivingEndpoint.cs" />
