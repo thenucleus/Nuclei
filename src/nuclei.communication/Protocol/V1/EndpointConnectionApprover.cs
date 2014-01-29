@@ -1,12 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
+﻿//-----------------------------------------------------------------------
+// <copyright company="Nuclei">
+//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Linq;
-using System.Text;
 
 namespace Nuclei.Communication.Protocol.V1
 {
+    /// <summary>
+    /// Approves connections with remote endpoints for endpoints that use V1 of the communication protocol.
+    /// </summary>
     internal sealed class EndpointConnectionApprover : IApproveEndpointConnections
     {
+        /// <summary>
+        /// The object that stores information about the available communication APIs.
+        /// </summary>
+        private readonly IStoreCommunicationDescriptions m_Descriptions;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EndpointConnectionApprover"/> class.
+        /// </summary>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="descriptions"/> is <see langword="null" />.
+        /// </exception>
+        public EndpointConnectionApprover(IStoreCommunicationDescriptions descriptions)
+        {
+            {
+                Lokad.Enforce.Argument(() => descriptions);
+            }
+
+            m_Descriptions = descriptions;
+        }
+
         /// <summary>
         /// The version of the protocol for which the current instance can approve endpoint connections.
         /// </summary>
