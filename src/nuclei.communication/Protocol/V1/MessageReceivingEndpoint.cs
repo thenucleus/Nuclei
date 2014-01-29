@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.ServiceModel;
 using Nuclei.Communication.Protocol.Messages;
+using Nuclei.Communication.Protocol.V1.DataObjects;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
@@ -61,7 +62,6 @@ namespace Nuclei.Communication.Protocol.V1
             }
 
             m_Diagnostics = systemDiagnostics;
-
             foreach (var converter in messageConverters)
             {
                 m_Converters.Add(converter.DataTypeToTranslate, converter);
@@ -86,8 +86,7 @@ namespace Nuclei.Communication.Protocol.V1
                         "Received message of type {0}.",
                         message.GetType()));
 
-                var translatedMessage = TranslateMessage(message);
-                RaiseOnNewMessage(translatedMessage);
+                ProcessMessage(message);
             }
             catch (Exception e)
             {
@@ -100,6 +99,12 @@ namespace Nuclei.Communication.Protocol.V1
                         message.GetType(),
                         e));
             }
+        }
+
+        private void ProcessMessage(IStoreV1CommunicationData message)
+        {
+            var translatedMessage = TranslateMessage(message);
+            RaiseOnNewMessage(translatedMessage);
         }
 
         private ICommunicationMessage TranslateMessage(IStoreV1CommunicationData message)
