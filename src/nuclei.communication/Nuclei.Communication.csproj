@@ -166,6 +166,7 @@
     <Compile Include="Protocol\FailedToSendMessageException.cs" />
     <Compile Include="Protocol\FileRegistrationNotFoundException.cs" />
     <Compile Include="Discovery\IAcceptExternalEndpointInformation.cs" />
+    <Compile Include="Protocol\IApproveEndpointConnections.cs" />
     <Compile Include="Protocol\IDataPipe.cs" />
     <Compile Include="Protocol\IDataTransferingEndpoint.cs" />
     <Compile Include="Protocol\IDirectIncomingData.cs" />
@@ -254,7 +255,7 @@
     <Compile Include="Protocol\V1\DataObjects\UnknownMessageTypeData.cs" />
     <Compile Include="Protocol\V1\DataReceivingEndpoint.cs" />
     <Compile Include="Protocol\V1\EndpointInformationStorage.cs" />
-    <Compile Include="Protocol\V1\HandshakeProtocolLayer.cs" />
+    <Compile Include="Protocol\HandshakeProtocolLayer.cs" />
     <Compile Include="Protocol\ICommunicationMessage.cs" />
     <Compile Include="Protocol\V1\IConvertCommunicationMessages.cs" />
     <Compile Include="Protocol\V1\IDataReceivingEndpoint.cs" />
@@ -265,7 +266,7 @@
     <Compile Include="Protocol\V1\IStoreV1CommunicationData.cs" />
     <Compile Include="Protocol\IStoreCommunicationDescriptions.cs" />
     <Compile Include="Protocol\MessageId.cs" />
-    <Compile Include="Protocol\V1\IStoreEndpointApprovalState.cs" />
+    <Compile Include="Protocol\IStoreEndpointApprovalState.cs" />
     <Compile Include="Protocol\V1\MessageReceivingEndpoint.cs" />
     <Compile Include="Protocol\Messages\CommandInvokedMessage.cs" />
     <Compile Include="Protocol\Messages\CommandInvokedResponseMessage.cs" />

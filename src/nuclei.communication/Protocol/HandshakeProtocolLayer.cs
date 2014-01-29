@@ -16,7 +16,7 @@ using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication.Protocol.V1
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the protocol for connection handshake behavior.
@@ -26,7 +26,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// <summary>
         /// Stores information about the messages that have been send and received.
         /// </summary>
-        private sealed class MessageTickList
+        private sealed class EndpointApprovalState
         {
             /// <summary>
             /// Gets or sets a value indicating whether the current application has send an
@@ -97,11 +97,14 @@ namespace Nuclei.Communication.Protocol.V1
         /// </summary>
         private readonly object m_Lock = new object();
 
+        private readonly Dictionary<Version, IApproveEndpointConnections> m_ConnectionApprovers
+            = new Dictionary<Version, IApproveEndpointConnections>();
+
         /// <summary>
         /// The collection that tracks which messages have been send and received from remote endpoints.
         /// </summary>
-        private readonly Dictionary<EndpointId, MessageTickList> m_EndpointMessages
-            = new Dictionary<EndpointId, MessageTickList>();
+        private readonly Dictionary<EndpointId, EndpointApprovalState> m_EndpointApprovalState
+            = new Dictionary<EndpointId, EndpointApprovalState>();
 
         /// <summary>
         /// The collection of endpoints that have been discovered.
@@ -184,11 +187,6 @@ namespace Nuclei.Communication.Protocol.V1
             m_AllowedChannelTypes = allowedChannelTypes;
             m_Diagnostics = systemDiagnostics;
 
-            // Initiate discovery of other services. 
-
-            // We should only get the sign-on notifications for those endpoints that
-            // use our version of the protocol ......
-            foobar();
             foreach (var source in m_DiscoverySources)
             {
                 source.OnEndpointBecomingAvailable += HandleEndpointSignIn;
@@ -226,9 +224,8 @@ namespace Nuclei.Communication.Protocol.V1
                     CommunicationConstants.DefaultLogTextPrefix,
                     string.Format(
                         CultureInfo.InvariantCulture,
-                        "New endpoint ({0}) discovered via the {1} channel. Endpoint URL: {2}.",
+                        "New endpoint ({0}) discovered at endpoint URL: {1}.",
                         info.Id,
-                        info.ChannelTemplate,
                         info.ProtocolInformation.MessageAddress));
 
                 StorePotentialEndpoint(info);
@@ -264,9 +261,9 @@ namespace Nuclei.Communication.Protocol.V1
             lock (m_Lock)
             {
                 m_PotentialEndpoints.TryRemoveEndpoint(endpoint);
-                if (m_EndpointMessages.ContainsKey(endpoint))
+                if (m_EndpointApprovalState.ContainsKey(endpoint))
                 {
-                    m_EndpointMessages.Remove(endpoint);
+                    m_EndpointApprovalState.Remove(endpoint);
                 }
             }
         }
@@ -282,8 +279,8 @@ namespace Nuclei.Communication.Protocol.V1
             {
                 lock (m_Lock)
                 {
-                    Debug.Assert(m_EndpointMessages.ContainsKey(information.Id), "The endpoint tick list is not stored.");
-                    var tickList = m_EndpointMessages[information.Id];
+                    Debug.Assert(m_EndpointApprovalState.ContainsKey(information.Id), "The endpoint tick list is not stored.");
+                    var tickList = m_EndpointApprovalState[information.Id];
 
                     if (!tickList.HaveSendConnect && !m_PotentialEndpoints.CanCommunicateWithEndpoint(information.Id))
                     {
@@ -291,9 +288,13 @@ namespace Nuclei.Communication.Protocol.V1
 
                         var message = new EndpointConnectMessage(
                             m_Layer.Id,
-                            information.ChannelTemplate,
-                            connectionInfo.Item2.AbsoluteUri,
-                            connectionInfo.Item3.AbsoluteUri,
+                            new DiscoveryInformation(
+                                foobar(),
+                                foobar()), 
+                            new ProtocolInformation(
+                                foobar(),
+                                connectionInfo.Item2,
+                                connectionInfo.Item3), 
                             m_Descriptions.ToStorage());
                         var task = m_Layer.SendMessageAndWaitForResponse(information.Id, message);
                         task.ContinueWith(HandleResponseToConnectMessage, TaskContinuationOptions.ExecuteSynchronously);
@@ -315,10 +316,10 @@ namespace Nuclei.Communication.Protocol.V1
             {
                 lock (m_Lock)
                 {
-                    Debug.Assert(m_EndpointMessages.ContainsKey(msg.Sender), "The endpoint tick list is not stored.");
-                    m_EndpointMessages[msg.Sender].HaveReceivedConnectResponse = true;
+                    Debug.Assert(m_EndpointApprovalState.ContainsKey(msg.Sender), "The endpoint tick list is not stored.");
+                    m_EndpointApprovalState[msg.Sender].HaveReceivedConnectResponse = true;
 
-                    if (m_EndpointMessages[msg.Sender].IsComplete())
+                    if (m_EndpointApprovalState[msg.Sender].IsComplete())
                     {
                         ApproveConnection(msg.Sender);
                     }
@@ -330,9 +331,9 @@ namespace Nuclei.Communication.Protocol.V1
         {
             lock (m_Lock)
             {
-                if (!m_EndpointMessages.ContainsKey(information.Id))
+                if (!m_EndpointApprovalState.ContainsKey(information.Id))
                 {
-                    m_EndpointMessages.Add(information.Id, new MessageTickList());
+                    m_EndpointApprovalState.Add(information.Id, new EndpointApprovalState());
                 }
 
                 var isStored = m_PotentialEndpoints.CanCommunicateWithEndpoint(information.Id)
@@ -347,10 +348,9 @@ namespace Nuclei.Communication.Protocol.V1
                         CommunicationConstants.DefaultLogTextPrefix,
                         string.Format(
                             CultureInfo.InvariantCulture,
-                            "New endpoint connected via the {0} channel. Endpoint {1} is at {2}.",
-                            information.ChannelTemplate,
+                            "New endpoint {0} connected via {1}.",
                             information.Id,
-                            information.MessageAddress));
+                            information.ProtocolInformation.MessageAddress));
                 }
                 else
                 {
@@ -390,15 +390,15 @@ namespace Nuclei.Communication.Protocol.V1
             {
                 // Potentially a new endpoint so store it
                 StorePotentialEndpoint(connection);
-                if (!m_EndpointMessages.ContainsKey(connection.Id))
+                if (!m_EndpointApprovalState.ContainsKey(connection.Id))
                 {
                     return;
                 }
 
-                var tickList = m_EndpointMessages[connection.Id];
+                var tickList = m_EndpointApprovalState[connection.Id];
                 tickList.HaveReceivedConnect = true;
 
-                if (!AllowConnection(information))
+                if (!AllowConnection(connection.ProtocolInformation.Version, information))
                 {
                     var failMsg = new FailureMessage(m_Layer.Id, messageId);
                     m_Layer.SendMessageTo(connection.Id, failMsg);
@@ -465,24 +465,28 @@ namespace Nuclei.Communication.Protocol.V1
                         CommunicationConstants.DefaultLogTextPrefix,
                         string.Format(
                             CultureInfo.InvariantCulture,
-                            "New endpoint ({0}) approved for communication via the {1} channel. Message URL: {2}. Data URL: {3}",
+                            "New endpoint ({0}) approved for communication. Message URL: {1}. Data URL: {2}",
                             info.Id,
-                            info.ChannelTemplate,
                             info.ProtocolInformation.MessageAddress,
                             info.ProtocolInformation.DataAddress));
                 }
             }
 
-            if (m_EndpointMessages.ContainsKey(connection))
+            if (m_EndpointApprovalState.ContainsKey(connection))
             {
-                m_EndpointMessages.Remove(connection);
+                m_EndpointApprovalState.Remove(connection);
             }
         }
 
-        private bool AllowConnection(CommunicationDescription information)
+        private bool AllowConnection(Version requiredProtocolVersion, CommunicationDescription information)
         {
-            return (information.CommunicationVersion == m_Descriptions.CommunicationVersion)
-                && information.Subjects.Intersect(m_Descriptions.Subjects()).Any();
+            if (!m_ConnectionApprovers.ContainsKey(requiredProtocolVersion))
+            {
+                return false;
+            }
+
+            var approver = m_ConnectionApprovers[requiredProtocolVersion];
+            return approver.IsEndpointAllowedToConnect(information);
         }
     }
 }
