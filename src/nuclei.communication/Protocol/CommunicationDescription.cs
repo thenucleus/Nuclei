@@ -17,11 +17,6 @@ namespace Nuclei.Communication.Protocol
     internal sealed class CommunicationDescription
     {
         /// <summary>
-        /// The version of the communication system that created this instance.
-        /// </summary>
-        private readonly Version m_Version;
-
-        /// <summary>
         /// The collection of subjects for the communication system.
         /// </summary>
         private readonly List<CommunicationSubject> m_Subjects;
@@ -39,13 +34,9 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Initializes a new instance of the <see cref="CommunicationDescription"/> class.
         /// </summary>
-        /// <param name="communicationVersion">The version of the communication system.</param>
         /// <param name="subjects">The collection of subjects for the current application.</param>
         /// <param name="commands">A collection containing all the known command set types.</param>
         /// <param name="notifications">A collection containing all the known notification set types.</param>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="communicationVersion"/> is <see langword="null" />.
-        /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="subjects"/> is <see langword="null" />.
         /// </exception>
@@ -55,34 +46,19 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="notifications"/> is <see langword="null" />.
         /// </exception>
-        public CommunicationDescription(
-            Version communicationVersion,
-            IEnumerable<CommunicationSubject> subjects,
+        public CommunicationDescription(IEnumerable<CommunicationSubject> subjects,
             IEnumerable<ISerializedType> commands, 
             IEnumerable<ISerializedType> notifications)
         {
             {
-                Lokad.Enforce.Argument(() => communicationVersion);
                 Lokad.Enforce.Argument(() => subjects);
                 Lokad.Enforce.Argument(() => commands);
                 Lokad.Enforce.Argument(() => notifications);
             }
 
-            m_Version = communicationVersion;
             m_Subjects = new List<CommunicationSubject>(subjects);
             m_Commands = new List<ISerializedType>(commands);
             m_Notifications = new List<ISerializedType>(notifications);
-        }
-
-        /// <summary>
-        /// Gets the version of the communication system that created this instance.
-        /// </summary>
-        public Version CommunicationVersion
-        {
-            get
-            {
-                return m_Version;
-            }
         }
 
         /// <summary>

@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Moq;
@@ -65,9 +64,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             var type = ChannelTemplate.TcpIP;
             var messageUri = @"http://localhost";
             var dataUri = @"http://localhost/data";
-            var description = new CommunicationDescription(
-                new Version(1, 0), 
-                new List<CommunicationSubject>(), 
+            var description = new CommunicationDescription(new List<CommunicationSubject>(), 
                 new List<ISerializedType>(), 
                 new List<ISerializedType>());
             var msg = new EndpointConnectMessage(id, type, messageUri, dataUri, description);

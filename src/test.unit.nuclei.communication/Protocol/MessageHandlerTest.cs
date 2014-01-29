@@ -155,9 +155,7 @@ namespace Nuclei.Communication.Protocol
                 ChannelTemplate.NamedPipe,
                 @"net.pipe://localhost/test", 
                 @"net.pipe://localhost/test/data",
-                new CommunicationDescription(
-                    new Version(1, 0), 
-                    new List<CommunicationSubject>(), 
+                new CommunicationDescription(new List<CommunicationSubject>(), 
                     new List<ISerializedType>(), 
                     new List<ISerializedType>()));
             handler.ProcessMessage(msg);
@@ -194,9 +192,7 @@ namespace Nuclei.Communication.Protocol
                 ChannelTemplate.NamedPipe,
                 @"net.pipe://localhost/test",
                 @"net.pipe://localhost/test/data", 
-                new CommunicationDescription(
-                    new Version(1, 0),
-                    new List<CommunicationSubject>(),
+                new CommunicationDescription(new List<CommunicationSubject>(),
                     new List<ISerializedType>(),
                     new List<ISerializedType>()));
             handler.ProcessMessage(msg);

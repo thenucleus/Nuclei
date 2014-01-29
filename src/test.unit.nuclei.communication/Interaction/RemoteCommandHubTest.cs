@@ -58,9 +58,7 @@ namespace Nuclei.Communication.Interaction
                 new EndpointId("other"), 
                 ChannelTemplate.NamedPipe, 
                 new Uri("net.pipe://localhost/apollo_test"));
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>
                     {
                         ProxyExtensions.FromType(typeof(IMockCommandSetWithTaskReturn))
@@ -104,9 +102,7 @@ namespace Nuclei.Communication.Interaction
                 new EndpointId("other"),
                 ChannelTemplate.NamedPipe, 
                 new Uri("net.pipe://localhost/apollo_test"));
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>
                     {
                         ProxyExtensions.FromType(typeof(IMockCommandSetWithTaskReturn))
@@ -160,9 +156,7 @@ namespace Nuclei.Communication.Interaction
                 new EndpointId("other"),
                 ChannelTemplate.NamedPipe,
                 new Uri("net.pipe://localhost/apollo_test"));
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>
                     {
                         ProxyExtensions.FromType(typeof(IMockCommandSetWithTaskReturn))
@@ -209,9 +203,7 @@ namespace Nuclei.Communication.Interaction
                 new EndpointId("other"),
                 ChannelTemplate.NamedPipe,
                 new Uri("net.pipe://localhost/apollo_test"));
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>
                     {
                         ProxyExtensions.FromType(typeof(IMockCommandSetWithTaskReturn))

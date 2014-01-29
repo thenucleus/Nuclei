@@ -104,9 +104,7 @@ namespace Nuclei.Communication.Protocol
                 throw new NoCommunicationSubjectsRegisteredException();
             }
 
-            return new CommunicationDescription(
-                CommunicationVersion,
-                new List<CommunicationSubject>(m_Subjects),
+            return new CommunicationDescription(new List<CommunicationSubject>(m_Subjects),
                 new List<ISerializedType>(m_Commands),
                 new List<ISerializedType>(m_Notifications));
         }

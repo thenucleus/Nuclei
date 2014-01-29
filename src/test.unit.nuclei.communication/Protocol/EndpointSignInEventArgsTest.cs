@@ -25,9 +25,7 @@ namespace Nuclei.Communication.Protocol
             var uri = new Uri("http://localhost");
 
             var info = new ChannelConnectionInformation(endpoint, channelType, uri);
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>(),
                 new List<ISerializedType>());
             var args = new EndpointSignInEventArgs(info, description);

@@ -327,9 +327,7 @@ namespace Nuclei.Communication.Protocol
 
             layer.ContinueHandshakeWith(
                 new ChannelConnectionInformation(remoteEndpoint, ChannelTemplate.TcpIP, new Uri(remoteMessageAddress), new Uri(remoteDataAddress)), 
-                new CommunicationDescription(
-                    communicationDescriptions.CommunicationVersion,
-                    new List<CommunicationSubject>
+                new CommunicationDescription(new List<CommunicationSubject>
                         {
                             new CommunicationSubject("b")
                         },

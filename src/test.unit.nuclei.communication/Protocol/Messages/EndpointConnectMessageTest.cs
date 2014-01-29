@@ -36,9 +36,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var channelType = ChannelTemplate.TcpIP;
             var messageAddress = "bla";
             var dataAddress = "bladibla";
-            var description = new CommunicationDescription(
-                new Version(1, 0), 
-                new List<CommunicationSubject>(), 
+            var description = new CommunicationDescription(new List<CommunicationSubject>(), 
                 new List<ISerializedType>(), 
                 new List<ISerializedType>());
             var msg = new EndpointConnectMessage(id, channelType, messageAddress, dataAddress, description);
@@ -56,9 +54,7 @@ namespace Nuclei.Communication.Protocol.Messages
             var channelType = ChannelTemplate.TcpIP;
             var messageAddress = "bla";
             var dataAddress = "bladibla";
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>
+            var description = new CommunicationDescription(new List<CommunicationSubject>
                     {
                         new CommunicationSubject("a")
                     },

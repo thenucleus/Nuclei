@@ -89,9 +89,7 @@ namespace Nuclei.Communication.Protocol
         {
             var storage = new EndpointInformationStorage();
 
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>(),
                 new List<ISerializedType>());
             Assert.IsFalse(storage.TryStartApproval(null, description));
@@ -112,9 +110,7 @@ namespace Nuclei.Communication.Protocol
             var storage = new EndpointInformationStorage();
 
             var endpoint = new EndpointId("a");
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>(),
                 new List<ISerializedType>());
             Assert.IsFalse(storage.TryStartApproval(endpoint, description));
@@ -135,9 +131,7 @@ namespace Nuclei.Communication.Protocol
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>(),
                 new List<ISerializedType>());
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
@@ -160,9 +154,7 @@ namespace Nuclei.Communication.Protocol
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>(),
                 new List<ISerializedType>());
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
@@ -193,9 +185,7 @@ namespace Nuclei.Communication.Protocol
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>(),
                 new List<ISerializedType>());
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
@@ -221,9 +211,7 @@ namespace Nuclei.Communication.Protocol
                 ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
 
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>(),
                 new List<ISerializedType>());
 
@@ -267,9 +255,7 @@ namespace Nuclei.Communication.Protocol
                 ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
 
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>(),
                 new List<ISerializedType>());
 
@@ -330,9 +316,7 @@ namespace Nuclei.Communication.Protocol
                 ChannelTemplate.NamedPipe,
                 new Uri("http://localhost"));
 
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>(),
                 new List<ISerializedType>());
 
@@ -403,9 +387,7 @@ namespace Nuclei.Communication.Protocol
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var description = new CommunicationDescription(
-                new Version(1, 0),
-                new List<CommunicationSubject>(),
+            var description = new CommunicationDescription(new List<CommunicationSubject>(),
                 new List<ISerializedType>(),
                 new List<ISerializedType>());
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
