@@ -201,6 +201,11 @@ namespace Nuclei.Communication.Protocol
             }
 
             m_PotentialEndpoints = potentialEndpoints;
+
+            // Also handle the case where the endpoint signs out while it is trying to 
+            // connect to us
+            m_PotentialEndpoints.OnEndpointDisconnected += HandleEndpointSignedOut;
+
             m_DiscoveryChannel = discoveryChannel;
             m_DiscoverySources = discoverySources;
             m_Layer = layer;

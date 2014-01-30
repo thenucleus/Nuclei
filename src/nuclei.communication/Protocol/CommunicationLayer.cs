@@ -149,6 +149,7 @@ namespace Nuclei.Communication.Protocol
             foreach (var pair in m_OpenConnections)
             {
                 pair.Value.Item1.EndpointDisconnected(args.Endpoint);
+                pair.Value.Item2.OnEndpointDisconnected(args.Endpoint);
             }
         }
 

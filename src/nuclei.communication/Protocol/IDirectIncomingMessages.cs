@@ -32,5 +32,11 @@ namespace Nuclei.Communication.Protocol
         /// <param name="messageFilter">The message filter.</param>
         /// <param name="notifyAction">The action invoked when a matching message arrives.</param>
         void ActOnArrival(IMessageFilter messageFilter, IMessageProcessAction notifyAction);
+
+        /// <summary>
+        /// Handles the case that a remote endpoint has disconnected.
+        /// </summary>
+        /// <param name="id">The ID of the remote endpoint.</param>
+        void OnEndpointDisconnected(EndpointId id);
     }
 }

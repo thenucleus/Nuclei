@@ -169,6 +169,48 @@ namespace Nuclei.Communication.Protocol
         }
 
         /// <summary>
+        /// Handles the case that a remote endpoint has disconnected.
+        /// </summary>
+        /// <param name="id">The ID of the remote endpoint.</param>
+        public void OnEndpointDisconnected(EndpointId id)
+        {
+            {
+                Lokad.Enforce.Argument(() => id);
+            }
+
+            TerminateWaitingResponsesForEndpoint(id);
+        }
+
+        private void TerminateWaitingResponsesForEndpoint(EndpointId endpointId)
+        {
+            m_Diagnostics.Log(
+                LevelToLog.Trace,
+                CommunicationConstants.DefaultLogTextPrefix,
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    "Endpoint {0} has signed off.",
+                    endpointId));
+
+            lock (m_Lock)
+            {
+                var messagesThatWillNotBeAnswered = new List<MessageId>();
+                foreach (var pair in m_TasksWaitingForResponse)
+                {
+                    if (pair.Value.Item1.Equals(endpointId))
+                    {
+                        messagesThatWillNotBeAnswered.Add(pair.Key);
+                        pair.Value.Item2.SetCanceled();
+                    }
+                }
+
+                foreach (var id in messagesThatWillNotBeAnswered)
+                {
+                    m_TasksWaitingForResponse.Remove(id);
+                }
+            }
+        }
+
+        /// <summary>
         /// Processes the message and invokes the desired functions based on the 
         /// message contents or type.
         /// </summary>
@@ -263,15 +305,6 @@ namespace Nuclei.Communication.Protocol
                     }
                 }
 
-                // Only now do we check if anything should be cleaned up. By waiting till here we
-                // give the system a chance to process the message the normal way first, that means
-                // that the rest of the system can be notified.
-                if (IsMessageIndicatingEndpointDisconnect(message))
-                {
-                    TerminateWaitingResponsesForEndpoint(message.Sender);
-                    return;
-                }
-
                 // The message type is unknown. See if the last chance handler wants it ...
                 if (m_LastChanceProcessor != null)
                 {
@@ -284,35 +317,6 @@ namespace Nuclei.Communication.Protocol
         {
             return m_Endpoints.CanCommunicateWithEndpoint(message.Sender)
                 || (message.IsHandshake() || IsMessageIndicatingEndpointDisconnect(message));
-        }
-
-        private void TerminateWaitingResponsesForEndpoint(EndpointId endpointId)
-        {
-            m_Diagnostics.Log(
-                LevelToLog.Trace,
-                CommunicationConstants.DefaultLogTextPrefix,
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    "Endpoint {0} is signing off.",
-                    endpointId));
-
-            lock (m_Lock)
-            {
-                var messagesThatWillNotBeAnswered = new List<MessageId>();
-                foreach (var pair in m_TasksWaitingForResponse)
-                {
-                    if (pair.Value.Item1.Equals(endpointId))
-                    {
-                        messagesThatWillNotBeAnswered.Add(pair.Key);
-                        pair.Value.Item2.SetCanceled();
-                    }
-                }
-
-                foreach (var id in messagesThatWillNotBeAnswered)
-                {
-                    m_TasksWaitingForResponse.Remove(id);
-                }
-            }
         }
 
         /// <summary>
