@@ -244,6 +244,12 @@
     <Compile Include="Protocol\CommunicationDescriptionStorage.cs" />
     <Compile Include="Protocol\CommunicationSubject.cs" />
     <Compile Include="Protocol\UriExtensions.cs" />
+    <Compile Include="Protocol\V1\DataObjects\Converters\DownloadRequestConverter.cs" />
+    <Compile Include="Protocol\V1\DataObjects\Converters\EndpointConnectConverter.cs" />
+    <Compile Include="Protocol\V1\DataObjects\Converters\EndpointDisconnectConverter.cs" />
+    <Compile Include="Protocol\V1\DataObjects\Converters\FailureConverter.cs" />
+    <Compile Include="Protocol\V1\DataObjects\Converters\SuccessConverter.cs" />
+    <Compile Include="Protocol\V1\DataObjects\Converters\UnknownMessageTypeConverter.cs" />
     <Compile Include="Protocol\V1\DataObjects\DataObjectBase.cs" />
     <Compile Include="Protocol\V1\DataObjects\DownloadRequestData.cs" />
     <Compile Include="Protocol\V1\DataObjects\EndpointConnectData.cs" />
@@ -329,9 +335,7 @@
       <Name>Nuclei</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Protocol\V1\DataObjects\Converters\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- 
        To modify your build process, add your task inside one of the targets below and uncomment it. 

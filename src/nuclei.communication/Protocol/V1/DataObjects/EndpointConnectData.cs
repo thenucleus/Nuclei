@@ -17,31 +17,10 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects
     internal sealed class EndpointConnectData : DataObjectBase
     {
         /// <summary>
-        /// Gets or sets the version of the discovery protocol used by the current endpoint.
-        /// </summary>
-        [DataMember]
-        public Version DiscoveryVersion
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets or sets the address of the discovery channel for the current endpoint.
         /// </summary>
         [DataMember]
         public Uri DiscoveryAddress
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating what kind of channel was used
-        /// to send this message.
-        /// </summary>
-        [DataMember]
-        public ChannelTemplate ChannelTemplate
         {
             get;
             set;
