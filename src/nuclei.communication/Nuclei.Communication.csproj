@@ -211,6 +211,7 @@
     <Compile Include="Protocol\MessageEventArgs.cs" />
     <Compile Include="Protocol\MessageHandler.cs" />
     <Compile Include="Protocol\MessageKindFilter.cs" />
+    <Compile Include="Protocol\Messages\Processors\EndpointDisconnectProcessAction.cs" />
     <Compile Include="Protocol\Messages\UnknownMessageTypeException.cs" />
     <Compile Include="Protocol\NamedPipeProtocolChannelTemplate.cs" />
     <Compile Include="Interaction\NotificationEventAddMethodInterceptor.cs" />
