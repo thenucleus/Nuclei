@@ -21,7 +21,7 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// An event raised when a remote endpoint becomes unavailable.
         /// </summary>
-        event EventHandler<EndpointLostEventArgs> OnEndpointBecomingUnavailable;
+        event EventHandler<EndpointEventArgs> OnEndpointBecomingUnavailable;
 
         /// <summary>
         /// Starts the endpoint discovery process.

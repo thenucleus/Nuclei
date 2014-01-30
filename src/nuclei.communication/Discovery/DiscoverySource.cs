@@ -98,14 +98,14 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// An event raised when a remote endpoint becomes unavailable.
         /// </summary>
-        public event EventHandler<EndpointLostEventArgs> OnEndpointBecomingUnavailable;
+        public event EventHandler<EndpointEventArgs> OnEndpointBecomingUnavailable;
 
         private void RaiseOnEndpointBecomingUnavailable(EndpointId id)
         {
             var local = OnEndpointBecomingUnavailable;
             if (local != null)
             {
-                local(this, new EndpointLostEventArgs(id));
+                local(this, new EndpointEventArgs(id));
             }
         }
 

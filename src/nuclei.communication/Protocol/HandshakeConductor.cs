@@ -272,7 +272,7 @@ namespace Nuclei.Communication.Protocol
         // Also note that it is quite easily possible to fake being another endpoint. All you have
         // to do is send a message saying that you're a different endpoint and then the evil is
         // done. Not quite sure how to make that not happen though ...
-        private void HandleEndpointSignedOut(object sender, EndpointLostEventArgs args)
+        private void HandleEndpointSignedOut(object sender, EndpointEventArgs args)
         {
             if (m_Layer.Id.Equals(args.Endpoint))
             {

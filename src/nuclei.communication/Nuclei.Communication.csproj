@@ -155,7 +155,6 @@
     <Compile Include="Protocol\DataTransferEventArgs.cs" />
     <Compile Include="Protocol\DataTransferMessage.cs" />
     <Compile Include="Discovery\EndpointDiscoveredEventArgs.cs" />
-    <Compile Include="Discovery\EndpointLostEventArgs.cs" />
     <Compile Include="Protocol\DownloadDataFromRemoteEndpoints.cs" />
     <Compile Include="EndpointEventArgs.cs" />
     <Compile Include="EndpointId.cs" />
