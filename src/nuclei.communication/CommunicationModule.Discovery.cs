@@ -204,33 +204,5 @@ namespace Nuclei.Communication
                 .As<IChannelTemplate>()
                 .As<IDiscoveryChannelTemplate>();
         }
-
-        private static void RegisterDiscoveryEndpoints(ContainerBuilder builder)
-        {
-            builder.Register(
-                c =>
-                {
-                    var storage = c.Resolve<IStoreInformationForActiveChannels>();
-                    return new Discovery.V1.InformationEndpoint(
-                        storage.ActiveChannels().ToArray());
-                })
-                .As<Discovery.V1.IInformationEndpoint>()
-                .As<IVersionedDiscoveryEndpoint>()
-                .SingleInstance()
-                .WithMetadata<IDiscoveryVersionMetaData>(
-                    m => m.For(endpoint => endpoint.Version, DiscoveryVersions.V1));
-        }
-
-        private static void RegisterChannelInformationTranslators(ContainerBuilder builder)
-        {
-            builder.Register(c => new Discovery.V1.DiscoveryChannelTranslator(
-                    Protocol.ProtocolVersions.SupportedVersions().ToArray(),
-                    c.Resolve<IDiscoveryChannelTemplate>(),
-                    c.Resolve<SystemDiagnostics>()))
-                .As<ITranslateVersionedChannelInformation>()
-                .SingleInstance()
-                .WithMetadata<IDiscoveryVersionMetaData>(
-                    m => m.For(endpoint => endpoint.Version, DiscoveryVersions.V1));
-        }
     }
 }

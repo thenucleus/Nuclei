@@ -102,6 +102,7 @@
       <Link>Properties\AssemblyInfo.VersionNumber.cs</Link>
     </Compile>
     <Compile Include="CommunicationModule.Discovery.cs" />
+    <Compile Include="CommunicationModule.Discovery.V1.cs" />
     <Compile Include="CommunicationModule.Interaction.cs" />
     <Compile Include="CommunicationModule.Protocol.cs" />
     <Compile Include="CommunicationModule.Protocol.V1.cs" />
