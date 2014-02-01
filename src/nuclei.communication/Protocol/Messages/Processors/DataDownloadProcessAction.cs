@@ -28,7 +28,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// <summary>
         /// The object that handles communication with remote endpoints.
         /// </summary>
-        private readonly ISendDataViaChannels m_Layer;
+        private readonly ICommunicationLayer m_Layer;
 
         /// <summary>
         /// The object that provides the diagnostics methods for the system.
@@ -58,7 +58,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// </exception>
         public DataDownloadProcessAction(
             IStoreUploads uploads,
-            ISendDataViaChannels layer,
+            ICommunicationLayer layer,
             SystemDiagnostics systemDiagnostics,
             TaskScheduler scheduler = null)
         {

@@ -471,7 +471,7 @@ namespace Nuclei.Communication.Protocol
                 {
                     if (!m_SendingEndpoints.ContainsKey(protocolVersion))
                     {
-                        var newSender = m_SenderBuilder(m_Id, protocolVersion, BuildMessageSendingProxy, BuildDataTransferProxy);
+                        var newSender = m_SenderBuilder(m_Id, BuildMessageSendingProxy, BuildDataTransferProxy);
                         m_SendingEndpoints.Add(protocolVersion, newSender);
                     }
 

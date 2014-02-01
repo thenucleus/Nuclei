@@ -64,30 +64,38 @@ namespace Nuclei.Communication.Protocol.V1
         /// <summary>
         /// Initializes a new instance of the <see cref="RestoringMessageSendingEndpoint"/> class.
         /// </summary>
+        /// <param name="address">The address of the remote endpoint.</param>
+        /// <param name="template">The template that is used to create the binding used to connect to the remote endpoint.</param>
         /// <param name="messageConverters">The collection that contains all the message converters.</param>
-        /// <param name="channelFactory">The factory that is used to create new channels.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostic methods for the system.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="messageConverters"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="address"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="channelFactory"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="template"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="messageConverters"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public RestoringMessageSendingEndpoint(
+            Uri address,
+            IProtocolChannelTemplate template,
             IEnumerable<IConvertCommunicationMessages> messageConverters,
-            ChannelFactory<IMessageReceivingEndpointProxy> channelFactory,
             SystemDiagnostics systemDiagnostics)
         {
             {
+                Lokad.Enforce.Argument(() => address);
+                Lokad.Enforce.Argument(() => template);
                 Lokad.Enforce.Argument(() => messageConverters);
-                Lokad.Enforce.Argument(() => channelFactory);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
 
-            m_Factory = channelFactory;
+            var endpoint = new EndpointAddress(address);
+            var binding = template.GenerateMessageBinding();
+            m_Factory = new ChannelFactory<IMessageReceivingEndpointProxy>(binding, endpoint);
             m_Diagnostics = systemDiagnostics;
 
             foreach (var converter in messageConverters)

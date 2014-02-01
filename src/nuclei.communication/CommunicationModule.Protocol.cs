@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core;
+using Autofac.Features.Metadata;
 using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Protocol;
@@ -45,7 +46,6 @@ namespace Nuclei.Communication
                         allowedChannelTemplates,
                         c.Resolve<SystemDiagnostics>());
                 })
-                .As<ISendDataViaChannels>()
                 .As<ICommunicationLayer>()
                 .SingleInstance();
         }
@@ -54,10 +54,12 @@ namespace Nuclei.Communication
         {
             builder.Register(
                 c => new HandshakeConductor(
-                    c.Resolve<IStoreInformationAboutEndpoints>(),
+                    c.Resolve<IStoreEndpointApprovalState>(),
+                    c.Resolve<IProvideLocalConnectionInformation>(),
                     c.Resolve<IEnumerable<IDiscoverOtherServices>>(),
-                    c.Resolve<ISendDataViaChannels>(),
+                    c.Resolve<ICommunicationLayer>(),
                     c.Resolve<IStoreCommunicationDescriptions>(),
+                    c.Resolve<IEnumerable<IApproveEndpointConnections>>(),
                     allowedChannelTemplates,
                     c.Resolve<SystemDiagnostics>()))
                 .As<IHandleHandshakes>()
@@ -101,14 +103,14 @@ namespace Nuclei.Communication
         {
             var handler = args.Instance;
             var layer = args.Context.Resolve<ICommunicationLayer>();
-            layer.OnEndpointSignedOut += (s, e) => handler.OnEndpointSignedOff(e.Endpoint);
+            layer.OnEndpointDisconnected += (s, e) => handler.OnEndpointSignedOff(e.Endpoint);
         }
 
         private static void RegisterMessageProcessingActions(ContainerBuilder builder)
         {
             builder.Register(c => new DataDownloadProcessAction(
                     c.Resolve<IStoreUploads>(),
-                    c.Resolve<ISendDataViaChannels>(),
+                    c.Resolve<ICommunicationLayer>(),
                     c.Resolve<SystemDiagnostics>()))
                 .As<IMessageProcessAction>();
 
@@ -123,6 +125,11 @@ namespace Nuclei.Communication
                     })
                 .As<IMessageProcessAction>();
 
+            builder.Register(c => new EndpointDisconnectProcessAction(
+                    c.Resolve<IStoreEndpointApprovalState>(),
+                    c.Resolve<SystemDiagnostics>()))
+                .As<IMessageProcessAction>();
+
             builder.Register(
                 c =>
                 {
@@ -132,7 +139,7 @@ namespace Nuclei.Communication
                         (endpoint, msg) =>
                         {
                             var config = ctx.Resolve<IConfiguration>();
-                            var layer = ctx.Resolve<ISendDataViaChannels>();
+                            var layer = ctx.Resolve<ICommunicationLayer>();
                             SendMessageWithoutResponse(config, layer, endpoint, msg);
                         },
                         c.Resolve<SystemDiagnostics>());
@@ -148,7 +155,7 @@ namespace Nuclei.Communication
                             (endpoint, msg) =>
                             {
                                 var config = ctx.Resolve<IConfiguration>();
-                                var layer = ctx.Resolve<ISendDataViaChannels>();
+                                var layer = ctx.Resolve<ICommunicationLayer>();
                                 SendMessageWithoutResponse(config, layer, endpoint, msg);
                             },
                             c.Resolve<ICommandCollection>(),
@@ -172,7 +179,7 @@ namespace Nuclei.Communication
 
         private static void SendMessageWithoutResponse(
             IConfiguration configuration,
-            ISendDataViaChannels layer,
+            ICommunicationLayer layer,
             EndpointId endpoint,
             ICommunicationMessage message)
         {
@@ -184,8 +191,8 @@ namespace Nuclei.Communication
 
                 var resetEvent = new AutoResetEvent(false);
                 var notifier = Observable.FromEventPattern<EndpointEventArgs>(
-                        h => layer.OnEndpointSignedIn += h,
-                        h => layer.OnEndpointSignedIn -= h)
+                        h => layer.OnEndpointConnected += h,
+                        h => layer.OnEndpointConnected -= h)
                     .Where(args => args.EventArgs.Endpoint.Equals(endpoint))
                     .Take(1)
                     .Subscribe(args => resetEvent.Set());
@@ -204,7 +211,7 @@ namespace Nuclei.Communication
 
         private static Task<ICommunicationMessage> SendMessageWithResponse(
             IConfiguration configuration,
-            ISendDataViaChannels layer,
+            ICommunicationLayer layer,
             EndpointId endpoint,
             ICommunicationMessage message)
         {
@@ -216,8 +223,8 @@ namespace Nuclei.Communication
 
                 var resetEvent = new AutoResetEvent(false);
                 var notifier = Observable.FromEventPattern<EndpointEventArgs>(
-                        h => layer.OnEndpointSignedIn += h,
-                        h => layer.OnEndpointSignedIn -= h)
+                        h => layer.OnEndpointConnected += h,
+                        h => layer.OnEndpointConnected -= h)
                     .Where(args => args.EventArgs.Endpoint.Equals(endpoint))
                     .Take(1)
                     .Subscribe(args => resetEvent.Set());
@@ -251,16 +258,16 @@ namespace Nuclei.Communication
             builder.Register(
                 (c, p) =>
                 {
-                    var channelTemplate = c.Resolve<NamedPipeProtocolChannelTemplate>();
+                    var channelTemplate = c.ResolveKeyed<IProtocolChannelTemplate>(ChannelTemplate.NamedPipe);
                     var ctx = c.Resolve<IComponentContext>();
+
                     return new CommunicationChannel(
                         p.TypedAs<EndpointId>(),
                         c.Resolve<IStoreInformationAboutEndpoints>(),
                         channelTemplate,
-                        c.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IProtocolChannelTemplate), channelTemplate)),
-                        c.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IProtocolChannelTemplate), channelTemplate)),
-                        ctx.Resolve<IMessagePipe>,
-                        ctx.Resolve<IDataPipe>,
+                        () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IProtocolChannelTemplate), channelTemplate)),
+                        BuildMessagePipeSelector(ctx),
+                        BuildDataPipeSelector(ctx),
                         (id, msgProxy, dataProxy) => ctx.Resolve<ISendingEndpoint>(
                             new TypedParameter(
                                 typeof(EndpointId),
@@ -271,7 +278,8 @@ namespace Nuclei.Communication
                             new TypedParameter(
                                 typeof(Func<EndpointId, IDataTransferingEndpoint>),
                                 dataProxy)),
-                        c.Resolve<SystemDiagnostics>());
+                        BuildMessageSenderSelector(ctx),
+                        BuildDataTransferSelector(ctx));
                 })
                 .OnActivated(ConnectToMessageHandler)
                 .Keyed<ICommunicationChannel>(ChannelTemplate.NamedPipe)
@@ -280,16 +288,15 @@ namespace Nuclei.Communication
             builder.Register(
                 (c, p) =>
                 {
-                    var channelTemplate = c.Resolve<TcpProtocolChannelTemplate>();
+                    var channelTemplate = c.ResolveKeyed<IProtocolChannelTemplate>(ChannelTemplate.TcpIP);
                     var ctx = c.Resolve<IComponentContext>();
                     return new CommunicationChannel(
                         p.TypedAs<EndpointId>(),
                         c.Resolve<IStoreInformationAboutEndpoints>(),
                         channelTemplate,
-                        c.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
-                        c.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
-                        ctx.Resolve<IMessagePipe>,
-                        ctx.Resolve<IDataPipe>,
+                        () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
+                        BuildMessagePipeSelector(ctx),
+                        BuildDataPipeSelector(ctx),
                         (id, msgProxy, dataProxy) => ctx.Resolve<ISendingEndpoint>(
                             new TypedParameter(
                                 typeof(EndpointId),
@@ -300,11 +307,106 @@ namespace Nuclei.Communication
                             new TypedParameter(
                                 typeof(Func<EndpointId, IDataTransferingEndpoint>),
                                 dataProxy)),
-                        c.Resolve<SystemDiagnostics>());
+                        BuildMessageSenderSelector(ctx),
+                        BuildDataTransferSelector(ctx));
                 })
                 .OnActivated(ConnectToMessageHandler)
                 .Keyed<ICommunicationChannel>(ChannelTemplate.TcpIP)
                 .SingleInstance();
+        }
+
+        private static Func<Version, Tuple<Type, IMessagePipe>> BuildMessagePipeSelector(IComponentContext context)
+        {
+            Func<Version, Tuple<Type, IMessagePipe>> result =
+                version =>
+                {
+                    var allPipesLazy = context.Resolve<IEnumerable<Meta<IMessagePipe>>>();
+
+                    IMessagePipe selectedPipe = null;
+                    foreach (var pipe in allPipesLazy)
+                    {
+                        var storedVersion = pipe.Metadata["Version"] as Version;
+                        if (storedVersion.Equals(version))
+                        {
+                            selectedPipe = pipe.Value;
+                        }
+                    }
+
+                    return new Tuple<Type, IMessagePipe>(selectedPipe.GetType(), selectedPipe);
+                };
+
+            return result;
+        }
+
+        private static Func<Version, Tuple<Type, IDataPipe>> BuildDataPipeSelector(IComponentContext context)
+        {
+            Func<Version, Tuple<Type, IDataPipe>> result =
+                version =>
+                {
+                    var allPipesLazy = context.Resolve<IEnumerable<Meta<IDataPipe>>>();
+
+                    IDataPipe selectedPipe = null;
+                    foreach (var pipe in allPipesLazy)
+                    {
+                        var storedVersion = pipe.Metadata["Version"] as Version;
+                        if (storedVersion.Equals(version))
+                        {
+                            selectedPipe = pipe.Value;
+                        }
+                    }
+
+                    return new Tuple<Type, IDataPipe>(selectedPipe.GetType(), selectedPipe);
+                };
+
+            return result;
+        }
+
+        private static Func<Version, Uri, IMessageSendingEndpoint> BuildMessageSenderSelector(IComponentContext context)
+        {
+            Func<Version, Uri, IMessageSendingEndpoint> result =
+                (version, uri) =>
+                {
+                    var allEndpointsLazy = context.Resolve<IEnumerable<Meta<IMessageSendingEndpoint>>>(
+                        new TypedParameter(typeof(Uri), uri));
+
+                    IMessageSendingEndpoint selectedPipe = null;
+                    foreach (var endpoint in allEndpointsLazy)
+                    {
+                        var storedVersion = endpoint.Metadata["Version"] as Version;
+                        if (storedVersion.Equals(version))
+                        {
+                            selectedPipe = endpoint.Value;
+                        }
+                    }
+
+                    return selectedPipe;
+                };
+
+            return result;
+        }
+
+        private static Func<Version, Uri, IDataTransferingEndpoint> BuildDataTransferSelector(IComponentContext context)
+        {
+            Func<Version, Uri, IDataTransferingEndpoint> result =
+                (version, uri) =>
+                {
+                    var allEndpointsLazy = context.Resolve<IEnumerable<Meta<IDataTransferingEndpoint>>>(
+                        new TypedParameter(typeof(Uri), uri));
+
+                    IDataTransferingEndpoint selectedPipe = null;
+                    foreach (var endpoint in allEndpointsLazy)
+                    {
+                        var storedVersion = endpoint.Metadata["Version"] as Version;
+                        if (storedVersion.Equals(version))
+                        {
+                            selectedPipe = endpoint.Value;
+                        }
+                    }
+
+                    return selectedPipe;
+                };
+
+            return result;
         }
 
         private static void ConnectToMessageHandler(IActivatedEventArgs<ICommunicationChannel> args)
@@ -325,14 +427,6 @@ namespace Nuclei.Communication
                     p.TypedAs<Func<EndpointId, IMessageSendingEndpoint>>(),
                     p.TypedAs<Func<EndpointId, IDataTransferingEndpoint>>()))
                 .As<ISendingEndpoint>();
-
-            builder.Register(c => new MessageReceivingEndpoint(
-                    c.Resolve<SystemDiagnostics>()))
-                .As<IMessagePipe>();
-
-            builder.Register(c => new DataReceivingEndpoint(
-                    c.Resolve<SystemDiagnostics>()))
-                .As<IDataPipe>();
         }
 
         private static void RegisterChannelTypes(ContainerBuilder builder)
@@ -340,14 +434,12 @@ namespace Nuclei.Communication
             builder.Register(c => new NamedPipeProtocolChannelTemplate(
                     c.Resolve<IConfiguration>()))
                 .As<IChannelTemplate>()
-                .As<IProtocolChannelTemplate>()
-                .As<NamedPipeProtocolChannelTemplate>();
+                .Keyed<IProtocolChannelTemplate>(ChannelTemplate.NamedPipe);
 
             builder.Register(c => new TcpProtocolChannelTemplate(
                     c.Resolve<IConfiguration>()))
                 .As<IChannelTemplate>()
-                .As<IProtocolChannelTemplate>()
-                .As<TcpProtocolChannelTemplate>();
+                .Keyed<IProtocolChannelTemplate>(ChannelTemplate.TcpIP);
         }
 
         private static void RegisterEndpointStorage(ContainerBuilder builder)
@@ -392,7 +484,7 @@ namespace Nuclei.Communication
                                var handler = ctx.Resolve<IDirectIncomingData>();
                                var result = handler.ForwardData(endpoint, filePath);
 
-                               var layer = ctx.Resolve<ISendDataViaChannels>();
+                               var layer = ctx.Resolve<ICommunicationLayer>();
                                var msg = new DataDownloadRequestMessage(layer.Id, token);
                                var response = layer.SendMessageAndWaitForResponse(endpoint, msg);
                                return Task<FileInfo>.Factory.StartNew(

@@ -181,12 +181,12 @@ namespace Nuclei.Communication
                             // XML config format then we have to increment at least
                             // the minor version number.
                             IVersionedDiscoveryEndpoint selectedEndpoint = null;
-                            foreach (var reader in allEndpointsLazy)
+                            foreach (var endpoint in allEndpointsLazy)
                             {
-                                var storedVersion = reader.Metadata["Version"] as Version;
+                                var storedVersion = endpoint.Metadata["Version"] as Version;
                                 if (storedVersion.Equals(version))
                                 {
-                                    selectedEndpoint = reader.Value;
+                                    selectedEndpoint = endpoint.Value;
                                 }
                             }
 

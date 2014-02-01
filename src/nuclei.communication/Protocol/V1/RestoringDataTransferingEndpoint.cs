@@ -56,24 +56,32 @@ namespace Nuclei.Communication.Protocol.V1
         /// <summary>
         /// Initializes a new instance of the <see cref="RestoringDataTransferingEndpoint"/> class.
         /// </summary>
-        /// <param name="channelFactory">The factory that is used to create new channels.</param>
+        /// <param name="address">The address of the remote endpoint.</param>
+        /// <param name="template">The template that is used to create the binding used to connect to the remote endpoint.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostic methods for the system.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="channelFactory"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="address"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="template"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public RestoringDataTransferingEndpoint(
-            ChannelFactory<IDataReceivingEndpointProxy> channelFactory,
+            Uri address,
+            IProtocolChannelTemplate template,
             SystemDiagnostics systemDiagnostics)
         {
             {
-                Lokad.Enforce.Argument(() => channelFactory);
+                Lokad.Enforce.Argument(() => address);
+                Lokad.Enforce.Argument(() => template);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
 
-            m_Factory = channelFactory;
+            var endpoint = new EndpointAddress(address);
+            var binding = template.GenerateDataBinding();
+            m_Factory = new ChannelFactory<IDataReceivingEndpointProxy>(binding, endpoint);
             m_Diagnostics = systemDiagnostics;
         }
 

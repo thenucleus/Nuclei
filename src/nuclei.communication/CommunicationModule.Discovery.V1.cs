@@ -17,7 +17,7 @@ namespace Nuclei.Communication
     /// </content>
     public sealed partial class CommunicationModule
     {
-        private static void RegisterDiscoveryEndpoints(ContainerBuilder builder)
+        private static void RegisterDiscoveryV1Endpoints(ContainerBuilder builder)
         {
             builder.Register(
                 c =>
@@ -30,10 +30,10 @@ namespace Nuclei.Communication
                 .As<IVersionedDiscoveryEndpoint>()
                 .SingleInstance()
                 .WithMetadata<IDiscoveryVersionMetaData>(
-                    m => m.For(endpoint => endpoint.Version, DiscoveryVersions.V1));
+                    m => m.For(meta => meta.Version, DiscoveryVersions.V1));
         }
 
-        private static void RegisterChannelInformationTranslators(ContainerBuilder builder)
+        private static void RegisterDiscoveryV1ChannelInformationTranslators(ContainerBuilder builder)
         {
             builder.Register(c => new DiscoveryChannelTranslator(
                     Protocol.ProtocolVersions.SupportedVersions().ToArray(),
@@ -42,7 +42,7 @@ namespace Nuclei.Communication
                 .As<ITranslateVersionedChannelInformation>()
                 .SingleInstance()
                 .WithMetadata<IDiscoveryVersionMetaData>(
-                    m => m.For(endpoint => endpoint.Version, DiscoveryVersions.V1));
+                    m => m.For(meta => meta.Version, DiscoveryVersions.V1));
         }
     }
 }

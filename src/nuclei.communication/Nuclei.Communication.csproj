@@ -130,6 +130,7 @@
     <Compile Include="Discovery\V1\VersionedChannelInformation.cs" />
     <Compile Include="ICommunicationFacade.cs" />
     <Compile Include="IDiscoveryVersionMetaData.cs" />
+    <Compile Include="IProtocolVersionMetaData.cs" />
     <Compile Include="IProvideLocalConnectionInformation.cs" />
     <Compile Include="IStoreInformationForActiveChannels.cs" />
     <Compile Include="ProtocolInformation.cs" />

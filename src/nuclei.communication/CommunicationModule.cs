@@ -87,7 +87,9 @@ namespace Nuclei.Communication
             base.Load(builder);
 
             RegisterDiscoveryLayer(builder);
+            RegisterDiscoveryLayerV1(builder);
             RegisterProtocolLayer(builder);
+            RegisterProtocolLayerV1(builder);
             RegisterInteractionLayer(builder);
 
             RegisterStartables(builder);
@@ -101,9 +103,13 @@ namespace Nuclei.Communication
             RegisterBootstrapChannel(builder);
             RegisterVersionedDiscoveryEndpointSelector(builder);
             RegisterDiscoveryChannelTemplate(builder);
-            RegisterDiscoveryEndpoints(builder);
-            RegisterChannelInformationTranslators(builder);
             RegisterLocalConnectionInformation(builder);
+        }
+
+        private void RegisterDiscoveryLayerV1(ContainerBuilder builder)
+        {
+            RegisterDiscoveryV1Endpoints(builder);
+            RegisterDiscoveryV1ChannelInformationTranslators(builder);
         }
 
         private void RegisterProtocolLayer(ContainerBuilder builder)
@@ -121,6 +127,14 @@ namespace Nuclei.Communication
             RegisterCommunicationDescriptions(builder, m_Subjects);
             RegisterUploads(builder);
             RegisterDownloads(builder);
+        }
+
+        private void RegisterProtocolLayerV1(ContainerBuilder builder)
+        {
+            RegisterProtocolV1Endpoints(builder);
+            RegisterProtocolV1MessageConverters(builder);
+            RegisterV1SendingEndpoints(builder);
+            RegisterV1ConnectionApprover(builder);
         }
 
         private void RegisterInteractionLayer(ContainerBuilder builder)
