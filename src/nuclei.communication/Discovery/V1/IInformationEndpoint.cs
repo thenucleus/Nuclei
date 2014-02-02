@@ -7,7 +7,6 @@
 using System;
 using System.Net.Security;
 using System.ServiceModel;
-using ProtoBuf;
 
 namespace Nuclei.Communication.Discovery.V1
 {

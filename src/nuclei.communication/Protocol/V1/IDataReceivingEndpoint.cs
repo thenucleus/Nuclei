@@ -7,7 +7,6 @@
 using System.Net.Security;
 using System.ServiceModel;
 using Nuclei.Communication.Protocol.V1.DataObjects;
-using ProtoBuf;
 
 namespace Nuclei.Communication.Protocol.V1
 {
