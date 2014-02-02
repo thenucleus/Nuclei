@@ -9,6 +9,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Schedulers;
+using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;

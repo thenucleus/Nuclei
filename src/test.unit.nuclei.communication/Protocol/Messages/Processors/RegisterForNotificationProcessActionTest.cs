@@ -9,6 +9,8 @@ using System.Diagnostics.CodeAnalysis;
 using Moq;
 using Nuclei.Communication.Interaction;
 using NUnit.Framework;
+using Nuclei.Communication.Interaction.Transport.Messages;
+using Nuclei.Communication.Interaction.Transport.Messages.Processors;
 
 namespace Nuclei.Communication.Protocol.Messages.Processors
 {

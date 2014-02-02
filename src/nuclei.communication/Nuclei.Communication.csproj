@@ -141,11 +141,11 @@
     <Compile Include="Interaction\CommandAlreadyRegisteredException.cs" />
     <Compile Include="Interaction\CommandInvocationFailedException.cs" />
     <Compile Include="Interaction\CommandNotSupportedException.cs" />
-    <Compile Include="Interaction\V1\CommandProxyBuilder.cs" />
-    <Compile Include="Interaction\V1\CommandSetInterceptorSelector.cs" />
-    <Compile Include="Interaction\V1\CommandSetMethodWithoutResultInterceptor.cs" />
-    <Compile Include="Interaction\V1\CommandSetMethodWithResultInterceptor.cs" />
-    <Compile Include="Interaction\V1\CommandSetProxy.cs" />
+    <Compile Include="Interaction\CommandProxyBuilder.cs" />
+    <Compile Include="Interaction\CommandSetInterceptorSelector.cs" />
+    <Compile Include="Interaction\CommandSetMethodWithoutResultInterceptor.cs" />
+    <Compile Include="Interaction\CommandSetMethodWithResultInterceptor.cs" />
+    <Compile Include="Interaction\CommandSetProxy.cs" />
     <Compile Include="CommunicationConfigurationKeys.cs" />
     <Compile Include="CommunicationConstants.cs" />
     <Compile Include="Protocol\CommunicationChannel.cs" />
@@ -215,13 +215,12 @@
     <Compile Include="Protocol\Messages\Processors\EndpointDisconnectProcessAction.cs" />
     <Compile Include="Protocol\Messages\UnknownMessageTypeException.cs" />
     <Compile Include="Protocol\NamedPipeProtocolChannelTemplate.cs" />
-    <Compile Include="Interaction\V1\NotificationEventAddMethodInterceptor.cs" />
-    <Compile Include="Interaction\V1\NotificationEventRemoveMethodInterceptor.cs" />
+    <Compile Include="Interaction\NotificationEventAddMethodInterceptor.cs" />
+    <Compile Include="Interaction\NotificationEventRemoveMethodInterceptor.cs" />
     <Compile Include="Interaction\NotificationNotSupportedException.cs" />
-    <Compile Include="Interaction\V1\NotificationProxyBuilder.cs" />
-    <Compile Include="Interaction\V1\NotificationSetAvailabilityEventArgs.cs" />
-    <Compile Include="Interaction\V1\NotificationSetInterceptorSelector.cs" />
-    <Compile Include="Interaction\V1\NotificationSetProxy.cs" />
+    <Compile Include="Interaction\NotificationProxyBuilder.cs" />
+    <Compile Include="Interaction\NotificationSetInterceptorSelector.cs" />
+    <Compile Include="Interaction\NotificationSetProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -229,7 +228,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Interaction\V1\ProxyExtensions.cs" />
-    <Compile Include="Interaction\V1\ProxySelfReferenceInterceptor.cs" />
+    <Compile Include="Interaction\ProxySelfReferenceInterceptor.cs" />
     <Compile Include="Interaction\RemoteCommandHub.cs" />
     <Compile Include="Interaction\RemoteEndpointProxyHub.cs" />
     <Compile Include="Interaction\RemoteNotificationHub.cs" />
@@ -333,9 +332,7 @@
       <Name>Nuclei</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interaction\V1\Storage\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- 
        To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -7,6 +7,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Interaction.Transport.V1.Messages;
 using Nuclei.Nunit.Extensions;
 using NUnit.Framework;
 

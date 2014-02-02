@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Moq;
+using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
 using NUnit.Framework;
