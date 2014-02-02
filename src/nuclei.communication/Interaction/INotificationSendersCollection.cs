@@ -41,23 +41,5 @@ namespace Nuclei.Communication.Interaction
         /// <param name="notificationType">The interface that defines the notification events.</param>
         /// <param name="notifications">The notification object.</param>
         void Store(Type notificationType, INotificationSet notifications);
-
-        /// <summary>
-        /// Returns the notification object that was registered for the given interface type.
-        /// </summary>
-        /// <typeparam name="T">The type of the <see cref="INotificationSet"/> derived interface.</typeparam>
-        /// <returns>
-        /// The desired notification set.
-        /// </returns>
-        T NotificationsFor<T>() where T : INotificationSet;
-
-        /// <summary>
-        /// Returns the notification object that was registered for the given interface type.
-        /// </summary>
-        /// <param name="interfaceType">The <see cref="INotificationSet"/> derived interface type.</param>
-        /// <returns>
-        /// The desired notification set.
-        /// </returns>
-        INotificationSet NotificationsFor(Type interfaceType);
     }
 }

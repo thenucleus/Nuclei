@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication
 {
     /// <summary>
     /// Defines a 'subject' for which the communication system is used to communicate about.

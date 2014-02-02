@@ -21,7 +21,7 @@ namespace Nuclei.Communication.Interaction
     /// The base class for classes that store proxies for one or more remote endpoints.
     /// </summary>
     /// <typeparam name="TProxyObject">The base type of the proxy object that is created by the proxy builder.</typeparam>
-    internal abstract class RemoteEndpointProxyHub<TProxyObject> where TProxyObject : class
+    internal abstract class RemoteEndpointProxyHub<TProxyObject> : INotifyOfEndpointStateChange where TProxyObject : class
     {
         /// <summary>
         /// The collection of endpoints which have been contacted for information about 
@@ -29,6 +29,11 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         private readonly IList<EndpointId> m_WaitingForEndpointInformation
             = new List<EndpointId>();
+
+        /// <summary>
+        /// The object that stores information about the known endpoints.
+        /// </summary>
+        private readonly IStoreInformationAboutEndpoints m_EndpointInformationStorage;
 
         /// <summary>
         /// The function that creates proxy objects.
@@ -48,11 +53,11 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoteEndpointProxyHub{TProxyObject}"/> class.
         /// </summary>
-        /// <param name="endpointStateChange">The object that provides notification of the signing in and signing out of endpoints.</param>
+        /// <param name="endpointInformationStorage">The object that provides notification of the signing in and signing out of endpoints.</param>
         /// <param name="builder">The function that is responsible for building the proxies.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="endpointStateChange"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="endpointInformationStorage"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="builder"/> is <see langword="null" />.
@@ -61,28 +66,29 @@ namespace Nuclei.Communication.Interaction
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         protected RemoteEndpointProxyHub(
-            INotifyOfEndpointStateChange endpointStateChange,
+            IStoreInformationAboutEndpoints endpointInformationStorage,
             Func<EndpointId, Type, TProxyObject> builder,
             SystemDiagnostics systemDiagnostics)
         {
             {
-                Lokad.Enforce.Argument(() => endpointStateChange);
+                Lokad.Enforce.Argument(() => endpointInformationStorage);
                 Lokad.Enforce.Argument(() => builder);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
 
-            endpointStateChange.OnEndpointConnected += HandleEndpointSignIn;
-            endpointStateChange.OnEndpointDisconnected += HandleEndpointSignOut;
+            m_EndpointInformationStorage = endpointInformationStorage;
+            m_EndpointInformationStorage.OnEndpointConnected += HandleEndpointSignIn;
+            m_EndpointInformationStorage.OnEndpointDisconnected += HandleEndpointSignOut;
 
             m_Builder = builder;
             m_Diagnostics = systemDiagnostics;
         }
 
-        private void HandleEndpointSignIn(object sender, EndpointSignInEventArgs eventArgs)
+        private void HandleEndpointSignIn(object sender, EndpointEventArgs eventArgs)
         {
             using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Received endpoint information"))
             {
-                var endpoint = eventArgs.ConnectionInformation.Id;
+                var endpoint = eventArgs.Endpoint;
 
                 bool haveStoredEndpointInformation = false;
                 var proxyList = new List<Type>();
@@ -96,7 +102,13 @@ namespace Nuclei.Communication.Interaction
                         // endpoints. Also accessing any method in a proxy is going to be slow because it 
                         // needs to travel to another application and come back (possibly over the network). it seems the
                         // sorted list is the best trade-off (memory vs performance) in this case.
-                        var proxyTypes = ProxyTypesFromDescription(eventArgs.Description);
+                        EndpointInformation info;
+                        if (!m_EndpointInformationStorage.TryGetConnectionFor(endpoint, out info))
+                        {
+                            foobar();
+                        }
+
+                        var proxyTypes = ProxyTypesFromDescription(info.InteractionInformation.Description);
                         m_Diagnostics.Log(
                             LevelToLog.Trace,
                             CommunicationConstants.DefaultLogTextPrefix,
@@ -168,14 +180,14 @@ namespace Nuclei.Communication.Interaction
                     {
                         using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Notifying of new endpoint"))
                         {
-                            RaiseOnEndpointSignedIn(endpoint, proxyList);
+                            RaiseOnEndpointConnected(endpoint, proxyList);
                         }
                     }
                 }
             }
         }
 
-        private void HandleEndpointSignOut(object sender, EndpointSignedOutEventArgs eventArgs)
+        private void HandleEndpointSignOut(object sender, EndpointEventArgs eventArgs)
         {
             using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Endpoint disconnected - removing proxies."))
             {
@@ -212,7 +224,7 @@ namespace Nuclei.Communication.Interaction
 
                 using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Notifying of proxy removal."))
                 {
-                    RaiseOnEndpointSignedOff(eventArgs.Endpoint);
+                    RaiseOnEndpointDisconnected(eventArgs.Endpoint);
                 }
             }
         }
@@ -300,16 +312,35 @@ namespace Nuclei.Communication.Interaction
         protected abstract void RemoveProxiesFor(EndpointId endpoint);
 
         /// <summary>
-        /// Indicates that a new endpoint has signed in and all the proxy information has been obtained.
+        /// An event raised when an endpoint has signed in.
         /// </summary>
-        /// <param name="endpoint">The endpoint that has signed in.</param>
-        /// <param name="proxies">The proxy types for the given endpoint.</param>
-        protected abstract void RaiseOnEndpointSignedIn(EndpointId endpoint, IEnumerable<Type> proxies);
+        public event EventHandler<EndpointEventArgs> OnEndpointConnected;
+
+        private void RaiseOnEndpointConnected(EndpointId endpoint)
+        {
+            var local = OnEndpointConnected;
+            if (local != null)
+            {
+                local(this, new EndpointEventArgs(endpoint));
+            }
+        }
+
+        /// <summary>
+        /// An event raised when an endpoint has signed out.
+        /// </summary>
+        public event EventHandler<EndpointEventArgs> OnEndpointDisconnected;
 
         /// <summary>
         /// Indicates that an endpoint has signed off.
         /// </summary>
         /// <param name="endpoint">The endpoint that signed off.</param>
-        protected abstract void RaiseOnEndpointSignedOff(EndpointId endpoint);
+        private void RaiseOnEndpointDisconnected(EndpointId endpoint)
+        {
+            var local = OnEndpointDisconnected;
+            if (local != null)
+            {
+                local(this, new EndpointEventArgs(endpoint));
+            }
+        }
     }
 }

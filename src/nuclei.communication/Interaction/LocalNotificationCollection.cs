@@ -7,6 +7,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
@@ -43,7 +44,7 @@ namespace Nuclei.Communication.Interaction
         /// The communication layer that is used to send out messages about newly
         /// registered commands.
         /// </summary>
-        private readonly ISendDataViaChannels m_Layer;
+        private readonly ICommunicationLayer m_Layer;
 
         /// <summary>
         /// The object that stores the communication descriptions for the application.
@@ -63,7 +64,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="descriptions"/> is <see langword="null" />.
         /// </exception>
-        public LocalNotificationCollection(ISendDataViaChannels layer, IStoreCommunicationDescriptions descriptions)
+        public LocalNotificationCollection(ICommunicationLayer layer, IStoreCommunicationDescriptions descriptions)
         {
             {
                 Lokad.Enforce.Argument(() => layer);

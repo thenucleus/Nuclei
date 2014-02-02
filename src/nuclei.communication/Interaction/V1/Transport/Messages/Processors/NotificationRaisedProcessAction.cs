@@ -8,12 +8,12 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 using Nuclei.Diagnostics.Profiling;
 
-namespace Nuclei.Communication.Protocol.Messages.Processors
+namespace Nuclei.Communication.Interaction.Transport.V1.Messages.Processors
 {
     /// <summary>
     /// Defines the action that processes an <see cref="NotificationRaisedMessage"/>.

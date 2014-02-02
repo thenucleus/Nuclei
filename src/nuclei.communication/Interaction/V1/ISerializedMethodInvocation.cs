@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Interaction.Transport.V1
 {
     /// <summary>
     /// Defines the interface for objects that carry information, in serialized form, about 

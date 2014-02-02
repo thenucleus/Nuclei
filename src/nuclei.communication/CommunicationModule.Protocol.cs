@@ -16,6 +16,7 @@ using Autofac.Core;
 using Autofac.Features.Metadata;
 using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Interaction.Transport.Messages.Processors;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Communication.Protocol.Messages.Processors;

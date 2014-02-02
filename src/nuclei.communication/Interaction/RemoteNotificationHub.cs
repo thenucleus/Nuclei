@@ -33,11 +33,11 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoteNotificationHub"/> class.
         /// </summary>
-        /// <param name="endpointStateChange">The object that provides notification of the signing in and signing out of endpoints.</param>
+        /// <param name="endpointInformationStorage">The object that provides notification of the signing in and signing out of endpoints.</param>
         /// <param name="builder">The object that is responsible for building the command proxies.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostic methods for the system.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="endpointStateChange"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="endpointInformationStorage"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="builder"/> is <see langword="null" />.
@@ -46,11 +46,11 @@ namespace Nuclei.Communication.Interaction
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         internal RemoteNotificationHub(
-            INotifyOfEndpointStateChange endpointStateChange,
+            IStoreInformationAboutEndpoints endpointInformationStorage,
             NotificationProxyBuilder builder,
             SystemDiagnostics systemDiagnostics)
             : base(
-                endpointStateChange,
+                endpointInformationStorage,
                 (endpoint, type) => (NotificationSetProxy)builder.ProxyConnectingTo(endpoint, type),
                 systemDiagnostics)
         {
@@ -163,106 +163,17 @@ namespace Nuclei.Communication.Interaction
         }
 
         /// <summary>
-        /// Returns a collection describing all the known endpoints and the notifications they
-        /// provide.
-        /// </summary>
-        /// <returns>
-        /// The collection describing all the known endpoints and the notifications they describe.
-        /// </returns>
-        public IEnumerable<NotificationInformationPerEndpoint> AvailableNotifications()
-        {
-            var result = new List<NotificationInformationPerEndpoint>();
-            lock (m_Lock)
-            {
-                foreach (var pair in m_RemoteNotifications)
-                {
-                    var list = new List<Type>();
-                    list.AddRange(pair.Value.Keys);
-                    result.Add(new NotificationInformationPerEndpoint(pair.Key, list));
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Returns a collection describing all the known notifications for the given endpoint.
-        /// </summary>
-        /// <param name="endpoint">The ID number of the endpoint.</param>
-        /// <returns>
-        ///     The collection describing all the known notifications for the given endpoint.
-        /// </returns>
-        public IEnumerable<Type> AvailableNotificationsFor(EndpointId endpoint)
-        {
-            var result = new List<Type>();
-            lock (m_Lock)
-            {
-                if (m_RemoteNotifications.ContainsKey(endpoint))
-                {
-                    var list = m_RemoteNotifications[endpoint];
-                    result.AddRange(list.Keys);
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// An event raised when an endpoint signs on and provides a set of notifications.
-        /// </summary>
-        public event EventHandler<NotificationSetAvailabilityEventArgs> OnEndpointSignedIn;
-
-        protected override void RaiseOnEndpointSignedIn(EndpointId endpoint, IEnumerable<Type> proxies)
-        {
-            var local = OnEndpointSignedIn;
-            if (local != null)
-            {
-                local(this, new NotificationSetAvailabilityEventArgs(endpoint, proxies));
-            }
-        }
-
-        /// <summary>
-        /// An event raised when an endpoint signs off.
-        /// </summary>
-        public event EventHandler<EndpointEventArgs> OnEndpointSignedOff;
-
-        protected override void RaiseOnEndpointSignedOff(EndpointId endpoint)
-        {
-            var local = OnEndpointSignedOff;
-            if (local != null)
-            {
-                local(this, new EndpointEventArgs(endpoint));
-            }
-        }
-
-        /// <summary>
-        /// Returns a value indicating if there are any known notifications for a given endpoint.
-        /// </summary>
-        /// <param name="endpoint">The ID number of the endpoint.</param>
-        /// <returns>
-        ///     <see langword="true" /> if there are known notifications for the given endpoint; otherwise, <see langword="false" />.
-        /// </returns>
-        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
-            Justification = "Documentation can start with a language keyword")]
-        public bool HasNotificationsFor(EndpointId endpoint)
-        {
-            lock (m_Lock)
-            {
-                return m_RemoteNotifications.ContainsKey(endpoint);
-            }
-        }
-
-        /// <summary>
         /// Returns a value indicating if a specific set of notifications is available for the given endpoint.
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint.</param>
         /// <param name="notificationInterfaceType">The type of the notification that should be available.</param>
+        /// <param name="notificationVersion">The version of the notification that should be available.</param>
         /// <returns>
         ///     <see langword="true" /> if there are the specific notifications exist for the given endpoint; otherwise, <see langword="false" />.
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        public bool HasNotificationFor(EndpointId endpoint, Type notificationInterfaceType)
+        public bool HasNotificationFor(EndpointId endpoint, Type notificationInterfaceType, Version notificationVersion)
         {
             lock (m_Lock)
             {
@@ -281,10 +192,11 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <typeparam name="TNotification">The typeof notification set that should be returned.</typeparam>
         /// <param name="endpoint">The ID number of the endpoint for which the notifications should be returned.</param>
+        /// <param name="notificationVersion">The version of the notification that should be returned.</param>
         /// <returns>The requested notification set.</returns>
-        public TNotification NotificationsFor<TNotification>(EndpointId endpoint) where TNotification : class, INotificationSet
+        public TNotification NotificationsFor<TNotification>(EndpointId endpoint, Version notificationVersion) where TNotification : class, INotificationSet
         {
-            return NotificationsFor(endpoint, typeof(TNotification)) as TNotification;
+            return NotificationsFor(endpoint, typeof(TNotification), notificationVersion) as TNotification;
         }
 
         /// <summary>
@@ -292,8 +204,9 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint for which the notification should be returned.</param>
         /// <param name="notificationType">The type of the notification.</param>
+        /// <param name="notificationVersion">The version of the notification that should be returned.</param>
         /// <returns>The requested notification set.</returns>
-        public INotificationSet NotificationsFor(EndpointId endpoint, Type notificationType)
+        public INotificationSet NotificationsFor(EndpointId endpoint, Type notificationType, Version notificationVersion)
         {
             lock (m_Lock)
             {

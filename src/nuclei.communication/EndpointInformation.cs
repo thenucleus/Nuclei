@@ -80,5 +80,14 @@ namespace Nuclei.Communication
                 return m_ProtocolInformation;
             }
         }
+
+        public InteractionInformation InteractionInformation
+        {
+            [DebuggerStepThrough]
+            get
+            {
+                return m_InteractionInformation;
+            }
+        }
     }
 }

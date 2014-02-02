@@ -5,9 +5,9 @@
 //-----------------------------------------------------------------------
 
 using System;
-using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Protocol.Messages;
 
-namespace Nuclei.Communication.Protocol.Messages
+namespace Nuclei.Communication.Interaction.Transport.V1.Messages
 {
     /// <summary>
     /// Defines a message that indicates that the an <see cref="INotificationSet"/> event was

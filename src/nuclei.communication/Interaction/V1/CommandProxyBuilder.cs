@@ -11,6 +11,7 @@ using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using Castle.DynamicProxy.Generators;
+using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;

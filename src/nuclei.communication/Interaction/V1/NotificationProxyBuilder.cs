@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using Castle.DynamicProxy;
+using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;

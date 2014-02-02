@@ -6,9 +6,9 @@
 
 using System;
 using System.Diagnostics;
-using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Protocol;
 
-namespace Nuclei.Communication.Protocol.Messages.Processors
+namespace Nuclei.Communication.Interaction.Transport.V1.Messages.Processors
 {
     /// <summary>
     /// Defines the action that processes an <see cref="UnregisterFromNotificationMessage"/>.

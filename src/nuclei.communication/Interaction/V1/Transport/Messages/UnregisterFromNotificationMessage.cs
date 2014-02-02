@@ -5,41 +5,41 @@
 //-----------------------------------------------------------------------
 
 using System;
-using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Protocol.Messages;
 
-namespace Nuclei.Communication.Protocol.Messages
+namespace Nuclei.Communication.Interaction.Transport.V1.Messages
 {
     /// <summary>
-    /// Defines a message that is used to request registration to a notification.
+    /// Defines a message that is used to request un-registration from a notification.
     /// </summary>
     [Serializable]
-    internal sealed class RegisterForNotificationMessage : CommunicationMessage
+    internal sealed class UnregisterFromNotificationMessage : CommunicationMessage
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="RegisterForNotificationMessage"/> class.
+        /// Initializes a new instance of the <see cref="UnregisterFromNotificationMessage"/> class.
         /// </summary>
         /// <param name="origin">
         /// The ID of the endpoint that send the message.
         /// </param>
-        /// <param name="notificationToSubscribeTo">The notification to which the sender wants to subscribe.</param>
+        /// <param name="notificationToUnsubscribeFrom">The notification from which the sender wants to unsubscribe.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="notificationToSubscribeTo"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="notificationToUnsubscribeFrom"/> is <see langword="null" />.
         /// </exception>
-        public RegisterForNotificationMessage(EndpointId origin, ISerializedEventRegistration notificationToSubscribeTo)
+        public UnregisterFromNotificationMessage(EndpointId origin, ISerializedEventRegistration notificationToUnsubscribeFrom)
             : base(origin)
         {
             {
-                Lokad.Enforce.Argument(() => notificationToSubscribeTo);
+                Lokad.Enforce.Argument(() => notificationToUnsubscribeFrom);
             }
 
-            Notification = notificationToSubscribeTo;
+            Notification = notificationToUnsubscribeFrom;
         }
 
         /// <summary>
-        /// Gets the notification to which the sender of the current message wants to subscribe.
+        /// Gets the notification from which the sender of the current message wants to unsubscribe.
         /// </summary>
         public ISerializedEventRegistration Notification 
         { 

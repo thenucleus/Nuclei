@@ -10,11 +10,12 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Protocol;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication.Protocol.Messages.Processors
+namespace Nuclei.Communication.Interaction.Transport.V1.Messages.Processors
 {
     /// <summary>
     /// Defines the action that processes an <see cref="CommandInvokedMessage"/>.

@@ -8,13 +8,13 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Interaction.Transport.V1
 {
     /// <summary>
-    /// Stores information about a serialized event.
+    /// Stores type information about a <see cref="ICommandSet"/> in serializable form.
     /// </summary>
     [Serializable]
-    internal sealed class SerializedEvent : ISerializedEventRegistration
+    internal sealed class SerializedType : ISerializedType
     {
         /// <summary>
         /// Implements the operator ==.
@@ -22,7 +22,7 @@ namespace Nuclei.Communication.Interaction
         /// <param name="first">The first object.</param>
         /// <param name="second">The second object.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator ==(SerializedEvent first, SerializedEvent second)
+        public static bool operator ==(SerializedType first, SerializedType second)
         {
             // Check if first is a null reference by using ReferenceEquals because
             // we overload the == operator. If first isn't actually null then
@@ -49,7 +49,7 @@ namespace Nuclei.Communication.Interaction
         /// <param name="first">The first object.</param>
         /// <param name="second">The second object.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator !=(SerializedEvent first, SerializedEvent second)
+        public static bool operator !=(SerializedType first, SerializedType second)
         {
             // Check if first is a null reference by using ReferenceEquals because
             // we overload the == operator. If first isn't actually null then
@@ -71,34 +71,34 @@ namespace Nuclei.Communication.Interaction
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SerializedEvent"/> class.
+        /// Initializes a new instance of the <see cref="SerializedType"/> class.
         /// </summary>
-        /// <param name="type">The serialized information about the command set.</param>
-        /// <param name="eventName">The name of the event.</param>
-        public SerializedEvent(ISerializedType type, string eventName)
+        /// <param name="fullName">The fully qualified name of the type.</param>
+        /// <param name="assemblyQualifiedTypeName">The assembly qualified name of the type.</param>
+        public SerializedType(string fullName, string assemblyQualifiedTypeName)
         {
             {
-                Debug.Assert(type != null, "No type information specified.");
-                Debug.Assert(!string.IsNullOrWhiteSpace(eventName), "No method name specified.");
+                Debug.Assert(!string.IsNullOrWhiteSpace(fullName), "No full name specified.");
+                Debug.Assert(!string.IsNullOrWhiteSpace(assemblyQualifiedTypeName), "No assembly full name specified.");
             }
 
-            Type = type;
-            MemberName = eventName;
+            FullName = fullName;
+            AssemblyQualifiedTypeName = assemblyQualifiedTypeName;
         }
 
         /// <summary>
-        /// Gets the command set on which the method was invoked.
+        /// Gets the assembly qualified name of the command set type.
         /// </summary>
-        public ISerializedType Type
+        public string AssemblyQualifiedTypeName
         {
             get;
             private set;
         }
 
         /// <summary>
-        /// Gets the name of the event.
+        /// Gets the full name of the type.
         /// </summary>
-        public string MemberName
+        public string FullName
         {
             get;
             private set;
@@ -113,7 +113,7 @@ namespace Nuclei.Communication.Interaction
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        public bool Equals(ISerializedEventRegistration other)
+        public bool Equals(ISerializedType other)
         {
             if (ReferenceEquals(other, null))
             {
@@ -125,8 +125,7 @@ namespace Nuclei.Communication.Interaction
                 return true;
             }
 
-            return Type.Equals(other.Type)
-                && string.Equals(MemberName, other.MemberName, StringComparison.Ordinal);
+            return string.Equals(AssemblyQualifiedTypeName, other.AssemblyQualifiedTypeName, StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -145,7 +144,7 @@ namespace Nuclei.Communication.Interaction
                 return true;
             }
 
-            var id = obj as ISerializedEventRegistration;
+            var id = obj as ISerializedType;
             return Equals(id);
         }
 
@@ -168,8 +167,7 @@ namespace Nuclei.Communication.Interaction
                 int hash = 17;
 
                 // Mash the hash together with yet another random prime number
-                hash = (hash * 23) ^ Type.GetHashCode();
-                hash = (hash * 23) ^ MemberName.GetHashCode();
+                hash = (hash * 23) ^ AssemblyQualifiedTypeName.GetHashCode();
 
                 return hash;
             }
@@ -183,7 +181,7 @@ namespace Nuclei.Communication.Interaction
         /// </returns>
         public override string ToString()
         {
-            return Type.FullName + "." + MemberName;
+            return AssemblyQualifiedTypeName;
         }
     }
 }

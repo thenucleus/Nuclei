@@ -130,6 +130,7 @@
     <Compile Include="Discovery\V1\VersionedChannelInformation.cs" />
     <Compile Include="ICommunicationFacade.cs" />
     <Compile Include="IDiscoveryVersionMetaData.cs" />
+    <Compile Include="InteractionInformation.cs" />
     <Compile Include="IProtocolVersionMetaData.cs" />
     <Compile Include="IProvideLocalConnectionInformation.cs" />
     <Compile Include="IStoreInformationForActiveChannels.cs" />
@@ -138,15 +139,13 @@
     <Compile Include="Protocol\ChannelClosedEventArgs.cs" />
     <Compile Include="Protocol\ChannelTemplate.cs" />
     <Compile Include="Interaction\CommandAlreadyRegisteredException.cs" />
-    <Compile Include="Interaction\CommandInformationPerEndpoint.cs" />
     <Compile Include="Interaction\CommandInvocationFailedException.cs" />
     <Compile Include="Interaction\CommandNotSupportedException.cs" />
-    <Compile Include="Interaction\CommandProxyBuilder.cs" />
-    <Compile Include="Interaction\CommandSetAvailabilityEventArgs.cs" />
-    <Compile Include="Interaction\CommandSetInterceptorSelector.cs" />
-    <Compile Include="Interaction\CommandSetMethodWithoutResultInterceptor.cs" />
-    <Compile Include="Interaction\CommandSetMethodWithResultInterceptor.cs" />
-    <Compile Include="Interaction\CommandSetProxy.cs" />
+    <Compile Include="Interaction\V1\CommandProxyBuilder.cs" />
+    <Compile Include="Interaction\V1\CommandSetInterceptorSelector.cs" />
+    <Compile Include="Interaction\V1\CommandSetMethodWithoutResultInterceptor.cs" />
+    <Compile Include="Interaction\V1\CommandSetMethodWithResultInterceptor.cs" />
+    <Compile Include="Interaction\V1\CommandSetProxy.cs" />
     <Compile Include="CommunicationConfigurationKeys.cs" />
     <Compile Include="CommunicationConstants.cs" />
     <Compile Include="Protocol\CommunicationChannel.cs" />
@@ -194,11 +193,11 @@
     <Compile Include="Protocol\IProcessIncomingMessages.cs" />
     <Compile Include="Protocol\IProtocolChannelTemplate.cs" />
     <Compile Include="Interaction\ISendNotifications.cs" />
-    <Compile Include="Interaction\ISerializedEventRegistration.cs" />
-    <Compile Include="Interaction\ISerializedMethodInvocation.cs" />
-    <Compile Include="Interaction\ISerializedType.cs" />
+    <Compile Include="Interaction\V1\ISerializedEventRegistration.cs" />
+    <Compile Include="Interaction\V1\ISerializedMethodInvocation.cs" />
+    <Compile Include="Interaction\V1\ISerializedType.cs" />
     <Compile Include="Protocol\ISendingEndpoint.cs" />
-    <Compile Include="Protocol\IStoreInformationAboutEndpoints.cs" />
+    <Compile Include="IStoreInformationAboutEndpoints.cs" />
     <Compile Include="Protocol\IStoreUploads.cs" />
     <Compile Include="Interaction\LocalCommandCollection.cs" />
     <Compile Include="Interaction\LocalNotificationCollection.cs" />
@@ -216,35 +215,32 @@
     <Compile Include="Protocol\Messages\Processors\EndpointDisconnectProcessAction.cs" />
     <Compile Include="Protocol\Messages\UnknownMessageTypeException.cs" />
     <Compile Include="Protocol\NamedPipeProtocolChannelTemplate.cs" />
-    <Compile Include="Interaction\NotificationEventAddMethodInterceptor.cs" />
-    <Compile Include="Interaction\NotificationEventRemoveMethodInterceptor.cs" />
-    <Compile Include="Interaction\NotificationInformationEventArgs.cs" />
-    <Compile Include="Interaction\NotificationInformationPerEndpoint.cs" />
+    <Compile Include="Interaction\V1\NotificationEventAddMethodInterceptor.cs" />
+    <Compile Include="Interaction\V1\NotificationEventRemoveMethodInterceptor.cs" />
     <Compile Include="Interaction\NotificationNotSupportedException.cs" />
-    <Compile Include="Interaction\NotificationProxyBuilder.cs" />
-    <Compile Include="Interaction\NotificationSetAvailabilityEventArgs.cs" />
-    <Compile Include="Interaction\NotificationSetInterceptorSelector.cs" />
-    <Compile Include="Interaction\NotificationSetProxy.cs" />
+    <Compile Include="Interaction\V1\NotificationProxyBuilder.cs" />
+    <Compile Include="Interaction\V1\NotificationSetAvailabilityEventArgs.cs" />
+    <Compile Include="Interaction\V1\NotificationSetInterceptorSelector.cs" />
+    <Compile Include="Interaction\V1\NotificationSetProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Interaction\ProxyExtensions.cs" />
-    <Compile Include="Interaction\ProxyInformationEventArgs.cs" />
-    <Compile Include="Interaction\ProxySelfReferenceInterceptor.cs" />
+    <Compile Include="Interaction\V1\ProxyExtensions.cs" />
+    <Compile Include="Interaction\V1\ProxySelfReferenceInterceptor.cs" />
     <Compile Include="Interaction\RemoteCommandHub.cs" />
     <Compile Include="Interaction\RemoteEndpointProxyHub.cs" />
     <Compile Include="Interaction\RemoteNotificationHub.cs" />
     <Compile Include="Protocol\ProtocolVersions.cs" />
     <Compile Include="Protocol\SendingEndpoint.cs" />
-    <Compile Include="Interaction\SerializedEvent.cs" />
-    <Compile Include="Interaction\SerializedMethodInvocation.cs" />
-    <Compile Include="Interaction\SerializedType.cs" />
+    <Compile Include="Interaction\V1\SerializedEvent.cs" />
+    <Compile Include="Interaction\V1\SerializedMethodInvocation.cs" />
+    <Compile Include="Interaction\V1\SerializedType.cs" />
     <Compile Include="Protocol\CommunicationDescription.cs" />
     <Compile Include="Protocol\CommunicationDescriptionStorage.cs" />
-    <Compile Include="Protocol\CommunicationSubject.cs" />
+    <Compile Include="CommunicationSubject.cs" />
     <Compile Include="Protocol\UriExtensions.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\DownloadRequestConverter.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\EndpointConnectConverter.cs" />
@@ -276,26 +272,26 @@
     <Compile Include="Protocol\MessageId.cs" />
     <Compile Include="Protocol\IStoreEndpointApprovalState.cs" />
     <Compile Include="Protocol\V1\MessageReceivingEndpoint.cs" />
-    <Compile Include="Protocol\Messages\CommandInvokedMessage.cs" />
-    <Compile Include="Protocol\Messages\CommandInvokedResponseMessage.cs" />
+    <Compile Include="Interaction\V1\Transport\Messages\CommandInvokedMessage.cs" />
+    <Compile Include="Interaction\V1\Transport\Messages\CommandInvokedResponseMessage.cs" />
     <Compile Include="Protocol\Messages\CommunicationMessage.cs" />
     <Compile Include="Protocol\Messages\CommunicationMessageExtensions.cs" />
     <Compile Include="Protocol\Messages\DataDownloadRequestMessage.cs" />
     <Compile Include="Protocol\Messages\EndpointConnectMessage.cs" />
     <Compile Include="Protocol\Messages\EndpointDisconnectMessage.cs" />
     <Compile Include="Protocol\Messages\FailureMessage.cs" />
-    <Compile Include="Protocol\Messages\NotificationRaisedMessage.cs" />
-    <Compile Include="Protocol\Messages\Processors\CommandInvokedProcessAction.cs" />
+    <Compile Include="Interaction\V1\Transport\Messages\NotificationRaisedMessage.cs" />
+    <Compile Include="Interaction\V1\Transport\Messages\Processors\CommandInvokedProcessAction.cs" />
     <Compile Include="Protocol\Messages\Processors\DataDownloadProcessAction.cs" />
     <Compile Include="Protocol\Messages\Processors\EndpointConnectProcessAction.cs" />
-    <Compile Include="Protocol\Messages\Processors\NotificationRaisedProcessAction.cs" />
-    <Compile Include="Protocol\Messages\Processors\RegisterForNotificationProcessAction.cs" />
+    <Compile Include="Interaction\V1\Transport\Messages\Processors\NotificationRaisedProcessAction.cs" />
+    <Compile Include="Interaction\V1\Transport\Messages\Processors\RegisterForNotificationProcessAction.cs" />
     <Compile Include="Protocol\Messages\Processors\UnknownMessageTypeProcessAction.cs" />
-    <Compile Include="Protocol\Messages\Processors\UnregisterFromNotificationProcessAction.cs" />
-    <Compile Include="Protocol\Messages\RegisterForNotificationMessage.cs" />
+    <Compile Include="Interaction\V1\Transport\Messages\Processors\UnregisterFromNotificationProcessAction.cs" />
+    <Compile Include="Interaction\V1\Transport\Messages\RegisterForNotificationMessage.cs" />
     <Compile Include="Protocol\Messages\SuccessMessage.cs" />
     <Compile Include="Protocol\Messages\UnknownMessageTypeMessage.cs" />
-    <Compile Include="Protocol\Messages\UnregisterFromNotificationMessage.cs" />
+    <Compile Include="Interaction\V1\Transport\Messages\UnregisterFromNotificationMessage.cs" />
     <Compile Include="Protocol\NoCommunicationSubjectsRegisteredException.cs" />
     <Compile Include="Protocol\V1\RestoringDataTransferingEndpoint.cs" />
     <Compile Include="Protocol\V1\RestoringMessageSendingEndpoint.cs" />
@@ -337,7 +333,9 @@
       <Name>Nuclei</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Interaction\V1\Storage\" />
+  </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- 
        To modify your build process, add your task inside one of the targets below and uncomment it. 

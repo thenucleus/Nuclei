@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Nuclei.Communication.Interaction
@@ -20,5 +21,12 @@ namespace Nuclei.Communication.Interaction
         Justification = "This interface is used as marker interface for sets of notifications.")]
     public interface INotificationSet
     {
+        /// <summary>
+        /// Gets the version of the current command set.
+        /// </summary>
+        Version NotificationSetVersion
+        {
+            get;
+        }
     }
 }
