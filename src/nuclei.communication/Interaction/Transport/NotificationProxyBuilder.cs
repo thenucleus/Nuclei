@@ -12,10 +12,9 @@ using Castle.DynamicProxy;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol;
-using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Interaction.Transport
 {
     /// <summary>
     /// Builds proxy objects for the <see cref="RemoteNotificationHub"/>.

@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Interaction.Transport
 {
     /// <summary>
     /// Forms the base for remote <see cref="INotificationSet"/> proxy objects.

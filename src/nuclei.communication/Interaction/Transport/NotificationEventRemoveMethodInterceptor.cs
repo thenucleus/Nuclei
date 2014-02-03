@@ -10,11 +10,10 @@ using System.Globalization;
 using System.Reflection;
 using Castle.DynamicProxy;
 using Nuclei.Communication.Interaction.Transport.Messages;
-using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Interaction.Transport
 {
     /// <summary>
     /// Defines an <see cref="IInterceptor"/> for the 'remove' method of an <see cref="INotificationSet"/> event.

@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Interaction.Transport
 {
     /// <summary>
     /// Defines the methods for handling communication notifications.
