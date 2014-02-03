@@ -7,7 +7,7 @@
 using System;
 using Nuclei.Communication.Protocol.Messages;
 
-namespace Nuclei.Communication.Interaction.Transport.V1.Messages
+namespace Nuclei.Communication.Interaction.Transport.Messages
 {
     /// <summary>
     /// Defines a message that indicates that the an <see cref="INotificationSet"/> event was
@@ -20,42 +20,27 @@ namespace Nuclei.Communication.Interaction.Transport.V1.Messages
         /// Initializes a new instance of the <see cref="NotificationRaisedMessage"/> class.
         /// </summary>
         /// <param name="origin">The endpoint that send the original message.</param>
-        /// <param name="eventNotification">The information about the <see cref="INotificationSet"/> event that was raised.</param>
-        /// <param name="args">The event arguments that were provided by the event.</param>
+        /// <param name="eventNotification">The information about the <see cref="INotificationSet"/> notification that was raised.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="eventNotification"/> is <see langword="null" />.
         /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="args"/> is <see langword="null" />.
-        /// </exception>
-        public NotificationRaisedMessage(EndpointId origin, ISerializedEventRegistration eventNotification, EventArgs args)
+        public NotificationRaisedMessage(EndpointId origin, NotificationRaisedData eventNotification)
             : base(origin)
         {
             {
                 Lokad.Enforce.Argument(() => eventNotification);
-                Lokad.Enforce.Argument(() => args);
             }
 
             Notification = eventNotification;
-            Arguments = args;
         }
 
         /// <summary>
-        /// Gets information about the <see cref="INotificationSet"/> event that was raised.
+        /// Gets information about the <see cref="INotificationSet"/> notification that was raised.
         /// </summary>
-        public ISerializedEventRegistration Notification
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Gets the event arguments that were provided by the event.
-        /// </summary>
-        public EventArgs Arguments
+        public NotificationRaisedData Notification
         {
             get;
             private set;

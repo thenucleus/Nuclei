@@ -8,13 +8,13 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nuclei.Communication.Interaction.Transport.V1
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Stores type information about a <see cref="ICommandSet"/> in serializable form.
     /// </summary>
     [Serializable]
-    internal sealed class SerializedType : ISerializedType
+    internal sealed class SerializedType : IEquatable<SerializedType>
     {
         /// <summary>
         /// Implements the operator ==.
@@ -113,7 +113,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        public bool Equals(ISerializedType other)
+        public bool Equals(SerializedType other)
         {
             if (ReferenceEquals(other, null))
             {
@@ -144,7 +144,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1
                 return true;
             }
 
-            var id = obj as ISerializedType;
+            var id = obj as SerializedType;
             return Equals(id);
         }
 

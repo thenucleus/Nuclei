@@ -8,13 +8,13 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nuclei.Communication.Interaction.Transport.V1
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Stores information about a serialized event.
     /// </summary>
     [Serializable]
-    internal sealed class SerializedEvent : ISerializedEventRegistration
+    internal sealed class SerializedEvent : IEquatable<SerializedEvent>
     {
         /// <summary>
         /// Implements the operator ==.
@@ -75,7 +75,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1
         /// </summary>
         /// <param name="type">The serialized information about the command set.</param>
         /// <param name="eventName">The name of the event.</param>
-        public SerializedEvent(ISerializedType type, string eventName)
+        public SerializedEvent(SerializedType type, string eventName)
         {
             {
                 Debug.Assert(type != null, "No type information specified.");
@@ -89,7 +89,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1
         /// <summary>
         /// Gets the command set on which the method was invoked.
         /// </summary>
-        public ISerializedType Type
+        public SerializedType Type
         {
             get;
             private set;
@@ -113,7 +113,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        public bool Equals(ISerializedEventRegistration other)
+        public bool Equals(SerializedEvent other)
         {
             if (ReferenceEquals(other, null))
             {
@@ -145,7 +145,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1
                 return true;
             }
 
-            var id = obj as ISerializedEventRegistration;
+            var id = obj as SerializedEvent;
             return Equals(id);
         }
 

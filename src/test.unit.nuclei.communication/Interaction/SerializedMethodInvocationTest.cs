@@ -30,24 +30,24 @@ namespace Nuclei.Communication.Interaction
             Task<int> OtherMethodWithReturnValue(int otherNumber);
         }
 
-        private sealed class SerializedMethodEqualityContractVerifier : EqualityContractVerifier<SerializedMethodInvocation>
+        private sealed class SerializedMethodEqualityContractVerifier : EqualityContractVerifier<SerializedMethod>
         {
-            private readonly SerializedMethodInvocation m_First
+            private readonly SerializedMethod m_First
                 = ProxyExtensions.FromMethodInfo(
                     typeof(IMockCommandSet).GetMethod("MethodWithoutReturnValue"), 
-                    new object[] { 2 }) as SerializedMethodInvocation;
+                    new object[] { 2 }) as SerializedMethod;
 
-            private readonly SerializedMethodInvocation m_Second
+            private readonly SerializedMethod m_Second
                  = ProxyExtensions.FromMethodInfo(
                     typeof(IMockCommandSet).GetMethod("OtherMethodWithoutReturnValue"),
-                    new object[] { 2 }) as SerializedMethodInvocation;
+                    new object[] { 2 }) as SerializedMethod;
 
-            protected override SerializedMethodInvocation Copy(SerializedMethodInvocation original)
+            protected override SerializedMethod Copy(SerializedMethod original)
             {
-                return new SerializedMethodInvocation(original.Type, original.MemberName, original.Parameters);
+                return new SerializedMethod(original.Type, original.MemberName, original.Parameters);
             }
 
-            protected override SerializedMethodInvocation FirstInstance
+            protected override SerializedMethod FirstInstance
             {
                 get
                 {
@@ -55,7 +55,7 @@ namespace Nuclei.Communication.Interaction
                 }
             }
 
-            protected override SerializedMethodInvocation SecondInstance
+            protected override SerializedMethod SecondInstance
             {
                 get
                 {

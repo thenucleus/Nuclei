@@ -26,7 +26,7 @@ namespace Nuclei.Communication.Interaction
         /// <returns>
         ///     An object that stores the <see cref="Type"/> information in a serializable format.
         /// </returns>
-        public static ISerializedType FromType(Type type)
+        public static SerializedType FromType(Type type)
         {
             return new SerializedType(type.FullName, type.AssemblyQualifiedName);
         }
@@ -39,7 +39,7 @@ namespace Nuclei.Communication.Interaction
         /// <returns>
         /// The proxy type.
         /// </returns>
-        public static Type ToType(ISerializedType serializedProxyType)
+        public static Type ToType(SerializedType serializedProxyType)
         {
             try
             {
@@ -103,18 +103,18 @@ namespace Nuclei.Communication.Interaction
         /// <returns>
         ///     An object that stores the method invocation information in a serializable format.
         /// </returns>
-        public static ISerializedMethodInvocation FromMethodInfo(MethodBase method, object[] parameters)
+        public static SerializedMethod FromMethodInfo(MethodBase method, object[] parameters)
         {
             var methodParameters = method.GetParameters();
             Debug.Assert(methodParameters.Length == parameters.Length, "There are a different number of parameters than there are parameter values.");
 
-            var namedParameters = new List<Tuple<ISerializedType, object>>();
+            var namedParameters = new List<Tuple<SerializedType, object>>();
             for (int i = 0; i < parameters.Length; i++)
             {
                 namedParameters.Add(Tuple.Create(FromType(methodParameters[i].ParameterType), parameters[i]));
             }
 
-            return new SerializedMethodInvocation(
+            return new SerializedMethod(
                 FromType(method.DeclaringType),
                 method.Name,
                 namedParameters);
@@ -127,7 +127,7 @@ namespace Nuclei.Communication.Interaction
         /// <returns>
         ///     An object that stores the event information in a serializable format.
         /// </returns>
-        public static ISerializedEventRegistration FromEventInfo(EventInfo eventInfo)
+        public static SerializedEvent FromEventInfo(EventInfo eventInfo)
         {
             return new SerializedEvent(
                 FromType(eventInfo.DeclaringType),

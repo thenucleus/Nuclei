@@ -9,13 +9,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nuclei.Communication.Interaction.Transport.V1
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Stores information about a serialized method invocation.
     /// </summary>
     [Serializable]
-    internal sealed class SerializedMethodInvocation : ISerializedMethodInvocation
+    internal sealed class SerializedMethod : IEquatable<SerializedMethod>
     {
         /// <summary>
         /// Implements the operator ==.
@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1
         /// <param name="first">The first object.</param>
         /// <param name="second">The second object.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator ==(SerializedMethodInvocation first, SerializedMethodInvocation second)
+        public static bool operator ==(SerializedMethod first, SerializedMethod second)
         {
             // Check if first is a null reference by using ReferenceEquals because
             // we overload the == operator. If first isn't actually null then
@@ -50,7 +50,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1
         /// <param name="first">The first object.</param>
         /// <param name="second">The second object.</param>
         /// <returns>The result of the operator.</returns>
-        public static bool operator !=(SerializedMethodInvocation first, SerializedMethodInvocation second)
+        public static bool operator !=(SerializedMethod first, SerializedMethod second)
         {
             // Check if first is a null reference by using ReferenceEquals because
             // we overload the == operator. If first isn't actually null then
@@ -74,15 +74,15 @@ namespace Nuclei.Communication.Interaction.Transport.V1
         /// <summary>
         /// The collection that holds the parameter names and values.
         /// </summary>
-        private readonly List<Tuple<ISerializedType, object>> m_Parameters;
+        private readonly List<Tuple<SerializedType, object>> m_Parameters;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SerializedMethodInvocation"/> class.
+        /// Initializes a new instance of the <see cref="SerializedMethod"/> class.
         /// </summary>
         /// <param name="type">The serialized information about the command set.</param>
         /// <param name="methodName">The name of the method that was called.</param>
         /// <param name="namedParameters">The collection of parameter names and values.</param>
-        public SerializedMethodInvocation(ISerializedType type, string methodName, List<Tuple<ISerializedType, object>> namedParameters)
+        public SerializedMethod(SerializedType type, string methodName, List<Tuple<SerializedType, object>> namedParameters)
         {
             {
                 Debug.Assert(type != null, "No type information specified.");
@@ -97,7 +97,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1
         /// <summary>
         /// Gets the command set on which the method was invoked.
         /// </summary>
-        public ISerializedType Type
+        public SerializedType Type
         {
             get;
             private set;
@@ -115,7 +115,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1
         /// <summary>
         /// Gets a collection which contains the names and values of the parameters.
         /// </summary>
-        public List<Tuple<ISerializedType, object>> Parameters
+        public List<Tuple<SerializedType, object>> Parameters
         {
             get
             {
@@ -132,7 +132,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        public bool Equals(ISerializedMethodInvocation other)
+        public bool Equals(SerializedMethod other)
         {
             if (ReferenceEquals(other, null))
             {
@@ -182,7 +182,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1
                 return true;
             }
 
-            var id = obj as ISerializedMethodInvocation;
+            var id = obj as SerializedMethod;
             return Equals(id);
         }
 

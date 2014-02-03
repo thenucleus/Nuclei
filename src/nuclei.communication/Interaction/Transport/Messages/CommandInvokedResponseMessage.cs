@@ -8,7 +8,7 @@ using System;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
 
-namespace Nuclei.Communication.Interaction.Transport.V1.Messages
+namespace Nuclei.Communication.Interaction.Transport.Messages
 {
     /// <summary>
     /// Defines a message that contains the return value for an <see cref="ICommandSet"/> method invocation.

@@ -7,7 +7,7 @@
 using System;
 using Nuclei.Communication.Protocol.Messages;
 
-namespace Nuclei.Communication.Interaction.Transport.V1.Messages
+namespace Nuclei.Communication.Interaction.Transport.Messages
 {
     /// <summary>
     /// Defines a message that indicates that the an <see cref="ICommandSet"/> method was
@@ -27,7 +27,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1.Messages
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="methodInvocation"/> is <see langword="null" />.
         /// </exception>
-        public CommandInvokedMessage(EndpointId origin, ISerializedMethodInvocation methodInvocation)
+        public CommandInvokedMessage(EndpointId origin, CommandInvokedData methodInvocation)
             : base(origin)
         {
             {
@@ -40,7 +40,7 @@ namespace Nuclei.Communication.Interaction.Transport.V1.Messages
         /// <summary>
         /// Gets information about the <see cref="ICommandSet"/> method that was invoked.
         /// </summary>
-        public ISerializedMethodInvocation Invocation
+        public CommandInvokedData Invocation
         {
             get;
             private set;

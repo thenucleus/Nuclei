@@ -7,9 +7,8 @@
 using System;
 using System.Diagnostics;
 using Nuclei.Communication.Protocol;
-using Nuclei.Communication.Protocol.Messages;
 
-namespace Nuclei.Communication.Interaction.Transport.V1.Messages.Processors
+namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
 {
     /// <summary>
     /// Defines the action that processes an <see cref="RegisterForNotificationMessage"/>.
