@@ -98,6 +98,9 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         private readonly object m_Lock = new object();
 
+        /// <summary>
+        /// The collection that contains the approvers for all supported protocol versions.
+        /// </summary>
         private readonly Dictionary<Version, IApproveEndpointConnections> m_ConnectionApprovers
             = new Dictionary<Version, IApproveEndpointConnections>();
 
