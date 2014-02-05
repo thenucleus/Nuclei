@@ -64,7 +64,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         /// <param name="description">The object that contains the proxy type definitions.</param>
         /// <returns>The collection of proxy types.</returns>
-        protected override IEnumerable<ISerializedType> ProxyTypesFromDescription(CommunicationDescription description)
+        protected override IEnumerable<Type> ProxyTypesFromDescription(CommunicationDescription description)
         {
             return description.CommandProxies;
         }

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol;
-using Nuclei.Communication.Protocol.Messages;
 
 namespace Nuclei.Communication.Interaction
 {
@@ -127,7 +126,7 @@ namespace Nuclei.Communication.Interaction
             var events = notificationType.GetEvents();
             foreach (var eventInfo in events)
             {
-                var serializedInfo = ProxyExtensions.FromEventInfo(eventInfo);
+                var serializedInfo = new NotificationData(notificationType, eventInfo.Name);
                 if (eventInfo.EventHandlerType == typeof(EventHandler))
                 {
                     // This one is easy because we know the types ...

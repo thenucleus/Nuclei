@@ -125,12 +125,7 @@ namespace Nuclei.Communication.Interaction.Transport
                             // Hydrate the proxy type. This requires loading the assembly which a) might be slow and b) might fail
                             try
                             {
-                                var proxyType = LoadProxyType(endpoint, proxy);
-                                list.Add(proxyType, m_Builder(endpoint, proxyType));
-                            }
-                            catch (UnableToLoadProxyTypeException)
-                            {
-                                // Unable to load the proxy type. Let's just ignore it for now.
+                                list.Add(proxy, m_Builder(endpoint, proxy));
                             }
                             catch (UnableToGenerateProxyException)
                             {
@@ -176,12 +171,9 @@ namespace Nuclei.Communication.Interaction.Transport
                 // b) it may trigger all kinds of other mayhem.
                 if (haveStoredEndpointInformation)
                 {
-                    if (proxyList.Count > 0)
+                    using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Notifying of new endpoint"))
                     {
-                        using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Notifying of new endpoint"))
-                        {
-                            RaiseOnEndpointConnected(endpoint, proxyList);
-                        }
+                        RaiseOnEndpointConnected(endpoint);
                     }
                 }
             }
@@ -229,6 +221,7 @@ namespace Nuclei.Communication.Interaction.Transport
             }
         }
 
+        /*
         private Type LoadProxyType(EndpointId endpoint, ISerializedType serializedType)
         {
             // Hydrate the proxy type. This requires loading the assembly which a) might
@@ -265,13 +258,14 @@ namespace Nuclei.Communication.Interaction.Transport
 
             return proxyType;
         }
+        */
 
         /// <summary>
         /// Extracts the correct collection of proxy types from the description.
         /// </summary>
         /// <param name="description">The object that contains the proxy type definitions.</param>
         /// <returns>The collection of proxy types.</returns>
-        protected abstract IEnumerable<ISerializedType> ProxyTypesFromDescription(CommunicationDescription description);
+        protected abstract IEnumerable<Type> ProxyTypesFromDescription(CommunicationDescription description);
 
         /// <summary>
         /// Returns the name of the proxy objects for use in the trace logs.
