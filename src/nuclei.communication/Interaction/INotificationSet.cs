@@ -4,29 +4,22 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Defines the base for classes that implement a set of notifications 
-    /// that can be watched remotely through a <see cref="RemoteNotificationHub"/>.
+    /// that can be watched remotely through a <see cref="INotifyOfRemoteEndpointEvents"/>.
     /// </summary>
     /// <design>
-    /// The <see cref="RemoteNotificationHub"/> will generate a proxy object for all the notification sets
+    /// The <see cref="INotifyOfRemoteEndpointEvents"/> implementations will generate a proxy object for all the notification sets
     /// available on a given endpoint.
     /// </design>
     [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces",
         Justification = "This interface is used as marker interface for sets of notifications.")]
     public interface INotificationSet
     {
-        /// <summary>
-        /// Gets the version of the current command set.
-        /// </summary>
-        Version NotificationSetVersion
-        {
-            get;
-        }
+
     }
 }

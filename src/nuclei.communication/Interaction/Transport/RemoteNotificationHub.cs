@@ -16,7 +16,7 @@ namespace Nuclei.Communication.Interaction.Transport
     /// Defines the methods for handling communication notifications.
     /// </summary>
     /// <remarks>
-    /// Objects can register <see cref="INotificationSet"/> implementations with the <see cref="INotificationSendersCollection"/>. The 
+    /// Objects can register <see cref="INotificationSet"/> implementations with the <see cref="INotificationCollection"/>. The 
     /// availability and definition of these notifications is then passed on to all endpoints that are connected
     /// to the current endpoint. Upon reception of notification information an endpoint will generate a proxy for
     /// the notification interface thereby allowing remote listening to notification events through the proxy notification interface.
@@ -167,13 +167,12 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint.</param>
         /// <param name="notificationInterfaceType">The type of the notification that should be available.</param>
-        /// <param name="notificationVersion">The version of the notification that should be available.</param>
         /// <returns>
         ///     <see langword="true" /> if there are the specific notifications exist for the given endpoint; otherwise, <see langword="false" />.
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        public bool HasNotificationFor(EndpointId endpoint, Type notificationInterfaceType, Version notificationVersion)
+        public bool HasNotificationFor(EndpointId endpoint, Type notificationInterfaceType)
         {
             lock (m_Lock)
             {
@@ -192,11 +191,10 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         /// <typeparam name="TNotification">The typeof notification set that should be returned.</typeparam>
         /// <param name="endpoint">The ID number of the endpoint for which the notifications should be returned.</param>
-        /// <param name="notificationVersion">The version of the notification that should be returned.</param>
         /// <returns>The requested notification set.</returns>
-        public TNotification NotificationsFor<TNotification>(EndpointId endpoint, Version notificationVersion) where TNotification : class, INotificationSet
+        public TNotification NotificationsFor<TNotification>(EndpointId endpoint) where TNotification : class, INotificationSet
         {
-            return NotificationsFor(endpoint, typeof(TNotification), notificationVersion) as TNotification;
+            return NotificationsFor(endpoint, typeof(TNotification)) as TNotification;
         }
 
         /// <summary>
@@ -204,9 +202,8 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint for which the notification should be returned.</param>
         /// <param name="notificationType">The type of the notification.</param>
-        /// <param name="notificationVersion">The version of the notification that should be returned.</param>
         /// <returns>The requested notification set.</returns>
-        public INotificationSet NotificationsFor(EndpointId endpoint, Type notificationType, Version notificationVersion)
+        public INotificationSet NotificationsFor(EndpointId endpoint, Type notificationType)
         {
             lock (m_Lock)
             {

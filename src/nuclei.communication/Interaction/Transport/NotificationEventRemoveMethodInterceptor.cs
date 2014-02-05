@@ -38,7 +38,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <summary>
         /// The function which sends the <see cref="RegisterForNotificationMessage"/> to the owning endpoint.
         /// </summary>
-        private readonly Action<ISerializedEventRegistration> m_SendMessageWithoutResponse;
+        private readonly Action<NotificationData> m_TransmitDeregistration;
 
         /// <summary>
         /// The object that provides the diagnostics methods for the system.
@@ -49,32 +49,32 @@ namespace Nuclei.Communication.Interaction.Transport
         /// Initializes a new instance of the <see cref="NotificationEventRemoveMethodInterceptor"/> class.
         /// </summary>
         /// <param name="proxyInterfaceType">The type of the interface for which a proxy is being provided.</param>
-        /// <param name="sendMessageWithoutResponse">
-        ///     The function used to send the information about the event registration to the owning endpoint.
+        /// <param name="transmitDeregistration">
+        ///     The function used to send the information about the event unregistration to the owning endpoint.
         /// </param>
         /// <param name="systemDiagnostics">The object that provides the diagnostic methods for the system.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="proxyInterfaceType"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="sendMessageWithoutResponse"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="transmitDeregistration"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public NotificationEventRemoveMethodInterceptor(
             Type proxyInterfaceType,
-            Action<ISerializedEventRegistration> sendMessageWithoutResponse,
+            Action<NotificationData> transmitDeregistration,
             SystemDiagnostics systemDiagnostics)
         {
             {
                 Lokad.Enforce.Argument(() => proxyInterfaceType);
-                Lokad.Enforce.Argument(() => sendMessageWithoutResponse);
+                Lokad.Enforce.Argument(() => transmitDeregistration);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
 
             m_InterfaceType = proxyInterfaceType;
-            m_SendMessageWithoutResponse = sendMessageWithoutResponse;
+            m_TransmitDeregistration = transmitDeregistration;
             m_Diagnostics = systemDiagnostics;
         }
 
@@ -107,7 +107,7 @@ namespace Nuclei.Communication.Interaction.Transport
 
             if (!proxy.HasSubscribers(eventName))
             {
-                m_SendMessageWithoutResponse(new SerializedEvent(ProxyExtensions.FromType(m_InterfaceType), eventName));
+                m_TransmitDeregistration(new NotificationData(m_InterfaceType, eventName));
             }
         }
     }

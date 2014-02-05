@@ -37,8 +37,8 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// The collection that maps an notification to a collection of registered listeners.
         /// </summary>
-        private readonly IDictionary<ISerializedEventRegistration, List<EndpointId>> m_RegisteredListeners
-            = new Dictionary<ISerializedEventRegistration, List<EndpointId>>();
+        private readonly IDictionary<NotificationData, List<EndpointId>> m_RegisteredListeners
+            = new Dictionary<NotificationData, List<EndpointId>>();
 
         /// <summary>
         /// The communication layer that is used to send out messages about newly
@@ -161,7 +161,7 @@ namespace Nuclei.Communication.Interaction
             }
         }
 
-        private void HandleEventAndForwardToListeners(ISerializedEventRegistration originatingEvent, EventArgs args)
+        private void HandleEventAndForwardToListeners(NotificationData originatingEvent, EventArgs args)
         {
             List<EndpointId> endpoints = null;
             lock (m_Lock)
@@ -176,33 +176,9 @@ namespace Nuclei.Communication.Interaction
             {
                 foreach (var endpoint in endpoints)
                 {
-                    m_Layer.SendMessageTo(endpoint, new NotificationRaisedMessage(m_Layer.Id, originatingEvent, args));
+                    m_Layer.SendMessageTo(endpoint, new NotificationRaisedMessage(m_Layer.Id, new NotificationRaisedData(originatingEvent, args)));
                 }
             }
-        }
-
-        /// <summary>
-        /// Returns the notification object that was registered for the given interface type.
-        /// </summary>
-        /// <typeparam name="T">The type of the <see cref="INotificationSet"/> derived interface.</typeparam>
-        /// <returns>
-        /// The desired notification set.
-        /// </returns>
-        public T NotificationsFor<T>() where T : INotificationSet
-        {
-            return (T)NotificationsFor(typeof(T));
-        }
-
-        /// <summary>
-        /// Returns the notification object that was registered for the given interface type.
-        /// </summary>
-        /// <param name="interfaceType">The <see cref="INotificationSet"/> derived interface type.</param>
-        /// <returns>
-        /// The desired notification set.
-        /// </returns>
-        public INotificationSet NotificationsFor(Type interfaceType)
-        {
-            return !m_Notifications.ContainsKey(interfaceType) ? null : m_Notifications[interfaceType];
         }
 
         /// <summary>
@@ -234,7 +210,7 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="notification">The object that describes to which event the endpoint wants to be subscribed.</param>
-        public void RegisterForNotification(EndpointId endpoint, ISerializedEventRegistration notification)
+        public void RegisterForNotification(EndpointId endpoint, NotificationData notification)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
@@ -262,7 +238,7 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="notification">The object that describes from which event the endpoint wants to be unsubscribed.</param>
-        public void UnregisterFromNotification(EndpointId endpoint, ISerializedEventRegistration notification)
+        public void UnregisterFromNotification(EndpointId endpoint, NotificationData notification)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);

@@ -81,28 +81,28 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 return;
             }
 
-            var invocation = msg.Notification;
+            var notification = msg.Notification;
             m_Diagnostics.Log(
                 LevelToLog.Trace,
                 CommunicationConstants.DefaultLogTextPrefix,
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "Received request to raise event: {0}.{1}",
-                    invocation.Type,
-                    invocation.MemberName));
+                    notification.Notification.InterfaceType,
+                    notification.Notification.EventName));
 
             try
             {
-                using (var interval = m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Raise notification"))
+                using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Raise notification"))
                 {
-                    var type = ProxyExtensions.ToType(invocation.Type);
+                    var type = notification.Notification.InterfaceType;
                     var notificationSet = m_AvailableProxies.NotificationsFor(msg.Sender, type);
                     Debug.Assert(notificationSet != null, "There should be a proxy for this notification set.");
 
                     var proxyObj = notificationSet as NotificationSetProxy;
                     Debug.Assert(proxyObj != null, "The object should be a NotificationSetProxy.");
 
-                    proxyObj.RaiseEvent(invocation.MemberName, msg.Arguments);
+                    proxyObj.RaiseEvent(notification.Notification.EventName, notification.EventArgs);
                 }
             }
             catch (Exception e)
@@ -113,8 +113,8 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                     string.Format(
                         CultureInfo.InvariantCulture,
                         "Error while raising event {0}.{1}. Exception is: {2}",
-                        msg.Notification.Type,
-                        msg.Notification.MemberName,
+                        msg.Notification.Notification.InterfaceType,
+                        msg.Notification.Notification.EventName,
                         e));
             }
         }
