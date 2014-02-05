@@ -37,7 +37,7 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// The function used to build discovery endpoints.
         /// </summary>
-        private readonly Func<Version, Tuple<Type, IVersionedDiscoveryEndpoint>> m_VersionedEndpointBuilder;
+        private readonly Func<Version, ChannelTemplate, Tuple<Type, IVersionedDiscoveryEndpoint>> m_VersionedEndpointBuilder;
 
         /// <summary>
         /// The function that creates the host information for the discovery host.
@@ -84,7 +84,7 @@ namespace Nuclei.Communication.Discovery
         public BootstrapChannel(
             EndpointId id, 
             IDiscoveryChannelTemplate template,
-            Func<Version, Tuple<Type, IVersionedDiscoveryEndpoint>> versionedEndpointBuilder, 
+            Func<Version, ChannelTemplate, Tuple<Type, IVersionedDiscoveryEndpoint>> versionedEndpointBuilder, 
             Func<IHoldServiceConnections> hostBuilder,
             Action<Uri> entryChannelStorage)
         {
@@ -112,7 +112,7 @@ namespace Nuclei.Communication.Discovery
             foreach (var version in DiscoveryVersions.SupportedVersions())
             {
                 var host = m_HostBuilder();
-                var endpoint = m_VersionedEndpointBuilder(version);
+                var endpoint = m_VersionedEndpointBuilder(version, m_Template.ChannelTemplate);
 
                 var localVersion = version;
                 var type = endpoint.Item1;

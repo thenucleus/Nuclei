@@ -6,7 +6,7 @@
 
 using System.Runtime.Serialization;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication
 {
     /// <summary>
     /// Defines what types of communication channels are available.

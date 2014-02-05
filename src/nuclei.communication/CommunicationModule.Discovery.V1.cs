@@ -37,9 +37,18 @@ namespace Nuclei.Communication
         {
             builder.Register(c => new DiscoveryChannelTranslator(
                     Protocol.ProtocolVersions.SupportedVersions().ToArray(),
-                    c.Resolve<IDiscoveryChannelTemplate>(),
+                    c.ResolveKeyed<IDiscoveryChannelTemplate>(ChannelTemplate.NamedPipe),
                     c.Resolve<SystemDiagnostics>()))
-                .As<ITranslateVersionedChannelInformation>()
+                .Keyed<ITranslateVersionedChannelInformation>(ChannelTemplate.NamedPipe)
+                .SingleInstance()
+                .WithMetadata<IDiscoveryVersionMetaData>(
+                    m => m.For(meta => meta.Version, DiscoveryVersions.V1));
+
+            builder.Register(c => new DiscoveryChannelTranslator(
+                    Protocol.ProtocolVersions.SupportedVersions().ToArray(),
+                    c.ResolveKeyed<IDiscoveryChannelTemplate>(ChannelTemplate.TcpIP),
+                    c.Resolve<SystemDiagnostics>()))
+                .Keyed<ITranslateVersionedChannelInformation>(ChannelTemplate.TcpIP)
                 .SingleInstance()
                 .WithMetadata<IDiscoveryVersionMetaData>(
                     m => m.For(meta => meta.Version, DiscoveryVersions.V1));

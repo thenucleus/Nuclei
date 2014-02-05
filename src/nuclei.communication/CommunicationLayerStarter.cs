@@ -36,27 +36,53 @@ namespace Nuclei.Communication
         private readonly SystemDiagnostics m_Diagnostics;
 
         /// <summary>
+        /// The collection containing the types of channel that should be opened.
+        /// </summary>
+        private readonly IEnumerable<ChannelTemplate> m_AllowedChannelTemplates;
+
+        /// <summary>
+        /// Indicates if the communication channels are allowed to provide discovery.
+        /// </summary>
+        private readonly bool m_AllowAutomaticChannelDiscovery;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CommunicationLayerStarter"/> class.
         /// </summary>
         /// <param name="context">The DI container component context.</param>
         /// <param name="diagnostics">The object that provides the diagnostics methods for the application.</param>
+        /// <param name="allowedChannelTemplates">The collection of channel types on which the application is allowed to connect.</param>
+        /// <param name="allowAutomaticChannelDiscovery">
+        ///     A flag that indicates if the communication channels are allowed to provide
+        ///     discovery.
+        /// </param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="context"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="allowedChannelTemplates"/> is <see langword="null" />.
+        /// </exception>
         public CommunicationLayerStarter(
             IComponentContext context, 
-            SystemDiagnostics diagnostics)
+            SystemDiagnostics diagnostics,
+            IEnumerable<ChannelTemplate> allowedChannelTemplates, 
+            bool allowAutomaticChannelDiscovery)
         {
             {
                 Lokad.Enforce.Argument(() => context);
                 Lokad.Enforce.Argument(() => diagnostics);
+                Lokad.Enforce.Argument(() => allowedChannelTemplates);
+                Lokad.Enforce.With<ArgumentException>(
+                    allowedChannelTemplates.Any(),
+                    Resources.Exceptions_Messages_AtLeastOneChannelTypeMustBeAllowed);
             }
 
             m_Context = context;
             m_Diagnostics = diagnostics;
+            m_AllowedChannelTemplates = allowedChannelTemplates;
+            m_AllowAutomaticChannelDiscovery = allowAutomaticChannelDiscovery;
         }
 
         /// <summary>
@@ -106,9 +132,16 @@ namespace Nuclei.Communication
                         var layer = m_Context.Resolve<ICommunicationLayer>();
                         layer.SignIn();
 
-                        // Discovery
-                        var discovery = m_Context.Resolve<IBootstrapChannel>();
-                        discovery.OpenChannel();
+
+                        if (m_AllowAutomaticChannelDiscovery)
+                        {
+                            foreach (var template in m_AllowedChannelTemplates)
+                            {
+                                // Discovery
+                                var discovery = m_Context.ResolveKeyed<IBootstrapChannel>(template);
+                                discovery.OpenChannel();
+                            }
+                        }
                     }
                     catch (Exception e)
                     {

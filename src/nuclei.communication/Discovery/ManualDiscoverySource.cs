@@ -21,21 +21,22 @@ namespace Nuclei.Communication.Discovery
         /// <param name="translatorsByVersion">
         ///     An array containing all the supported translators mapped to the version of the discovery layer.
         /// </param>
-        /// <param name="template">The channel type that is used to create WCF channels.</param>
+        /// <param name="templateBuilder">The channel type that is used to create WCF channels.</param>
         /// <param name="diagnostics">The object that provides the discovery information for the application.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="translatorsByVersion"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="template"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="templateBuilder"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
         /// </exception>
         public ManualDiscoverySource(
-            Tuple<Version, ITranslateVersionedChannelInformation>[] translatorsByVersion, 
-            IDiscoveryChannelTemplate template, 
-            SystemDiagnostics diagnostics) : base(translatorsByVersion, template, diagnostics)
+            Tuple<Version, ITranslateVersionedChannelInformation>[] translatorsByVersion,
+            Func<ChannelTemplate, IDiscoveryChannelTemplate> templateBuilder, 
+            SystemDiagnostics diagnostics) 
+            : base(translatorsByVersion, templateBuilder, diagnostics)
         {
         }
 

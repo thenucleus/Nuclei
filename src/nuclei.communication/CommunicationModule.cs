@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Autofac;
 using Nuclei.Communication.Properties;
-using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 
 namespace Nuclei.Communication
@@ -19,11 +18,16 @@ namespace Nuclei.Communication
     /// </summary>
     public sealed partial class CommunicationModule : Module
     {
-        private static void RegisterStartables(ContainerBuilder builder)
+        private static void RegisterStartables(
+            ContainerBuilder builder, 
+            IEnumerable<ChannelTemplate> allowedChannelTemplates, 
+            bool allowAutomaticChannelDiscovery)
         {
             builder.Register(c => new CommunicationLayerStarter(
                     c.Resolve<IComponentContext>(),
-                    c.Resolve<SystemDiagnostics>()))
+                    c.Resolve<SystemDiagnostics>(),
+                    allowedChannelTemplates,
+                    allowAutomaticChannelDiscovery))
                 .As<IStartable>();
         }
 
@@ -91,8 +95,9 @@ namespace Nuclei.Communication
             RegisterProtocolLayer(builder);
             RegisterProtocolLayerV1(builder);
             RegisterInteractionLayer(builder);
+            RegisterInteractionLayerV1(builder);
 
-            RegisterStartables(builder);
+            RegisterStartables(builder, m_AllowedChannelTemplates, m_AllowAutomaticChannelDiscovery);
         }
 
         private void RegisterDiscoveryLayer(ContainerBuilder builder)
@@ -102,7 +107,7 @@ namespace Nuclei.Communication
             RegisterManualEndpointDisconnection(builder);
             RegisterBootstrapChannel(builder);
             RegisterVersionedDiscoveryEndpointSelector(builder);
-            RegisterDiscoveryChannelTemplate(builder);
+            RegisterDiscoveryChannelTemplates(builder);
             RegisterLocalConnectionInformation(builder);
         }
 
@@ -118,11 +123,11 @@ namespace Nuclei.Communication
             RegisterHandshakeLayer(builder, m_AllowedChannelTemplates);
             RegisterMessageHandler(builder);
             RegisterDataHandler(builder);
-            RegisterMessageProcessingActions(builder);
+            RegisterProtocolMessageProcessingActions(builder);
             RegisterConnectionHolders(builder);
             RegisterCommunicationChannel(builder);
             RegisterEndpoints(builder);
-            RegisterChannelTypes(builder);
+            RegisterProtocolChannelTemplates(builder);
             RegisterEndpointStorage(builder);
             RegisterCommunicationDescriptions(builder, m_Subjects);
             RegisterUploads(builder);
@@ -143,6 +148,12 @@ namespace Nuclei.Communication
             RegisterCommandCollection(builder);
             RegisterNotificationHub(builder);
             RegisterNotificationCollection(builder);
+            RegisterInteractionMessageProcessingActions(builder);
+        }
+
+        private void RegisterInteractionLayerV1(ContainerBuilder builder)
+        {
+            // Do Nothing for now
         }
     }
 }

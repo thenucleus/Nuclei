@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -18,27 +17,8 @@ namespace Nuclei.Communication.Protocol
     /// Defines a <see cref="IProtocolChannelTemplate"/> that uses named pipes for communication between
     /// applications on the same local machine.
     /// </summary>
-    internal sealed class NamedPipeProtocolChannelTemplate : IProtocolChannelTemplate
+    internal sealed class NamedPipeProtocolChannelTemplate : NamedPipeChannelTemplate, IProtocolChannelTemplate
     {
-        /// <summary>
-        /// Returns the process ID of the process that is currently executing
-        /// this code.
-        /// </summary>
-        /// <returns>
-        /// The ID number of the current process.
-        /// </returns>
-        private static int CurrentProcessId()
-        {
-            var process = Process.GetCurrentProcess();
-            return process.Id;
-        }
-
-        /// <summary>
-        /// The object that stores the configuration values for the
-        /// named pipe WCF connection.
-        /// </summary>
-        private readonly IConfiguration m_Configuration;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="NamedPipeProtocolChannelTemplate"/> class.
         /// </summary>
@@ -47,38 +27,8 @@ namespace Nuclei.Communication.Protocol
         ///     Thrown if <paramref name="namedPipeConfiguration"/> is <see langword="null" />.
         /// </exception>
         public NamedPipeProtocolChannelTemplate(IConfiguration namedPipeConfiguration)
+            : base(namedPipeConfiguration)
         {
-            {
-                Lokad.Enforce.Argument(() => namedPipeConfiguration);
-            }
-
-            m_Configuration = namedPipeConfiguration;
-        }
-
-        /// <summary>
-        /// Gets the type of the channel.
-        /// </summary>
-        public ChannelTemplate ChannelTemplate
-        {
-            get
-            {
-                return ChannelTemplate.NamedPipe;
-            }
-        }
-
-        /// <summary>
-        /// Generates a new URI for the channel.
-        /// </summary>
-        /// <returns>
-        /// The newly generated URI.
-        /// </returns>
-        public Uri GenerateNewChannelUri()
-        {
-            var channelUri = string.Format(
-                CultureInfo.InvariantCulture, 
-                CommunicationConstants.DefaultNamedPipeChannelUriTemplate, 
-                CurrentProcessId());
-            return new Uri(channelUri);
         }
 
         /// <summary>
@@ -91,17 +41,17 @@ namespace Nuclei.Communication.Protocol
         {
             var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None) 
                 { 
-                    MaxConnections = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
-                        ? m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
+                    MaxConnections = Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
+                        ? Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
                         : CommunicationConstants.DefaultMaximumNumberOfConnectionsForNamedPipes,
-                    ReceiveTimeout = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds) 
-                        ? TimeSpan.FromMilliseconds(m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds)) 
+                    ReceiveTimeout = Configuration.HasValueFor(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds) 
+                        ? TimeSpan.FromMilliseconds(Configuration.Value<int>(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds)) 
                         : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultBindingReceiveTimeoutInMilliSeconds),
-                    MaxBufferSize = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaxBufferSizeForMessagesInBytes)
-                        ? m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaxBufferSizeForMessagesInBytes)
+                    MaxBufferSize = Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaxBufferSizeForMessagesInBytes)
+                        ? Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaxBufferSizeForMessagesInBytes)
                         : CommunicationConstants.DefaultBindingMaxBufferSizeForMessagesInBytes,
-                    MaxReceivedMessageSize = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaxReceivedSizeForMessagesInBytes)
-                        ? m_Configuration.Value<long>(CommunicationConfigurationKeys.BindingMaxReceivedSizeForMessagesInBytes)
+                    MaxReceivedMessageSize = Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaxReceivedSizeForMessagesInBytes)
+                        ? Configuration.Value<long>(CommunicationConfigurationKeys.BindingMaxReceivedSizeForMessagesInBytes)
                         : CommunicationConstants.DefaultBindingMaxReceivedSizeForMessagesInBytes,
                     TransferMode = TransferMode.Buffered,
                 };
@@ -119,17 +69,17 @@ namespace Nuclei.Communication.Protocol
         {
             var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
             {
-                MaxConnections = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
-                    ? m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
+                MaxConnections = Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections)
+                    ? Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaximumNumberOfConnections) 
                     : CommunicationConstants.DefaultMaximumNumberOfConnectionsForNamedPipes,
-                ReceiveTimeout = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds) 
-                    ? TimeSpan.FromMilliseconds(m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds)) 
+                ReceiveTimeout = Configuration.HasValueFor(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds)
+                    ? TimeSpan.FromMilliseconds(Configuration.Value<int>(CommunicationConfigurationKeys.BindingReceiveTimeoutInMilliseconds)) 
                     : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultBindingReceiveTimeoutInMilliSeconds),
-                MaxBufferSize = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaxBufferSizeForDataInBytes)
-                    ? m_Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaxBufferSizeForDataInBytes)
+                MaxBufferSize = Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaxBufferSizeForDataInBytes)
+                    ? Configuration.Value<int>(CommunicationConfigurationKeys.BindingMaxBufferSizeForDataInBytes)
                     : CommunicationConstants.DefaultBindingMaxBufferSizeForMessagesInBytes,
-                MaxReceivedMessageSize = m_Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaxReceivedSizeForDataInBytes)
-                    ? m_Configuration.Value<long>(CommunicationConfigurationKeys.BindingMaxReceivedSizeForDataInBytes)
+                MaxReceivedMessageSize = Configuration.HasValueFor(CommunicationConfigurationKeys.BindingMaxReceivedSizeForDataInBytes)
+                    ? Configuration.Value<long>(CommunicationConfigurationKeys.BindingMaxReceivedSizeForDataInBytes)
                     : CommunicationConstants.DefaultBindingMaxReceivedSizeForMessagesInBytes,
                 TransferMode = TransferMode.Streamed,
             };
@@ -152,8 +102,8 @@ namespace Nuclei.Communication.Protocol
 
         private string GenerateNewMessageAddress()
         {
-            return m_Configuration.HasValueFor(CommunicationConfigurationKeys.NamedPipeProtocolPath) ?
-                m_Configuration.Value<string>(CommunicationConfigurationKeys.NamedPipeProtocolPath) :
+            return Configuration.HasValueFor(CommunicationConfigurationKeys.NamedPipeProtocolPath) ?
+                Configuration.Value<string>(CommunicationConfigurationKeys.NamedPipeProtocolPath) :
                 string.Format(CultureInfo.InvariantCulture, CommunicationConstants.DefaultNamedPipeAddressTemplate, CurrentProcessId());
         }
 

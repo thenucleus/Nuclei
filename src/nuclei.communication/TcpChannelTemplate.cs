@@ -94,6 +94,17 @@ namespace Nuclei.Communication
         }
 
         /// <summary>
+        /// Gets the type of the channel.
+        /// </summary>
+        public ChannelTemplate ChannelTemplate
+        {
+            get
+            {
+                return ChannelTemplate.TcpIP;
+            }
+        }
+
+        /// <summary>
         /// Generates a new URI for the channel.
         /// </summary>
         /// <returns>

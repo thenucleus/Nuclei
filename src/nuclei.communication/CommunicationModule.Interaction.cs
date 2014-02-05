@@ -6,6 +6,8 @@
 
 using Autofac;
 using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Interaction.Transport;
+using Nuclei.Communication.Interaction.Transport.Messages.Processors;
 using Nuclei.Communication.Protocol;
 using Nuclei.Configuration;
 using Nuclei.Diagnostics;
@@ -83,6 +85,39 @@ namespace Nuclei.Communication
                 .As<INotificationCollection>()
                 .As<ISendNotifications>()
                 .SingleInstance();
+        }
+
+        private static void RegisterInteractionMessageProcessingActions(ContainerBuilder builder)
+        {
+            builder.Register(
+                    c =>
+                    {
+                        var ctx = c.Resolve<IComponentContext>();
+                        return new CommandInvokedProcessAction(
+                            EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                            (endpoint, msg) =>
+                            {
+                                var config = ctx.Resolve<IConfiguration>();
+                                var layer = ctx.Resolve<ICommunicationLayer>();
+                                SendMessageWithoutResponse(config, layer, endpoint, msg);
+                            },
+                            c.Resolve<ICommandCollection>(),
+                            c.Resolve<SystemDiagnostics>());
+                    })
+                .As<IMessageProcessAction>();
+
+            builder.Register(c => new RegisterForNotificationProcessAction(
+                    c.Resolve<ISendNotifications>()))
+                .As<IMessageProcessAction>();
+
+            builder.Register(c => new UnregisterFromNotificationProcessAction(
+                    c.Resolve<ISendNotifications>()))
+                .As<IMessageProcessAction>();
+
+            builder.Register(c => new NotificationRaisedProcessAction(
+                    c.Resolve<INotifyOfRemoteEndpointEvents>(),
+                    c.Resolve<SystemDiagnostics>()))
+                .As<IMessageProcessAction>();
         }
     }
 }

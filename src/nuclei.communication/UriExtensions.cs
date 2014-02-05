@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication
 {
     /// <summary>
     /// Defines a set of extension methods for the <see cref="Uri"/> class.

@@ -30,9 +30,9 @@ namespace Nuclei.Communication.Discovery
             = new SortedList<Version, ITranslateVersionedChannelInformation>();
 
         /// <summary>
-        /// The channel type used for discovery purposes.
+        /// The function that is used to get the channel template used for discovery purposes.
         /// </summary>
-        private readonly IDiscoveryChannelTemplate m_Template;
+        private readonly Func<ChannelTemplate, IDiscoveryChannelTemplate> m_TemplateBuilder;
 
         /// <summary>
         /// The object that provides the diagnostics for the application.
@@ -50,25 +50,25 @@ namespace Nuclei.Communication.Discovery
         /// <param name="translatorsByVersion">
         ///     An array containing all the supported translators mapped to the version of the discovery layer.
         /// </param>
-        /// <param name="template">The channel type that is used to create WCF channels.</param>
+        /// <param name="templateBuilder">The function that is used to create the channel template that is used to create WCF channels.</param>
         /// <param name="diagnostics">The object that provides the discovery information for the application.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="translatorsByVersion"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="template"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="templateBuilder"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
         /// </exception>
         protected DiscoverySource(
-            Tuple<Version, ITranslateVersionedChannelInformation>[] translatorsByVersion, 
-            IDiscoveryChannelTemplate template, 
+            Tuple<Version, ITranslateVersionedChannelInformation>[] translatorsByVersion,
+            Func<ChannelTemplate, IDiscoveryChannelTemplate> templateBuilder, 
             SystemDiagnostics diagnostics)
         {
             {
                 Lokad.Enforce.Argument(() => translatorsByVersion);
-                Lokad.Enforce.Argument(() => template);
+                Lokad.Enforce.Argument(() => templateBuilder);
                 Lokad.Enforce.Argument(() => diagnostics);
             }
 
@@ -77,7 +77,7 @@ namespace Nuclei.Communication.Discovery
                 m_TranslatorMap.Add(pair.Item1, pair.Item2);
             }
 
-            m_Template = template;
+            m_TemplateBuilder = templateBuilder;
             m_Diagnostics = diagnostics;
         }
 
@@ -277,8 +277,10 @@ namespace Nuclei.Communication.Discovery
 
         private ChannelFactory<IBootstrapEndpointProxy> CreateFactoryForBootstrapChannel(Uri address)
         {
+            var template = m_TemplateBuilder(address.ToChannelTemplate());
+
             var endpoint = new EndpointAddress(address);
-            var binding = m_Template.GenerateBinding();
+            var binding = template.GenerateBinding();
 
             return new ChannelFactory<IBootstrapEndpointProxy>(binding, endpoint);
         }

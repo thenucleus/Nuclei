@@ -18,14 +18,6 @@ namespace Nuclei.Communication.Protocol
     internal interface IProtocolChannelTemplate : IChannelTemplate
     {
         /// <summary>
-        /// Gets the type of the channel.
-        /// </summary>
-        ChannelTemplate ChannelTemplate
-        {
-            get;
-        }
-
-        /// <summary>
         /// Generates a new binding object used to send messages across the channel.
         /// </summary>
         /// <returns>

@@ -35,10 +35,11 @@ namespace Nuclei.Communication
                 builder.Register(
                         c =>
                         {
-                            var translators = TranslatorsByVersion(c);
+                            var ctx = c.Resolve<IComponentContext>();
+                            var translators = TranslatorsByVersion(ctx);
                             return new UdpBasedDiscoverySource(
                                 translators,
-                                c.Resolve<IDiscoveryChannelTemplate>(),
+                                template => ctx.ResolveKeyed<IDiscoveryChannelTemplate>(template),
                                 c.Resolve<SystemDiagnostics>());
                         })
                     .As<IDiscoverOtherServices>()
@@ -53,10 +54,11 @@ namespace Nuclei.Communication
             builder.Register(
                     c =>
                     {
-                        var translators = TranslatorsByVersion(c);
+                        var ctx = c.Resolve<IComponentContext>();
+                        var translators = TranslatorsByVersion(ctx);
                         return new ManualDiscoverySource(
                             translators,
-                            c.Resolve<IDiscoveryChannelTemplate>(),
+                            template => ctx.ResolveKeyed<IDiscoveryChannelTemplate>(ctx),
                             c.Resolve<SystemDiagnostics>());
                     })
                 .As<IDiscoverOtherServices>()
@@ -138,15 +140,31 @@ namespace Nuclei.Communication
                 c =>
                 {
                     var ctx = c.Resolve<IComponentContext>();
-                    var channelTemplate = c.Resolve<IDiscoveryChannelTemplate>();
+                    var channelTemplate = c.ResolveKeyed<IDiscoveryChannelTemplate>(ChannelTemplate.NamedPipe);
                     return new BootstrapChannel(
                         EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
                         channelTemplate,
-                        c.Resolve<Func<Version, Tuple<Type, IVersionedDiscoveryEndpoint>>>(),
+                        c.Resolve<Func<Version, ChannelTemplate, Tuple<Type, IVersionedDiscoveryEndpoint>>>(),
                         () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IDiscoveryChannelTemplate), channelTemplate)),
                         uri => s_BootstrapChannelUri = uri);
                 })
-                .As<IBootstrapChannel>()
+                .Keyed<IBootstrapChannel>(ChannelTemplate.NamedPipe)
+                .As<IDisposable>()
+                .SingleInstance();
+
+            builder.Register(
+                c =>
+                {
+                    var ctx = c.Resolve<IComponentContext>();
+                    var channelTemplate = c.ResolveKeyed<IDiscoveryChannelTemplate>(ChannelTemplate.TcpIP);
+                    return new BootstrapChannel(
+                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                        channelTemplate,
+                        c.Resolve<Func<Version, ChannelTemplate, Tuple<Type, IVersionedDiscoveryEndpoint>>>(),
+                        () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IDiscoveryChannelTemplate), channelTemplate)),
+                        uri => s_BootstrapChannelUri = uri);
+                })
+                .Keyed<IBootstrapChannel>(ChannelTemplate.TcpIP)
                 .As<IDisposable>()
                 .SingleInstance();
         }
@@ -165,12 +183,12 @@ namespace Nuclei.Communication
                 c =>
                 {
                     var ctx = c.Resolve<IComponentContext>();
-                    Func<Version, Tuple<Type, IVersionedDiscoveryEndpoint>> selector =
-                        version =>
+                    Func<Version, ChannelTemplate, Tuple<Type, IVersionedDiscoveryEndpoint>> selector =
+                        (version, template) =>
                         {
                             // Get a collection of lazy resolved meta data objects for the
                             // IVersionedDiscoveryEndpoint
-                            var allEndpointsLazy = ctx.Resolve<IEnumerable<Meta<IVersionedDiscoveryEndpoint>>>();
+                            var allEndpointsLazy = ctx.ResolveKeyed<IEnumerable<Meta<IVersionedDiscoveryEndpoint>>>(template);
 
                             // Now find the reader that we want
                             // This is done by comparing the version numbers. If the
@@ -197,12 +215,17 @@ namespace Nuclei.Communication
                 });
         }
 
-        private static void RegisterDiscoveryChannelTemplate(ContainerBuilder builder)
+        private static void RegisterDiscoveryChannelTemplates(ContainerBuilder builder)
         {
+            builder.Register(c => new NamedPipeDiscoveryChannelTemplate(
+                    c.Resolve<IConfiguration>()))
+                .As<IChannelTemplate>()
+                .Keyed<IDiscoveryChannelTemplate>(ChannelTemplate.NamedPipe);
+
             builder.Register(c => new TcpDiscoveryChannelTemplate(
                     c.Resolve<IConfiguration>()))
                 .As<IChannelTemplate>()
-                .As<IDiscoveryChannelTemplate>();
+                .Keyed<IDiscoveryChannelTemplate>(ChannelTemplate.TcpIP);
         }
     }
 }

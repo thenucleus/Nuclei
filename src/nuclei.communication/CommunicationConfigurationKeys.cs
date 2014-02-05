@@ -32,7 +32,7 @@ namespace Nuclei.Communication
             = new ConfigurationKey("TcpBaseAddress", typeof(string));
 
         /// <summary>
-        /// The <see cref="ConfigurationKey"/> that is used to retrieve the TCP sub-address (string).
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the TCP discovery sub-address (string).
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
             Justification = "ConfigurationKey is immutable")]
@@ -40,7 +40,7 @@ namespace Nuclei.Communication
             = new ConfigurationKey("TcpDiscoveryPath", typeof(string));
 
         /// <summary>
-        /// The <see cref="ConfigurationKey"/> that is used to retrieve the TCP sub-address (string).
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the TCP protocol sub-address (string).
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
             Justification = "ConfigurationKey is immutable")]
@@ -48,7 +48,15 @@ namespace Nuclei.Communication
             = new ConfigurationKey("TcpSubAddress", typeof(string));
 
         /// <summary>
-        /// The <see cref="ConfigurationKey"/> that is used to retrieve the named pipe sub-address (string).
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the named pipe discovery sub-address (string).
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
+            Justification = "ConfigurationKey is immutable")]
+        public static readonly ConfigurationKey NamedPipeDiscoveryPath
+            = new ConfigurationKey("NamedPipeDiscoveryPath", typeof(string));
+
+        /// <summary>
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the named pipe protocol sub-address (string).
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
             Justification = "ConfigurationKey is immutable")]
@@ -128,7 +136,9 @@ namespace Nuclei.Communication
                 {
                     TcpPort,
                     TcpBaseAddress,
+                    TcpDiscoveryPath,
                     TcpProtocolPath,
+                    NamedPipeDiscoveryPath,
                     NamedPipeProtocolPath,
                     BindingMaximumNumberOfConnections,
                     BindingReceiveTimeoutInMilliseconds,

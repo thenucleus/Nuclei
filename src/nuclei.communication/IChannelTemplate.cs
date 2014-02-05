@@ -15,6 +15,14 @@ namespace Nuclei.Communication
     internal interface IChannelTemplate
     {
         /// <summary>
+        /// Gets the type of the channel.
+        /// </summary>
+        ChannelTemplate ChannelTemplate
+        {
+            get;
+        }
+
+        /// <summary>
         /// Generates a new URI for the channel.
         /// </summary>
         /// <returns>

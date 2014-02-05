@@ -46,17 +46,6 @@ namespace Nuclei.Communication.Protocol
         }
 
         /// <summary>
-        /// Gets the type of the channel.
-        /// </summary>
-        public ChannelTemplate ChannelTemplate
-        {
-            get
-            {
-                return ChannelTemplate.TcpIP;
-            }
-        }
-
-        /// <summary>
         /// Generates a new binding object for the channel.
         /// </summary>
         /// <returns>
