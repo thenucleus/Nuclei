@@ -23,18 +23,6 @@ namespace Nuclei.Communication.Protocol
         void RegisterApplicationSubject(CommunicationSubject subject);
 
         /// <summary>
-        /// Registers a <see cref="ICommandSet"/> type.
-        /// </summary>
-        /// <param name="commandType">The <see cref="ICommandSet"/> type.</param>
-        void RegisterCommandType(Type commandType);
-
-        /// <summary>
-        /// Registers a <see cref="INotificationSet"/> type.
-        /// </summary>
-        /// <param name="notificationType">The <see cref="INotificationSet"/> type.</param>
-        void RegisterNotificationType(Type notificationType);
-
-        /// <summary>
         /// Returns a collection containing all the subjects registered for the current application.
         /// </summary>
         /// <returns>A collection containing all the subjects registered for the current application.</returns>
