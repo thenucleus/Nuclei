@@ -144,8 +144,8 @@
     <Compile Include="Protocol\ChannelClosedEventArgs.cs" />
     <Compile Include="Protocol\ChannelTemplate.cs" />
     <Compile Include="Interaction\CommandAlreadyRegisteredException.cs" />
-    <Compile Include="Interaction\CommandInvocationFailedException.cs" />
-    <Compile Include="Interaction\CommandNotSupportedException.cs" />
+    <Compile Include="Interaction\Transport\CommandInvocationFailedException.cs" />
+    <Compile Include="Interaction\Transport\CommandNotSupportedException.cs" />
     <Compile Include="Interaction\Transport\CommandProxyBuilder.cs" />
     <Compile Include="Interaction\Transport\CommandSetInterceptorSelector.cs" />
     <Compile Include="Interaction\Transport\CommandSetMethodWithoutResultInterceptor.cs" />
@@ -208,7 +208,6 @@
     <Compile Include="Discovery\ManualEndpointDisconnection.cs" />
     <Compile Include="MaximumNumberOfChannelRestartsExceededException.cs" />
     <Compile Include="Discovery\MissingBindingTypeException.cs" />
-    <Compile Include="Interaction\MissingCommandSetException.cs" />
     <Compile Include="Discovery\MissingEndpointIdException.cs" />
     <Compile Include="Protocol\LastChanceMessageHandlerAttribute.cs" />
     <Compile Include="Protocol\MessageEventArgs.cs" />
@@ -219,7 +218,7 @@
     <Compile Include="Protocol\NamedPipeProtocolChannelTemplate.cs" />
     <Compile Include="Interaction\Transport\NotificationEventAddMethodInterceptor.cs" />
     <Compile Include="Interaction\Transport\NotificationEventRemoveMethodInterceptor.cs" />
-    <Compile Include="Interaction\NotificationNotSupportedException.cs" />
+    <Compile Include="Interaction\Transport\NotificationNotSupportedException.cs" />
     <Compile Include="Interaction\Transport\NotificationProxyBuilder.cs" />
     <Compile Include="Interaction\Transport\NotificationSetInterceptorSelector.cs" />
     <Compile Include="Interaction\Transport\NotificationSetProxy.cs" />
@@ -299,8 +298,8 @@
     <Compile Include="ServiceConnectionHolder.cs" />
     <Compile Include="Discovery\UdpBasedDiscoverySource.cs" />
     <Compile Include="Protocol\TcpProtocolChannelTemplate.cs" />
-    <Compile Include="Interaction\TypeIsNotAValidCommandSetException.cs" />
-    <Compile Include="Interaction\TypeIsNotAValidNotificationSetException.cs" />
+    <Compile Include="Interaction\Transport\TypeIsNotAValidCommandSetException.cs" />
+    <Compile Include="Interaction\Transport\TypeIsNotAValidNotificationSetException.cs" />
     <Compile Include="Interaction\Transport\UnableToGenerateProxyException.cs" />
     <Compile Include="Interaction\V1\UnableToLoadProxyTypeException.cs" />
     <Compile Include="Interaction\UnknownCommandSetException.cs" />

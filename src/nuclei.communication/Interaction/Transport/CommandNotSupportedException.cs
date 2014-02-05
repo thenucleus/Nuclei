@@ -5,46 +5,57 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Interaction.Transport
 {
     /// <summary>
-    /// An exception thrown when a remote operation fails for some reason.
+    /// An exception thrown the user requests a given command from an endpoint that does
+    /// not support the given command.
     /// </summary>
     [Serializable]
-    public sealed class CommandInvocationFailedException : Exception
+    public sealed class CommandNotSupportedException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandInvocationFailedException"/> class.
+        /// Initializes a new instance of the <see cref="CommandNotSupportedException"/> class.
         /// </summary>
-        public CommandInvocationFailedException()
-            : this(Resources.Exceptions_Messages_CommandInvocationFailed)
+        public CommandNotSupportedException()
+            : this(Resources.Exceptions_Messages_CommandNotSupported)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandInvocationFailedException"/> class.
+        /// Initializes a new instance of the <see cref="CommandNotSupportedException"/> class.
+        /// </summary>
+        /// <param name="commandType">The type of the command that was requested.</param>
+        public CommandNotSupportedException(Type commandType)
+            : this(string.Format(CultureInfo.InvariantCulture, Resources.Exceptions_Messages_CommandNotSupported_WithCommand, commandType))
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CommandNotSupportedException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
-        public CommandInvocationFailedException(string message) 
+        public CommandNotSupportedException(string message) 
             : base(message)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandInvocationFailedException"/> class.
+        /// Initializes a new instance of the <see cref="CommandNotSupportedException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
-        public CommandInvocationFailedException(string message, Exception innerException)
+        public CommandNotSupportedException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandInvocationFailedException"/> class.
+        /// Initializes a new instance of the <see cref="CommandNotSupportedException"/> class.
         /// </summary>
         /// <param name="info">
         ///     The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object
@@ -60,7 +71,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="T:System.Runtime.Serialization.SerializationException">
         /// The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0).
         /// </exception>
-        private CommandInvocationFailedException(SerializationInfo info, StreamingContext context)
+        private CommandNotSupportedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

@@ -8,43 +8,44 @@ using System;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Interaction.Transport
 {
     /// <summary>
-    /// An exception thrown when a given command set could not be found.
+    /// An exception thrown when the user tries to register a <see cref="ICommandSet"/> interface
+    /// that does not have the correct type definition.
     /// </summary>
     [Serializable]
-    public sealed class MissingCommandSetException : Exception
+    public sealed class TypeIsNotAValidCommandSetException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MissingCommandSetException"/> class.
+        /// Initializes a new instance of the <see cref="TypeIsNotAValidCommandSetException"/> class.
         /// </summary>
-        public MissingCommandSetException()
-            : this(Resources.Exceptions_Messages_MissingCommandSet)
+        public TypeIsNotAValidCommandSetException()
+            : this(Resources.Exceptions_Messages_TypeIsNotAValidCommandSet)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MissingCommandSetException"/> class.
+        /// Initializes a new instance of the <see cref="TypeIsNotAValidCommandSetException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
-        public MissingCommandSetException(string message) 
+        public TypeIsNotAValidCommandSetException(string message) 
             : base(message)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MissingCommandSetException"/> class.
+        /// Initializes a new instance of the <see cref="TypeIsNotAValidCommandSetException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
-        public MissingCommandSetException(string message, Exception innerException)
+        public TypeIsNotAValidCommandSetException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MissingCommandSetException"/> class.
+        /// Initializes a new instance of the <see cref="TypeIsNotAValidCommandSetException"/> class.
         /// </summary>
         /// <param name="info">
         ///     The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object
@@ -60,7 +61,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="T:System.Runtime.Serialization.SerializationException">
         /// The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0).
         /// </exception>
-        private MissingCommandSetException(SerializationInfo info, StreamingContext context)
+        private TypeIsNotAValidCommandSetException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
