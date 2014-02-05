@@ -17,7 +17,7 @@ namespace Nuclei.Communication.Interaction
     /// <summary>
     /// Defines a collection that contains notification objects for the local endpoint.
     /// </summary>
-    internal sealed class LocalNotificationCollection : INotificationSendersCollection, ISendNotifications
+    internal sealed class LocalNotificationCollection : INotificationCollection, ISendNotifications
     {
         /// <summary>
         /// The object used to lock on.

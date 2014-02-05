@@ -80,7 +80,7 @@ namespace Nuclei.Communication
             builder.Register(c => new LocalNotificationCollection(
                     c.Resolve<ISendDataViaChannels>(),
                     c.Resolve<IStoreCommunicationDescriptions>()))
-                .As<INotificationSendersCollection>()
+                .As<INotificationCollection>()
                 .As<ISendNotifications>()
                 .SingleInstance();
         }

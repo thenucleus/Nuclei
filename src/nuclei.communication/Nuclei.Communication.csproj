@@ -180,7 +180,7 @@
     <Compile Include="Protocol\ICommunicationChannel.cs" />
     <Compile Include="Protocol\ICommunicationLayer.cs" />
     <Compile Include="Discovery\IDiscoverOtherServices.cs" />
-    <Compile Include="Interaction\INotificationSendersCollection.cs" />
+    <Compile Include="Interaction\INotificationCollection.cs" />
     <Compile Include="Interaction\INotificationSet.cs" />
     <Compile Include="Protocol\IDirectIncomingMessages.cs" />
     <Compile Include="Protocol\IMessageFilter.cs" />

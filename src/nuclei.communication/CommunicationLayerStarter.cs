@@ -93,7 +93,7 @@ namespace Nuclei.Communication
                             .Select(n => n.GetType())
                             .ToList();
 
-                        var notificationCollection = m_Context.Resolve<INotificationSendersCollection>();
+                        var notificationCollection = m_Context.Resolve<INotificationCollection>();
                         var unregisteredNotifications = notificationCollection
                             .Select(p => p.Value.GetType())
                             .Except(notifications, new TypeEqualityComparer());
