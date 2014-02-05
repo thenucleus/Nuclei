@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Interaction.V1
 {
     /// <summary>
     /// Stores information about a serialized method invocation.

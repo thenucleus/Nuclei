@@ -8,7 +8,7 @@ using System;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication.Interaction.Transport
+namespace Nuclei.Communication.Interaction.V1
 {
     /// <summary>
     /// An exception thrown when a proxy type could not be loaded.
