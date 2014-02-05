@@ -217,13 +217,13 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "Received request to execute command: {0}.{1}",
-                    invocation.Type.FullName,
-                    invocation.MemberName));
+                    invocation.Command.InterfaceType.FullName,
+                    invocation.Command.MethodName));
 
-            Task result = null;
             try
             {
-                var type = ProxyExtensions.ToType(invocation.Type);
+                var type = invocation.Command.InterfaceType;
+                var methodName = invocation.Command.MethodName;
                 var commandSet = m_Commands.CommandsFor(type);
                 if (commandSet == null)
                 {
@@ -233,8 +233,8 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                         string.Format(
                             CultureInfo.InvariantCulture,
                             "Command invokation was requested for {0}.{1} from {2} but this command was not registered.",
-                            invocation.Type.FullName,
-                            invocation.MemberName,
+                            type.FullName,
+                            methodName,
                             msg.Sender));
 
                     var failureResult = new FailureMessage(m_Current, msg.Id);
@@ -242,13 +242,13 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                     return;
                 }
 
-                var parameterTypes = from pair in invocation.Parameters
-                                     select ProxyExtensions.ToType(pair.Item1);
-                var method = type.GetMethod(invocation.MemberName, parameterTypes.ToArray());
+                var parameterTypes = from pair in invocation.ParameterValues
+                                     select pair.Item1;
+                var method = type.GetMethod(methodName, parameterTypes.ToArray());
                 
-                var parameterValues = from pair in invocation.Parameters
+                var parameterValues = from pair in invocation.ParameterValues
                                       select pair.Item2;
-                result = method.Invoke(commandSet, parameterValues.ToArray()) as Task;
+                var result = method.Invoke(commandSet, parameterValues.ToArray()) as Task;
                 
                 Debug.Assert(result != null, "The command return result was not a Task or Task<T>.");
                 result.ContinueWith(
@@ -267,7 +267,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
         {
             try
             {
-                ICommunicationMessage returnMsg = null;
+                ICommunicationMessage returnMsg;
                 if (result == null)
                 {
                     returnMsg = new FailureMessage(m_Current, msg.Id);
@@ -307,8 +307,8 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                     string.Format(
                         CultureInfo.InvariantCulture,
                         "Error while invoking command {0}.{1}. Exception is: {2}",
-                        msg.Invocation.Type.FullName,
-                        msg.Invocation.MemberName,
+                        msg.Invocation.Command.InterfaceType.FullName,
+                        msg.Invocation.Command.MethodName,
                         e));
                 m_SendMessage(msg.Sender, new FailureMessage(m_Current, msg.Id));
             }

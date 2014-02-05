@@ -158,13 +158,12 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint.</param>
         /// <param name="commandInterfaceType">The type of the command that should be available.</param>
-        /// <param name="commandVersion">The version of the command that should be available.</param>
         /// <returns>
         ///     <see langword="true" /> if there are the specific commands exist for the given endpoint; otherwise, <see langword="false" />.
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        public bool HasCommandFor(EndpointId endpoint, Type commandInterfaceType, Version commandVersion)
+        public bool HasCommandFor(EndpointId endpoint, Type commandInterfaceType)
         {
             lock (m_Lock)
             {
@@ -183,11 +182,10 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         /// <typeparam name="TCommand">The typeof command set that should be returned.</typeparam>
         /// <param name="endpoint">The ID number of the endpoint for which the commands should be returned.</param>
-        /// <param name="commandVersion">The version of the command that should be returned.</param>
         /// <returns>The requested command set.</returns>
-        public TCommand CommandsFor<TCommand>(EndpointId endpoint, Version commandVersion) where TCommand : class, ICommandSet
+        public TCommand CommandsFor<TCommand>(EndpointId endpoint) where TCommand : class, ICommandSet
         {
-            return CommandsFor(endpoint, typeof(TCommand), commandVersion) as TCommand;
+            return CommandsFor(endpoint, typeof(TCommand)) as TCommand;
         }
 
         /// <summary>
@@ -195,9 +193,8 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint for which the commands should be returned.</param>
         /// <param name="commandType">The type of the command.</param>
-        /// <param name="commandVersion">The version of the command that should be returned.</param>
         /// <returns>The requested command set.</returns>
-        public ICommandSet CommandsFor(EndpointId endpoint, Type commandType, Version commandVersion)
+        public ICommandSet CommandsFor(EndpointId endpoint, Type commandType)
         {
             lock (m_Lock)
             {

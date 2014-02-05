@@ -78,7 +78,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <summary>
         /// The function which sends the <see cref="CommandInvokedMessage"/> to the owning endpoint.
         /// </summary>
-        private readonly Func<ISerializedMethodInvocation, Task<ICommunicationMessage>> m_SendMessageWithResponse;
+        private readonly Func<CommandInvokedData, Task<ICommunicationMessage>> m_TransmitCommandInvocation;
 
         /// <summary>
         /// The object that provides the diagnostics for the system.
@@ -93,28 +93,28 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandSetMethodWithResultInterceptor"/> class.
         /// </summary>
-        /// <param name="sendMessageWithResponse">
+        /// <param name="transmitCommandInvocation">
         ///     The function used to send the information about the method invocation to the owning endpoint.
         /// </param>
         /// <param name="systemDiagnostics">The function that is used to log messages.</param>
         /// <param name="scheduler">The scheduler that is used to run the tasks.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="sendMessageWithResponse"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="transmitCommandInvocation"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public CommandSetMethodWithResultInterceptor(
-            Func<ISerializedMethodInvocation, Task<ICommunicationMessage>> sendMessageWithResponse,
+            Func<CommandInvokedData, Task<ICommunicationMessage>> transmitCommandInvocation,
             SystemDiagnostics systemDiagnostics,
             TaskScheduler scheduler = null)
         {
             {
-                Lokad.Enforce.Argument(() => sendMessageWithResponse);
+                Lokad.Enforce.Argument(() => transmitCommandInvocation);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
 
-            m_SendMessageWithResponse = sendMessageWithResponse;
+            m_TransmitCommandInvocation = transmitCommandInvocation;
             m_Diagnostics = systemDiagnostics;
             m_Scheduler = scheduler ?? TaskScheduler.Default;
         }
@@ -136,8 +136,8 @@ namespace Nuclei.Communication.Interaction.Transport
             Task<ICommunicationMessage> result = null;
             try
             {
-                result = m_SendMessageWithResponse(
-                    ProxyExtensions.FromMethodInfo(
+                result = m_TransmitCommandInvocation(
+                    new CommandInvokedData(
                         invocation.Method,
                         invocation.Arguments));
             }

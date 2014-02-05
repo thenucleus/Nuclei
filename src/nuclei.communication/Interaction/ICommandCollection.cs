@@ -48,5 +48,14 @@ namespace Nuclei.Communication.Interaction
         /// <param name="commandType">The interface that defines the command methods.</param>
         /// <param name="commands">The commands.</param>
         void Register(Type commandType, ICommandSet commands);
+
+        /// <summary>
+        /// Returns the command object that was registered for the given interface type.
+        /// </summary>
+        /// <param name="interfaceType">The <see cref="ICommandSet"/> derived interface type.</param>
+        /// <returns>
+        /// The desired command set.
+        /// </returns>
+        ICommandSet CommandsFor(Type interfaceType);
     }
 }

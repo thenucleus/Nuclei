@@ -19,30 +19,27 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint.</param>
         /// <param name="commandInterfaceType">The type of the command that should be available.</param>
-        /// <param name="commandVersion">The version of the command that should be available.</param>
         /// <returns>
         ///     <see langword="true" /> if there are the specific commands exist for the given endpoint; otherwise, <see langword="false" />.
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        bool HasCommandFor(EndpointId endpoint, Type commandInterfaceType, Version commandVersion);
+        bool HasCommandFor(EndpointId endpoint, Type commandInterfaceType);
 
         /// <summary>
         /// Returns the command proxy for the given endpoint.
         /// </summary>
         /// <typeparam name="TCommand">The typeof command set that should be returned.</typeparam>
         /// <param name="endpoint">The ID number of the endpoint for which the commands should be returned.</param>
-        /// <param name="commandVersion">The version of the command that should be returned.</param>
         /// <returns>The requested command set.</returns>
-        TCommand CommandsFor<TCommand>(EndpointId endpoint, Version commandVersion) where TCommand : class, ICommandSet;
+        TCommand CommandsFor<TCommand>(EndpointId endpoint) where TCommand : class, ICommandSet;
 
         /// <summary>
         /// Returns the command proxy for the given endpoint.
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint for which the commands should be returned.</param>
         /// <param name="commandType">The type of the command.</param>
-        /// <param name="commandVersion">The version of the command that should be returned.</param>
         /// <returns>The requested command set.</returns>
-        ICommandSet CommandsFor(EndpointId endpoint, Type commandType, Version commandVersion);
+        ICommandSet CommandsFor(EndpointId endpoint, Type commandType);
     }
 }
