@@ -8,7 +8,7 @@ using System;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication.Interaction.Transport
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// An exception thrown when the user tries to register a <see cref="INotificationSet"/> interface
