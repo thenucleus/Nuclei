@@ -21,7 +21,7 @@ namespace Nuclei.Communication.Interaction.Transport
     /// to the current endpoint. Upon reception of command information an endpoint will generate a proxy for
     /// the command interface thereby allowing remote invocation of commands through the proxy command interface.
     /// </remarks>
-    internal sealed class RemoteCommandHub : RemoteEndpointProxyHub<CommandSetProxy>, ISendCommandsToRemoteEndpoints
+    internal sealed class RemoteCommandHub : RemoteEndpointProxyHub<CommandSetProxy>, ISendCommandsToRemoteEndpoints, IStoreRemoteCommandProxies
     {
         /// <summary>
         /// The collection that holds all the <see cref="ICommandSet"/> proxies for each endpoint that
@@ -212,6 +212,16 @@ namespace Nuclei.Communication.Interaction.Transport
                 var result = commandSets[commandType];
                 return result;
             }
+        }
+
+        /// <summary>
+        /// Handles the reception of new command types.
+        /// </summary>
+        /// <param name="endpoint">The ID of the endpoint that owns the commands.</param>
+        /// <param name="commandTypes">An array containing the command types for a given endpoint.</param>
+        public void OnReceiptOfEndpointCommands(EndpointId endpoint, OfflineTypeInformation[] commandTypes)
+        {
+            OnReceiptOfEndpointProxies(endpoint, commandTypes);
         }
     }
 }

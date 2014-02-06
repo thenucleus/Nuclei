@@ -13,7 +13,7 @@ namespace Nuclei.Communication.Interaction
     /// Defines the interface for collections that store one or more <see cref="INotificationSet"/>
     /// objects.
     /// </summary>
-    public interface INotificationCollection : IEnumerable<KeyValuePair<Type, INotificationSet>>
+    public interface INotificationCollection : IEnumerable<Tuple<Type, INotificationSet>>
     {
         /// <summary>
         /// Registers a <see cref="INotificationSet"/> object.

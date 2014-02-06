@@ -14,7 +14,7 @@ namespace Nuclei.Communication.Interaction
     /// Defines the interface for collections that store one or more <see cref="ICommandSet"/>
     /// objects.
     /// </summary>
-    public interface ICommandCollection : IEnumerable<KeyValuePair<Type, ICommandSet>>
+    public interface ICommandCollection : IEnumerable<Tuple<Type, ICommandSet>>
     {
         /// <summary>
         /// Registers a <see cref="ICommandSet"/> object.

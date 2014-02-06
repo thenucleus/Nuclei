@@ -46,8 +46,7 @@ namespace Nuclei.Communication
 
         private static void RegisterCommandCollection(ContainerBuilder builder)
         {
-            builder.Register(c => new LocalCommandCollection(
-                    c.Resolve<IStoreCommunicationDescriptions>()))
+            builder.Register(c => new LocalCommandCollection())
                 .As<ICommandCollection>()
                 .SingleInstance();
         }
@@ -80,8 +79,7 @@ namespace Nuclei.Communication
         private static void RegisterNotificationCollection(ContainerBuilder builder)
         {
             builder.Register(c => new LocalNotificationCollection(
-                    c.Resolve<ISendDataViaChannels>(),
-                    c.Resolve<IStoreCommunicationDescriptions>()))
+                    c.Resolve<ISendDataViaChannels>()))
                 .As<INotificationCollection>()
                 .As<ISendNotifications>()
                 .SingleInstance();

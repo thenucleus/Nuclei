@@ -5,6 +5,8 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using System.Threading;
@@ -24,6 +26,31 @@ namespace Nuclei.Communication.Interaction.Transport
     /// </summary>
     internal sealed class CommandSetMethodWithoutResultInterceptor : IInterceptor
     {
+        /// <summary>
+        /// Translates a <see cref="MethodInfo"/> and the related parameter values into a serializable form.
+        /// </summary>
+        /// <param name="method">The method information that needs to be serialized.</param>
+        /// <param name="parameters">
+        ///     The collection of parameter values with which the method should be called. Note that the parameter
+        ///     values should be in the same order as they are given by the <c>MethodInfo.GetParameters()</c> method.
+        /// </param>
+        /// <returns>
+        ///     An object that stores the method invocation information in a serializable format.
+        /// </returns>
+        private static Tuple<Type, object>[] ToParameterArray(MethodBase method, object[] parameters)
+        {
+            var methodParameters = method.GetParameters();
+            Debug.Assert(methodParameters.Length == parameters.Length, "There are a different number of parameters than there are parameter values.");
+
+            var namedParameters = new List<Tuple<Type, object>>();
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                namedParameters.Add(Tuple.Create(methodParameters[i].ParameterType, parameters[i]));
+            }
+
+            return namedParameters.ToArray();
+        }
+
         /// <summary>
         /// Returns a task with a specific return type based on an expected <see cref="CommandInvokedResponseMessage"/> object
         /// which is delivered by another task.
@@ -128,13 +155,15 @@ namespace Nuclei.Communication.Interaction.Transport
                     "Invoking {0}",
                     MethodToText(invocation.Method)));
 
-            Task<ICommunicationMessage> result = null;
+            Task<ICommunicationMessage> result;
             try
             {
                 result = m_TransmitCommandInvocation(
                     new CommandInvokedData(
-                        invocation.Method,
-                        invocation.Arguments));
+                        new CommandData(
+                            invocation.TargetType,
+                            invocation.Method.Name),
+                        ToParameterArray(invocation.Method, invocation.Arguments)));
             }
             catch (EndpointNotContactableException e)
             {

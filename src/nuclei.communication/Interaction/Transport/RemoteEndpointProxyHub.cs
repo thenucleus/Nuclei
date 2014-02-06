@@ -77,19 +77,16 @@ namespace Nuclei.Communication.Interaction.Transport
             }
 
             m_EndpointInformationStorage = endpointInformationStorage;
-            m_EndpointInformationStorage.OnEndpointConnected += HandleEndpointSignIn;
             m_EndpointInformationStorage.OnEndpointDisconnected += HandleEndpointSignOut;
 
             m_Builder = builder;
             m_Diagnostics = systemDiagnostics;
         }
 
-        private void HandleEndpointSignIn(object sender, EndpointEventArgs eventArgs)
+        protected void OnReceiptOfEndpointProxies(EndpointId endpoint, OfflineTypeInformation[] proxyTypes)
         {
             using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Received endpoint information"))
             {
-                var endpoint = eventArgs.Endpoint;
-
                 bool haveStoredEndpointInformation = false;
                 var proxyList = new List<Type>();
                 try

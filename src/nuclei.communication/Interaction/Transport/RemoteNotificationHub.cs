@@ -21,7 +21,8 @@ namespace Nuclei.Communication.Interaction.Transport
     /// to the current endpoint. Upon reception of notification information an endpoint will generate a proxy for
     /// the notification interface thereby allowing remote listening to notification events through the proxy notification interface.
     /// </remarks>
-    internal sealed class RemoteNotificationHub : RemoteEndpointProxyHub<NotificationSetProxy>, INotifyOfRemoteEndpointEvents
+    internal sealed class RemoteNotificationHub 
+        : RemoteEndpointProxyHub<NotificationSetProxy>, INotifyOfRemoteEndpointEvents, IStoreRemoteNotificationProxies
     {
         /// <summary>
         /// The collection that holds all the <see cref="INotificationSet"/> proxies for each endpoint that
@@ -221,6 +222,16 @@ namespace Nuclei.Communication.Interaction.Transport
                 var result = notificationSets[notificationType];
                 return result;
             }
+        }
+
+        /// <summary>
+        /// Handles the reception of new notification types.
+        /// </summary>
+        /// <param name="endpoint">The ID of the endpoint that owns the notifications.</param>
+        /// <param name="notificationTypes">An array containing the notification types for a given endpoint.</param>
+        public void OnReceiptOfEndpointNotifications(EndpointId endpoint, OfflineTypeInformation[] notificationTypes)
+        {
+            OnReceiptOfEndpointProxies(endpoint, notificationTypes);
         }
     }
 }

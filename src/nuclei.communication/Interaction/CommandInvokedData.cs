@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// The parameters for the command invocation.
         /// </summary>
-        private readonly List<Tuple<Type, object>> m_ParameterValues;
+        private readonly Tuple<Type, object>[] m_ParameterValues;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandInvokedData"/> class.
@@ -36,7 +36,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="parameterValues"/> is <see langword="null" />.
         /// </exception>
-        public CommandInvokedData(CommandData command, List<Tuple<Type, object>> parameterValues)
+        public CommandInvokedData(CommandData command, Tuple<Type, object>[] parameterValues)
         {
             {
                 Lokad.Enforce.Argument(() => command);
@@ -62,7 +62,7 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// Gets the collection of parameters for the command invocation.
         /// </summary>
-        public List<Tuple<Type, object>> ParameterValues
+        public Tuple<Type, object>[] ParameterValues
         {
             [DebuggerStepThrough]
             get
