@@ -83,7 +83,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var collection = new LocalNotificationCollection(layer.Object, store.Object);
+            var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
             collection.Store(typeof(IMockNotificationSet), obj);
@@ -115,7 +115,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var collection = new LocalNotificationCollection(layer.Object, store.Object);
+            var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
             collection.Store(typeof(IMockNotificationSet), obj);
@@ -160,7 +160,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var collection = new LocalNotificationCollection(layer.Object, store.Object);
+            var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
             collection.Store(typeof(IMockNotificationSet), obj);
@@ -217,7 +217,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var collection = new LocalNotificationCollection(layer.Object, store.Object);
+            var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
             collection.Store(typeof(IMockNotificationSet), obj);
@@ -274,7 +274,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var collection = new LocalNotificationCollection(layer.Object, store.Object);
+            var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
             collection.Store(typeof(IMockNotificationSet), obj);

@@ -35,7 +35,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var collection = new LocalCommandCollection(store.Object);
+            var collection = new LocalCommandCollection();
 
             var commands = new Mock<IMockCommandSetWithTaskReturn>();
             collection.Register(typeof(IMockCommandSetWithTaskReturn), commands.Object);
@@ -56,7 +56,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var collection = new LocalCommandCollection(store.Object);
+            var collection = new LocalCommandCollection();
             
             var commands = new Mock<IMockCommandSetWithTaskReturn>();
             collection.Register(typeof(IMockCommandSetWithTaskReturn), commands.Object);
@@ -72,7 +72,7 @@ namespace Nuclei.Communication.Interaction
         public void CommandsForWithUnknownType()
         {
             var layer = new Mock<IStoreCommunicationDescriptions>();
-            var collection = new LocalCommandCollection(layer.Object);
+            var collection = new LocalCommandCollection();
             Assert.IsNull(collection.CommandsFor(typeof(IMockCommandSetWithTaskReturn)));
         }
 
@@ -80,7 +80,7 @@ namespace Nuclei.Communication.Interaction
         public void CommandsFor()
         {
             var layer = new Mock<IStoreCommunicationDescriptions>();
-            var collection = new LocalCommandCollection(layer.Object);
+            var collection = new LocalCommandCollection();
 
             var commands = new Mock<IMockCommandSetWithTaskReturn>();
             collection.Register(typeof(IMockCommandSetWithTaskReturn), commands.Object);

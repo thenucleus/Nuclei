@@ -46,32 +46,21 @@ namespace Nuclei.Communication.Interaction
         private readonly ICommunicationLayer m_Layer;
 
         /// <summary>
-        /// The object that stores the communication descriptions for the application.
-        /// </summary>
-        private readonly IStoreCommunicationDescriptions m_Descriptions;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="LocalNotificationCollection"/> class.
         /// </summary>
         /// <param name="layer">
         ///     The communication layer that is used to send out messages about newly registered notifications.
         /// </param>
-        /// <param name="descriptions">The object that stores the communication descriptions for the application.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="layer"/> is <see langword="null" />.
         /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="descriptions"/> is <see langword="null" />.
-        /// </exception>
-        public LocalNotificationCollection(ICommunicationLayer layer, IStoreCommunicationDescriptions descriptions)
+        public LocalNotificationCollection(ICommunicationLayer layer)
         {
             {
                 Lokad.Enforce.Argument(() => layer);
-                Lokad.Enforce.Argument(() => descriptions);
             }
 
             m_Layer = layer;
-            m_Descriptions = descriptions;
         }
 
         /// <summary>
@@ -109,7 +98,7 @@ namespace Nuclei.Communication.Interaction
                     Resources.Exceptions_Messages_NotificationObjectMustImplementNotificationInterface);
             }
 
-            NotificationProxyBuilder.VerifyThatTypeIsACorrectNotificationSet(notificationType);
+            notificationType.VerifyThatTypeIsACorrectNotificationSet();
             if (m_Notifications.ContainsKey(notificationType))
             {
                 throw new CommandAlreadyRegisteredException();
@@ -118,7 +107,6 @@ namespace Nuclei.Communication.Interaction
             ConnectToEvents(notificationType, notifications);
 
             m_Notifications.Add(notificationType, notifications);
-            m_Descriptions.RegisterNotificationType(notificationType);
         }
 
         private void ConnectToEvents(Type notificationType, INotificationSet notifications)
@@ -186,9 +174,12 @@ namespace Nuclei.Communication.Interaction
         /// <returns>
         /// The element in the collection at the current position of the enumerator.
         /// </returns>
-        public IEnumerator<KeyValuePair<Type, INotificationSet>> GetEnumerator()
+        public IEnumerator<Tuple<Type, INotificationSet>> GetEnumerator()
         {
-            return m_Notifications.GetEnumerator();
+            foreach (var pair in m_Notifications)
+            {
+                yield return new Tuple<Type, INotificationSet>(pair.Key, pair.Value);
+            }
         }
 
         /// <summary>

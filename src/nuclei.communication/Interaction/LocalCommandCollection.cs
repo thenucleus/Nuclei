@@ -9,7 +9,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nuclei.Communication.Properties;
-using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication.Interaction
 {
@@ -23,27 +22,6 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         private readonly SortedList<Type, ICommandSet> m_Commands
             = new SortedList<Type, ICommandSet>(new TypeComparer());
-
-        /// <summary>
-        /// The object that stores the communication descriptions for the application.
-        /// </summary>
-        private readonly IStoreCommunicationDescriptions m_Descriptions;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LocalCommandCollection"/> class.
-        /// </summary>
-        /// <param name="descriptions">The object that stores the communication descriptions for the application.</param>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="descriptions"/> is <see langword="null" />.
-        /// </exception>
-        public LocalCommandCollection(IStoreCommunicationDescriptions descriptions)
-        {
-            {
-                Lokad.Enforce.Argument(() => descriptions);
-            }
-
-            m_Descriptions = descriptions;
-        }
 
         /// <summary>
         /// Registers a <see cref="ICommandSet"/> object.
@@ -101,14 +79,13 @@ namespace Nuclei.Communication.Interaction
                     Resources.Exceptions_Messages_CommandObjectMustImplementCommandInterface);
             }
 
-            CommandProxyBuilder.VerifyThatTypeIsACorrectCommandSet(commandType);
+            commandType.VerifyThatTypeIsACorrectCommandSet();
             if (m_Commands.ContainsKey(commandType))
             {
                 throw new CommandAlreadyRegisteredException();
             }
 
             m_Commands.Add(commandType, commands);
-            m_Descriptions.RegisterCommandType(commandType);
         }
 
         /// <summary>
@@ -129,9 +106,12 @@ namespace Nuclei.Communication.Interaction
         /// <returns>
         /// The element in the collection at the current position of the enumerator.
         /// </returns>
-        public IEnumerator<KeyValuePair<Type, ICommandSet>> GetEnumerator()
+        public IEnumerator<Tuple<Type, ICommandSet>> GetEnumerator()
         {
-            return m_Commands.GetEnumerator();
+            foreach (var pair in m_Commands)
+            {
+                yield return new Tuple<Type, ICommandSet>(pair.Key, pair.Value);
+            }
         }
 
         /// <summary>
