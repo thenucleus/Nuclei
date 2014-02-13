@@ -13,7 +13,6 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
     /// <summary>
     /// Defines a message that contains the return value for an <see cref="ICommandSet"/> method invocation.
     /// </summary>
-    [Serializable]
     internal sealed class CommandInvokedResponseMessage : CommunicationMessage
     {
         /// <summary>

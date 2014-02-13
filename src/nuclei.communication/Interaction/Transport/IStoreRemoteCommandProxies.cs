@@ -4,6 +4,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Nuclei.Communication.Interaction.Transport
 {
     /// <summary>
@@ -16,6 +18,6 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         /// <param name="endpoint">The ID of the endpoint that owns the commands.</param>
         /// <param name="commandTypes">An array containing the command types for a given endpoint.</param>
-        void OnReceiptOfEndpointCommands(EndpointId endpoint, OfflineTypeInformation[] commandTypes);
+        void OnReceiptOfEndpointCommands(EndpointId endpoint, IEnumerable<OfflineTypeInformation> commandTypes);
     }
 }

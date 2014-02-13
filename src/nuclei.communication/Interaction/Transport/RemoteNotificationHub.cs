@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 
 namespace Nuclei.Communication.Interaction.Transport
@@ -58,16 +57,6 @@ namespace Nuclei.Communication.Interaction.Transport
             {
                 Lokad.Enforce.Argument(() => builder);
             }
-        }
-
-        /// <summary>
-        /// Extracts the correct collection of proxy types from the description.
-        /// </summary>
-        /// <param name="description">The object that contains the proxy type definitions.</param>
-        /// <returns>The collection of proxy types.</returns>
-        protected override IEnumerable<Type> ProxyTypesFromDescription(CommunicationDescription description)
-        {
-            return description.NotificationProxies;
         }
 
         /// <summary>
@@ -175,7 +164,7 @@ namespace Nuclei.Communication.Interaction.Transport
             Justification = "Documentation can start with a language keyword")]
         public bool HasNotificationFor(EndpointId endpoint, Type notificationInterfaceType)
         {
-            lock (m_Lock)
+            lock (Lock)
             {
                 if (m_RemoteNotifications.ContainsKey(endpoint))
                 {
@@ -206,7 +195,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <returns>The requested notification set.</returns>
         public INotificationSet NotificationsFor(EndpointId endpoint, Type notificationType)
         {
-            lock (m_Lock)
+            lock (Lock)
             {
                 if (!m_RemoteNotifications.ContainsKey(endpoint))
                 {
@@ -229,7 +218,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         /// <param name="endpoint">The ID of the endpoint that owns the notifications.</param>
         /// <param name="notificationTypes">An array containing the notification types for a given endpoint.</param>
-        public void OnReceiptOfEndpointNotifications(EndpointId endpoint, OfflineTypeInformation[] notificationTypes)
+        public void OnReceiptOfEndpointNotifications(EndpointId endpoint, IEnumerable<OfflineTypeInformation> notificationTypes)
         {
             OnReceiptOfEndpointProxies(endpoint, notificationTypes);
         }

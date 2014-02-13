@@ -11,72 +11,46 @@ using Nuclei.Communication.Protocol.Messages;
 namespace Nuclei.Communication.Interaction.Transport.Messages
 {
     /// <summary>
-    /// Defines a message that contains the return value for an <see cref="ICommandSet"/> method invocation.
+    /// Defines a message that contains information describing all the provided <see cref="CommunicationSubject"/>s for the
+    /// sending endpoint and the commands and notifications belonging to those subjects.
     /// </summary>
-    [Serializable]
     internal sealed class EndpointInteractionInformationMessage : CommunicationMessage
     {
         /// <summary>
-        /// The collection containing type information for one or more command sets.
+        /// The collection containing all the subject groups for the endpoint.
         /// </summary>
-        private readonly OfflineTypeInformation[] m_Commands;
-
-        /// <summary>
-        /// The collection containing type information for one or more notification sets.
-        /// </summary>
-        private readonly OfflineTypeInformation[] m_Notifications;
+        private readonly CommunicationSubjectGroup[] m_Groups;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommunicationMessage"/> class.
         /// </summary>
         /// <param name="origin">The endpoint that send the original message.</param>
-        /// <param name="commands">The collection containing type information for one or more command sets.</param>
-        /// <param name="notifications">The collection containing type information for one or more notification sets.</param>
+        /// <param name="groups">The collection containing communication subjects for the endpoint.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="commands"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="groups"/> is <see langword="null" />.
         /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="notifications"/> is <see langword="null" />.
-        /// </exception>
-        public EndpointInteractionInformationMessage(
-            EndpointId origin, 
-            OfflineTypeInformation[] commands, 
-            OfflineTypeInformation[] notifications) : 
+        public EndpointInteractionInformationMessage(EndpointId origin, CommunicationSubjectGroup[] groups) : 
             base(origin)
         {
             {
-                Lokad.Enforce.Argument(() => commands);
-                Lokad.Enforce.Argument(() => notifications);
+                Lokad.Enforce.Argument(() => groups);
             }
 
-            m_Commands = commands;
-            m_Notifications = notifications;
+            m_Groups = groups;
         }
 
         /// <summary>
-        /// Gets the collection containing type information for one or more command sets.
+        /// Gets the collection containing all the subject groups.
         /// </summary>
-        public OfflineTypeInformation[] Commands
+        public CommunicationSubjectGroup[] SubjectGroups
         {
             [DebuggerStepThrough]
             get
             {
-                return m_Commands;
-            }
-        }
-
-        /// <summary>
-        /// Gets the collection containing type information for one or more notification sets.
-        /// </summary>
-        public OfflineTypeInformation[] Notifications
-        {
-            [DebuggerStepThrough]
-            get
-            {
-                return m_Notifications;
+                return m_Groups;
             }
         }
     }

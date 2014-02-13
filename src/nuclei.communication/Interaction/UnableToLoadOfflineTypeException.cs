@@ -8,43 +8,43 @@ using System;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication.Interaction.V1
+namespace Nuclei.Communication.Interaction
 {
     /// <summary>
-    /// An exception thrown when a proxy type could not be loaded.
+    /// An exception thrown when a type could not be loaded.
     /// </summary>
     [Serializable]
-    public sealed class UnableToLoadProxyTypeException : Exception
+    public sealed class UnableToLoadOfflineTypeException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnableToLoadProxyTypeException"/> class.
+        /// Initializes a new instance of the <see cref="UnableToLoadOfflineTypeException"/> class.
         /// </summary>
-        public UnableToLoadProxyTypeException()
-            : this(Resources.Exceptions_Messages_UnableToLoadProxyType)
+        public UnableToLoadOfflineTypeException()
+            : this(Resources.Exceptions_Messages_UnableToLoadOfflineType)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnableToLoadProxyTypeException"/> class.
+        /// Initializes a new instance of the <see cref="UnableToLoadOfflineTypeException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
-        public UnableToLoadProxyTypeException(string message) 
+        public UnableToLoadOfflineTypeException(string message) 
             : base(message)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnableToLoadProxyTypeException"/> class.
+        /// Initializes a new instance of the <see cref="UnableToLoadOfflineTypeException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
-        public UnableToLoadProxyTypeException(string message, Exception innerException)
+        public UnableToLoadOfflineTypeException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnableToLoadProxyTypeException"/> class.
+        /// Initializes a new instance of the <see cref="UnableToLoadOfflineTypeException"/> class.
         /// </summary>
         /// <param name="info">
         ///     The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized
@@ -60,7 +60,7 @@ namespace Nuclei.Communication.Interaction.V1
         /// <exception cref="T:System.Runtime.Serialization.SerializationException">
         /// The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0).
         /// </exception>
-        private UnableToLoadProxyTypeException(SerializationInfo info, StreamingContext context)
+        private UnableToLoadOfflineTypeException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

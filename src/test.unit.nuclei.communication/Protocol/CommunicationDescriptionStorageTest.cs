@@ -31,7 +31,7 @@ namespace Nuclei.Communication.Protocol
         [Test]
         public void RegisterApplicationSubject()
         {
-            var storage = new CommunicationDescriptionStorage();
+            var storage = new ProtocolSubjectStorage();
 
             var subject = new CommunicationSubject("a");
             storage.RegisterApplicationSubject(subject);
@@ -42,7 +42,7 @@ namespace Nuclei.Communication.Protocol
         [Test]
         public void RegisterCommandType()
         {
-            var storage = new CommunicationDescriptionStorage();
+            var storage = new ProtocolSubjectStorage();
             var type = typeof(IMockCommandSetWithTypedTaskReturn);
             storage.RegisterCommandType(type);
 
@@ -62,7 +62,7 @@ namespace Nuclei.Communication.Protocol
         [Test]
         public void RegisterNotificationType()
         {
-            var storage = new CommunicationDescriptionStorage();
+            var storage = new ProtocolSubjectStorage();
             var type = typeof(IMockNotificationSetWithEventHandlerEvent);
             storage.RegisterNotificationType(type);
 
@@ -82,7 +82,7 @@ namespace Nuclei.Communication.Protocol
         [Test]
         public void ToStorage()
         {
-            var storage = new CommunicationDescriptionStorage();
+            var storage = new ProtocolSubjectStorage();
 
             var subject = new CommunicationSubject("a");
             storage.RegisterApplicationSubject(subject);

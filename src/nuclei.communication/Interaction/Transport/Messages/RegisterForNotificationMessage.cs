@@ -12,7 +12,6 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
     /// <summary>
     /// Defines a message that is used to request registration to a notification.
     /// </summary>
-    [Serializable]
     internal sealed class RegisterForNotificationMessage : CommunicationMessage
     {
         /// <summary>

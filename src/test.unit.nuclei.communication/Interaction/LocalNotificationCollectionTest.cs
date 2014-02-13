@@ -76,7 +76,7 @@ namespace Nuclei.Communication.Interaction
             }
 
             Type registeredType = null;
-            var store = new Mock<IStoreCommunicationDescriptions>();
+            var store = new Mock<IStoreProtocolSubjects>();
             {
                 store.Setup(l => l.RegisterNotificationType(It.IsAny<Type>()))
                     .Callback<Type>(t => registeredType = t)
@@ -108,7 +108,7 @@ namespace Nuclei.Communication.Interaction
             }
 
             Type registeredType = null;
-            var store = new Mock<IStoreCommunicationDescriptions>();
+            var store = new Mock<IStoreProtocolSubjects>();
             {
                 store.Setup(l => l.RegisterNotificationType(It.IsAny<Type>()))
                     .Callback<Type>(t => registeredType = t)
@@ -154,7 +154,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var store = new Mock<IStoreCommunicationDescriptions>();
+            var store = new Mock<IStoreProtocolSubjects>();
             {
                 store.Setup(l => l.RegisterNotificationType(It.IsAny<Type>()))
                     .Verifiable();
@@ -211,7 +211,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var store = new Mock<IStoreCommunicationDescriptions>();
+            var store = new Mock<IStoreProtocolSubjects>();
             {
                 store.Setup(l => l.RegisterNotificationType(It.IsAny<Type>()))
                     .Verifiable();
@@ -268,7 +268,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var store = new Mock<IStoreCommunicationDescriptions>();
+            var store = new Mock<IStoreProtocolSubjects>();
             {
                 store.Setup(l => l.RegisterNotificationType(It.IsAny<Type>()))
                     .Verifiable();

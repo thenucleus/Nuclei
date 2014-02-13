@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 
 namespace Nuclei.Communication.Interaction.Transport
@@ -57,16 +56,6 @@ namespace Nuclei.Communication.Interaction.Transport
             {
                 Lokad.Enforce.Argument(() => builder);
             }
-        }
-
-        /// <summary>
-        /// Extracts the correct collection of proxy types from the description.
-        /// </summary>
-        /// <param name="description">The object that contains the proxy type definitions.</param>
-        /// <returns>The collection of proxy types.</returns>
-        protected override IEnumerable<Type> ProxyTypesFromDescription(CommunicationDescription description)
-        {
-            return description.CommandProxies;
         }
 
         /// <summary>
@@ -165,7 +154,7 @@ namespace Nuclei.Communication.Interaction.Transport
             Justification = "Documentation can start with a language keyword")]
         public bool HasCommandFor(EndpointId endpoint, Type commandInterfaceType)
         {
-            lock (m_Lock)
+            lock (Lock)
             {
                 if (m_RemoteCommands.ContainsKey(endpoint))
                 {
@@ -196,7 +185,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <returns>The requested command set.</returns>
         public ICommandSet CommandsFor(EndpointId endpoint, Type commandType)
         {
-            lock (m_Lock)
+            lock (Lock)
             {
                 if (!m_RemoteCommands.ContainsKey(endpoint))
                 {
@@ -219,7 +208,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         /// <param name="endpoint">The ID of the endpoint that owns the commands.</param>
         /// <param name="commandTypes">An array containing the command types for a given endpoint.</param>
-        public void OnReceiptOfEndpointCommands(EndpointId endpoint, OfflineTypeInformation[] commandTypes)
+        public void OnReceiptOfEndpointCommands(EndpointId endpoint, IEnumerable<OfflineTypeInformation> commandTypes)
         {
             OnReceiptOfEndpointProxies(endpoint, commandTypes);
         }

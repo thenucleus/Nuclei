@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 using Nuclei.Diagnostics.Profiling;
@@ -24,11 +23,9 @@ namespace Nuclei.Communication.Interaction.Transport
     internal abstract class RemoteEndpointProxyHub<TProxyObject> : INotifyOfEndpointStateChange where TProxyObject : class
     {
         /// <summary>
-        /// The collection of endpoints which have been contacted for information about 
-        /// their available proxies.
+        /// The object used to lock on.
         /// </summary>
-        private readonly IList<EndpointId> m_WaitingForEndpointInformation
-            = new List<EndpointId>();
+        private readonly object m_Lock = new object();
 
         /// <summary>
         /// The object that stores information about the known endpoints.
@@ -44,11 +41,6 @@ namespace Nuclei.Communication.Interaction.Transport
         /// The object that provides the diagnostic methods for the system.
         /// </summary>
         private readonly SystemDiagnostics m_Diagnostics;
-
-        /// <summary>
-        /// The object used to lock on.
-        /// </summary>
-        protected readonly object m_Lock = new object();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoteEndpointProxyHub{TProxyObject}"/> class.
@@ -83,11 +75,10 @@ namespace Nuclei.Communication.Interaction.Transport
             m_Diagnostics = systemDiagnostics;
         }
 
-        protected void OnReceiptOfEndpointProxies(EndpointId endpoint, OfflineTypeInformation[] proxyTypes)
+        protected void OnReceiptOfEndpointProxies(EndpointId endpoint, IEnumerable<OfflineTypeInformation> proxyTypes)
         {
             using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Received endpoint information"))
             {
-                bool haveStoredEndpointInformation = false;
                 var proxyList = new List<Type>();
                 try
                 {
@@ -99,13 +90,6 @@ namespace Nuclei.Communication.Interaction.Transport
                         // endpoints. Also accessing any method in a proxy is going to be slow because it 
                         // needs to travel to another application and come back (possibly over the network). it seems the
                         // sorted list is the best trade-off (memory vs performance) in this case.
-                        EndpointInformation info;
-                        if (!m_EndpointInformationStorage.TryGetConnectionFor(endpoint, out info))
-                        {
-                            foobar();
-                        }
-
-                        var proxyTypes = ProxyTypesFromDescription(info.InteractionInformation.Description);
                         m_Diagnostics.Log(
                             LevelToLog.Trace,
                             CommunicationConstants.DefaultLogTextPrefix,
@@ -122,7 +106,8 @@ namespace Nuclei.Communication.Interaction.Transport
                             // Hydrate the proxy type. This requires loading the assembly which a) might be slow and b) might fail
                             try
                             {
-                                list.Add(proxy, m_Builder(endpoint, proxy));
+                                var proxyType = LoadProxyType(endpoint, proxy);
+                                list.Add(proxyType, m_Builder(endpoint, proxyType));
                             }
                             catch (UnableToGenerateProxyException)
                             {
@@ -133,7 +118,6 @@ namespace Nuclei.Communication.Interaction.Transport
                         if (list.Count > 0)
                         {
                             AddProxiesToStorage(endpoint, list);
-                            haveStoredEndpointInformation = true;
                             proxyList.AddRange(list.Keys);
                         }
                     }
@@ -142,38 +126,52 @@ namespace Nuclei.Communication.Interaction.Transport
                 {
                     // We don't really care about any exceptions that were thrown. If there was a problem we just remove the endpoint from the
                     // 'waiting list' and move on.
-                    haveStoredEndpointInformation = false;
-                }
-                finally
-                {
-                    lock (m_Lock)
-                    {
-                        if (m_WaitingForEndpointInformation.Contains(endpoint))
-                        {
-                            m_Diagnostics.Log(
-                                LevelToLog.Trace,
-                                CommunicationConstants.DefaultLogTextPrefix,
-                                string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    "No longer waiting for {0} from endpoint: {1}",
-                                    TraceNameForProxyObjects(),
-                                    endpoint));
-
-                            m_WaitingForEndpointInformation.Remove(endpoint);
-                        }
-                    }
                 }
 
                 // Notify the outside world that we have more proxies. Do this outside the lock because a) the notification may take a while and 
                 // b) it may trigger all kinds of other mayhem.
-                if (haveStoredEndpointInformation)
+                using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Notifying of new endpoint"))
                 {
-                    using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Notifying of new endpoint"))
-                    {
-                        RaiseOnEndpointConnected(endpoint);
-                    }
+                    RaiseOnEndpointConnected(endpoint);
                 }
             }
+        }
+
+        private Type LoadProxyType(EndpointId endpoint, OfflineTypeInformation serializedType)
+        {
+            // Hydrate the proxy type. This requires loading the assembly which a) might
+            // be slow and b) might fail
+            Type proxyType;
+            try
+            {
+                proxyType = serializedType.ToType();
+
+                m_Diagnostics.Log(
+                    LevelToLog.Trace,
+                    CommunicationConstants.DefaultLogTextPrefix,
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        "Got {0} from endpoint [{1}] of type {2}.",
+                        TraceNameForProxyObjects(),
+                        endpoint,
+                        proxyType));
+            }
+            catch (UnableToLoadOfflineTypeException)
+            {
+                m_Diagnostics.Log(
+                    LevelToLog.Error,
+                    CommunicationConstants.DefaultLogTextPrefix,
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        "Could not load the {0} type: {1} for endpoint {2}",
+                        TraceNameForProxyObjects(),
+                        serializedType.TypeFullName,
+                        endpoint));
+
+                throw;
+            }
+
+            return proxyType;
         }
 
         private void HandleEndpointSignOut(object sender, EndpointEventArgs eventArgs)
@@ -182,20 +180,6 @@ namespace Nuclei.Communication.Interaction.Transport
             {
                 lock (m_Lock)
                 {
-                    if (m_WaitingForEndpointInformation.Contains(eventArgs.Endpoint))
-                    {
-                        m_Diagnostics.Log(
-                            LevelToLog.Trace,
-                            CommunicationConstants.DefaultLogTextPrefix,
-                            string.Format(
-                                CultureInfo.InvariantCulture,
-                                "No longer waiting for {0} from endpoint [{1}].",
-                                TraceNameForProxyObjects(),
-                                eventArgs.Endpoint));
-
-                        m_WaitingForEndpointInformation.Remove(eventArgs.Endpoint);
-                    }
-
                     if (HasProxyFor(eventArgs.Endpoint))
                     {
                         m_Diagnostics.Log(
@@ -218,51 +202,16 @@ namespace Nuclei.Communication.Interaction.Transport
             }
         }
 
-        /*
-        private Type LoadProxyType(EndpointId endpoint, ISerializedType serializedType)
-        {
-            // Hydrate the proxy type. This requires loading the assembly which a) might
-            // be slow and b) might fail
-            Type proxyType;
-            try
-            {
-                proxyType = ProxyExtensions.ToType(serializedType);
-
-                m_Diagnostics.Log(
-                    LevelToLog.Trace,
-                    CommunicationConstants.DefaultLogTextPrefix,
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Got {0} from endpoint [{1}] of type {2}.",
-                        TraceNameForProxyObjects(),
-                        endpoint,
-                        proxyType));
-            }
-            catch (UnableToLoadProxyTypeException)
-            {
-                m_Diagnostics.Log(
-                    LevelToLog.Error,
-                    CommunicationConstants.DefaultLogTextPrefix,
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Could not load the {0} type: {1} for endpoint {2}",
-                        TraceNameForProxyObjects(),
-                        serializedType.AssemblyQualifiedTypeName,
-                        endpoint));
-
-                throw;
-            }
-
-            return proxyType;
-        }
-        */
-
         /// <summary>
-        /// Extracts the correct collection of proxy types from the description.
+        /// The object used to lock on. Provided to allow derivative classes to use the same lock as the base class.
         /// </summary>
-        /// <param name="description">The object that contains the proxy type definitions.</param>
-        /// <returns>The collection of proxy types.</returns>
-        protected abstract IEnumerable<Type> ProxyTypesFromDescription(CommunicationDescription description);
+        protected object Lock
+        {
+            get
+            {
+                return m_Lock;
+            }
+        }
 
         /// <summary>
         /// Returns the name of the proxy objects for use in the trace logs.

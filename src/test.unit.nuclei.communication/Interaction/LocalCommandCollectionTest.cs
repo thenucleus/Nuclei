@@ -28,7 +28,7 @@ namespace Nuclei.Communication.Interaction
         public void Register()
         {
             Type registeredType = null;
-            var store = new Mock<IStoreCommunicationDescriptions>();
+            var store = new Mock<IStoreProtocolSubjects>();
             {
                 store.Setup(l => l.RegisterCommandType(It.IsAny<Type>()))
                     .Callback<Type>(t => registeredType = t)
@@ -49,7 +49,7 @@ namespace Nuclei.Communication.Interaction
         public void RegisterWithExistingType()
         {
             Type registeredType = null;
-            var store = new Mock<IStoreCommunicationDescriptions>();
+            var store = new Mock<IStoreProtocolSubjects>();
             {
                 store.Setup(l => l.RegisterCommandType(It.IsAny<Type>()))
                     .Callback<Type>(t => registeredType = t)
@@ -71,7 +71,7 @@ namespace Nuclei.Communication.Interaction
         [Test]
         public void CommandsForWithUnknownType()
         {
-            var layer = new Mock<IStoreCommunicationDescriptions>();
+            var layer = new Mock<IStoreProtocolSubjects>();
             var collection = new LocalCommandCollection();
             Assert.IsNull(collection.CommandsFor(typeof(IMockCommandSetWithTaskReturn)));
         }
@@ -79,7 +79,7 @@ namespace Nuclei.Communication.Interaction
         [Test]
         public void CommandsFor()
         {
-            var layer = new Mock<IStoreCommunicationDescriptions>();
+            var layer = new Mock<IStoreProtocolSubjects>();
             var collection = new LocalCommandCollection();
 
             var commands = new Mock<IMockCommandSetWithTaskReturn>();

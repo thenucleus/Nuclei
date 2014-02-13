@@ -17,7 +17,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// <summary>
         /// The object that stores information about the available communication APIs.
         /// </summary>
-        private readonly IStoreCommunicationDescriptions m_Descriptions;
+        private readonly IStoreProtocolSubjects m_Descriptions;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EndpointConnectionApprover"/> class.
@@ -25,7 +25,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="descriptions"/> is <see langword="null" />.
         /// </exception>
-        public EndpointConnectionApprover(IStoreCommunicationDescriptions descriptions)
+        public EndpointConnectionApprover(IStoreProtocolSubjects descriptions)
         {
             {
                 Lokad.Enforce.Argument(() => descriptions);

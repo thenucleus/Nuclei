@@ -28,7 +28,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// <summary>
         /// The object that handles the handshake protocol.
         /// </summary>
-        private readonly IHandleHandshakes m_HandShakeHandler;
+        private readonly IHandleProtocolHandshakes m_HandShakeHandler;
 
         /// <summary>
         /// The object that provides the diagnostics methods.
@@ -38,7 +38,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// <summary>
         /// Initializes a new instance of the <see cref="EndpointConnectProcessAction"/> class.
         /// </summary>
-        /// <param name="handshakeHandler">
+        /// <param name="protocolHandshakeHandler">
         /// The object that handles the handshake protocol for the current endpoint.
         /// </param>
         /// <param name="channelTypes">
@@ -47,7 +47,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// </param>
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="handshakeHandler"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="protocolHandshakeHandler"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="channelTypes"/> is <see langword="null" />.
@@ -59,12 +59,12 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public EndpointConnectProcessAction(
-            IHandleHandshakes handshakeHandler,
+            IHandleProtocolHandshakes protocolHandshakeHandler,
             IEnumerable<ChannelTemplate> channelTypes,
             SystemDiagnostics systemDiagnostics)
         {
             {
-                Lokad.Enforce.Argument(() => handshakeHandler);
+                Lokad.Enforce.Argument(() => protocolHandshakeHandler);
 
                 Lokad.Enforce.Argument(() => channelTypes);
                 Lokad.Enforce.With<InvalidChannelTypeException>(
@@ -75,7 +75,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             }
 
             m_ConnectedChannelTypes.AddRange(channelTypes);
-            m_HandShakeHandler = handshakeHandler;
+            m_HandShakeHandler = protocolHandshakeHandler;
             m_Diagnostics = systemDiagnostics;
         }
 

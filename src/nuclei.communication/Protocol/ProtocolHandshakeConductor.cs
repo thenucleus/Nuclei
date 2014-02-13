@@ -19,9 +19,9 @@ using Nuclei.Diagnostics.Logging;
 namespace Nuclei.Communication.Protocol
 {
     /// <summary>
-    /// Defines the protocol for connection handshake behavior.
+    /// Defines the handshake behaviour for the protocol layer.
     /// </summary>
-    internal sealed class HandshakeConductor : IHandleHandshakes
+    internal sealed class ProtocolHandshakeConductor : IHandleProtocolHandshakes
     {
         /// <summary>
         /// Stores information about the messages that have been send and received.
@@ -133,7 +133,7 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// The object that stores information about the available communication APIs.
         /// </summary>
-        private readonly IStoreCommunicationDescriptions m_Descriptions;
+        private readonly IStoreProtocolSubjects m_Descriptions;
 
         /// <summary>
         /// The collection containing the types of channel that should be opened.
@@ -146,7 +146,7 @@ namespace Nuclei.Communication.Protocol
         private readonly SystemDiagnostics m_Diagnostics;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HandshakeConductor"/> class.
+        /// Initializes a new instance of the <see cref="ProtocolHandshakeConductor"/> class.
         /// </summary>
         /// <param name="potentialEndpoints">The collection of endpoints that have been discovered.</param>
         /// <param name="discoveryChannel">The object that provides the information about the entry discovery channel for the application.</param>
@@ -182,12 +182,12 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
-        public HandshakeConductor(
+        public ProtocolHandshakeConductor(
             IStoreEndpointApprovalState potentialEndpoints,
             IProvideLocalConnectionInformation discoveryChannel,
             IEnumerable<IDiscoverOtherServices> discoverySources,
             ICommunicationLayer layer,
-            IStoreCommunicationDescriptions descriptions,
+            IStoreProtocolSubjects descriptions,
             IEnumerable<IApproveEndpointConnections> connectionApprovers,
             IEnumerable<ChannelTemplate> allowedChannelTypes,
             SystemDiagnostics systemDiagnostics)
@@ -385,30 +385,6 @@ namespace Nuclei.Communication.Protocol
                             "New endpoint {0} connected via {1}.",
                             information.Id,
                             information.ProtocolInformation.MessageAddress));
-                }
-                else
-                {
-                    EndpointInformation storedInformation;
-                    if (m_PotentialEndpoints.TryGetConnectionFor(information.Id, out storedInformation))
-                    {
-                        /*
-                         * For the moment we don't need this, but it may come back when we need to handle
-                         * Description information stuff ...
-                         * 
-                        if (!storedInformation.IsComplete && information.IsComplete)
-                        {
-                            m_PotentialEndpoints.TryUpdate(information);
-
-                            m_Diagnostics.Log(
-                                LevelToLog.Trace,
-                                CommunicationConstants.DefaultLogTextPrefix,
-                                string.Format(
-                                    CultureInfo.InvariantCulture,
-                                    "Endpoint information for {0} updated.",
-                                    information.Id));
-                        }
-                        */
-                    }
                 }
             }
         }

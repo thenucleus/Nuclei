@@ -13,7 +13,6 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
     /// Defines a message that indicates that the an <see cref="ICommandSet"/> method was
     /// invoked.
     /// </summary>
-    [Serializable]
     internal sealed class CommandInvokedMessage : CommunicationMessage
     {
         /// <summary>

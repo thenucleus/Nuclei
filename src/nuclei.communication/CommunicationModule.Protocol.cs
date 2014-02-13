@@ -52,16 +52,16 @@ namespace Nuclei.Communication
         private static void RegisterHandshakeLayer(ContainerBuilder builder, IEnumerable<ChannelTemplate> allowedChannelTemplates)
         {
             builder.Register(
-                c => new HandshakeConductor(
+                c => new ProtocolHandshakeConductor(
                     c.Resolve<IStoreEndpointApprovalState>(),
                     c.Resolve<IProvideLocalConnectionInformation>(),
                     c.Resolve<IEnumerable<IDiscoverOtherServices>>(),
                     c.Resolve<ICommunicationLayer>(),
-                    c.Resolve<IStoreCommunicationDescriptions>(),
+                    c.Resolve<IStoreProtocolSubjects>(),
                     c.Resolve<IEnumerable<IApproveEndpointConnections>>(),
                     allowedChannelTemplates,
                     c.Resolve<SystemDiagnostics>()))
-                .As<IHandleHandshakes>()
+                .As<IHandleProtocolHandshakes>()
                 .SingleInstance();
         }
 
@@ -118,7 +118,7 @@ namespace Nuclei.Communication
                     {
                         var ctx = c.Resolve<IComponentContext>();
                         return new EndpointConnectProcessAction(
-                            c.Resolve<IHandleHandshakes>(),
+                            c.Resolve<IHandleProtocolHandshakes>(),
                             from channelType in ctx.Resolve<IEnumerable<IProtocolChannelTemplate>>() select channelType.ChannelTemplate,
                             c.Resolve<SystemDiagnostics>());
                     })
@@ -421,7 +421,7 @@ namespace Nuclei.Communication
 
         private static void RegisterCommunicationDescriptions(ContainerBuilder builder, IEnumerable<CommunicationSubject> subjects)
         {
-            builder.Register(c => new CommunicationDescriptionStorage())
+            builder.Register(c => new ProtocolSubjectStorage())
                 .OnActivated(
                     a =>
                     {
@@ -430,7 +430,7 @@ namespace Nuclei.Communication
                             a.Instance.RegisterApplicationSubject(subject);
                         }
                     })
-                .As<IStoreCommunicationDescriptions>()
+                .As<IStoreProtocolSubjects>()
                 .SingleInstance();
         }
 

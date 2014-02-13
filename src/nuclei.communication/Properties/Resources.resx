@@ -270,11 +270,11 @@
   <data name="Exceptions_Messages_UnableToGenerateProxy" xml:space="preserve">
     <value>Unable to generate a proxy for the given type.</value>
   </data>
-  <data name="Exceptions_Messages_UnableToLoadProxyType" xml:space="preserve">
-    <value>An ICommandSet type could not be loaded.</value>
+  <data name="Exceptions_Messages_UnableToLoadOfflineType" xml:space="preserve">
+    <value>An offline type could not be loaded.</value>
   </data>
-  <data name="Exceptions_Messages_UnableToLoadProxyType_WithTypeName" xml:space="preserve">
-    <value>An proxy of type {0} could not be loaded.</value>
+  <data name="Exceptions_Messages_UnableToLoadOfflineType_WithTypeName" xml:space="preserve">
+    <value>An offline type of type {0} could not be loaded.</value>
   </data>
   <data name="Exceptions_Messages_UnknownCommandSet" xml:space="preserve">
     <value>The requested command set has not been registered.</value>

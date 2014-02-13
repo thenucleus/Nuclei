@@ -254,7 +254,7 @@ namespace Nuclei.Communication.Protocol
         /// <param name="endpoint">The ID of the endpoint.</param>
         /// <param name="information">The connection information for the endpoint.</param>
         /// <returns>
-        /// <see langword="true" /> if the endpoint was approved successfully; otherwise, <see langword="false" />.
+        /// <see langword="true" /> if the information for the endpoint was retrieved successfully; otherwise, <see langword="false" />.
         /// </returns>
         public bool TryGetConnectionFor(EndpointId endpoint, out EndpointInformation information)
         {

@@ -82,16 +82,5 @@ namespace Nuclei.Communication.Protocol
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
         bool IsWaitingForApproval(EndpointId endpoint);
-
-        /// <summary>
-        /// Removes the endpoint from the storage.
-        /// </summary>
-        /// <param name="endpoint">The ID of the endpoint.</param>
-        /// <returns>
-        /// <see langword="true" /> if the endpoint was removed successfully; otherwise, <see langword="false" />.
-        /// </returns>
-        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
-            Justification = "Documentation can start with a language keyword")]
-        bool TryRemoveEndpoint(EndpointId endpoint);
     }
 }

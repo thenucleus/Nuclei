@@ -524,20 +524,20 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An ICommandSet type could not be loaded..
+        ///   Looks up a localized string similar to An offline type could not be loaded..
         /// </summary>
-        internal static string Exceptions_Messages_UnableToLoadProxyType {
+        internal static string Exceptions_Messages_UnableToLoadOfflineType {
             get {
-                return ResourceManager.GetString("Exceptions_Messages_UnableToLoadProxyType", resourceCulture);
+                return ResourceManager.GetString("Exceptions_Messages_UnableToLoadOfflineType", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An proxy of type {0} could not be loaded..
+        ///   Looks up a localized string similar to An offline type of type {0} could not be loaded..
         /// </summary>
-        internal static string Exceptions_Messages_UnableToLoadProxyType_WithTypeName {
+        internal static string Exceptions_Messages_UnableToLoadOfflineType_WithTypeName {
             get {
-                return ResourceManager.GetString("Exceptions_Messages_UnableToLoadProxyType_WithTypeName", resourceCulture);
+                return ResourceManager.GetString("Exceptions_Messages_UnableToLoadOfflineType_WithTypeName", resourceCulture);
             }
         }
         

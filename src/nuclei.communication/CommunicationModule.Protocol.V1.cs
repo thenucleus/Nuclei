@@ -87,7 +87,7 @@ namespace Nuclei.Communication
         private static void RegisterV1ConnectionApprover(ContainerBuilder builder)
         {
             builder.Register(c => new EndpointConnectionApprover(
-                    c.Resolve<IStoreCommunicationDescriptions>()))
+                    c.Resolve<IStoreProtocolSubjects>()))
                 .As<IApproveEndpointConnections>();
         }
     }

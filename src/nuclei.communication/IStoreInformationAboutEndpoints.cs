@@ -31,10 +31,21 @@ namespace Nuclei.Communication
         /// <param name="endpoint">The ID of the endpoint.</param>
         /// <param name="information">The connection information for the endpoint.</param>
         /// <returns>
-        /// <see langword="true" /> if the endpoint was approved successfully; otherwise, <see langword="false" />.
+        /// <see langword="true" /> if the information for the endpoint was retrieved successfully; otherwise, <see langword="false" />.
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
         bool TryGetConnectionFor(EndpointId endpoint, out EndpointInformation information);
+
+        /// <summary>
+        /// Removes the endpoint from the storage.
+        /// </summary>
+        /// <param name="endpoint">The ID of the endpoint.</param>
+        /// <returns>
+        /// <see langword="true" /> if the endpoint was removed successfully; otherwise, <see langword="false" />.
+        /// </returns>
+        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
+            Justification = "Documentation can start with a language keyword")]
+        bool TryRemoveEndpoint(EndpointId endpoint);
     }
 }

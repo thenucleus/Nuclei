@@ -13,7 +13,6 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
     /// Defines a message that indicates that the an <see cref="INotificationSet"/> event was
     /// raised.
     /// </summary>
-    [Serializable]
     internal sealed class NotificationRaisedMessage : CommunicationMessage
     {
         /// <summary>

@@ -39,7 +39,7 @@ namespace Nuclei.Communication.Protocol
             var remoteMessageAddress = @"http://othermachine";
             var remoteDataAddress = @"http://othermachine/data";
 
-            var communicationDescriptions = new CommunicationDescriptionStorage();
+            var communicationDescriptions = new ProtocolSubjectStorage();
             communicationDescriptions.RegisterApplicationSubject(subject);
 
             var storage = new EndpointInformationStorage();
@@ -70,7 +70,7 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
 
-            var layer = new HandshakeConductor(
+            var layer = new ProtocolHandshakeConductor(
                 storage,
                 new[]
                     {
@@ -127,7 +127,7 @@ namespace Nuclei.Communication.Protocol
             var remoteMessageAddress = @"http://othermachine"; 
             var remoteDataAddress = @"http://othermachine/data";
 
-            var communicationDescriptions = new CommunicationDescriptionStorage();
+            var communicationDescriptions = new ProtocolSubjectStorage();
             communicationDescriptions.RegisterApplicationSubject(subject);
 
             var storage = new EndpointInformationStorage();
@@ -158,7 +158,7 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
 
-            var layer = new HandshakeConductor(
+            var layer = new ProtocolHandshakeConductor(
                 storage,
                 new[]
                     {
@@ -202,7 +202,7 @@ namespace Nuclei.Communication.Protocol
             var remoteEndpoint = new EndpointId("b:10");
             var remoteMessageAddress = @"http://othermachine";
 
-            var communicationDescriptions = new CommunicationDescriptionStorage();
+            var communicationDescriptions = new ProtocolSubjectStorage();
             communicationDescriptions.RegisterApplicationSubject(subject);
 
             var storage = new EndpointInformationStorage();
@@ -237,7 +237,7 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
 
-            var layer = new HandshakeConductor(
+            var layer = new ProtocolHandshakeConductor(
                 storage,
                 new[]
                     {
@@ -286,7 +286,7 @@ namespace Nuclei.Communication.Protocol
             var remoteMessageAddress = @"http://othermachine";
             var remoteDataAddress = @"http://othermachine/data";
 
-            var communicationDescriptions = new CommunicationDescriptionStorage();
+            var communicationDescriptions = new ProtocolSubjectStorage();
             communicationDescriptions.RegisterApplicationSubject(subject);
 
             var storage = new EndpointInformationStorage();
@@ -310,7 +310,7 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
 
-            var layer = new HandshakeConductor(
+            var layer = new ProtocolHandshakeConductor(
                 storage,
                 new[]
                     {

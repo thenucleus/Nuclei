@@ -4,6 +4,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Nuclei.Communication.Interaction.Transport
 {
     /// <summary>
@@ -16,6 +18,6 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         /// <param name="endpoint">The ID of the endpoint that owns the notifications.</param>
         /// <param name="notificationTypes">An array containing the notification types for a given endpoint.</param>
-        void OnReceiptOfEndpointNotifications(EndpointId endpoint, OfflineTypeInformation[] notificationTypes);
+        void OnReceiptOfEndpointNotifications(EndpointId endpoint, IEnumerable<OfflineTypeInformation> notificationTypes);
     }
 }

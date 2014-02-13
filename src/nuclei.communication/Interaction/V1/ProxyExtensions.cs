@@ -47,46 +47,46 @@ namespace Nuclei.Communication.Interaction.V1
             }
             catch (TargetInvocationException e)
             {
-                throw new UnableToLoadProxyTypeException(
+                throw new UnableToLoadOfflineTypeException(
                     string.Format(
                         CultureInfo.InvariantCulture, 
-                        Resources.Exceptions_Messages_UnableToLoadProxyType_WithTypeName, 
+                        Resources.Exceptions_Messages_UnableToLoadOfflineType_WithTypeName, 
                         serializedProxyType.AssemblyQualifiedTypeName),
                     e);
             }
             catch (TypeLoadException e)
             {
-                throw new UnableToLoadProxyTypeException(
+                throw new UnableToLoadOfflineTypeException(
                     string.Format(
                         CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadProxyType_WithTypeName,
+                        Resources.Exceptions_Messages_UnableToLoadOfflineType_WithTypeName,
                         serializedProxyType.AssemblyQualifiedTypeName),
                     e);
             }
             catch (FileNotFoundException e)
             {
-                throw new UnableToLoadProxyTypeException(
+                throw new UnableToLoadOfflineTypeException(
                     string.Format(
                         CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadProxyType_WithTypeName,
+                        Resources.Exceptions_Messages_UnableToLoadOfflineType_WithTypeName,
                         serializedProxyType.AssemblyQualifiedTypeName),
                     e);
             }
             catch (FileLoadException e)
             {
-                throw new UnableToLoadProxyTypeException(
+                throw new UnableToLoadOfflineTypeException(
                     string.Format(
                         CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadProxyType_WithTypeName,
+                        Resources.Exceptions_Messages_UnableToLoadOfflineType_WithTypeName,
                         serializedProxyType.AssemblyQualifiedTypeName),
                     e);
             }
             catch (BadImageFormatException e)
             {
-                throw new UnableToLoadProxyTypeException(
+                throw new UnableToLoadOfflineTypeException(
                     string.Format(
                         CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadProxyType_WithTypeName,
+                        Resources.Exceptions_Messages_UnableToLoadOfflineType_WithTypeName,
                         serializedProxyType.AssemblyQualifiedTypeName),
                     e);
             }

@@ -21,7 +21,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         [Test]
         public void MessageTypeToProcess()
         {
-            var sink = new Mock<IHandleHandshakes>();
+            var sink = new Mock<IHandleProtocolHandshakes>();
             var channelTypes = new[] 
                 { 
                     ChannelTemplate.TcpIP
@@ -38,7 +38,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             ChannelConnectionInformation processedChannel = null;
             CommunicationDescription processedDescription = null;
             MessageId processedMessageId = null;
-            var sink = new Mock<IHandleHandshakes>();
+            var sink = new Mock<IHandleProtocolHandshakes>();
             {
                 sink.Setup(s => s.ContinueHandshakeWith(
                         It.IsAny<ChannelConnectionInformation>(), 
