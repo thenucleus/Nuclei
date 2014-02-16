@@ -96,32 +96,18 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
 
             try
             {
-                var returnMessage = new UnknownMessageTypeMessage(m_Current, message.Id);
+                var returnMessage = new FailureMessage(m_Current, message.Id);
                 m_SendMessage(message.Sender, returnMessage);
             }
             catch (Exception e)
             {
-                try
-                {
-                    m_Diagnostics.Log(
-                        LevelToLog.Error,
-                        CommunicationConstants.DefaultLogTextPrefix,
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "Error while sending a message indicating that received message was of an unknown type. Exception is: {0}",
-                            e));
-                    m_SendMessage(message.Sender, new FailureMessage(m_Current, message.Id));
-                }
-                catch (Exception errorSendingException)
-                {
-                    m_Diagnostics.Log(
-                        LevelToLog.Error,
-                        CommunicationConstants.DefaultLogTextPrefix,
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "Error while trying to send unknown message response. Exception is: {0}",
-                            errorSendingException));
-                }
+                m_Diagnostics.Log(
+                    LevelToLog.Error,
+                    CommunicationConstants.DefaultLogTextPrefix,
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        "Error while trying to send unknown message response. Exception is: {0}",
+                        e));
             }
         }
     }
