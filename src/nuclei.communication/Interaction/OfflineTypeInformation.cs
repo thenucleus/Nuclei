@@ -8,9 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.IO;
 using System.Reflection;
-using Nuclei.Communication.Properties;
 
 namespace Nuclei.Communication.Interaction
 {
@@ -152,73 +150,6 @@ namespace Nuclei.Communication.Interaction
             return !ReferenceEquals(other, null) 
                 && string.Equals(TypeFullName, other.TypeFullName, StringComparison.OrdinalIgnoreCase) 
                 && AssemblyName.Name.Equals(other.AssemblyName.Name);
-        }
-
-        /// <summary>
-        /// Returns the <see cref="Type"/> that matches the current offline type.
-        /// </summary>
-        /// <returns>The type that matches the current offline type.</returns>
-        public Type ToType()
-        {
-            // Hydrate the proxy type. This requires loading the assembly which a) might
-            // be slow and b) might fail
-            try
-            {
-                // Generate the non-strong named assembly qualified name for the type, based
-                // on the remarks from here: http://msdn.microsoft.com/en-us/library/w3f99sx1(v=vs.110).aspx
-                var typeName = string.Format(
-                    CultureInfo.InvariantCulture,
-                    "{0},{1}",
-                    TypeFullName,
-                    AssemblyName.Name);
-
-                return Type.GetType(typeName);
-            }
-            catch (TargetInvocationException e)
-            {
-                throw new UnableToLoadOfflineTypeException(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadOfflineType_WithTypeName,
-                        TypeFullName),
-                    e);
-            }
-            catch (TypeLoadException e)
-            {
-                throw new UnableToLoadOfflineTypeException(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadOfflineType_WithTypeName,
-                        TypeFullName),
-                    e);
-            }
-            catch (FileNotFoundException e)
-            {
-                throw new UnableToLoadOfflineTypeException(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadOfflineType_WithTypeName,
-                        TypeFullName),
-                    e);
-            }
-            catch (FileLoadException e)
-            {
-                throw new UnableToLoadOfflineTypeException(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadOfflineType_WithTypeName,
-                        TypeFullName),
-                    e);
-            }
-            catch (BadImageFormatException e)
-            {
-                throw new UnableToLoadOfflineTypeException(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadOfflineType_WithTypeName,
-                        TypeFullName),
-                    e);
-            }
         }
 
         /// <summary>

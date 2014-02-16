@@ -8,12 +8,12 @@ using System.Diagnostics.CodeAnalysis;
 using Nuclei.Nunit.Extensions;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
                 Justification = "Unit tests do not need documentation.")]
-    public sealed class UnableToLoadOfflineTypeExceptionTest : ExceptionContractVerifier<UnableToLoadOfflineTypeException>
+    public sealed class UnableToLoadTypeExceptionTest : ExceptionContractVerifier<UnableToLoadTypeException>
     {
     }
 }

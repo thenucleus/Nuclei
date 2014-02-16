@@ -121,7 +121,6 @@
     <Compile Include="Interaction\TypeIsNotAValidCommandSetExceptionTest.cs" />
     <Compile Include="Interaction\TypeIsNotAValidNotificationSetExceptionTest.cs" />
     <Compile Include="Interaction\UnableToGenerateProxyExceptionTest.cs" />
-    <Compile Include="Interaction\UnableToLoadProxyTypeException.cs" />
     <Compile Include="Interaction\UnknownCommandSetExceptionTest.cs" />
     <Compile Include="UnknownEndpointIdFormatExceptionTest.cs" />
     <Compile Include="Interaction\UnknownNotificationSetExceptionTest.cs" />

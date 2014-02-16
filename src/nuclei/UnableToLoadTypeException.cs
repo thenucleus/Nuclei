@@ -6,45 +6,45 @@
 
 using System;
 using System.Runtime.Serialization;
-using Nuclei.Communication.Properties;
+using Nuclei.Properties;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei
 {
     /// <summary>
     /// An exception thrown when a type could not be loaded.
     /// </summary>
     [Serializable]
-    public sealed class UnableToLoadOfflineTypeException : Exception
+    public sealed class UnableToLoadTypeException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnableToLoadOfflineTypeException"/> class.
+        /// Initializes a new instance of the <see cref="UnableToLoadTypeException"/> class.
         /// </summary>
-        public UnableToLoadOfflineTypeException()
-            : this(Resources.Exceptions_Messages_UnableToLoadOfflineType)
+        public UnableToLoadTypeException()
+            : this(Resources.Exceptions_Messages_UnableToLoadType)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnableToLoadOfflineTypeException"/> class.
+        /// Initializes a new instance of the <see cref="UnableToLoadTypeException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
-        public UnableToLoadOfflineTypeException(string message) 
+        public UnableToLoadTypeException(string message) 
             : base(message)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnableToLoadOfflineTypeException"/> class.
+        /// Initializes a new instance of the <see cref="UnableToLoadTypeException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
-        public UnableToLoadOfflineTypeException(string message, Exception innerException)
+        public UnableToLoadTypeException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnableToLoadOfflineTypeException"/> class.
+        /// Initializes a new instance of the <see cref="UnableToLoadTypeException"/> class.
         /// </summary>
         /// <param name="info">
         ///     The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized
@@ -60,7 +60,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="T:System.Runtime.Serialization.SerializationException">
         /// The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0).
         /// </exception>
-        private UnableToLoadOfflineTypeException(SerializationInfo info, StreamingContext context)
+        private UnableToLoadTypeException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

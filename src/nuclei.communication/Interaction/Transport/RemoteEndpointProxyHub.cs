@@ -144,8 +144,7 @@ namespace Nuclei.Communication.Interaction.Transport
             Type proxyType;
             try
             {
-                proxyType = serializedType.ToType();
-
+                proxyType = TypeLoader.FromPartialInformation(serializedType.TypeFullName, serializedType.AssemblyName.Name);
                 m_Diagnostics.Log(
                     LevelToLog.Trace,
                     CommunicationConstants.DefaultLogTextPrefix,
@@ -156,7 +155,7 @@ namespace Nuclei.Communication.Interaction.Transport
                         endpoint,
                         proxyType));
             }
-            catch (UnableToLoadOfflineTypeException)
+            catch (UnableToLoadTypeException)
             {
                 m_Diagnostics.Log(
                     LevelToLog.Error,
