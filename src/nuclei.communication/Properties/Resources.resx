@@ -201,6 +201,9 @@
   <data name="Exceptions_Messages_MissingEndpointId" xml:space="preserve">
     <value>The endpoint discovery message did not provide an endpoint ID. Contact information for the endpoint is incomplete without the ID.</value>
   </data>
+  <data name="Exceptions_Messages_MissingObjectDataSerializer" xml:space="preserve">
+    <value>No object data serializer was provided for the given object type.</value>
+  </data>
   <data name="Exceptions_Messages_NoCommunicationSubjectsRegistered" xml:space="preserve">
     <value>No communication subjects have been registered. This may result in the rejection of all incoming endpoint connections.</value>
   </data>
@@ -269,12 +272,6 @@
   </data>
   <data name="Exceptions_Messages_UnableToGenerateProxy" xml:space="preserve">
     <value>Unable to generate a proxy for the given type.</value>
-  </data>
-  <data name="Exceptions_Messages_UnableToLoadOfflineType" xml:space="preserve">
-    <value>An offline type could not be loaded.</value>
-  </data>
-  <data name="Exceptions_Messages_UnableToLoadOfflineType_WithTypeName" xml:space="preserve">
-    <value>An offline type of type {0} could not be loaded.</value>
   </data>
   <data name="Exceptions_Messages_UnknownCommandSet" xml:space="preserve">
     <value>The requested command set has not been registered.</value>

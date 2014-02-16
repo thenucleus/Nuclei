@@ -134,6 +134,7 @@
     <Compile Include="Interaction\CommandData.cs" />
     <Compile Include="Interaction\CommunicationSubjectGroup.cs" />
     <Compile Include="Interaction\IHandleInteractionHandshakes.cs" />
+    <Compile Include="Interaction\ISerializeObjectData.cs" />
     <Compile Include="Interaction\IStoreInteractionSubjects.cs" />
     <Compile Include="Interaction\OfflineTypeInformation.cs" />
     <Compile Include="Interaction\CommandInvokedData.cs" />
@@ -147,6 +148,19 @@
     <Compile Include="Interaction\Transport\Messages\EndpointInteractionInformationMessage.cs" />
     <Compile Include="Interaction\Transport\Messages\EndpointInteractionInformationResponseMessage.cs" />
     <Compile Include="Interaction\Transport\Messages\Processors\EndpointInteractionInformationProcessAction.cs" />
+    <Compile Include="Interaction\Transport\MissingObjectDataSerializerException.cs" />
+    <Compile Include="Interaction\V1\DataObjects\CommandInvocationData.cs" />
+    <Compile Include="Interaction\V1\DataObjects\CommandInvocationResponseData.cs" />
+    <Compile Include="Interaction\V1\DataObjects\Converters\CommandInvocationConverter.cs" />
+    <Compile Include="Interaction\V1\DataObjects\Converters\CommandInvocationResponseConverter.cs" />
+    <Compile Include="Interaction\V1\DataObjects\EndpointInteractionInformationData.cs" />
+    <Compile Include="Interaction\V1\DataObjects\EndpointInteractionInformationResponseData.cs" />
+    <Compile Include="Interaction\V1\DataObjects\NotificationRaisedData.cs" />
+    <Compile Include="Interaction\V1\DataObjects\NotificationRegistrationData.cs" />
+    <Compile Include="Interaction\V1\DataObjects\NotificationUnregistrationData.cs" />
+    <Compile Include="Interaction\V1\SerializedSubjectInformation.cs" />
+    <Compile Include="Interaction\V1\SerializedTypeFallback.cs" />
+    <Compile Include="Interaction\V1\SerializedVersionedType.cs" />
     <Compile Include="Interaction\VersionedTypeFallback.cs" />
     <Compile Include="IProtocolVersionMetaData.cs" />
     <Compile Include="IProvideLocalConnectionInformation.cs" />
@@ -343,9 +357,7 @@
       <Name>Nuclei</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interaction\V1\DataObjects\Converters\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- 
        To modify your build process, add your task inside one of the targets below and uncomment it. 
