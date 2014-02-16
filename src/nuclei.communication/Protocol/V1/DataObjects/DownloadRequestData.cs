@@ -16,7 +16,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects
     internal sealed class DownloadRequestData : DataObjectBase
     {
         /// <summary>
-        /// Gets the token that indicates which file should be uploaded.
+        /// Gets or sets the token that indicates which file should be uploaded.
         /// </summary>
         [DataMember]
         public UploadToken Token
