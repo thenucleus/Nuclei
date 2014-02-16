@@ -89,6 +89,8 @@
     <Compile Include="TypeComparer.cs" />
     <Compile Include="TypeEqualityComparer.cs" />
     <Compile Include="TypeExtensions.cs" />
+    <Compile Include="TypeLoader.cs" />
+    <Compile Include="UnableToLoadTypeException.cs" />
   </ItemGroup>
   <!-- Indicate that we depend on the SolutionLevel build projects -->
   <ItemGroup>
