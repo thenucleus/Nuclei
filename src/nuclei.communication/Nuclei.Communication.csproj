@@ -153,6 +153,11 @@
     <Compile Include="Interaction\V1\DataObjects\CommandInvocationResponseData.cs" />
     <Compile Include="Interaction\V1\DataObjects\Converters\CommandInvocationConverter.cs" />
     <Compile Include="Interaction\V1\DataObjects\Converters\CommandInvocationResponseConverter.cs" />
+    <Compile Include="Interaction\V1\DataObjects\Converters\EndpointInteractionInformationConverter.cs" />
+    <Compile Include="Interaction\V1\DataObjects\Converters\EndpointInteractionInformationResponseConverter.cs" />
+    <Compile Include="Interaction\V1\DataObjects\Converters\NotificationRaisedConverter.cs" />
+    <Compile Include="Interaction\V1\DataObjects\Converters\NotificationRegistrationConverter.cs" />
+    <Compile Include="Interaction\V1\DataObjects\Converters\NotificationUnregistrationConverter.cs" />
     <Compile Include="Interaction\V1\DataObjects\EndpointInteractionInformationData.cs" />
     <Compile Include="Interaction\V1\DataObjects\EndpointInteractionInformationResponseData.cs" />
     <Compile Include="Interaction\V1\DataObjects\NotificationRaisedData.cs" />

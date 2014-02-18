@@ -17,9 +17,9 @@ using Nuclei.Communication.Protocol.V1.DataObjects;
 namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
 {
     /// <summary>
-    /// Converts <see cref="CommandInvokedMessage"/> objects to <see cref="CommandInvocationData"/> objects and visa versa.
+    /// Converts <see cref="NotificationRaisedMessage"/> objects to <see cref="NotificationRaisedData"/> objects and visa versa.
     /// </summary>
-    internal sealed class CommandInvocationConverter : IConvertCommunicationMessages
+    internal sealed class NotificationRaisedConverter : IConvertCommunicationMessages
     {
         /// <summary>
         /// The ordered list of serializers for object data.
@@ -27,10 +27,10 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         private readonly IList<ISerializeObjectData> m_TypeSerializers;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandInvocationConverter"/> class.
+        /// Initializes a new instance of the <see cref="NotificationRaisedConverter"/> class.
         /// </summary>
         /// <param name="typeSerializers">The ordered list of serializers for object data.</param>
-        public CommandInvocationConverter(IList<ISerializeObjectData> typeSerializers)
+        public NotificationRaisedConverter(IList<ISerializeObjectData> typeSerializers)
         {
             {
                 Lokad.Enforce.Argument(() => typeSerializers);
@@ -47,7 +47,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         {
             get
             {
-                return typeof(CommandInvokedMessage);
+                return typeof(NotificationRaisedMessage);
             }
         }
 
@@ -59,7 +59,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         {
             get
             {
-                return typeof(CommandInvocationData);
+                return typeof(NotificationRaisedData);
             }
         }
 
@@ -70,7 +70,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// <returns>The communication message containing all the information that was stored in the data structure.</returns>
         public ICommunicationMessage ToMessage(IStoreV1CommunicationData data)
         {
-            var msg = data as CommandInvocationData;
+            var msg = data as NotificationRaisedData;
             if (msg == null)
             {
                 throw new UnknownMessageTypeException();
@@ -82,30 +82,26 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
                     msg.InterfaceType.FullName,
                     msg.InterfaceType.AssemblyName);
 
-                var parameterValues = new Tuple<Type, object>[msg.ParameterTypes.Length];
-                for (int i = 0; i < msg.ParameterTypes.Length; i++)
+                var eventArgsType = TypeLoader.FromPartialInformation(
+                    msg.EventArgumentsType.FullName,
+                    msg.EventArgumentsType.AssemblyName);
+
+                var serializedObjectData = msg.EventArguments;
+                var serializer = m_TypeSerializers.FirstOrDefault(t => t.TypeToSerialize.IsAssignableFrom(eventArgsType));
+                if (serializer == null)
                 {
-                    var typeInfo = msg.ParameterTypes[i];
-                    var type = TypeLoader.FromPartialInformation(typeInfo.FullName, typeInfo.AssemblyName);
-
-                    var serializedObjectData = msg.ParameterValues[i];
-                    var serializer = m_TypeSerializers.FirstOrDefault(t => t.TypeToSerialize.IsAssignableFrom(type));
-                    if (serializer == null)
-                    {
-                        throw new MissingObjectDataSerializerException();
-                    }
-
-                    var value = serializer.Deserialize(serializedObjectData);
-                    parameterValues[i] = new Tuple<Type, object>(type, value);
+                    throw new MissingObjectDataSerializerException();
                 }
 
-                return new CommandInvokedMessage(
+                var eventArgs = serializer.Deserialize(serializedObjectData) as EventArgs;
+
+                return new NotificationRaisedMessage(
                     data.Sender,
-                    new CommandInvokedData(
-                        new CommandData(
+                    new Interaction.NotificationRaisedData(
+                        new NotificationData(
                             interfaceType,
-                            msg.MethodName),
-                        parameterValues));
+                            msg.EventName), 
+                        eventArgs));
             }
             catch (Exception)
             {
@@ -120,7 +116,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// <returns>The data structure that contains all the information that was stored in the message.</returns>
         public IStoreV1CommunicationData FromMessage(ICommunicationMessage message)
         {
-            var msg = message as CommandInvokedMessage;
+            var msg = message as NotificationRaisedMessage;
             if (msg == null)
             {
                 throw new UnknownMessageTypeException();
@@ -128,41 +124,35 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
 
             try
             {
-                var valuePairs = msg.Invocation.ParameterValues;
-                var parameterTypes = new SerializedType[valuePairs.Length];
-                var parameterValues = new object[valuePairs.Length];
-                for (int i = 0; i < valuePairs.Length; i++)
-                {
-                    var pair = valuePairs[i];
-                    parameterTypes[i] = new SerializedType
-                        {
-                            FullName = pair.Item1.FullName,
-                            AssemblyName = pair.Item1.Assembly.GetName().Name
-                        };
-
-                    var serializer = m_TypeSerializers.FirstOrDefault(t => t.TypeToSerialize.IsInstanceOfType(pair.Item2));
-                    if (serializer == null)
+                var eventArgs = msg.Notification.EventArgs;
+                var eventArgsType = msg.Notification.EventArgs.GetType();
+                var serializedEventArgsType = new SerializedType
                     {
-                        throw new MissingObjectDataSerializerException();
-                    }
+                        FullName = eventArgsType.FullName,
+                        AssemblyName = eventArgsType.Assembly.GetName().Name
+                    };
 
-                    var value = serializer.Serialize(pair.Item2);
-                    parameterValues[i] = value;
+                var serializer = m_TypeSerializers.FirstOrDefault(t => t.TypeToSerialize.IsInstanceOfType(eventArgs));
+                if (serializer == null)
+                {
+                    throw new MissingObjectDataSerializerException();
                 }
 
-                return new CommandInvocationData
+                var value = serializer.Serialize(eventArgs);
+                
+                return new NotificationRaisedData
                     {
                         Id = message.Id,
                         InResponseTo = message.InResponseTo,
                         Sender = message.Sender,
                         InterfaceType = new SerializedType
                             {
-                                FullName = msg.Invocation.Command.InterfaceType.FullName,
-                                AssemblyName = msg.Invocation.Command.InterfaceType.Assembly.GetName().Name
+                                FullName = msg.Notification.Notification.InterfaceType.FullName,
+                                AssemblyName = msg.Notification.Notification.InterfaceType.Assembly.GetName().Name
                             },
-                        MethodName = msg.Invocation.Command.MethodName,
-                        ParameterTypes = parameterTypes,
-                        ParameterValues = parameterValues,
+                        EventName = msg.Notification.Notification.EventName,
+                        EventArgumentsType = serializedEventArgsType,
+                        EventArguments = value,
                     };
             }
             catch (Exception)

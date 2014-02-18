@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Nuclei.Communication.Interaction
     /// <summary>
     /// Defines the order of preference for a set of commands or notifications.
     /// </summary>
-    internal sealed class VersionedTypeFallback
+    internal sealed class VersionedTypeFallback : IEnumerable<Tuple<OfflineTypeInformation, Version>>
     {
         private sealed class VersionedOfflineTypeEqualityComparer : IEqualityComparer<Tuple<OfflineTypeInformation, Version>>
         {
@@ -122,6 +123,28 @@ namespace Nuclei.Communication.Interaction
                 .FirstOrDefault();
 
             return bestMatchPair != null ? bestMatchPair.Item1 : null;
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
+        /// </returns>
+        public IEnumerator<Tuple<OfflineTypeInformation, Version>> GetEnumerator()
+        {
+            return m_Types.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through a collection.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
+        /// </returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
