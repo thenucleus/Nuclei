@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.Serialization;
 using Nuclei.Properties;
 
 namespace Nuclei
@@ -26,6 +27,7 @@ namespace Nuclei
     /// <typeparam name="TId">The type of the id.</typeparam>
     /// <typeparam name="TInternalValue">The type of object that is stored internally as the ID number.</typeparam>
     [Serializable]
+    [DataContract]
     public abstract class Id<TId, TInternalValue> : IIsId<TId>
         where TId : Id<TId, TInternalValue>
         where TInternalValue : IComparable<TInternalValue>, IEquatable<TInternalValue>
@@ -207,6 +209,7 @@ namespace Nuclei
         /// <summary>
         /// The internal value which defines the value for the current ID.
         /// </summary>
+        [DataMember]
         private readonly TInternalValue m_Value;
 
         /// <summary>
