@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Nuclei.Communication.Interaction.Transport.Messages;
@@ -27,6 +28,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// </summary>
         public Type MessageTypeToTranslate
         {
+            [DebuggerStepThrough]
             get
             {
                 return typeof(EndpointInteractionInformationMessage);
@@ -39,6 +41,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// </summary>
         public Type DataTypeToTranslate
         {
+            [DebuggerStepThrough]
             get
             {
                 return typeof(EndpointInteractionInformationData);

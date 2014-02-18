@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 
 namespace Nuclei.Communication.Protocol
 {
@@ -39,6 +40,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         public DataTransferMessage Data
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_Data;

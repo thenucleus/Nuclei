@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Nuclei.Communication.Protocol
 {
@@ -41,6 +42,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         public IEnumerable<CommunicationSubject> Subjects
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_Subjects;

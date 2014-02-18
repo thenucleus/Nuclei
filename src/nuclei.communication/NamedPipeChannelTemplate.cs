@@ -57,6 +57,7 @@ namespace Nuclei.Communication
         /// </summary>
         protected IConfiguration Configuration
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_Configuration;
@@ -68,6 +69,7 @@ namespace Nuclei.Communication
         /// </summary>
         public ChannelTemplate ChannelTemplate
         {
+            [DebuggerStepThrough]
             get
             {
                 return ChannelTemplate.NamedPipe;

@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Nuclei.Communication.Protocol.V1
@@ -39,6 +40,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// </summary>
         public Version ProtocolVersion
         {
+            [DebuggerStepThrough]
             get
             {
                 return ProtocolVersions.V1;

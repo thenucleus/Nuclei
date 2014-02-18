@@ -206,6 +206,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         protected object Lock
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_Lock;

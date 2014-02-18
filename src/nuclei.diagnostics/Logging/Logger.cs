@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
@@ -154,11 +155,13 @@ namespace Nuclei.Diagnostics.Logging
         /// </summary>
         public LevelToLog Level
         {
+            [DebuggerStepThrough]
             get
             {
                 return TranslateFromNlogLevel(m_Logger);
             }
 
+            [DebuggerStepThrough]
             set
             {
                 var nlogLevel = TranslateToNlogLevel(value);

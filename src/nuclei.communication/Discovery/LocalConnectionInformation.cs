@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 
 namespace Nuclei.Communication.Discovery
 {
@@ -44,6 +45,7 @@ namespace Nuclei.Communication.Discovery
         /// </summary>
         public EndpointId Id
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_Id;
@@ -55,6 +57,7 @@ namespace Nuclei.Communication.Discovery
         /// </summary>
         public Uri EntryChannel
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_EntryChannel;

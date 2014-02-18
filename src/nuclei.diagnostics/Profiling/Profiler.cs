@@ -106,6 +106,7 @@ namespace Nuclei.Diagnostics.Profiling
         /// </summary>
         public long CurrentTicks
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_Timer.ElapsedTicks;

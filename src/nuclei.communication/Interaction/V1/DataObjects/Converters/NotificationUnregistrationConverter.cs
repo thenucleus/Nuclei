@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
@@ -24,6 +25,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// </summary>
         public Type MessageTypeToTranslate
         {
+            [DebuggerStepThrough]
             get
             {
                 return typeof(UnregisterFromNotificationMessage);
@@ -36,6 +38,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// </summary>
         public Type DataTypeToTranslate
         {
+            [DebuggerStepThrough]
             get
             {
                 return typeof(NotificationUnregistrationData);

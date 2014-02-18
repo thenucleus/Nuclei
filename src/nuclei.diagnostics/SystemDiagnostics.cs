@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using Nuclei.Diagnostics.Logging;
 using Nuclei.Diagnostics.Profiling;
@@ -77,6 +78,7 @@ namespace Nuclei.Diagnostics
         /// </summary>
         public Profiler Profiler
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_Profiler;

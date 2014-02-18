@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Nuclei.Communication.Protocol
 {
@@ -19,6 +20,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         public static Version Current
         {
+            [DebuggerStepThrough]
             get
             {
                 return V1;
@@ -30,6 +32,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         public static Version V1
         {
+            [DebuggerStepThrough]
             get
             {
                 return new Version(1, 0, 0, 0);

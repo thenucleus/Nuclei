@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using Nuclei.Communication.Protocol.Messages;
 
 namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
@@ -20,6 +21,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
         /// </summary>
         public Type MessageTypeToTranslate
         {
+            [DebuggerStepThrough]
             get
             {
                 return typeof(DataDownloadRequestMessage);
@@ -32,6 +34,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
         /// </summary>
         public Type DataTypeToTranslate
         {
+            [DebuggerStepThrough]
             get
             {
                 return typeof(DownloadRequestData);

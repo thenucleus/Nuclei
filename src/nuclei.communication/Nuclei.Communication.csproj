@@ -266,7 +266,6 @@
     <Compile Include="Interaction\Transport\RemoteNotificationHub.cs" />
     <Compile Include="Protocol\ProtocolVersions.cs" />
     <Compile Include="Protocol\SendingEndpoint.cs" />
-    <Compile Include="Interaction\V1\SerializedEvent.cs" />
     <Compile Include="Interaction\V1\SerializedType.cs" />
     <Compile Include="Protocol\CommunicationDescription.cs" />
     <Compile Include="Protocol\ProtocolSubjectStorage.cs" />

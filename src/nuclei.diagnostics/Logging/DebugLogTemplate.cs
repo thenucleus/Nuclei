@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Nuclei.Configuration;
@@ -59,6 +60,7 @@ namespace Nuclei.Diagnostics.Logging
         /// <value>The name of the template.</value>
         public string Name
         {
+            [DebuggerStepThrough]
             get
             {
                 return "Debug";

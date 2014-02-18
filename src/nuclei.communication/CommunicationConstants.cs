@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using Nuclei.Diagnostics.Profiling;
 
 namespace Nuclei.Communication
@@ -94,6 +95,7 @@ namespace Nuclei.Communication
         /// </summary>
         internal static TimingGroup TimingGroup
         {
+            [DebuggerStepThrough]
             get
             {
                 return s_TimingGroup;

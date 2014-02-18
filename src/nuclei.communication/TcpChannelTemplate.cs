@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Management;
@@ -87,6 +88,7 @@ namespace Nuclei.Communication
         /// </summary>
         protected IConfiguration Configuration
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_Configuration;
@@ -98,6 +100,7 @@ namespace Nuclei.Communication
         /// </summary>
         public ChannelTemplate ChannelTemplate
         {
+            [DebuggerStepThrough]
             get
             {
                 return ChannelTemplate.TcpIP;

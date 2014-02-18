@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using Nuclei.Diagnostics;
@@ -71,6 +72,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// <value>The message type to process.</value>
         public Type MessageTypeToProcess
         {
+            [DebuggerStepThrough]
             get
             {
                 return typeof(ICommunicationMessage);

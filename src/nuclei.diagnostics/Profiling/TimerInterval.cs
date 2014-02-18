@@ -101,6 +101,7 @@ namespace Nuclei.Diagnostics.Profiling
         /// </summary>
         public TimingGroup Group
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_Group;
@@ -112,6 +113,7 @@ namespace Nuclei.Diagnostics.Profiling
         /// </summary>
         public string Description
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_IntervalDescription;
@@ -123,6 +125,7 @@ namespace Nuclei.Diagnostics.Profiling
         /// </summary>
         public long StartedAt
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_StartTicks;
@@ -134,6 +137,7 @@ namespace Nuclei.Diagnostics.Profiling
         /// </summary>
         public long StoppedAt
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_StopTicks;
@@ -146,6 +150,7 @@ namespace Nuclei.Diagnostics.Profiling
         /// </summary>
         public long TotalTicks
         {
+            [DebuggerStepThrough]
             get
             {
                 return (m_StopTicks > 0) ? m_StopTicks - m_StartTicks : 0;

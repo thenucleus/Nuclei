@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -192,6 +193,7 @@ namespace Nuclei.Communication.Protocol.V1
 
         private bool ShouldCreateChannel
         {
+            [DebuggerStepThrough]
             get
             {
                 return (!m_IsDisposed) && ((m_Channel == null) || (m_Channel.State == CommunicationState.Faulted));

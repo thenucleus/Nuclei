@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Nuclei.Diagnostics.Properties;
 
 namespace Nuclei.Diagnostics.Logging
@@ -93,6 +94,7 @@ namespace Nuclei.Diagnostics.Logging
         /// </summary>
         public bool HasAdditionalInformation
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_Properties != null;
@@ -105,6 +107,7 @@ namespace Nuclei.Diagnostics.Logging
         /// </summary>
         public IEnumerable<KeyValuePair<string, object>> Properties
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_Properties;

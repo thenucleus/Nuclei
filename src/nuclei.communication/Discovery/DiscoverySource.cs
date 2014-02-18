@@ -130,6 +130,7 @@ namespace Nuclei.Communication.Discovery
         /// </summary>
         protected bool IsDiscoveryAllowed
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_IsDiscoveryAllowed;

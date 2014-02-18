@@ -56,6 +56,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// <value>The message type to process.</value>
         public Type MessageTypeToProcess
         {
+            [DebuggerStepThrough]
             get
             {
                 return typeof(EndpointDisconnectMessage);

@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.Serialization;
 
@@ -27,6 +28,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         public static MessageId None
         {
+            [DebuggerStepThrough]
             get 
             {
                 return new MessageId(s_NoneId);

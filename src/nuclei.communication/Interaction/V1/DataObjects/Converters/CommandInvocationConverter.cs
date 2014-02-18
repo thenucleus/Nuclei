@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
@@ -45,6 +46,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// </summary>
         public Type MessageTypeToTranslate
         {
+            [DebuggerStepThrough]
             get
             {
                 return typeof(CommandInvokedMessage);
@@ -57,6 +59,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// </summary>
         public Type DataTypeToTranslate
         {
+            [DebuggerStepThrough]
             get
             {
                 return typeof(CommandInvocationData);

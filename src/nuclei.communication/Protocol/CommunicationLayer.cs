@@ -158,6 +158,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         public EndpointId Id
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_Id;
@@ -170,6 +171,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         public bool IsSignedIn
         {
+            [DebuggerStepThrough]
             get
             {
                 return m_AlreadySignedOn;
