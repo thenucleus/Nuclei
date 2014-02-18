@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Runtime.Serialization;
 
 namespace Nuclei.Communication
 {
@@ -12,6 +13,7 @@ namespace Nuclei.Communication
     /// The globally unique ID for a communication endpoint.
     /// </summary>
     [Serializable]
+    [DataContract]
     public sealed class EndpointId : Id<EndpointId, string>
     {
         /// <summary>

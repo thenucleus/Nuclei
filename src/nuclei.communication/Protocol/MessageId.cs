@@ -6,6 +6,7 @@
 
 using System;
 using System.Globalization;
+using System.Runtime.Serialization;
 
 namespace Nuclei.Communication.Protocol
 {
@@ -13,6 +14,7 @@ namespace Nuclei.Communication.Protocol
     /// Defines an ID number for messages.
     /// </summary>
     [Serializable]
+    [DataContract]
     public sealed class MessageId : Id<MessageId, Guid>
     {
         /// <summary>

@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.Serialization;
 using System.Threading;
 
 namespace Nuclei.Communication.Protocol
@@ -29,6 +30,7 @@ namespace Nuclei.Communication.Protocol
     /// </para>
     /// </design>
     [Serializable]
+    [DataContract]
     public sealed class UploadToken : Id<UploadToken, int>
     {
         /// <summary>
