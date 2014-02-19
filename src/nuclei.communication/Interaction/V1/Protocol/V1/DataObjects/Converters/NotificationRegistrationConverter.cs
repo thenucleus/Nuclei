@@ -12,7 +12,7 @@ using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Communication.Protocol.V1;
 using Nuclei.Communication.Protocol.V1.DataObjects;
 
-namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
+namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 {
     /// <summary>
     /// Converts <see cref="RegisterForNotificationMessage"/> objects to <see cref="NotificationRegistrationData"/> objects and visa versa.

@@ -4,32 +4,33 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Protocol.V1.DataObjects;
 
-namespace Nuclei.Communication.Interaction.V1.DataObjects
+namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects
 {
     /// <summary>
-    /// Defines a message that indicates that the sending endpoint wants to unregister for event notifications.
+    /// Defines a message that indicates that the sending endpoint has executed a command
+    /// and has gotten a response value.
     /// </summary>
     [DataContract]
-    internal sealed class NotificationUnregistrationData : DataObjectBase
+    internal sealed class CommandInvocationResponseData : DataObjectBase
     {
         /// <summary>
-        /// Gets or sets the type of interface on which the command was invoked.
+        /// Gets or sets the actual <see cref="Type"/> of the returned value.
         /// </summary>
-        [DataMember]
-        public SerializedType InterfaceType
+        public SerializedType ReturnedType
         {
             get;
             set;
         }
 
         /// <summary>
-        /// Gets or sets the name of the method that was invoked.
+        /// Gets or sets the result of the command execution.
         /// </summary>
         [DataMember]
-        public string EventName
+        public object Result
         {
             get;
             set;

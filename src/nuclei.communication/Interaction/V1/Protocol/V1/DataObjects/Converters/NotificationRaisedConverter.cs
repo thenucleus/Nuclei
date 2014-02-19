@@ -15,10 +15,10 @@ using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Communication.Protocol.V1;
 using Nuclei.Communication.Protocol.V1.DataObjects;
 
-namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
+namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 {
     /// <summary>
-    /// Converts <see cref="NotificationRaisedMessage"/> objects to <see cref="NotificationRaisedData"/> objects and visa versa.
+    /// Converts <see cref="NotificationRaisedMessage"/> objects to <see cref="Protocol.V1.DataObjects.NotificationRaisedData"/> objects and visa versa.
     /// </summary>
     internal sealed class NotificationRaisedConverter : IConvertCommunicationMessages
     {
@@ -62,7 +62,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
             [DebuggerStepThrough]
             get
             {
-                return typeof(NotificationRaisedData);
+                return typeof(Protocol.V1.DataObjects.NotificationRaisedData);
             }
         }
 
@@ -73,7 +73,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// <returns>The communication message containing all the information that was stored in the data structure.</returns>
         public ICommunicationMessage ToMessage(IStoreV1CommunicationData data)
         {
-            var msg = data as NotificationRaisedData;
+            var msg = data as Protocol.V1.DataObjects.NotificationRaisedData;
             if (msg == null)
             {
                 throw new UnknownMessageTypeException();
@@ -143,7 +143,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
 
                 var value = serializer.Serialize(eventArgs);
                 
-                return new NotificationRaisedData
+                return new Protocol.V1.DataObjects.NotificationRaisedData
                     {
                         Id = message.Id,
                         InResponseTo = message.InResponseTo,

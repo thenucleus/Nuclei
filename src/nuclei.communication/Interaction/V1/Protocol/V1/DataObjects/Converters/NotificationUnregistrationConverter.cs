@@ -6,20 +6,18 @@
 
 using System;
 using System.Diagnostics;
-using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Communication.Protocol.V1;
 using Nuclei.Communication.Protocol.V1.DataObjects;
 
-namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
+namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 {
     /// <summary>
-    /// Converts <see cref="EndpointInteractionInformationResponseMessage"/> objects to 
-    /// <see cref="EndpointInteractionInformationResponseData"/> objects and visa versa.
+    /// Converts <see cref="UnregisterFromNotificationMessage"/> objects to <see cref="NotificationUnregistrationData"/> objects and visa versa.
     /// </summary>
-    internal sealed class EndpointInteractionInformationResponseConverter : IConvertCommunicationMessages
+    internal sealed class NotificationUnregistrationConverter : IConvertCommunicationMessages
     {
         /// <summary>
         /// Gets the type of <see cref="ICommunicationMessage"/> objects that the current convertor can
@@ -30,7 +28,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
             [DebuggerStepThrough]
             get
             {
-                return typeof(EndpointInteractionInformationResponseMessage);
+                return typeof(UnregisterFromNotificationMessage);
             }
         }
 
@@ -43,7 +41,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
             [DebuggerStepThrough]
             get
             {
-                return typeof(EndpointInteractionInformationResponseData);
+                return typeof(NotificationUnregistrationData);
             }
         }
 
@@ -54,7 +52,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// <returns>The communication message containing all the information that was stored in the data structure.</returns>
         public ICommunicationMessage ToMessage(IStoreV1CommunicationData data)
         {
-            var msg = data as EndpointInteractionInformationResponseData;
+            var msg = data as NotificationUnregistrationData;
             if (msg == null)
             {
                 throw new UnknownMessageTypeException();
@@ -62,11 +60,15 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
 
             try
             {
-                var state = (InteractionConnectionState)Enum.Parse(typeof(InteractionConnectionState), msg.State);
-                return new EndpointInteractionInformationResponseMessage(
+                var interfaceType = TypeLoader.FromPartialInformation(
+                    msg.InterfaceType.FullName,
+                    msg.InterfaceType.AssemblyName);
+
+                return new UnregisterFromNotificationMessage(
                     data.Sender,
-                    data.InResponseTo,
-                    state);
+                    new NotificationData(
+                        interfaceType,
+                        msg.EventName));
             }
             catch (Exception)
             {
@@ -81,7 +83,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// <returns>The data structure that contains all the information that was stored in the message.</returns>
         public IStoreV1CommunicationData FromMessage(ICommunicationMessage message)
         {
-            var msg = message as EndpointInteractionInformationResponseMessage;
+            var msg = message as UnregisterFromNotificationMessage;
             if (msg == null)
             {
                 throw new UnknownMessageTypeException();
@@ -89,22 +91,27 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
 
             try
             {
-                return new EndpointInteractionInformationResponseData
-                {
-                    Id = message.Id,
-                    InResponseTo = message.InResponseTo,
-                    Sender = message.Sender,
-                    State = msg.State.ToString(),
-                };
+                return new NotificationUnregistrationData
+                    {
+                        Id = message.Id,
+                        InResponseTo = message.InResponseTo,
+                        Sender = message.Sender,
+                        InterfaceType = new SerializedType
+                            {
+                                FullName = msg.Notification.InterfaceType.FullName,
+                                AssemblyName = msg.Notification.InterfaceType.Assembly.GetName().Name
+                            },
+                        EventName = msg.Notification.EventName,
+                    };
             }
             catch (Exception)
             {
                 return new UnknownMessageTypeData
-                {
-                    Id = message.Id,
-                    InResponseTo = message.InResponseTo,
-                    Sender = message.Sender,
-                };
+                    {
+                        Id = message.Id,
+                        InResponseTo = message.InResponseTo,
+                        Sender = message.Sender,
+                    };
             }
         }
     }

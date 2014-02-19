@@ -4,33 +4,23 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Protocol.V1.DataObjects;
 
-namespace Nuclei.Communication.Interaction.V1.DataObjects
+namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects
 {
     /// <summary>
     /// Defines a message that indicates that the sending endpoint has executed a command
     /// and has gotten a response value.
     /// </summary>
     [DataContract]
-    internal sealed class CommandInvocationResponseData : DataObjectBase
+    internal sealed class EndpointInteractionInformationData : DataObjectBase
     {
         /// <summary>
-        /// Gets or sets the actual <see cref="Type"/> of the returned value.
-        /// </summary>
-        public SerializedType ReturnedType
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the result of the command execution.
+        /// Gets or sets the collection containing the communication subject information for the endpoint.
         /// </summary>
         [DataMember]
-        public object Result
+        public SerializedSubjectInformation[] Groups
         {
             get;
             set;

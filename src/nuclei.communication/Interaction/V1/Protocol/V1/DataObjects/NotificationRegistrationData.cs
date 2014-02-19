@@ -7,7 +7,7 @@
 using System.Runtime.Serialization;
 using Nuclei.Communication.Protocol.V1.DataObjects;
 
-namespace Nuclei.Communication.Interaction.V1.DataObjects
+namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects
 {
     /// <summary>
     /// Defines a message that indicates that the sending endpoint wants to register for event notifications.

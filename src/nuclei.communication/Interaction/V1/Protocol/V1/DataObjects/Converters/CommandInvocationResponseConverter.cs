@@ -15,12 +15,12 @@ using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Communication.Protocol.V1;
 using Nuclei.Communication.Protocol.V1.DataObjects;
 
-namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
+namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 {
     /// <summary>
-    /// Converts <see cref="CommandInvokedMessage"/> objects to <see cref="CommandInvocationData"/> objects and visa versa.
+    /// Converts <see cref="CommandInvokedResponseMessage"/> objects to <see cref="CommandInvocationResponseData"/> objects and visa versa.
     /// </summary>
-    internal sealed class CommandInvocationConverter : IConvertCommunicationMessages
+    internal sealed class CommandInvocationResponseConverter : IConvertCommunicationMessages
     {
         /// <summary>
         /// The ordered list of serializers for object data.
@@ -28,10 +28,10 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         private readonly IList<ISerializeObjectData> m_TypeSerializers;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandInvocationConverter"/> class.
+        /// Initializes a new instance of the <see cref="CommandInvocationResponseConverter"/> class.
         /// </summary>
         /// <param name="typeSerializers">The ordered list of serializers for object data.</param>
-        public CommandInvocationConverter(IList<ISerializeObjectData> typeSerializers)
+        public CommandInvocationResponseConverter(IList<ISerializeObjectData> typeSerializers)
         {
             {
                 Lokad.Enforce.Argument(() => typeSerializers);
@@ -49,7 +49,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
             [DebuggerStepThrough]
             get
             {
-                return typeof(CommandInvokedMessage);
+                return typeof(CommandInvokedResponseMessage);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
             [DebuggerStepThrough]
             get
             {
-                return typeof(CommandInvocationData);
+                return typeof(CommandInvocationResponseData);
             }
         }
 
@@ -73,42 +73,30 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// <returns>The communication message containing all the information that was stored in the data structure.</returns>
         public ICommunicationMessage ToMessage(IStoreV1CommunicationData data)
         {
-            var msg = data as CommandInvocationData;
-            if (msg == null)
+            var invocationData = data as CommandInvocationResponseData;
+            if (invocationData == null)
             {
                 throw new UnknownMessageTypeException();
             }
 
             try
             {
-                var interfaceType = TypeLoader.FromPartialInformation(
-                    msg.InterfaceType.FullName,
-                    msg.InterfaceType.AssemblyName);
+                var typeInfo = invocationData.ReturnedType;
+                var type = TypeLoader.FromPartialInformation(typeInfo.FullName, typeInfo.AssemblyName);
 
-                var parameterValues = new Tuple<Type, object>[msg.ParameterTypes.Length];
-                for (int i = 0; i < msg.ParameterTypes.Length; i++)
+                var serializedObjectData = invocationData.Result;
+                var serializer = m_TypeSerializers.FirstOrDefault(t => t.TypeToSerialize.IsAssignableFrom(type));
+                if (serializer == null)
                 {
-                    var typeInfo = msg.ParameterTypes[i];
-                    var type = TypeLoader.FromPartialInformation(typeInfo.FullName, typeInfo.AssemblyName);
-
-                    var serializedObjectData = msg.ParameterValues[i];
-                    var serializer = m_TypeSerializers.FirstOrDefault(t => t.TypeToSerialize.IsAssignableFrom(type));
-                    if (serializer == null)
-                    {
-                        throw new MissingObjectDataSerializerException();
-                    }
-
-                    var value = serializer.Deserialize(serializedObjectData);
-                    parameterValues[i] = new Tuple<Type, object>(type, value);
+                    throw new MissingObjectDataSerializerException();
                 }
 
-                return new CommandInvokedMessage(
+                var returnValue = serializer.Deserialize(serializedObjectData);
+
+                return new CommandInvokedResponseMessage(
                     data.Sender,
-                    new CommandInvokedData(
-                        new CommandData(
-                            interfaceType,
-                            msg.MethodName),
-                        parameterValues));
+                    data.InResponseTo,
+                    returnValue);
             }
             catch (Exception)
             {
@@ -123,49 +111,36 @@ namespace Nuclei.Communication.Interaction.V1.DataObjects.Converters
         /// <returns>The data structure that contains all the information that was stored in the message.</returns>
         public IStoreV1CommunicationData FromMessage(ICommunicationMessage message)
         {
-            var msg = message as CommandInvokedMessage;
-            if (msg == null)
+            var invocationMessage = message as CommandInvokedResponseMessage;
+            if (invocationMessage == null)
             {
                 throw new UnknownMessageTypeException();
             }
 
             try
             {
-                var valuePairs = msg.Invocation.ParameterValues;
-                var parameterTypes = new SerializedType[valuePairs.Length];
-                var parameterValues = new object[valuePairs.Length];
-                for (int i = 0; i < valuePairs.Length; i++)
-                {
-                    var pair = valuePairs[i];
-                    parameterTypes[i] = new SerializedType
-                        {
-                            FullName = pair.Item1.FullName,
-                            AssemblyName = pair.Item1.Assembly.GetName().Name
-                        };
-
-                    var serializer = m_TypeSerializers.FirstOrDefault(t => t.TypeToSerialize.IsInstanceOfType(pair.Item2));
-                    if (serializer == null)
+                var type = invocationMessage.Result.GetType();
+                var returnedType = new SerializedType
                     {
-                        throw new MissingObjectDataSerializerException();
-                    }
+                        FullName = type.FullName,
+                        AssemblyName = type.Assembly.GetName().Name
+                    };
 
-                    var value = serializer.Serialize(pair.Item2);
-                    parameterValues[i] = value;
+                var serializer = m_TypeSerializers.FirstOrDefault(t => t.TypeToSerialize.IsInstanceOfType(type));
+                if (serializer == null)
+                {
+                    throw new MissingObjectDataSerializerException();
                 }
 
-                return new CommandInvocationData
+                var returnValue = serializer.Serialize(invocationMessage.Result);
+                
+                return new CommandInvocationResponseData
                     {
                         Id = message.Id,
                         InResponseTo = message.InResponseTo,
                         Sender = message.Sender,
-                        InterfaceType = new SerializedType
-                            {
-                                FullName = msg.Invocation.Command.InterfaceType.FullName,
-                                AssemblyName = msg.Invocation.Command.InterfaceType.Assembly.GetName().Name
-                            },
-                        MethodName = msg.Invocation.Command.MethodName,
-                        ParameterTypes = parameterTypes,
-                        ParameterValues = parameterValues,
+                        ReturnedType = returnedType,
+                        Result = returnValue,
                     };
             }
             catch (Exception)
