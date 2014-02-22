@@ -15,12 +15,6 @@ namespace Nuclei.Communication.Protocol
     internal interface IStoreProtocolSubjects
     {
         /// <summary>
-        /// Registers a new subject.
-        /// </summary>
-        /// <param name="subject">The subject.</param>
-        void RegisterApplicationSubject(CommunicationSubject subject);
-
-        /// <summary>
         /// Returns a collection containing all the subjects registered for the current application.
         /// </summary>
         /// <returns>A collection containing all the subjects registered for the current application.</returns>

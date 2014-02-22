@@ -46,10 +46,11 @@ namespace Nuclei.Communication
                         c.Resolve<SystemDiagnostics>());
                 })
                 .As<ICommunicationLayer>()
+                .As<IStoreInformationForActiveChannels>()
                 .SingleInstance();
         }
 
-        private static void RegisterHandshakeLayer(ContainerBuilder builder, IEnumerable<ChannelTemplate> allowedChannelTemplates)
+        private static void RegisterProtocolHandshakeConductor(ContainerBuilder builder, IEnumerable<ChannelTemplate> allowedChannelTemplates)
         {
             builder.Register(
                 c => new ProtocolHandshakeConductor(
@@ -416,21 +417,6 @@ namespace Nuclei.Communication
             builder.Register(c => new EndpointInformationStorage())
                 .As<IStoreInformationAboutEndpoints>()
                 .As<INotifyOfEndpointStateChange>()
-                .SingleInstance();
-        }
-
-        private static void RegisterCommunicationDescriptions(ContainerBuilder builder, IEnumerable<CommunicationSubject> subjects)
-        {
-            builder.Register(c => new ProtocolSubjectStorage())
-                .OnActivated(
-                    a =>
-                    {
-                        foreach (var subject in subjects)
-                        {
-                            a.Instance.RegisterApplicationSubject(subject);
-                        }
-                    })
-                .As<IStoreProtocolSubjects>()
                 .SingleInstance();
         }
 

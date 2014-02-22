@@ -14,11 +14,12 @@ namespace Nuclei.Communication.Interaction
     /// Defines the interface for collections that store one or more <see cref="ICommandSet"/>
     /// objects.
     /// </summary>
-    public interface ICommandCollection : IEnumerable<Tuple<Type, ICommandSet>>
+    internal interface ICommandCollection : IEnumerable<Tuple<Type, ICommandSet>>
     {
         /// <summary>
         /// Registers a <see cref="ICommandSet"/> object.
         /// </summary>
+        /// <remarks>
         /// <para>
         /// A proper command set class has the following characteristics:
         /// <list type="bullet">
@@ -45,6 +46,7 @@ namespace Nuclei.Communication.Interaction
         ///     </item>
         /// </list>
         /// </para>
+        /// </remarks>
         /// <param name="commandType">The interface that defines the command methods.</param>
         /// <param name="commands">The commands.</param>
         void Register(Type commandType, ICommandSet commands);

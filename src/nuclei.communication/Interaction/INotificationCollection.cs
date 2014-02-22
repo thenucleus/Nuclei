@@ -13,11 +13,12 @@ namespace Nuclei.Communication.Interaction
     /// Defines the interface for collections that store one or more <see cref="INotificationSet"/>
     /// objects.
     /// </summary>
-    public interface INotificationCollection : IEnumerable<Tuple<Type, INotificationSet>>
+    internal interface INotificationCollection : IEnumerable<Tuple<Type, INotificationSet>>
     {
         /// <summary>
         /// Registers a <see cref="INotificationSet"/> object.
         /// </summary>
+        /// <remarks>
         /// <para>
         /// A proper notification set class has the following characteristics:
         /// <list type="bullet">
@@ -38,8 +39,9 @@ namespace Nuclei.Communication.Interaction
         ///     </item>
         /// </list>
         /// </para>
+        /// </remarks>
         /// <param name="notificationType">The interface that defines the notification events.</param>
         /// <param name="notifications">The notification object.</param>
-        void Store(Type notificationType, INotificationSet notifications);
+        void Register(Type notificationType, INotificationSet notifications);
     }
 }

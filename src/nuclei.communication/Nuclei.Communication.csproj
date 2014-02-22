@@ -104,6 +104,7 @@
     <Compile Include="CommunicationModule.Discovery.cs" />
     <Compile Include="CommunicationModule.Discovery.V1.cs" />
     <Compile Include="CommunicationModule.Interaction.cs" />
+    <Compile Include="CommunicationModule.Interaction.V1.cs" />
     <Compile Include="CommunicationModule.Protocol.cs" />
     <Compile Include="CommunicationModule.Protocol.V1.cs" />
     <Compile Include="DiscoveryInformation.cs" />
@@ -134,6 +135,8 @@
     <Compile Include="Interaction\CommandData.cs" />
     <Compile Include="Interaction\CommunicationSubjectGroup.cs" />
     <Compile Include="Interaction\IHandleInteractionHandshakes.cs" />
+    <Compile Include="Interaction\InteractionSubjectGroupStorage.cs" />
+    <Compile Include="Interaction\IRegisterSubjectGroups.cs" />
     <Compile Include="Interaction\ISerializeObjectData.cs" />
     <Compile Include="Interaction\IStoreInteractionSubjects.cs" />
     <Compile Include="Interaction\OfflineTypeInformation.cs" />
@@ -142,6 +145,11 @@
     <Compile Include="Interaction\InteractionExtensions.cs" />
     <Compile Include="Interaction\NotificationData.cs" />
     <Compile Include="Interaction\NotificationRaisedData.cs" />
+    <Compile Include="Interaction\RegisterLocalCommand.cs" />
+    <Compile Include="Interaction\RegisterLocalNotification.cs" />
+    <Compile Include="Interaction\RegisterRequiredCommand.cs" />
+    <Compile Include="Interaction\RegisterRequiredNotification.cs" />
+    <Compile Include="Interaction\SubjectGroupIdentifier.cs" />
     <Compile Include="Interaction\Transport\InteractionConnectionState.cs" />
     <Compile Include="Interaction\Transport\IStoreRemoteCommandProxies.cs" />
     <Compile Include="Interaction\Transport\IStoreRemoteNotificationProxies.cs" />
@@ -268,8 +276,8 @@
     <Compile Include="Protocol\SendingEndpoint.cs" />
     <Compile Include="Interaction\V1\SerializedType.cs" />
     <Compile Include="Protocol\CommunicationDescription.cs" />
-    <Compile Include="Protocol\ProtocolSubjectStorage.cs" />
     <Compile Include="CommunicationSubject.cs" />
+    <Compile Include="UnknownCommunicationSubjectException.cs" />
     <Compile Include="UriExtensions.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\DownloadRequestConverter.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\EndpointConnectConverter.cs" />

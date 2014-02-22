@@ -276,6 +276,9 @@
   <data name="Exceptions_Messages_UnknownCommandSet" xml:space="preserve">
     <value>The requested command set has not been registered.</value>
   </data>
+  <data name="Exceptions_Messages_UnknownCommunicationSubject" xml:space="preserve">
+    <value>There is no information for the given communication subject.</value>
+  </data>
   <data name="Exceptions_Messages_UnknownEndpointIdFormat" xml:space="preserve">
     <value>The given endpoint had an unsupported format.</value>
   </data>

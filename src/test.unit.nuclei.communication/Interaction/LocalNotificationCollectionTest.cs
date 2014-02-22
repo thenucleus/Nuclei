@@ -56,7 +56,7 @@ namespace Nuclei.Communication.Interaction
         }
 
         [Test]
-        public void Store()
+        public void Register()
         {
             var knownEndpoint = new EndpointId("other");
             var layer = new Mock<ISendDataViaChannels>();
@@ -86,7 +86,7 @@ namespace Nuclei.Communication.Interaction
             var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
-            collection.Store(typeof(IMockNotificationSet), obj);
+            collection.Register(typeof(IMockNotificationSet), obj);
 
             Assert.IsTrue(collection.Any(pair => pair.Key == typeof(IMockNotificationSet)));
             Assert.AreEqual(typeof(IMockNotificationSet), registeredType);
@@ -95,7 +95,7 @@ namespace Nuclei.Communication.Interaction
         }
 
         [Test]
-        public void StoreWithoutBeingSignedIn()
+        public void RegisterWithoutBeingSignedIn()
         {
             var layer = new Mock<ISendDataViaChannels>();
             {
@@ -118,7 +118,7 @@ namespace Nuclei.Communication.Interaction
             var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
-            collection.Store(typeof(IMockNotificationSet), obj);
+            collection.Register(typeof(IMockNotificationSet), obj);
 
             Assert.IsTrue(collection.Any(pair => pair.Key == typeof(IMockNotificationSet)));
             Assert.AreEqual(typeof(IMockNotificationSet), registeredType);
@@ -163,7 +163,7 @@ namespace Nuclei.Communication.Interaction
             var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
-            collection.Store(typeof(IMockNotificationSet), obj);
+            collection.Register(typeof(IMockNotificationSet), obj);
 
             Assert.IsTrue(collection.Any(pair => pair.Key == typeof(IMockNotificationSet)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
@@ -220,7 +220,7 @@ namespace Nuclei.Communication.Interaction
             var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
-            collection.Store(typeof(IMockNotificationSet), obj);
+            collection.Register(typeof(IMockNotificationSet), obj);
 
             Assert.IsTrue(collection.Any(pair => pair.Key == typeof(IMockNotificationSet)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
@@ -277,7 +277,7 @@ namespace Nuclei.Communication.Interaction
             var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
-            collection.Store(typeof(IMockNotificationSet), obj);
+            collection.Register(typeof(IMockNotificationSet), obj);
 
             Assert.IsTrue(collection.Any(pair => pair.Key == typeof(IMockNotificationSet)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());

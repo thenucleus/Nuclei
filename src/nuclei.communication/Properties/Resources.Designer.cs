@@ -542,6 +542,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is no information for the given communication subject..
+        /// </summary>
+        internal static string Exceptions_Messages_UnknownCommunicationSubject {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_UnknownCommunicationSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The given endpoint had an unsupported format..
         /// </summary>
         internal static string Exceptions_Messages_UnknownEndpointIdFormat {

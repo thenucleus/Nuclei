@@ -32,11 +32,6 @@ namespace Nuclei.Communication
         }
 
         /// <summary>
-        /// The collection of communication subjects for the current application.
-        /// </summary>
-        private readonly IEnumerable<CommunicationSubject> m_Subjects;
-
-        /// <summary>
         /// The collection containing the types of channel that should be opened.
         /// </summary>
         private readonly IEnumerable<ChannelTemplate> m_AllowedChannelTemplates;
@@ -49,15 +44,11 @@ namespace Nuclei.Communication
         /// <summary>
         /// Initializes a new instance of the <see cref="CommunicationModule"/> class.
         /// </summary>
-        /// <param name="subjects">The collection containing the communication subjects for the application.</param>
         /// <param name="allowedChannelTemplates">The collection of channel types on which the application is allowed to connect.</param>
         /// <param name="allowAutomaticChannelDiscovery">
         ///     A flag that indicates if the communication channels are allowed to provide
         ///     discovery.
         /// </param>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="subjects"/> is <see langword="null" />.
-        /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="allowedChannelTemplates"/> is <see langword="null" />.
         /// </exception>
@@ -65,19 +56,16 @@ namespace Nuclei.Communication
         ///     Thrown if <paramref name="allowedChannelTemplates"/> is an empty collection.
         /// </exception>
         public CommunicationModule(
-            IEnumerable<CommunicationSubject> subjects, 
             IEnumerable<ChannelTemplate> allowedChannelTemplates, 
             bool allowAutomaticChannelDiscovery)
         {
             {
-                Lokad.Enforce.Argument(() => subjects);
                 Lokad.Enforce.Argument(() => allowedChannelTemplates);
                 Lokad.Enforce.With<ArgumentException>(
                     allowedChannelTemplates.Any(), 
                     Resources.Exceptions_Messages_AtLeastOneChannelTypeMustBeAllowed);
             }
 
-            m_Subjects = subjects;
             m_AllowedChannelTemplates = allowedChannelTemplates;
             m_AllowAutomaticChannelDiscovery = allowAutomaticChannelDiscovery;
         }
@@ -120,7 +108,7 @@ namespace Nuclei.Communication
         private void RegisterProtocolLayer(ContainerBuilder builder)
         {
             RegisterCommunicationLayer(builder, m_AllowedChannelTemplates);
-            RegisterHandshakeLayer(builder, m_AllowedChannelTemplates);
+            RegisterProtocolHandshakeConductor(builder, m_AllowedChannelTemplates);
             RegisterMessageHandler(builder);
             RegisterDataHandler(builder);
             RegisterProtocolMessageProcessingActions(builder);
@@ -129,7 +117,6 @@ namespace Nuclei.Communication
             RegisterEndpoints(builder);
             RegisterProtocolChannelTemplates(builder);
             RegisterEndpointStorage(builder);
-            RegisterCommunicationDescriptions(builder, m_Subjects);
             RegisterUploads(builder);
             RegisterDownloads(builder);
         }
@@ -149,11 +136,15 @@ namespace Nuclei.Communication
             RegisterNotificationHub(builder);
             RegisterNotificationCollection(builder);
             RegisterInteractionMessageProcessingActions(builder);
+            RegisterInteractionHandshakeConductor(builder);
+            RegisterInteractionSubjectStorage(builder);
+            RegisterCommandRegistrationFunctions(builder);
+            RegisterNotificationRegistrationFunctions(builder);
         }
 
         private void RegisterInteractionLayerV1(ContainerBuilder builder)
         {
-            // Do Nothing for now
+            RegisterInteractionV1ProtocolV1MessageConverters(builder);
         }
     }
 }
