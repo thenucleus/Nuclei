@@ -14,7 +14,10 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// Opens the channel.
         /// </summary>
-        void OpenChannel();
+        /// <param name="allowAutomaticChannelDiscovery">
+        /// A flag that indicates whether or not the channel should provide automatic channel discovery.
+        /// </param>
+        void OpenChannel(bool allowAutomaticChannelDiscovery);
 
         /// <summary>
         /// Closes the channel.

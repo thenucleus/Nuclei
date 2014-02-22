@@ -106,7 +106,10 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// Opens the channel.
         /// </summary>
-        public void OpenChannel()
+        /// <param name="allowAutomaticChannelDiscovery">
+        /// A flag that indicates whether or not the channel should provide automatic channel discovery.
+        /// </param>
+        public void OpenChannel(bool allowAutomaticChannelDiscovery)
         {
             var discoveryChannelsByVersion = new Dictionary<Version, Uri>();
             foreach (var version in DiscoveryVersions.SupportedVersions())
@@ -128,7 +131,7 @@ namespace Nuclei.Communication.Discovery
             var bootstrapEndpoint = new BootstrapEndpoint(discoveryChannelsByVersion.Select(p => new Tuple<Version, Uri>(p.Key, p.Value)));
 
             Func<ServiceHost, ServiceEndpoint> bootstrapEndpointBuilder = 
-                h => m_Template.AttachDiscoveryEntryEndpoint(h, typeof(IBootstrapEndpoint), m_Id);
+                h => m_Template.AttachDiscoveryEntryEndpoint(h, typeof(IBootstrapEndpoint), m_Id, allowAutomaticChannelDiscovery);
             var bootstrapUri = m_BootstrapHost.OpenChannel(bootstrapEndpoint, bootstrapEndpointBuilder);
             m_EntryChannelStorage(bootstrapUri);
         }

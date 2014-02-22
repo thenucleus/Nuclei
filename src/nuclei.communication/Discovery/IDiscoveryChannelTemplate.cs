@@ -30,8 +30,15 @@ namespace Nuclei.Communication.Discovery
         /// <param name="host">The host to which the endpoint should be attached.</param>
         /// <param name="implementedContract">The contract implemented by the endpoint.</param>
         /// <param name="localEndpoint">The ID of the local endpoint, to be used in the endpoint metadata.</param>
+        /// <param name="allowAutomaticChannelDiscovery">
+        /// A flag that indicates whether or not the channel should provide automatic channel discovery.
+        /// </param>
         /// <returns>The newly attached endpoint.</returns>
-        ServiceEndpoint AttachDiscoveryEntryEndpoint(ServiceHost host, Type implementedContract, EndpointId localEndpoint);
+        ServiceEndpoint AttachDiscoveryEntryEndpoint(
+            ServiceHost host, 
+            Type implementedContract, 
+            EndpointId localEndpoint, 
+            bool allowAutomaticChannelDiscovery);
 
         /// <summary>
         /// Attaches a new endpoint to the given host.

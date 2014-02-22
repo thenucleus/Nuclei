@@ -106,7 +106,7 @@ namespace Nuclei.Communication
 
                         var commandCollection = m_Context.Resolve<ICommandCollection>();
                         var unregisteredCommands = commandCollection
-                            .Select(p => p.Value.GetType())
+                            .Select(p => p.Item2.GetType())
                             .Except(commands, new TypeEqualityComparer());
                         if (unregisteredCommands.Any())
                         {
@@ -121,7 +121,7 @@ namespace Nuclei.Communication
 
                         var notificationCollection = m_Context.Resolve<INotificationCollection>();
                         var unregisteredNotifications = notificationCollection
-                            .Select(p => p.Value.GetType())
+                            .Select(p => p.Item2.GetType())
                             .Except(notifications, new TypeEqualityComparer());
                         if (unregisteredNotifications.Any())
                         {
@@ -132,15 +132,10 @@ namespace Nuclei.Communication
                         var layer = m_Context.Resolve<ICommunicationLayer>();
                         layer.SignIn();
 
-
-                        if (m_AllowAutomaticChannelDiscovery)
+                        foreach (var template in m_AllowedChannelTemplates)
                         {
-                            foreach (var template in m_AllowedChannelTemplates)
-                            {
-                                // Discovery
-                                var discovery = m_Context.ResolveKeyed<IBootstrapChannel>(template);
-                                discovery.OpenChannel();
-                            }
+                            var discovery = m_Context.ResolveKeyed<IBootstrapChannel>(template);
+                            discovery.OpenChannel(m_AllowAutomaticChannelDiscovery);
                         }
                     }
                     catch (Exception e)
