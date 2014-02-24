@@ -11,7 +11,7 @@ using Nuclei.Communication.Properties;
 namespace Nuclei.Communication.Interaction
 {
     /// <summary>
-    /// An exception thrown the user tries to register a command for which an interface has
+    /// An exception thrown when the user tries to register a command for which an interface has
     /// already been registered.
     /// </summary>
     [Serializable]

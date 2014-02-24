@@ -6,8 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Nuclei.Communication
 {
@@ -24,8 +22,17 @@ namespace Nuclei.Communication
             get;
         }
 
+        /// <summary>
+        /// Returns a collection containing all the known remote endpoints.
+        /// </summary>
+        /// <returns>The collection of all the known remote endpoints.</returns>
         IEnumerable<EndpointId> KnownEndpoints();
 
+        /// <summary>
+        /// Gets the endpoint ID for the endpoint with its discovery channel at the given URI.
+        /// </summary>
+        /// <param name="address">The URI of the discovery channel.</param>
+        /// <returns>The endpoint ID of the endpoint with a discovery channel at the given URI.</returns>
         EndpointId FromUri(Uri address);
     }
 }
