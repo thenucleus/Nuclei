@@ -156,6 +156,9 @@
   <data name="Exceptions_Messages_DataDownloadFailed" xml:space="preserve">
     <value>The download of the desired data failed.</value>
   </data>
+  <data name="Exceptions_Messages_DuplicateObjectSerializer" xml:space="preserve">
+    <value>An object data serializer for the given type already exists.</value>
+  </data>
   <data name="Exceptions_Messages_EndpointIdCannotBeDeserializedFromAnEmptyString" xml:space="preserve">
     <value>An endpoint ID cannot be deserialized from an empty string.</value>
   </data>
@@ -206,6 +209,9 @@
   </data>
   <data name="Exceptions_Messages_NoCommunicationSubjectsRegistered" xml:space="preserve">
     <value>No communication subjects have been registered. This may result in the rejection of all incoming endpoint connections.</value>
+  </data>
+  <data name="Exceptions_Messages_NoSerializerForTypeFound" xml:space="preserve">
+    <value>No object data serializer was found for the given type.</value>
   </data>
   <data name="Exceptions_Messages_NotificationNotSupported" xml:space="preserve">
     <value>The requested notification is not supported by the endpoint.</value>

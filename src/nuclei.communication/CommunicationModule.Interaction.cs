@@ -246,5 +246,24 @@ namespace Nuclei.Communication
                 .As<RegisterRequiredNotification>()
                 .SingleInstance();
         }
+
+        private static void RegisterObjectSerializers(ContainerBuilder builder)
+        {
+            builder.Register(c => new NonTransformingObjectSerializer())
+                .OnActivated(
+                    a =>
+                    {
+                        var collection = a.Context.Resolve<IStoreObjectSerializers>();
+                        collection.Add(a.Instance);
+                    })
+                .As<ISerializeObjectData>();
+        }
+
+        private static void RegisterObjectSerializerStorage(ContainerBuilder builder)
+        {
+            builder.Register(c => new ObjectSerializerStorage())
+                .As<IStoreObjectSerializers>()
+                .SingleInstance();
+        }
     }
 }

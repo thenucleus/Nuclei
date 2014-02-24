@@ -9,16 +9,20 @@ using System;
 namespace Nuclei.Communication.Interaction
 {
     /// <summary>
-    /// Defines the interface for objects that prepare object data for transmission to a remote endpoint.
+    /// The default <see cref="ISerializeObjectData"/> implementation that simply passes the input object through as
+    /// the serialized object.
     /// </summary>
-    public interface ISerializeObjectData
+    internal sealed class NonTransformingObjectSerializer : ISerializeObjectData
     {
         /// <summary>
         /// Gets the object type that the current serializer can serialize.
         /// </summary>
-        Type TypeToSerialize
+        public Type TypeToSerialize
         {
-            get;
+            get
+            {
+                return typeof(object);
+            }
         }
 
         /// <summary>
@@ -26,13 +30,19 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="input">The input data.</param>
         /// <returns>An object that contains the serialized data.</returns>
-        object Serialize(object input);
+        public object Serialize(object input)
+        {
+            return input;
+        }
 
         /// <summary>
         /// Turns the serialized data into an object that can be used by the current endpoint.
         /// </summary>
         /// <param name="data">The serialized data.</param>
         /// <returns>An object that can be used by the current endpoint.</returns>
-        object Deserialize(object data);
+        public object Deserialize(object data)
+        {
+            return data;
+        }
     }
 }

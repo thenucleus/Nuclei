@@ -5,9 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
@@ -25,13 +23,13 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
         /// <summary>
         /// The ordered list of serializers for object data.
         /// </summary>
-        private readonly IList<ISerializeObjectData> m_TypeSerializers;
+        private readonly IStoreObjectSerializers m_TypeSerializers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationRaisedConverter"/> class.
         /// </summary>
         /// <param name="typeSerializers">The ordered list of serializers for object data.</param>
-        public NotificationRaisedConverter(IList<ISerializeObjectData> typeSerializers)
+        public NotificationRaisedConverter(IStoreObjectSerializers typeSerializers)
         {
             {
                 Lokad.Enforce.Argument(() => typeSerializers);
@@ -90,12 +88,12 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                     msg.EventArgumentsType.AssemblyName);
 
                 var serializedObjectData = msg.EventArguments;
-                var serializer = m_TypeSerializers.FirstOrDefault(t => t.TypeToSerialize.IsAssignableFrom(eventArgsType));
-                if (serializer == null)
+                if (m_TypeSerializers.HasSerializerFor(eventArgsType))
                 {
                     throw new MissingObjectDataSerializerException();
                 }
 
+                var serializer = m_TypeSerializers.SerializerFor(eventArgsType);
                 var eventArgs = serializer.Deserialize(serializedObjectData) as EventArgs;
 
                 return new NotificationRaisedMessage(
@@ -135,15 +133,16 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                         AssemblyName = eventArgsType.Assembly.GetName().Name
                     };
 
-                var serializer = m_TypeSerializers.FirstOrDefault(t => t.TypeToSerialize.IsInstanceOfType(eventArgs));
-                if (serializer == null)
+                if (m_TypeSerializers.HasSerializerFor(eventArgsType))
                 {
                     throw new MissingObjectDataSerializerException();
                 }
 
+                var serializer = m_TypeSerializers.SerializerFor(eventArgsType);
+
                 var value = serializer.Serialize(eventArgs);
                 
-                return new Protocol.V1.DataObjects.NotificationRaisedData
+                return new NotificationRaisedData
                     {
                         Id = message.Id,
                         InResponseTo = message.InResponseTo,

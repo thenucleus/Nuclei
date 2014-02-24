@@ -51,6 +51,18 @@
       <HintPath>..\..\packages\Mono.Cecil.0.9.5.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
+    <Reference Include="QuickGraph, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Data, Version=3.6.61114.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Graphviz, Version=3.6.61114.0, Culture=neutral, PublicKeyToken=f3fb40175eec2af3, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Graphviz.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickGraph.Serialization, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\QuickGraph.3.6.61119.7\lib\net4\QuickGraph.Serialization.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -134,11 +146,16 @@
     <Compile Include="IDiscoveryVersionMetaData.cs" />
     <Compile Include="Interaction\CommandData.cs" />
     <Compile Include="Interaction\CommunicationSubjectGroup.cs" />
+    <Compile Include="Interaction\DuplicateObjectSerializerException.cs" />
     <Compile Include="Interaction\IHandleInteractionHandshakes.cs" />
     <Compile Include="Interaction\InteractionSubjectGroupStorage.cs" />
     <Compile Include="Interaction\IRegisterSubjectGroups.cs" />
     <Compile Include="Interaction\ISerializeObjectData.cs" />
     <Compile Include="Interaction\IStoreInteractionSubjects.cs" />
+    <Compile Include="Interaction\IStoreObjectSerializers.cs" />
+    <Compile Include="Interaction\NonTransformingObjectSerializer.cs" />
+    <Compile Include="Interaction\NoSerializerForTypeFoundException.cs" />
+    <Compile Include="Interaction\ObjectSerializerStorage.cs" />
     <Compile Include="Interaction\OfflineTypeInformation.cs" />
     <Compile Include="Interaction\CommandInvokedData.cs" />
     <Compile Include="Interaction\InteractionHandshakeConductor.cs" />

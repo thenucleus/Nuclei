@@ -5,9 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
@@ -25,13 +23,13 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
         /// <summary>
         /// The ordered list of serializers for object data.
         /// </summary>
-        private readonly IList<ISerializeObjectData> m_TypeSerializers;
+        private readonly IStoreObjectSerializers m_TypeSerializers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandInvocationResponseConverter"/> class.
         /// </summary>
         /// <param name="typeSerializers">The ordered list of serializers for object data.</param>
-        public CommandInvocationResponseConverter(IList<ISerializeObjectData> typeSerializers)
+        public CommandInvocationResponseConverter(IStoreObjectSerializers typeSerializers)
         {
             {
                 Lokad.Enforce.Argument(() => typeSerializers);
@@ -85,12 +83,12 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                 var type = TypeLoader.FromPartialInformation(typeInfo.FullName, typeInfo.AssemblyName);
 
                 var serializedObjectData = invocationData.Result;
-                var serializer = m_TypeSerializers.FirstOrDefault(t => t.TypeToSerialize.IsAssignableFrom(type));
-                if (serializer == null)
+                if (m_TypeSerializers.HasSerializerFor(type))
                 {
                     throw new MissingObjectDataSerializerException();
                 }
 
+                var serializer = m_TypeSerializers.SerializerFor(type);
                 var returnValue = serializer.Deserialize(serializedObjectData);
 
                 return new CommandInvokedResponseMessage(
@@ -126,12 +124,12 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                         AssemblyName = type.Assembly.GetName().Name
                     };
 
-                var serializer = m_TypeSerializers.FirstOrDefault(t => t.TypeToSerialize.IsInstanceOfType(type));
-                if (serializer == null)
+                if (m_TypeSerializers.HasSerializerFor(type))
                 {
                     throw new MissingObjectDataSerializerException();
                 }
 
+                var serializer = m_TypeSerializers.SerializerFor(type);
                 var returnValue = serializer.Serialize(invocationMessage.Result);
                 
                 return new CommandInvocationResponseData

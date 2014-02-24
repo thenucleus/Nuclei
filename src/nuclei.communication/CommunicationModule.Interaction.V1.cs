@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using Autofac;
+using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters;
 using Nuclei.Communication.Protocol.V1;
 
@@ -17,10 +18,12 @@ namespace Nuclei.Communication
     {
         private static void RegisterInteractionV1ProtocolV1MessageConverters(ContainerBuilder builder)
         {
-            builder.Register(c => new CommandInvocationConverter())
+            builder.Register(c => new CommandInvocationConverter(
+                    c.Resolve<IStoreObjectSerializers>()))
                 .As<IConvertCommunicationMessages>();
 
-            builder.Register(c => new CommandInvocationResponseConverter())
+            builder.Register(c => new CommandInvocationResponseConverter(
+                    c.Resolve<IStoreObjectSerializers>()))
                 .As<IConvertCommunicationMessages>();
 
             builder.Register(c => new EndpointInteractionInformationConverter())
@@ -35,7 +38,8 @@ namespace Nuclei.Communication
             builder.Register(c => new NotificationUnregistrationConverter())
                 .As<IConvertCommunicationMessages>();
 
-            builder.Register(c => new NotificationRaisedConverter())
+            builder.Register(c => new NotificationRaisedConverter(
+                    c.Resolve<IStoreObjectSerializers>()))
                 .As<IConvertCommunicationMessages>();
         }
     }

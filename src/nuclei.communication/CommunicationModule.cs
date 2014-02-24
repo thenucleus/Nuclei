@@ -140,6 +140,8 @@ namespace Nuclei.Communication
             RegisterInteractionSubjectStorage(builder);
             RegisterCommandRegistrationFunctions(builder);
             RegisterNotificationRegistrationFunctions(builder);
+            RegisterObjectSerializerStorage(builder);
+            RegisterObjectSerializers(builder);
         }
 
         private void RegisterInteractionLayerV1(ContainerBuilder builder)

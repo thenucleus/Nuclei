@@ -178,6 +178,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An object data serializer for the given type already exists..
+        /// </summary>
+        internal static string Exceptions_Messages_DuplicateObjectSerializer {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_DuplicateObjectSerializer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An endpoint ID cannot be deserialized from an empty string..
         /// </summary>
         internal static string Exceptions_Messages_EndpointIdCannotBeDeserializedFromAnEmptyString {
@@ -327,6 +336,15 @@ namespace Nuclei.Communication.Properties {
         internal static string Exceptions_Messages_NoCommunicationSubjectsRegistered {
             get {
                 return ResourceManager.GetString("Exceptions_Messages_NoCommunicationSubjectsRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No object data serializer was found for the given type..
+        /// </summary>
+        internal static string Exceptions_Messages_NoSerializerForTypeFound {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_NoSerializerForTypeFound", resourceCulture);
             }
         }
         
