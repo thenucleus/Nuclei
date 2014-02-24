@@ -98,35 +98,8 @@ namespace Nuclei.Communication
                 {
                     try
                     {
-                        // Get all the commands so that they all exist and at the same time
-                        // make sure all commands have actually been registered.
-                        var commands = m_Context.Resolve<IEnumerable<ICommandSet>>()
-                            .Select(c => c.GetType())
-                            .ToList();
-
-                        var commandCollection = m_Context.Resolve<ICommandCollection>();
-                        var unregisteredCommands = commandCollection
-                            .Select(p => p.Item2.GetType())
-                            .Except(commands, new TypeEqualityComparer());
-                        if (unregisteredCommands.Any())
-                        {
-                            throw new UnknownCommandSetException();
-                        }
-
-                        // Get all the notifications so that they actually exist and at the same time
-                        // make sure all notifications have actually been registered
-                        var notifications = m_Context.Resolve<IEnumerable<INotificationSet>>()
-                            .Select(n => n.GetType())
-                            .ToList();
-
-                        var notificationCollection = m_Context.Resolve<INotificationCollection>();
-                        var unregisteredNotifications = notificationCollection
-                            .Select(p => p.Item2.GetType())
-                            .Except(notifications, new TypeEqualityComparer());
-                        if (unregisteredNotifications.Any())
-                        {
-                            throw new UnknownNotificationSetException();
-                        }
+                        ActivateCommands();
+                        ActivateNotifications();
 
                         // Start the communication layer so that we can actuallly use it.
                         var layer = m_Context.Resolve<ICommunicationLayer>();
@@ -151,6 +124,42 @@ namespace Nuclei.Communication
                         throw;
                     }
                 });
+        }
+
+        private void ActivateCommands()
+        {
+            // Get all the commands so that they all exist and at the same time
+            // make sure all commands have actually been registered.
+            var commands = m_Context.Resolve<IEnumerable<ICommandSet>>()
+                .Select(c => c.GetType())
+                .ToList();
+
+            var commandCollection = m_Context.Resolve<ICommandCollection>();
+            var unregisteredCommands = commandCollection
+                .Select(p => p.Item2.GetType())
+                .Except(commands, new TypeEqualityComparer());
+            if (unregisteredCommands.Any())
+            {
+                throw new UnknownCommandSetException();
+            }
+        }
+
+        private void ActivateNotifications()
+        {
+            // Get all the notifications so that they actually exist and at the same time
+            // make sure all notifications have actually been registered
+            var notifications = m_Context.Resolve<IEnumerable<INotificationSet>>()
+                .Select(n => n.GetType())
+                .ToList();
+
+            var notificationCollection = m_Context.Resolve<INotificationCollection>();
+            var unregisteredNotifications = notificationCollection
+                .Select(p => p.Item2.GetType())
+                .Except(notifications, new TypeEqualityComparer());
+            if (unregisteredNotifications.Any())
+            {
+                throw new UnknownNotificationSetException();
+            }
         }
     }
 }
