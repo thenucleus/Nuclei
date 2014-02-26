@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
+using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Properties;
 using Nuclei.Diagnostics;
 
@@ -18,6 +19,16 @@ namespace Nuclei.Communication
     /// </summary>
     public sealed partial class CommunicationModule : Module
     {
+        private static void RegisterEntryPoint(ContainerBuilder builder)
+        {
+            builder.Register(c => new CommunicationEntryPoint(
+                    c.Resolve<IStoreInformationAboutEndpoints>(),
+                    c.Resolve<ISendCommandsToRemoteEndpoints>(),
+                    c.Resolve<INotifyOfRemoteEndpointEvents>()))
+                .As<ICommunicationFacade>()
+                .SingleInstance();
+        }
+
         private static void RegisterStartables(
             ContainerBuilder builder, 
             IEnumerable<ChannelTemplate> allowedChannelTemplates, 
@@ -85,6 +96,7 @@ namespace Nuclei.Communication
             RegisterInteractionLayer(builder);
             RegisterInteractionLayerV1(builder);
 
+            RegisterEntryPoint(builder);
             RegisterStartables(builder, m_AllowedChannelTemplates, m_AllowAutomaticChannelDiscovery);
         }
 

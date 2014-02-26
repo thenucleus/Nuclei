@@ -12,7 +12,7 @@ namespace Nuclei.Communication.Interaction
     /// <summary>
     /// Defines the interface for objects that handle receiving notifications from remote endpoints.
     /// </summary>
-    public interface INotifyOfRemoteEndpointEvents
+    public interface INotifyOfRemoteEndpointEvents : INotifyOfEndpointStateChange
     {
         /// <summary>
         /// Returns a value indicating if a specific set of notifications is available for the given endpoint.

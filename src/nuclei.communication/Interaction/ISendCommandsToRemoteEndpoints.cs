@@ -12,7 +12,7 @@ namespace Nuclei.Communication.Interaction
     /// <summary>
     /// Defines the interface for objects that handle sending commands to remote endpoints.
     /// </summary>
-    public interface ISendCommandsToRemoteEndpoints
+    public interface ISendCommandsToRemoteEndpoints : INotifyOfEndpointStateChange
     {
         /// <summary>
         /// Returns a value indicating if a specific set of commands is available for the given endpoint.

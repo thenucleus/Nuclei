@@ -113,6 +113,7 @@
     <Compile Include="..\..\build\temp\AssemblyInfo.VersionNumber.cs">
       <Link>Properties\AssemblyInfo.VersionNumber.cs</Link>
     </Compile>
+    <Compile Include="CommunicationEntryPoint.cs" />
     <Compile Include="CommunicationModule.Discovery.cs" />
     <Compile Include="CommunicationModule.Discovery.V1.cs" />
     <Compile Include="CommunicationModule.Interaction.cs" />
