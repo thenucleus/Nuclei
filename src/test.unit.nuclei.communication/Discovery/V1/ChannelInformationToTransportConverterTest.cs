@@ -18,39 +18,32 @@ namespace Nuclei.Communication.Discovery.V1
         [Test]
         public void ToVersioned()
         {
-            var input = new EndpointInformation(
-                EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                new Version(1, 2, 3, 4),
-                new Uri("http://localhost/invalid"));
+            var input = new ProtocolInformation(new Version(1, 2, 3, 4), new Uri("http://localhost/protocol/invalid"));
+            var output = ChannelInformationToTransportConverter.ToVersioned(input);
 
-            var output = ChannelInformationToTransportConverter.ToVersioned();
-
-            Assert.AreSame(input.Id, output.Id);
-            Assert.AreSame(input.ProtocolVersion, output.ProtocolVersion);
-            Assert.AreSame(input.ProtocolAddress, output.Address);
+            Assert.AreSame(input.Version, output.ProtocolVersion);
+            Assert.AreSame(input.MessageAddress, output.Address);
         }
 
         [Test]
         public void ToVersionedWithNullObject()
         {
-            Assert.Throws<ArgumentNullException>(() => ChannelInformationToTransportConverter.ToVersioned());
+            Assert.Throws<ArgumentNullException>(() => ChannelInformationToTransportConverter.ToVersioned(null));
         }
 
         [Test]
         public void FromVersioned()
         {
             var input = new VersionedChannelInformation
-            {
-                Id = EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                ProtocolVersion = new Version(1, 2, 3, 4),
-                Address = new Uri("http://localhost/invalid")
-            };
+                {
+                    ProtocolVersion = new Version(1, 2, 3, 4),
+                    Address = new Uri("http://localhost/invalid")
+                };
 
             var output = ChannelInformationToTransportConverter.FromVersioned(input);
 
-            Assert.AreSame(input.Id, output.Id);
-            Assert.AreSame(input.ProtocolVersion, output.ProtocolVersion);
-            Assert.AreSame(input.Address, output.ProtocolAddress);
+            Assert.AreSame(input.ProtocolVersion, output.Version);
+            Assert.AreSame(input.Address, output.MessageAddress);
         }
 
         [Test]

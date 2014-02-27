@@ -26,8 +26,8 @@ namespace Nuclei.Communication.Discovery
 
             var versionedEndpointCounter = 0;
             var versionedEndpoint = new Mock<IVersionedDiscoveryEndpoint>();
-            Func<Version, Tuple<Type, IVersionedDiscoveryEndpoint>> endpointBuilder =
-                v =>
+            Func<Version, ChannelTemplate, Tuple<Type, IVersionedDiscoveryEndpoint>> endpointBuilder =
+                (v, t) =>
                 {
                     versionedEndpointCounter++;
                     return new Tuple<Type, IVersionedDiscoveryEndpoint>(versionedEndpoint.Object.GetType(), versionedEndpoint.Object);
@@ -62,7 +62,7 @@ namespace Nuclei.Communication.Discovery
                 hostBuilder,
                 storage);
             
-            channel.OpenChannel();
+            channel.OpenChannel(true);
 
             host.Verify(
                 h => h.OpenChannel(It.IsAny<IReceiveInformationFromRemoteEndpoints>(), It.IsAny<Func<ServiceHost, ServiceEndpoint>>()),
@@ -81,8 +81,8 @@ namespace Nuclei.Communication.Discovery
             var template = new Mock<IDiscoveryChannelTemplate>();
 
             var versionedEndpoint = new Mock<IVersionedDiscoveryEndpoint>();
-            Func<Version, Tuple<Type, IVersionedDiscoveryEndpoint>> endpointBuilder =
-                v => new Tuple<Type, IVersionedDiscoveryEndpoint>(versionedEndpoint.Object.GetType(), versionedEndpoint.Object);
+            Func<Version, ChannelTemplate, Tuple<Type, IVersionedDiscoveryEndpoint>> endpointBuilder =
+                (v, t) => new Tuple<Type, IVersionedDiscoveryEndpoint>(versionedEndpoint.Object.GetType(), versionedEndpoint.Object);
 
             var host = new Mock<IHoldServiceConnections>();
             {
@@ -103,7 +103,7 @@ namespace Nuclei.Communication.Discovery
                 hostBuilder,
                 storage);
 
-            channel.OpenChannel();
+            channel.OpenChannel(true);
             channel.CloseChannel();
 
             host.Verify(h => h.CloseConnection(), Times.Exactly(2));

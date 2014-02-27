@@ -19,7 +19,7 @@ namespace Nuclei.Communication.Discovery.V1
         [Test]
         public void Version()
         {
-            var endpoint = new InformationEndpoint(new ChannelInformation[0]);
+            var endpoint = new InformationEndpoint(new ProtocolInformation[0]);
             Assert.AreEqual(new Version(1, 0, 0, 0), endpoint.Version());
         }
 
@@ -28,16 +28,13 @@ namespace Nuclei.Communication.Discovery.V1
         {
             var info = new[]
                 {
-                    new ChannelInformation(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    new ProtocolInformation(
                         new Version(3, 0, 0, 0), 
                         new Uri("http://localhost/invalid/v3")),
-                    new ChannelInformation(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    new ProtocolInformation(
                         new Version(1, 0, 0, 0), 
                         new Uri("http://localhost/invalid/v1")),
-                    new ChannelInformation(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    new ProtocolInformation(
                         new Version(2, 0, 0, 0), 
                         new Uri("http://localhost/invalid/v2")),
                 };
@@ -47,7 +44,7 @@ namespace Nuclei.Communication.Discovery.V1
             Assert.That(
                 versions,
                 Is.EquivalentTo(
-                    info.Select(i => i.ProtocolVersion)
+                    info.Select(i => i.Version)
                         .OrderBy(v => v)));
         }
 
@@ -56,16 +53,13 @@ namespace Nuclei.Communication.Discovery.V1
         {
             var info = new[]
                 {
-                    new ChannelInformation(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    new ProtocolInformation(
                         new Version(3, 0, 0, 0), 
                         new Uri("http://localhost/invalid/v3")),
-                    new ChannelInformation(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    new ProtocolInformation(
                         new Version(1, 0, 0, 0), 
                         new Uri("http://localhost/invalid/v1")),
-                    new ChannelInformation(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    new ProtocolInformation(
                         new Version(2, 0, 0, 0), 
                         new Uri("http://localhost/invalid/v2")),
                 };
@@ -79,16 +73,13 @@ namespace Nuclei.Communication.Discovery.V1
         {
             var info = new[]
                 {
-                    new ChannelInformation(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    new ProtocolInformation(
                         new Version(3, 0, 0, 0), 
                         new Uri("http://localhost/invalid/v3")),
-                    new ChannelInformation(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    new ProtocolInformation(
                         new Version(1, 0, 0, 0), 
                         new Uri("http://localhost/invalid/v1")),
-                    new ChannelInformation(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    new ProtocolInformation(
                         new Version(2, 0, 0, 0), 
                         new Uri("http://localhost/invalid/v2")),
                 };
@@ -105,16 +96,13 @@ namespace Nuclei.Communication.Discovery.V1
         {
             var info = new[]
                 {
-                    new ChannelInformation(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    new ProtocolInformation(
                         new Version(3, 0, 0, 0), 
                         new Uri("http://localhost/invalid/v3")),
-                    new ChannelInformation(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    new ProtocolInformation(
                         new Version(1, 0, 0, 0), 
                         new Uri("http://localhost/invalid/v1")),
-                    new ChannelInformation(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    new ProtocolInformation(
                         new Version(2, 0, 0, 0), 
                         new Uri("http://localhost/invalid/v2")),
                 };
@@ -123,9 +111,8 @@ namespace Nuclei.Communication.Discovery.V1
             var output = endpoint.ConnectionInformationForProtocol(new Version(2, 0, 0, 0));
             
             Assert.IsNotNull(output);
-            Assert.AreSame(info[2].Id, output.Id);
-            Assert.AreSame(info[2].ProtocolVersion, output.ProtocolVersion);
-            Assert.AreSame(info[2].Address, output.Address);
+            Assert.AreSame(info[2].Version, output.ProtocolVersion);
+            Assert.AreSame(info[2].MessageAddress, output.Address);
         }
     }
 }

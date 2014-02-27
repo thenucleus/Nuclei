@@ -55,6 +55,7 @@
     <Compile Include="CommunicationEntryPointTest.cs" />
     <Compile Include="Discovery\BootstrapChannelTest.cs" />
     <Compile Include="Discovery\BootstrapEndpointTest.cs" />
+    <Compile Include="Discovery\IncorrectTranslatorVersionExceptionTest.cs" />
     <Compile Include="Discovery\V1\ChannelInformationToTransportConverterTest.cs" />
     <Compile Include="Discovery\V1\InformationEndpointTest.cs" />
     <Compile Include="EndpointEventArgsTest.cs" />
