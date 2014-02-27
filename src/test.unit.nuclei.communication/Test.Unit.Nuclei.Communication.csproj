@@ -52,6 +52,7 @@
     <Compile Include="..\..\build\temp\AssemblyInfo.VersionNumber.cs">
       <Link>Properties\AssemblyInfo.VersionNumber.cs</Link>
     </Compile>
+    <Compile Include="CommunicationEntryPointTest.cs" />
     <Compile Include="Discovery\BootstrapChannelTest.cs" />
     <Compile Include="Discovery\BootstrapEndpointTest.cs" />
     <Compile Include="Discovery\V1\ChannelInformationToTransportConverterTest.cs" />
@@ -82,7 +83,7 @@
     <Compile Include="Protocol\ChannelClosedEventArgsTest.cs" />
     <Compile Include="Protocol\ChannelConnectionInformationTest.cs" />
     <Compile Include="Protocol\CommunicationDescriptionStorageTest.cs" />
-    <Compile Include="Protocol\CommunicationSubjectTest.cs" />
+    <Compile Include="CommunicationSubjectTest.cs" />
     <Compile Include="Protocol\DataHandlerTest.cs" />
     <Compile Include="Protocol\EndpointInformationStorageTest.cs" />
     <Compile Include="Protocol\EndpointNotContactableExceptionTest.cs" />
@@ -122,11 +123,13 @@
     <Compile Include="Interaction\TypeIsNotAValidNotificationSetExceptionTest.cs" />
     <Compile Include="Interaction\UnableToGenerateProxyExceptionTest.cs" />
     <Compile Include="Interaction\UnknownCommandSetExceptionTest.cs" />
+    <Compile Include="UnknownCommunicationSubjectExceptionTest.cs" />
     <Compile Include="UnknownEndpointIdFormatExceptionTest.cs" />
     <Compile Include="Interaction\UnknownNotificationSetExceptionTest.cs" />
     <Compile Include="Protocol\UploadNotDeregisteredExceptionTest.cs" />
     <Compile Include="Protocol\UploadTokenTest.cs" />
     <Compile Include="Protocol\WaitingUploadsTest.cs" />
+    <Compile Include="UriExtensionsTest.cs" />
   </ItemGroup>
   <!-- Indicate that we depend on the SolutionLevel build projects -->
   <ItemGroup>

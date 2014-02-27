@@ -11,7 +11,7 @@ using System.Linq;
 using Nuclei.Nunit.Extensions;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
