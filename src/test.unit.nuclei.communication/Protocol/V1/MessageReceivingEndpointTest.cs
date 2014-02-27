@@ -7,6 +7,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Nuclei.Communication.Protocol.Messages;
+using Nuclei.Communication.Protocol.V1.DataObjects;
+using Nuclei.Communication.Protocol.V1.DataObjects.Converters;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
@@ -23,10 +25,18 @@ namespace Nuclei.Communication.Protocol.V1
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
             var endpointId = new EndpointId("id");
-            var msg = new EndpointDisconnectMessage(endpointId);
+            var msg = new EndpointDisconnectData
+                {
+                    Sender = endpointId,
+                };
 
-            var endpoint = new MessageReceivingEndpoint(systemDiagnostics);
-            endpoint.OnNewMessage += (s, e) => Assert.AreSame(msg, e.Message);
+            var endpoint = new MessageReceivingEndpoint(
+                new IConvertCommunicationMessages[]
+                    {
+                        new EndpointDisconnectConverter(), 
+                    }, 
+                systemDiagnostics);
+            endpoint.OnNewMessage += (s, e) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), e.Message);
 
             endpoint.AcceptMessage(msg);
         }
@@ -37,9 +47,17 @@ namespace Nuclei.Communication.Protocol.V1
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
             var endpointId = new EndpointId("id");
-            var msg = new EndpointDisconnectMessage(endpointId);
+            var msg = new EndpointDisconnectData
+            {
+                Sender = endpointId,
+            };
 
-            var endpoint = new MessageReceivingEndpoint(systemDiagnostics);
+            var endpoint = new MessageReceivingEndpoint(
+                new IConvertCommunicationMessages[]
+                    {
+                        new EndpointDisconnectConverter(), 
+                    },
+                systemDiagnostics);
             endpoint.OnNewMessage += 
                 (s, e) => 
                 { 

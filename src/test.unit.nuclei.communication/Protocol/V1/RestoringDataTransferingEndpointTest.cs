@@ -9,6 +9,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.ServiceModel;
+using Moq;
+using Nuclei.Configuration;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
@@ -56,9 +58,18 @@ namespace Nuclei.Communication.Protocol.V1
             host.Open();
             try
             {
+                var configuration = new Mock<IConfiguration>();
+                {
+                    configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                        .Returns(false);
+                }
+
                 var localAddress = string.Format("{0}/{1}", uri.OriginalString, address);
-                var factory = new ChannelFactory<IDataReceivingEndpointProxy>(binding, localAddress);
-                var sender = new RestoringDataTransferingEndpoint(factory, systemDiagnostics);
+                var template = new NamedPipeProtocolChannelTemplate(configuration.Object);
+                var sender = new RestoringDataTransferingEndpoint(
+                    new Uri(localAddress),
+                    template,
+                    systemDiagnostics);
 
                 sender.Send(msg);
             }
@@ -96,12 +107,10 @@ namespace Nuclei.Communication.Protocol.V1
                         count++;
                         throw new FaultException("Lets bail the first one");
                     }
-                    else
-                    {
-                        Assert.AreEqual(sendingEndpoint, e.Data.SendingEndpoint);
-                        Assert.AreEqual(receivingEndpoint, e.Data.ReceivingEndpoint);
-                        Assert.AreEqual(text, new StreamReader(e.Data.Data).ReadToEnd());
-                    }
+                    
+                    Assert.AreEqual(sendingEndpoint, e.Data.SendingEndpoint);
+                    Assert.AreEqual(receivingEndpoint, e.Data.ReceivingEndpoint);
+                    Assert.AreEqual(text, new StreamReader(e.Data.Data).ReadToEnd());
                 };
 
             var uri = new Uri("net.pipe://localhost/test/pipe");
@@ -114,9 +123,18 @@ namespace Nuclei.Communication.Protocol.V1
             host.Open();
             try
             {
+                var configuration = new Mock<IConfiguration>();
+                {
+                    configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                        .Returns(false);
+                }
+
                 var localAddress = string.Format("{0}/{1}", uri.OriginalString, address);
-                var factory = new ChannelFactory<IDataReceivingEndpointProxy>(binding, localAddress);
-                var sender = new RestoringDataTransferingEndpoint(factory, systemDiagnostics);
+                var template = new NamedPipeProtocolChannelTemplate(configuration.Object);
+                var sender = new RestoringDataTransferingEndpoint(
+                    new Uri(localAddress),
+                    template,
+                    systemDiagnostics);
 
                 // This message should fault the channel
                 sender.Send(msg);

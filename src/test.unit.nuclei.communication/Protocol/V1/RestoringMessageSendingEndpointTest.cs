@@ -8,7 +8,10 @@ using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.ServiceModel;
+using Moq;
 using Nuclei.Communication.Protocol.Messages;
+using Nuclei.Communication.Protocol.V1.DataObjects.Converters;
+using Nuclei.Configuration;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
@@ -26,8 +29,13 @@ namespace Nuclei.Communication.Protocol.V1
             var endpointId = new EndpointId("id");
             var msg = new EndpointDisconnectMessage(endpointId);
 
-            var receiver = new MessageReceivingEndpoint(systemDiagnostics);
-            receiver.OnNewMessage += (s, e) => Assert.AreEqual(endpointId, e.Message.OriginatingEndpoint);
+            var receiver = new MessageReceivingEndpoint(
+                new IConvertCommunicationMessages[]
+                    {
+                        new EndpointDisconnectConverter(), 
+                    },
+                systemDiagnostics);
+            receiver.OnNewMessage += (s, e) => Assert.AreEqual(endpointId, e.Message.Sender);
 
             var uri = new Uri("net.pipe://localhost/test/pipe");
             var host = new ServiceHost(receiver, uri);
@@ -39,9 +47,22 @@ namespace Nuclei.Communication.Protocol.V1
             host.Open();
             try
             {
+                var configuration = new Mock<IConfiguration>();
+                {
+                    configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                        .Returns(false);
+                }
+
                 var localAddress = string.Format("{0}/{1}", uri.OriginalString, address);
-                var factory = new ChannelFactory<IMessageReceivingEndpointProxy>(binding, localAddress);
-                var sender = new RestoringMessageSendingEndpoint(factory, systemDiagnostics);
+                var template = new NamedPipeProtocolChannelTemplate(configuration.Object);
+                var sender = new RestoringMessageSendingEndpoint(
+                    new Uri(localAddress),
+                    template,
+                    new IConvertCommunicationMessages[]
+                        {
+                            new EndpointDisconnectConverter(), 
+                        }, 
+                    systemDiagnostics);
 
                 sender.Send(msg);
             }
@@ -58,8 +79,13 @@ namespace Nuclei.Communication.Protocol.V1
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
             var endpointId = new EndpointId("id");
             var msg = new EndpointDisconnectMessage(endpointId);
-
-            var receiver = new MessageReceivingEndpoint(systemDiagnostics);
+            
+            var receiver = new MessageReceivingEndpoint(
+                new IConvertCommunicationMessages[]
+                    {
+                        new EndpointDisconnectConverter(), 
+                    },
+                systemDiagnostics);
             receiver.OnNewMessage +=
                 (s, e) =>
                 {
@@ -68,10 +94,8 @@ namespace Nuclei.Communication.Protocol.V1
                         count++;
                         throw new FaultException("Lets bail the first one");
                     }
-                    else
-                    {
-                        Assert.AreEqual(endpointId, e.Message.OriginatingEndpoint);
-                    }
+                    
+                    Assert.AreEqual(endpointId, e.Message.Sender);
                 };
 
             var uri = new Uri("net.pipe://localhost/test/pipe");
@@ -84,9 +108,22 @@ namespace Nuclei.Communication.Protocol.V1
             host.Open();
             try
             {
+                var configuration = new Mock<IConfiguration>();
+                {
+                    configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                        .Returns(false);
+                }
+
                 var localAddress = string.Format("{0}/{1}", uri.OriginalString, address);
-                var factory = new ChannelFactory<IMessageReceivingEndpointProxy>(binding, localAddress);
-                var sender = new RestoringMessageSendingEndpoint(factory, systemDiagnostics);
+                var template = new NamedPipeProtocolChannelTemplate(configuration.Object);
+                var sender = new RestoringMessageSendingEndpoint(
+                    new Uri(localAddress),
+                    template,
+                    new IConvertCommunicationMessages[]
+                        {
+                            new EndpointDisconnectConverter(), 
+                        },
+                    systemDiagnostics);
 
                 // This message should fault the channel
                 sender.Send(msg);

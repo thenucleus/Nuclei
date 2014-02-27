@@ -114,6 +114,9 @@
     <Compile Include="Protocol\Messages\SuccessMessageTest.cs" />
     <Compile Include="Protocol\Messages\UnknownMessageTypeMessageTest.cs" />
     <Compile Include="Protocol\Messages\UnregisterFromNotificationMessageTest.cs" />
+    <Compile Include="Protocol\V1\DataObjects\Converters\UnknownMessageTypeConverterTest.cs" />
+    <Compile Include="Protocol\V1\DataReceivingEndpointTest.cs" />
+    <Compile Include="Protocol\V1\EndpointConnectionApproverTest.cs" />
     <Compile Include="Protocol\V1\MessageReceivingEndpointTest.cs" />
     <Compile Include="Protocol\V1\RestoringDataTransferingEndpointTest.cs" />
     <Compile Include="Protocol\V1\RestoringMessageSendingEndpointTest.cs" />
@@ -143,6 +146,10 @@
       <Project>{b0d0341b-98d0-48d0-a2d8-9b05761ae64e}</Project>
       <Name>Nuclei.Communication</Name>
     </ProjectReference>
+    <ProjectReference Include="..\nuclei.configuration\Nuclei.Configuration.csproj">
+      <Project>{62e77b2f-34ee-4258-b1c7-9f30eb80ae12}</Project>
+      <Name>Nuclei.Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Nuclei.Diagnostics\Nuclei.Diagnostics.csproj">
       <Project>{751a1133-0a06-4fd1-a4c1-0daec2d40d31}</Project>
       <Name>Nuclei.Diagnostics</Name>
@@ -160,9 +167,7 @@
       <Name>SolutionLevel</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Protocol\V1\DataObjects\Converters\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
