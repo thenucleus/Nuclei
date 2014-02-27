@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Moq;
-using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Communication.Protocol.Messages.Processors;
 using Nuclei.Diagnostics;
@@ -152,12 +151,12 @@ namespace Nuclei.Communication.Protocol
             var endpoint = new EndpointId("sendingEndpoint");
             var msg = new EndpointConnectMessage(
                 endpoint, 
-                ChannelTemplate.NamedPipe,
-                @"net.pipe://localhost/test", 
-                @"net.pipe://localhost/test/data",
-                new CommunicationDescription(new List<CommunicationSubject>(), 
-                    new List<ISerializedType>(), 
-                    new List<ISerializedType>()));
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")), 
+                new ProtocolInformation( 
+                    new Version(), 
+                    new Uri(@"net.pipe://localhost/test"), 
+                    new Uri(@"net.pipe://localhost/test/data")),
+                new CommunicationDescription(new List<CommunicationSubject>()));
             handler.ProcessMessage(msg);
 
             Assert.AreSame(msg, storedMessage);
@@ -189,15 +188,40 @@ namespace Nuclei.Communication.Protocol
             var endpoint = new EndpointId("sendingEndpoint");
             var msg = new EndpointConnectMessage(
                 endpoint,
-                ChannelTemplate.NamedPipe,
-                @"net.pipe://localhost/test",
-                @"net.pipe://localhost/test/data", 
-                new CommunicationDescription(new List<CommunicationSubject>(),
-                    new List<ISerializedType>(),
-                    new List<ISerializedType>()));
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri(@"net.pipe://localhost/test"),
+                    new Uri(@"net.pipe://localhost/test/data")),
+                new CommunicationDescription(new List<CommunicationSubject>()));
             handler.ProcessMessage(msg);
 
             Assert.IsInstanceOf<UnknownMessageTypeMessage>(storedMsg);
+        }
+
+        [Test]
+        public void OnLocalChannelClosed()
+        {
+            var store = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                store.Setup(s => s.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
+
+            var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
+            var handler = new MessageHandler(store.Object, systemDiagnostics);
+
+            var endpoint = new EndpointId("sendingEndpoint");
+            var messageId = new MessageId();
+            var task = handler.ForwardResponse(endpoint, messageId);
+            Assert.IsFalse(task.IsCompleted);
+            Assert.IsFalse(task.IsCanceled);
+
+            handler.OnLocalChannelClosed();
+
+            Assert.Throws<AggregateException>(task.Wait);
+            Assert.IsTrue(task.IsCompleted);
+            Assert.IsTrue(task.IsCanceled);
         }
     }
 }

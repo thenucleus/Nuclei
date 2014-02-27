@@ -8,7 +8,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication.Protocol.Messages
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Filters messages based on their <see cref="Type"/>.

@@ -7,41 +7,58 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.ServiceModel;
-using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication.Protocol.V1
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
         Justification = "Unit tests do not need documentation.")]
-    public sealed class RestoringMessageSendingEndpointTest
+    public sealed class RestoringDataTransferingEndpointTest
     {
         [Test]
         public void SendWithNoChannel()
         {
-            var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
-            var endpointId = new EndpointId("id");
-            var msg = new EndpointDisconnectMessage(endpointId);
+            var text = "Hello world.";
+            var data = new MemoryStream();
+            var writer = new StreamWriter(data);
+            writer.Write(text);
 
-            var receiver = new MessageReceivingEndpoint(systemDiagnostics);
-            receiver.OnNewMessage += (s, e) => Assert.AreEqual(endpointId, e.Message.OriginatingEndpoint);
+            var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
+            var sendingEndpoint = new EndpointId("a");
+            var receivingEndpoint = new EndpointId("b");
+            var msg = new DataTransferMessage
+                {
+                    SendingEndpoint = sendingEndpoint,
+                    ReceivingEndpoint = receivingEndpoint,
+                    Data = data,
+                };
+
+            var receiver = new DataReceivingEndpoint(systemDiagnostics);
+            receiver.OnNewData += 
+                (s, e) =>
+                {
+                    Assert.AreEqual(sendingEndpoint, e.Data.SendingEndpoint);
+                    Assert.AreEqual(receivingEndpoint, e.Data.ReceivingEndpoint);
+                    Assert.AreEqual(text, new StreamReader(e.Data.Data).ReadToEnd());
+                };
 
             var uri = new Uri("net.pipe://localhost/test/pipe");
             var host = new ServiceHost(receiver, uri);
-            
+
             var binding = new NetNamedPipeBinding();
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
-            host.AddServiceEndpoint(typeof(IMessageReceivingEndpoint), binding, address);
+            host.AddServiceEndpoint(typeof(IDataReceivingEndpoint), binding, address);
 
             host.Open();
             try
             {
                 var localAddress = string.Format("{0}/{1}", uri.OriginalString, address);
-                var factory = new ChannelFactory<IMessageReceivingEndpointProxy>(binding, localAddress);
-                var sender = new RestoringMessageSendingEndpoint(factory, systemDiagnostics);
+                var factory = new ChannelFactory<IDataReceivingEndpointProxy>(binding, localAddress);
+                var sender = new RestoringDataTransferingEndpoint(factory, systemDiagnostics);
 
                 sender.Send(msg);
             }
@@ -54,13 +71,24 @@ namespace Nuclei.Communication.Protocol
         [Test]
         public void SendWithFaultedChannel()
         {
-            var count = 0;
+            var text = "Hello world.";
+            var data = new MemoryStream();
+            var writer = new StreamWriter(data);
+            writer.Write(text);
+            
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
-            var endpointId = new EndpointId("id");
-            var msg = new EndpointDisconnectMessage(endpointId);
+            var sendingEndpoint = new EndpointId("a");
+            var receivingEndpoint = new EndpointId("b");
+            var msg = new DataTransferMessage
+            {
+                SendingEndpoint = sendingEndpoint,
+                ReceivingEndpoint = receivingEndpoint,
+                Data = data,
+            };
 
-            var receiver = new MessageReceivingEndpoint(systemDiagnostics);
-            receiver.OnNewMessage +=
+            var count = 0;
+            var receiver = new DataReceivingEndpoint(systemDiagnostics);
+            receiver.OnNewData +=
                 (s, e) =>
                 {
                     if (count == 0)
@@ -70,7 +98,9 @@ namespace Nuclei.Communication.Protocol
                     }
                     else
                     {
-                        Assert.AreEqual(endpointId, e.Message.OriginatingEndpoint);
+                        Assert.AreEqual(sendingEndpoint, e.Data.SendingEndpoint);
+                        Assert.AreEqual(receivingEndpoint, e.Data.ReceivingEndpoint);
+                        Assert.AreEqual(text, new StreamReader(e.Data.Data).ReadToEnd());
                     }
                 };
 
@@ -79,14 +109,14 @@ namespace Nuclei.Communication.Protocol
 
             var binding = new NetNamedPipeBinding();
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
-            host.AddServiceEndpoint(typeof(IMessageReceivingEndpoint), binding, address);
+            host.AddServiceEndpoint(typeof(IDataReceivingEndpoint), binding, address);
 
             host.Open();
             try
             {
                 var localAddress = string.Format("{0}/{1}", uri.OriginalString, address);
-                var factory = new ChannelFactory<IMessageReceivingEndpointProxy>(binding, localAddress);
-                var sender = new RestoringMessageSendingEndpoint(factory, systemDiagnostics);
+                var factory = new ChannelFactory<IDataReceivingEndpointProxy>(binding, localAddress);
+                var sender = new RestoringDataTransferingEndpoint(factory, systemDiagnostics);
 
                 // This message should fault the channel
                 sender.Send(msg);

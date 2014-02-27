@@ -8,35 +8,42 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
         Justification = "Unit tests do not need documentation.")]
-    public sealed class ChannelConnectionInformationTest
+    public sealed class ProtocolInformationTest
     {
         [Test]
-        public void CreateWithIncorrectChannelType()
+        public void CreateWithNullVersion()
         {
-            Assert.Throws<InvalidChannelTypeException>(
-                () => new ChannelConnectionInformation(
-                    new EndpointId("a"), 
-                    ChannelTemplate.None, 
+            Assert.Throws<ArgumentNullException>(
+                () => new ProtocolInformation(
+                    null,
                     new Uri(@"net.pipe://localhost/pipe/sendingEndpoint"),
+                    new Uri(@"net.pipe://localhost/pipe/sendingEndpoint/Data")));
+        }
+
+        [Test]
+        public void CreateWithNullMessageAddress()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () => new ProtocolInformation(
+                    new Version(), 
+                    null,
                     new Uri(@"net.pipe://localhost/pipe/sendingEndpoint/Data")));
         }
 
         [Test]
         public void Create()
         {
-            var endpoint = new EndpointId("a");
-            var type = ChannelTemplate.NamedPipe;
+            var version = new Version(1, 2, 3, 4);
             var messageUri = new Uri(@"net.pipe://localhost/pipe/sendingEndpoint");
             var dataUri = new Uri(@"net.pipe://localhost/pipe/sendingEndpoint/Data");
-            var info = new ChannelConnectionInformation(endpoint, type, messageUri, dataUri);
+            var info = new ProtocolInformation(version, messageUri, dataUri);
 
-            Assert.AreSame(endpoint, info.Id);
-            Assert.AreEqual(type, info.ChannelTemplate);
+            Assert.AreEqual(version, info.Version);
             Assert.AreSame(messageUri, info.MessageAddress);
             Assert.AreSame(dataUri, info.DataAddress);
         }

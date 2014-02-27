@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Nuclei.Communication.Interaction;
 using NUnit.Framework;
 
 namespace Nuclei.Communication.Protocol
@@ -22,10 +21,12 @@ namespace Nuclei.Communication.Protocol
         {
             var storage = new EndpointInformationStorage();
 
-            var connection = new ChannelConnectionInformation(
+            var connection = new EndpointInformation(
                 new EndpointId("a"), 
-                ChannelTemplate.NamedPipe, 
-                new Uri("http://localhost"));
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")), 
+                new ProtocolInformation(
+                    new Version(), 
+                    new Uri("http://localhost/protocol/invalid")));
             Assert.IsFalse(storage.TryAdd(null, connection));
         }
 
@@ -42,22 +43,26 @@ namespace Nuclei.Communication.Protocol
             var storage = new EndpointInformationStorage();
 
             var endpoint = new EndpointId("a");
-            var connection = new ChannelConnectionInformation(
-                endpoint,
-                ChannelTemplate.NamedPipe,
-                new Uri("http://localhost"));
+            var connection = new EndpointInformation(
+                new EndpointId("a"),
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://localhost/protocol/invalid")));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var newConnection = new ChannelConnectionInformation(
+            var newConnection = new EndpointInformation(
                 endpoint,
-                ChannelTemplate.TcpIP,
-                new Uri("http://localhost"));
+                new DiscoveryInformation(new Uri("http://other/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://other/protocol/invalid")));
             Assert.IsFalse(storage.TryAdd(endpoint, newConnection));
 
-            ChannelConnectionInformation otherConnection;
+            EndpointInformation otherConnection;
             var result = storage.TryGetConnectionFor(endpoint, out otherConnection);
             Assert.IsTrue(result);
             Assert.AreSame(connection, otherConnection);
@@ -69,16 +74,18 @@ namespace Nuclei.Communication.Protocol
             var storage = new EndpointInformationStorage();
 
             var endpoint = new EndpointId("a");
-            var connection = new ChannelConnectionInformation(
+            var connection = new EndpointInformation(
                 new EndpointId("a"),
-                ChannelTemplate.NamedPipe,
-                new Uri("http://localhost"));
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://localhost/protocol/invalid")));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            ChannelConnectionInformation otherConnection;
+            EndpointInformation otherConnection;
             var result = storage.TryGetConnectionFor(endpoint, out otherConnection);
             Assert.IsTrue(result);
             Assert.AreSame(connection, otherConnection);
@@ -89,9 +96,7 @@ namespace Nuclei.Communication.Protocol
         {
             var storage = new EndpointInformationStorage();
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>(),
-                new List<ISerializedType>());
+            var description = new CommunicationDescription(new List<CommunicationSubject>());
             Assert.IsFalse(storage.TryStartApproval(null, description));
         }
 
@@ -110,9 +115,7 @@ namespace Nuclei.Communication.Protocol
             var storage = new EndpointInformationStorage();
 
             var endpoint = new EndpointId("a");
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>(),
-                new List<ISerializedType>());
+            var description = new CommunicationDescription(new List<CommunicationSubject>());
             Assert.IsFalse(storage.TryStartApproval(endpoint, description));
         }
 
@@ -122,18 +125,18 @@ namespace Nuclei.Communication.Protocol
             var storage = new EndpointInformationStorage();
 
             var endpoint = new EndpointId("a");
-            var connection = new ChannelConnectionInformation(
+            var connection = new EndpointInformation(
                 new EndpointId("a"),
-                ChannelTemplate.NamedPipe,
-                new Uri("http://localhost"));
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://localhost/protocol/invalid")));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>(),
-                new List<ISerializedType>());
+            var description = new CommunicationDescription(new List<CommunicationSubject>());
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
             Assert.IsTrue(storage.TryCompleteApproval(endpoint));
             Assert.IsFalse(storage.TryStartApproval(endpoint, description));
@@ -145,18 +148,18 @@ namespace Nuclei.Communication.Protocol
             var storage = new EndpointInformationStorage();
 
             var endpoint = new EndpointId("a");
-            var connection = new ChannelConnectionInformation(
+            var connection = new EndpointInformation(
                 new EndpointId("a"),
-                ChannelTemplate.NamedPipe,
-                new Uri("http://localhost"));
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://localhost/protocol/invalid")));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>(),
-                new List<ISerializedType>());
+            var description = new CommunicationDescription(new List<CommunicationSubject>());
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
             Assert.IsFalse(storage.HasBeenContacted(endpoint));
@@ -176,18 +179,18 @@ namespace Nuclei.Communication.Protocol
             var storage = new EndpointInformationStorage();
 
             var endpoint = new EndpointId("a");
-            var connection = new ChannelConnectionInformation(
-                endpoint,
-                ChannelTemplate.NamedPipe,
-                new Uri("http://localhost"));
+            var connection = new EndpointInformation(
+                new EndpointId("a"),
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://localhost/protocol/invalid")));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>(),
-                new List<ISerializedType>());
+            var description = new CommunicationDescription(new List<CommunicationSubject>());
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
             Assert.IsTrue(storage.TryCompleteApproval(endpoint));
             Assert.IsFalse(storage.TryCompleteApproval(endpoint));
@@ -206,15 +209,14 @@ namespace Nuclei.Communication.Protocol
         public void TryApprove()
         {
             var endpoint = new EndpointId("a");
-            var connection = new ChannelConnectionInformation(
-                endpoint,
-                ChannelTemplate.NamedPipe,
-                new Uri("http://localhost"));
+            var connection = new EndpointInformation(
+                new EndpointId("a"),
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://localhost/protocol/invalid")));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>(),
-                new List<ISerializedType>());
-
+            var description = new CommunicationDescription(new List<CommunicationSubject>());
             var storage = new EndpointInformationStorage();
 
             var wasApproved = false;
@@ -222,8 +224,7 @@ namespace Nuclei.Communication.Protocol
                 (s, e) =>
                 {
                     wasApproved = true;
-                    Assert.AreSame(connection, e.ConnectionInformation);
-                    Assert.AreSame(description, e.Description);
+                    Assert.AreSame(connection.Id, e.Endpoint);
                 };
 
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
@@ -250,15 +251,14 @@ namespace Nuclei.Communication.Protocol
         public void TryUpdateWithApprovedEndpoint()
         {
             var endpoint = new EndpointId("a");
-            var connection = new ChannelConnectionInformation(
-                endpoint,
-                ChannelTemplate.NamedPipe,
-                new Uri("http://localhost"));
+            var connection = new EndpointInformation(
+                new EndpointId("a"),
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://localhost/protocol/invalid")));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>(),
-                new List<ISerializedType>());
-
+            var description = new CommunicationDescription(new List<CommunicationSubject>());
             var storage = new EndpointInformationStorage();
 
             var wasApproved = false;
@@ -266,8 +266,7 @@ namespace Nuclei.Communication.Protocol
                 (s, e) =>
                 {
                     wasApproved = true;
-                    Assert.AreSame(connection, e.ConnectionInformation);
-                    Assert.AreSame(description, e.Description);
+                    Assert.AreSame(connection.Id, e.Endpoint);
                 };
 
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
@@ -275,11 +274,12 @@ namespace Nuclei.Communication.Protocol
             Assert.IsTrue(storage.TryCompleteApproval(endpoint));
             Assert.IsTrue(wasApproved);
 
-            var newConnection = new ChannelConnectionInformation(
+            var newConnection = new EndpointInformation(
                 endpoint,
-                ChannelTemplate.NamedPipe,
-                new Uri(@"http://localhost"),
-                new Uri(@"http://localhost/data"));
+                new DiscoveryInformation(new Uri("http://other/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://other/protocol/invalid")));
             Assert.IsFalse(storage.TryUpdate(newConnection));
         }
 
@@ -287,22 +287,25 @@ namespace Nuclei.Communication.Protocol
         public void TryUpdateWithContactedEndpoint()
         {
             var endpoint = new EndpointId("a");
-            var connection = new ChannelConnectionInformation(
-                endpoint,
-                ChannelTemplate.NamedPipe,
-                new Uri("http://localhost"));
+            var connection = new EndpointInformation(
+                new EndpointId("a"),
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://localhost/protocol/invalid")));
 
             var storage = new EndpointInformationStorage();
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
-            
-            var newConnection = new ChannelConnectionInformation(
+
+            var newConnection = new EndpointInformation(
                 endpoint,
-                ChannelTemplate.NamedPipe,
-                new Uri(@"http://localhost"),
-                new Uri(@"http://localhost/data"));
+                new DiscoveryInformation(new Uri("http://other/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://other/protocol/invalid")));
             Assert.IsTrue(storage.TryUpdate(newConnection));
 
-            ChannelConnectionInformation storedConnection;
+            EndpointInformation storedConnection;
             storage.TryGetConnectionFor(endpoint, out storedConnection);
             Assert.AreSame(newConnection, storedConnection);
         }
@@ -311,27 +314,27 @@ namespace Nuclei.Communication.Protocol
         public void TryUpdateWithApprovalUnderWay()
         {
             var endpoint = new EndpointId("a");
-            var connection = new ChannelConnectionInformation(
-                endpoint,
-                ChannelTemplate.NamedPipe,
-                new Uri("http://localhost"));
+            var connection = new EndpointInformation(
+                new EndpointId("a"),
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://localhost/protocol/invalid")));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>(),
-                new List<ISerializedType>());
-
+            var description = new CommunicationDescription(new List<CommunicationSubject>());
             var storage = new EndpointInformationStorage();
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
 
-            var newConnection = new ChannelConnectionInformation(
+            var newConnection = new EndpointInformation(
                 endpoint,
-                ChannelTemplate.NamedPipe,
-                new Uri(@"http://localhost"),
-                new Uri(@"http://localhost/data"));
+                new DiscoveryInformation(new Uri("http://other/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://other/protocol/invalid")));
             Assert.IsTrue(storage.TryUpdate(newConnection));
 
-            ChannelConnectionInformation storedConnection;
+            EndpointInformation storedConnection;
             storage.TryGetConnectionFor(endpoint, out storedConnection);
             Assert.AreSame(newConnection, storedConnection);
         }
@@ -358,10 +361,12 @@ namespace Nuclei.Communication.Protocol
             var storage = new EndpointInformationStorage();
 
             var endpoint = new EndpointId("a");
-            var connection = new ChannelConnectionInformation(
+            var connection = new EndpointInformation(
                 new EndpointId("a"),
-                ChannelTemplate.NamedPipe,
-                new Uri("http://localhost"));
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://localhost/protocol/invalid")));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
@@ -378,18 +383,18 @@ namespace Nuclei.Communication.Protocol
             var storage = new EndpointInformationStorage();
 
             var endpoint = new EndpointId("a");
-            var connection = new ChannelConnectionInformation(
-                endpoint,
-                ChannelTemplate.NamedPipe,
-                new Uri("http://localhost"));
+            var connection = new EndpointInformation(
+                new EndpointId("a"),
+                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new ProtocolInformation(
+                    new Version(),
+                    new Uri("http://localhost/protocol/invalid")));
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>(),
-                new List<ISerializedType>());
+            var description = new CommunicationDescription(new List<CommunicationSubject>());
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
             Assert.IsTrue(storage.TryCompleteApproval(endpoint));
             Assert.IsTrue(storage.CanCommunicateWithEndpoint(endpoint));

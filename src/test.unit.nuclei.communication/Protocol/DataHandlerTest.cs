@@ -26,7 +26,7 @@ namespace Nuclei.Communication.Protocol
         }
 
         [Test]
-        public void ForwardResponse()
+        public void ForwardData()
         {
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
             var handler = new DataHandler(systemDiagnostics);
@@ -58,7 +58,7 @@ namespace Nuclei.Communication.Protocol
         }
 
         [Test]
-        public void ForwardResponseWithDisconnectingEndpoint()
+        public void ForwardDataWithDisconnectingEndpoint()
         {
             var store = new Mock<IStoreInformationAboutEndpoints>();
             {
@@ -70,12 +70,35 @@ namespace Nuclei.Communication.Protocol
             var handler = new DataHandler(systemDiagnostics);
 
             var sendingEndpoint = new EndpointId("sendingEndpoint");
-            var messageId = new MessageId();
             var task = handler.ForwardData(sendingEndpoint, GenerateNewTestFileName());
             Assert.IsFalse(task.IsCompleted);
             Assert.IsFalse(task.IsCanceled);
 
             handler.OnEndpointSignedOff(sendingEndpoint);
+
+            Assert.Throws<AggregateException>(task.Wait);
+            Assert.IsTrue(task.IsCompleted);
+            Assert.IsTrue(task.IsCanceled);
+        }
+
+        [Test]
+        public void OnLocalChannelClosed()
+        {
+            var store = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                store.Setup(s => s.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
+
+            var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
+            var handler = new DataHandler(systemDiagnostics);
+
+            var sendingEndpoint = new EndpointId("sendingEndpoint");
+            var task = handler.ForwardData(sendingEndpoint, GenerateNewTestFileName());
+            Assert.IsFalse(task.IsCompleted);
+            Assert.IsFalse(task.IsCanceled);
+
+            handler.OnLocalChannelClosed();
 
             Assert.Throws<AggregateException>(task.Wait);
             Assert.IsTrue(task.IsCompleted);

@@ -10,12 +10,12 @@ using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Protocol
+namespace Nuclei.Communication.Protocol.V1
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
         Justification = "Unit tests do not need documentation.")]
-    public sealed class ReceivingEndpointTest
+    public sealed class MessageReceivingEndpointTest
     {
         [Test]
         public void AcceptMessage()

@@ -74,16 +74,17 @@
     <Compile Include="Interaction\RemoteCommandHubTest.cs" />
     <Compile Include="Interaction\RemoteNotificationHubTest.cs" />
     <Compile Include="MaximumNumberOfChannelRestartsExceededExceptionTest.cs" />
+    <Compile Include="Protocol\CommunicationLayerTest.cs" />
     <Compile Include="Protocol\MessageHandlerTest.cs" />
     <Compile Include="Protocol\MessageIdTest.cs" />
     <Compile Include="Discovery\MissingBindingTypeExceptionTest.cs" />
     <Compile Include="Interaction\MissingCommandSetExceptionTest.cs" />
     <Compile Include="Discovery\MissingEndpointIdExceptionTest.cs" />
+    <Compile Include="Protocol\MessageKindFilterTest.cs" />
     <Compile Include="Protocol\NoCommunicationSubjectsRegisteredExceptionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Protocol\ChannelClosedEventArgsTest.cs" />
-    <Compile Include="Protocol\ChannelConnectionInformationTest.cs" />
-    <Compile Include="Protocol\CommunicationDescriptionStorageTest.cs" />
+    <Compile Include="ProtocolInformationTest.cs" />
     <Compile Include="CommunicationSubjectTest.cs" />
     <Compile Include="Protocol\DataHandlerTest.cs" />
     <Compile Include="Protocol\EndpointInformationStorageTest.cs" />
@@ -91,7 +92,7 @@
     <Compile Include="Protocol\EndpointSignInEventArgsTest.cs" />
     <Compile Include="Protocol\FailedToSendMessageExceptionTest.cs" />
     <Compile Include="Protocol\FileRegistrationNotFoundExceptionTest.cs" />
-    <Compile Include="Protocol\HandshakeProtocolLayerTest.cs" />
+    <Compile Include="Protocol\ProtocolHandshakeConductorTest.cs" />
     <Compile Include="Protocol\InvalidChannelTypeExceptionTest.cs" />
     <Compile Include="Protocol\MessageEventArgsTest.cs" />
     <Compile Include="Protocol\Messages\CommandInvokedMessageTest.cs" />
@@ -113,9 +114,9 @@
     <Compile Include="Protocol\Messages\SuccessMessageTest.cs" />
     <Compile Include="Protocol\Messages\UnknownMessageTypeMessageTest.cs" />
     <Compile Include="Protocol\Messages\UnregisterFromNotificationMessageTest.cs" />
-    <Compile Include="Protocol\ReceivingEndpointTest.cs" />
-    <Compile Include="Protocol\RestoringDataTransferingEndpointTest.cs" />
-    <Compile Include="Protocol\RestoringMessageSendingEndpointTest.cs" />
+    <Compile Include="Protocol\V1\MessageReceivingEndpointTest.cs" />
+    <Compile Include="Protocol\V1\RestoringDataTransferingEndpointTest.cs" />
+    <Compile Include="Protocol\V1\RestoringMessageSendingEndpointTest.cs" />
     <Compile Include="Protocol\SendingEndpointTest.cs" />
     <Compile Include="Interaction\SerializedEventTest.cs" />
     <Compile Include="Interaction\SerializedMethodInvocationTest.cs" />
@@ -158,6 +159,9 @@
       <Project>{b0b1c32a-53fc-4b7e-ba60-6dafb8180a42}</Project>
       <Name>SolutionLevel</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Protocol\V1\DataObjects\Converters\" />
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
