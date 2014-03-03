@@ -4,10 +4,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Moq;
-using Nuclei.Communication.Interaction;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
@@ -35,16 +35,16 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         [Test]
         public void Invoke()
         {
-            ChannelConnectionInformation processedChannel = null;
+            EndpointInformation processedChannel = null;
             CommunicationDescription processedDescription = null;
             MessageId processedMessageId = null;
             var sink = new Mock<IHandleProtocolHandshakes>();
             {
                 sink.Setup(s => s.ContinueHandshakeWith(
-                        It.IsAny<ChannelConnectionInformation>(), 
+                        It.IsAny<EndpointInformation>(), 
                         It.IsAny<CommunicationDescription>(), 
                         It.IsAny<MessageId>()))
-                    .Callback<ChannelConnectionInformation, CommunicationDescription, MessageId>((e, t, u) => 
+                    .Callback<EndpointInformation, CommunicationDescription, MessageId>((e, t, u) => 
                         {
                             processedChannel = e;
                             processedDescription = t;
@@ -61,19 +61,19 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             var action = new EndpointConnectProcessAction(sink.Object, channelTypes, systemDiagnostics);
             
             var id = new EndpointId("id");
-            var type = ChannelTemplate.TcpIP;
-            var messageUri = @"http://localhost";
-            var dataUri = @"http://localhost/data";
-            var description = new CommunicationDescription(new List<CommunicationSubject>(), 
-                new List<ISerializedType>(), 
-                new List<ISerializedType>());
-            var msg = new EndpointConnectMessage(id, type, messageUri, dataUri, description);
+            var discovery = new DiscoveryInformation(new Uri("http://localhost/discovery/invalid"));
+            var protocol = new ProtocolInformation(
+                new Version(1, 0), 
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var description = new CommunicationDescription(new List<CommunicationSubject>());
+            var msg = new EndpointConnectMessage(id, discovery, protocol, description);
             action.Invoke(msg);
 
             Assert.AreEqual(msg.Id, processedMessageId);
             Assert.AreEqual(id, processedChannel.Id);
-            Assert.AreEqual(type, processedChannel.ChannelTemplate);
-            Assert.AreEqual(messageUri, processedChannel.MessageAddress.OriginalString);
+            Assert.AreSame(discovery, processedChannel.DiscoveryInformation);
+            Assert.AreSame(protocol, processedChannel.ProtocolInformation);
             Assert.AreSame(description, processedDescription);
         }
     }

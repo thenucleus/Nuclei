@@ -24,7 +24,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         public void Invoke()
         {
             var uploads = new WaitingUploads();
-            var layer = new Mock<ISendDataViaChannels>();
+            var layer = new Mock<ICommunicationLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("other"));
@@ -79,7 +79,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         public void InvokeWithoutFileRegistration()
         {
             var uploads = new WaitingUploads();
-            var layer = new Mock<ISendDataViaChannels>();
+            var layer = new Mock<ICommunicationLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("other"));
@@ -132,7 +132,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         public void InvokeWithFailedUpload()
         {
             var uploads = new WaitingUploads();
-            var layer = new Mock<ISendDataViaChannels>();
+            var layer = new Mock<ICommunicationLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("other"));
@@ -187,7 +187,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         public void InvokeWithFailingMessageChannel()
         {
             var uploads = new WaitingUploads();
-            var layer = new Mock<ISendDataViaChannels>();
+            var layer = new Mock<ICommunicationLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("other"));
