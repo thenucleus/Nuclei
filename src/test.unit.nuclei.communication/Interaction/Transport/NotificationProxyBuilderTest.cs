@@ -21,70 +21,7 @@ namespace Nuclei.Communication.Interaction
         Justification = "Unit tests do not need documentation. Especially not in partial classes.")]
     public sealed partial class NotificationProxyBuilderTest
     {
-        [Test]
-        public void VerifyThatTypeIsACorrectNotificationSetWithNonAssignableType()
-        {
-            Assert.Throws<TypeIsNotAValidNotificationSetException>(
-                () => NotificationProxyBuilder.VerifyThatTypeIsACorrectNotificationSet(typeof(object)));
-        }
-
-        [Test]
-        public void VerifyThatTypeIsACorrectNotificationSetWithNonInterface()
-        {
-            Assert.Throws<TypeIsNotAValidNotificationSetException>(
-                () => NotificationProxyBuilder.VerifyThatTypeIsACorrectNotificationSet(typeof(MockNotificationSetNotAnInterface)));
-        }
-
-        [Test]
-        public void VerifyThatTypeIsACorrectNotificationSetWithGenericInterface()
-        {
-            Assert.Throws<TypeIsNotAValidNotificationSetException>(
-                () => NotificationProxyBuilder.VerifyThatTypeIsACorrectNotificationSet(typeof(IMockNotificationSetWithGenericParameters<>)));
-        }
-
-        [Test]
-        public void VerifyThatTypeIsACorrectNotificationSetWithProperties()
-        {
-            Assert.Throws<TypeIsNotAValidNotificationSetException>(
-                () => NotificationProxyBuilder.VerifyThatTypeIsACorrectNotificationSet(typeof(IMockNotificationSetWithProperties)));
-        }
-
-        [Test]
-        public void VerifyThatTypeIsACorrectNotificationSetWithMethods()
-        {
-            Assert.Throws<TypeIsNotAValidNotificationSetException>(
-                () => NotificationProxyBuilder.VerifyThatTypeIsACorrectNotificationSet(typeof(IMockNotificationSetWithMethods)));
-        }
-
-        [Test]
-        public void VerifyThatTypeIsACorrectNotificationSetWithoutEvents()
-        {
-            Assert.Throws<TypeIsNotAValidNotificationSetException>(
-                () => NotificationProxyBuilder.VerifyThatTypeIsACorrectNotificationSet(typeof(IMockNotificationSetWithoutEvents)));
-        }
-
-        [Test]
-        public void VerifyThatTypeIsACorrectNotificationSetWithNonEventHandlerEvent()
-        {
-            Assert.Throws<TypeIsNotAValidNotificationSetException>(
-                () => NotificationProxyBuilder.VerifyThatTypeIsACorrectNotificationSet(typeof(IMockNotificationSetWithNonEventHandlerEvent)));
-        }
-
-        [Test]
-        public void VerifyThatTypeIsACorrectNotificationSetWithNonSerializableEventArgs()
-        {
-            Assert.Throws<TypeIsNotAValidNotificationSetException>(
-                () => NotificationProxyBuilder.VerifyThatTypeIsACorrectNotificationSet(typeof(IMockNotificationSetWithNonSerializableEventArgs)));
-        }
-
-        [Test]
-        public void VerifyThatTypeIsACorrectNotificationSet()
-        {
-            Assert.DoesNotThrow(
-                () => NotificationProxyBuilder.VerifyThatTypeIsACorrectNotificationSet(typeof(IMockNotificationSetWithEventHandler)));
-            Assert.DoesNotThrow(
-                () => NotificationProxyBuilder.VerifyThatTypeIsACorrectNotificationSet(typeof(IMockNotificationSetWithTypedEventHandler)));
-        }
+        
         
         [Test]
         public void ProxyConnectingToEventWithNormalEventHandler()

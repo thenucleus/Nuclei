@@ -303,7 +303,7 @@ namespace Nuclei.Communication.Interaction
                 bool foundAtLeastOneSubjectMatch = false;
                 foreach (var subject in m_InteractionSubjects)
                 {
-                    if (!m_InteractionSubjects.ContainsGroupRequirementForSubject(subject))
+                    if (!m_InteractionSubjects.ContainsGroupRequirementsForSubject(subject))
                     {
                         continue;
                     }

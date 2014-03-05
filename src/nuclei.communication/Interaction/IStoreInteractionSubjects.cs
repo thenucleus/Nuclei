@@ -26,7 +26,7 @@ namespace Nuclei.Communication.Interaction
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        bool ContainsGroupRequirementForSubject(CommunicationSubject subject);
+        bool ContainsGroupRequirementsForSubject(CommunicationSubject subject);
         
         /// <summary>
         /// Returns the required subject group that is related with the given subject.

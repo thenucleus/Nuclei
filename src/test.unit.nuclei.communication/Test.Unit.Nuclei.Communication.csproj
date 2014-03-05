@@ -62,23 +62,30 @@
     <Compile Include="EndpointIdExtensionsTest.cs" />
     <Compile Include="EndpointIdTest.cs" />
     <Compile Include="Interaction\CommandAlreadyRegisteredExceptionTest.cs" />
-    <Compile Include="Interaction\CommandInvocationFailedExceptionTest.cs" />
-    <Compile Include="Interaction\CommandNotSupportedExceptionTest.cs" />
-    <Compile Include="Interaction\CommandProxyBuilderTest.cs" />
-    <Compile Include="Interaction\CommandProxyBuilderTest.Interfaces.cs" />
+    <Compile Include="Interaction\CommandDataTest.cs" />
+    <Compile Include="Interaction\CommandInvokedDataTest.cs" />
+    <Compile Include="Interaction\CommunicationSubjectGroupTest.cs" />
+    <Compile Include="Interaction\DuplicateObjectSerializerExceptionTest.cs" />
+    <Compile Include="Interaction\InteractionExtensionsTest.cs" />
+    <Compile Include="Interaction\InteractionSubjectGroupStorageTest.cs" />
+    <Compile Include="Interaction\NonTransformingObjectSerializerTest.cs" />
+    <Compile Include="Interaction\NoSerializerForTypeFoundExceptionTest.cs" />
+    <Compile Include="Interaction\Transport\CommandInvocationFailedExceptionTest.cs" />
+    <Compile Include="Interaction\Transport\CommandNotSupportedExceptionTest.cs" />
+    <Compile Include="Interaction\Transport\CommandProxyBuilderTest.cs" />
+    <Compile Include="Interaction\InteractionExtensionsTest.Interfaces.cs" />
     <Compile Include="Interaction\LocalCommandCollectionTest.cs" />
     <Compile Include="Interaction\LocalNotificationCollectionTest.cs" />
-    <Compile Include="Interaction\NotificationNotSupportedExceptionTest.cs" />
-    <Compile Include="Interaction\NotificationProxyBuilderTest.cs" />
-    <Compile Include="Interaction\NotificationProxyBuilderTest.Interfaces.cs" />
-    <Compile Include="Interaction\RemoteCommandHubTest.cs" />
-    <Compile Include="Interaction\RemoteNotificationHubTest.cs" />
+    <Compile Include="Interaction\Transport\NotificationNotSupportedExceptionTest.cs" />
+    <Compile Include="Interaction\Transport\NotificationProxyBuilderTest.cs" />
+    <Compile Include="Interaction\Transport\RemoteCommandHubTest.cs" />
+    <Compile Include="Interaction\Transport\RemoteNotificationHubTest.cs" />
     <Compile Include="MaximumNumberOfChannelRestartsExceededExceptionTest.cs" />
     <Compile Include="Protocol\CommunicationLayerTest.cs" />
     <Compile Include="Protocol\MessageHandlerTest.cs" />
     <Compile Include="Protocol\MessageIdTest.cs" />
     <Compile Include="Discovery\MissingBindingTypeExceptionTest.cs" />
-    <Compile Include="Interaction\MissingCommandSetExceptionTest.cs" />
+    <Compile Include="Interaction\Transport\MissingCommandSetExceptionTest.cs" />
     <Compile Include="Discovery\MissingEndpointIdExceptionTest.cs" />
     <Compile Include="Protocol\MessageKindFilterTest.cs" />
     <Compile Include="Protocol\Messages\Processors\EndpointDisconnectProcessActionTest.cs" />
@@ -127,12 +134,12 @@
     <Compile Include="Protocol\V1\RestoringDataTransferingEndpointTest.cs" />
     <Compile Include="Protocol\V1\RestoringMessageSendingEndpointTest.cs" />
     <Compile Include="Protocol\SendingEndpointTest.cs" />
-    <Compile Include="Interaction\SerializedEventTest.cs" />
-    <Compile Include="Interaction\SerializedMethodInvocationTest.cs" />
-    <Compile Include="Interaction\SerializedTypeTest.cs" />
+    <Compile Include="Interaction\V1\SerializedEventTest.cs" />
+    <Compile Include="Interaction\V1\SerializedMethodInvocationTest.cs" />
+    <Compile Include="Interaction\V1\SerializedTypeTest.cs" />
     <Compile Include="Interaction\TypeIsNotAValidCommandSetExceptionTest.cs" />
     <Compile Include="Interaction\TypeIsNotAValidNotificationSetExceptionTest.cs" />
-    <Compile Include="Interaction\UnableToGenerateProxyExceptionTest.cs" />
+    <Compile Include="Interaction\Transport\UnableToGenerateProxyExceptionTest.cs" />
     <Compile Include="Interaction\UnknownCommandSetExceptionTest.cs" />
     <Compile Include="UnknownCommunicationSubjectExceptionTest.cs" />
     <Compile Include="UnknownEndpointIdFormatExceptionTest.cs" />
@@ -173,7 +180,9 @@
       <Name>SolutionLevel</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Interaction\V1\Protocol\V1\DataObjects\Converters\" />
+  </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

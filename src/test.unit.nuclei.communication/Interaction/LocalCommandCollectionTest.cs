@@ -4,12 +4,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Moq;
-using Nuclei.Communication.Protocol;
 using NUnit.Framework;
 
 namespace Nuclei.Communication.Interaction
@@ -27,51 +25,30 @@ namespace Nuclei.Communication.Interaction
         [Test]
         public void Register()
         {
-            Type registeredType = null;
-            var store = new Mock<IStoreProtocolSubjects>();
-            {
-                store.Setup(l => l.RegisterCommandType(It.IsAny<Type>()))
-                    .Callback<Type>(t => registeredType = t)
-                    .Verifiable();
-            }
-
             var collection = new LocalCommandCollection();
 
             var commands = new Mock<IMockCommandSetWithTaskReturn>();
             collection.Register(typeof(IMockCommandSetWithTaskReturn), commands.Object);
 
-            Assert.IsTrue(collection.Any(pair => pair.Key == typeof(IMockCommandSetWithTaskReturn)));
-            Assert.AreEqual(typeof(IMockCommandSetWithTaskReturn), registeredType);
-            store.Verify(l => l.RegisterCommandType(It.IsAny<Type>()), Times.Once());
+            Assert.IsTrue(collection.Any(pair => pair.Item1 == typeof(IMockCommandSetWithTaskReturn)));
         }
 
         [Test]
         public void RegisterWithExistingType()
         {
-            Type registeredType = null;
-            var store = new Mock<IStoreProtocolSubjects>();
-            {
-                store.Setup(l => l.RegisterCommandType(It.IsAny<Type>()))
-                    .Callback<Type>(t => registeredType = t)
-                    .Verifiable();
-            }
-
             var collection = new LocalCommandCollection();
             
             var commands = new Mock<IMockCommandSetWithTaskReturn>();
             collection.Register(typeof(IMockCommandSetWithTaskReturn), commands.Object);
-
-            Assert.AreEqual(typeof(IMockCommandSetWithTaskReturn), registeredType);
-            store.Verify(l => l.RegisterCommandType(It.IsAny<Type>()), Times.Once());
+            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(IMockCommandSetWithTaskReturn)));
 
             Assert.Throws<CommandAlreadyRegisteredException>(() => collection.Register(typeof(IMockCommandSetWithTaskReturn), commands.Object));
-            store.Verify(l => l.RegisterCommandType(It.IsAny<Type>()), Times.Once());
+            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(IMockCommandSetWithTaskReturn)));
         }
 
         [Test]
         public void CommandsForWithUnknownType()
         {
-            var layer = new Mock<IStoreProtocolSubjects>();
             var collection = new LocalCommandCollection();
             Assert.IsNull(collection.CommandsFor(typeof(IMockCommandSetWithTaskReturn)));
         }
@@ -79,7 +56,6 @@ namespace Nuclei.Communication.Interaction
         [Test]
         public void CommandsFor()
         {
-            var layer = new Mock<IStoreProtocolSubjects>();
             var collection = new LocalCommandCollection();
 
             var commands = new Mock<IMockCommandSetWithTaskReturn>();

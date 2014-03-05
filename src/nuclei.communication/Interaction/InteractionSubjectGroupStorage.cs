@@ -336,7 +336,7 @@ namespace Nuclei.Communication.Interaction
         /// <see langword="true" /> if a subject group with required commands and notifications exists for the
         /// given subject; otherwise, <see langword="false"/>.
         /// </returns>
-        public bool ContainsGroupRequirementForSubject(CommunicationSubject subject)
+        public bool ContainsGroupRequirementsForSubject(CommunicationSubject subject)
         {
             return (subject != null) && m_RequiredSubjects.ContainsKey(subject);
         }

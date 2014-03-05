@@ -11,14 +11,11 @@ using System.Linq;
 using Moq;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
-using Nuclei.Communication.Protocol.Messages;
 using NUnit.Framework;
 
 namespace Nuclei.Communication.Interaction
 {
     [TestFixture]
-    [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
-        Justification = "Unit tests do not need documentation.")]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
         Justification = "Unit tests do not need documentation.")]
     public sealed class LocalNotificationCollectionTest
@@ -59,7 +56,7 @@ namespace Nuclei.Communication.Interaction
         public void Register()
         {
             var knownEndpoint = new EndpointId("other");
-            var layer = new Mock<ISendDataViaChannels>();
+            var layer = new Mock<ICommunicationLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("mine"));
@@ -75,29 +72,19 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            Type registeredType = null;
-            var store = new Mock<IStoreProtocolSubjects>();
-            {
-                store.Setup(l => l.RegisterNotificationType(It.IsAny<Type>()))
-                    .Callback<Type>(t => registeredType = t)
-                    .Verifiable();
-            }
-
             var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
             collection.Register(typeof(IMockNotificationSet), obj);
 
-            Assert.IsTrue(collection.Any(pair => pair.Key == typeof(IMockNotificationSet)));
-            Assert.AreEqual(typeof(IMockNotificationSet), registeredType);
+            Assert.IsTrue(collection.Any(pair => pair.Item1 == typeof(IMockNotificationSet)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
-            store.Verify(l => l.RegisterNotificationType(It.IsAny<Type>()), Times.Once());
         }
 
         [Test]
         public void RegisterWithoutBeingSignedIn()
         {
-            var layer = new Mock<ISendDataViaChannels>();
+            var layer = new Mock<ICommunicationLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("mine"));
@@ -107,23 +94,13 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            Type registeredType = null;
-            var store = new Mock<IStoreProtocolSubjects>();
-            {
-                store.Setup(l => l.RegisterNotificationType(It.IsAny<Type>()))
-                    .Callback<Type>(t => registeredType = t)
-                    .Verifiable();
-            }
-
             var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
             collection.Register(typeof(IMockNotificationSet), obj);
 
-            Assert.IsTrue(collection.Any(pair => pair.Key == typeof(IMockNotificationSet)));
-            Assert.AreEqual(typeof(IMockNotificationSet), registeredType);
+            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(IMockNotificationSet)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
-            store.Verify(l => l.RegisterNotificationType(It.IsAny<Type>()), Times.Once());
         }
 
         [Test]
@@ -132,7 +109,7 @@ namespace Nuclei.Communication.Interaction
             var knownEndpoint = new EndpointId("other");
             EndpointId other = null;
             ICommunicationMessage msg = null;
-            var layer = new Mock<ISendDataViaChannels>();
+            var layer = new Mock<ICommunicationLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("mine"));
@@ -154,22 +131,16 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var store = new Mock<IStoreProtocolSubjects>();
-            {
-                store.Setup(l => l.RegisterNotificationType(It.IsAny<Type>()))
-                    .Verifiable();
-            }
-
             var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
             collection.Register(typeof(IMockNotificationSet), obj);
 
-            Assert.IsTrue(collection.Any(pair => pair.Key == typeof(IMockNotificationSet)));
+            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(IMockNotificationSet)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
 
-            var notificationType = ProxyExtensions.FromEventInfo(typeof(IMockNotificationSet).GetEvent("OnMyEvent"));
-            collection.RegisterForNotification(knownEndpoint, notificationType);
+            var notificationData = new NotificationData(typeof(IMockNotificationSet), "OnMyEvent");
+            collection.RegisterForNotification(knownEndpoint, notificationData);
 
             var args = new EventArgs();
             obj.RaiseOnMyEvent(args);
@@ -179,8 +150,8 @@ namespace Nuclei.Communication.Interaction
             Assert.IsInstanceOf<NotificationRaisedMessage>(msg);
 
             var notificationMsg = msg as NotificationRaisedMessage;
-            Assert.AreEqual(notificationType, notificationMsg.Notification);
-            Assert.AreSame(args, notificationMsg.Arguments);
+            Assert.AreEqual(notificationData, notificationMsg.Notification.Notification);
+            Assert.AreSame(args, notificationMsg.Notification.EventArgs);
         }
 
         [Test]
@@ -189,7 +160,7 @@ namespace Nuclei.Communication.Interaction
             var knownEndpoint = new EndpointId("other");
             EndpointId other = null;
             ICommunicationMessage msg = null;
-            var layer = new Mock<ISendDataViaChannels>();
+            var layer = new Mock<ICommunicationLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("mine"));
@@ -211,22 +182,16 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var store = new Mock<IStoreProtocolSubjects>();
-            {
-                store.Setup(l => l.RegisterNotificationType(It.IsAny<Type>()))
-                    .Verifiable();
-            }
-
             var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
             collection.Register(typeof(IMockNotificationSet), obj);
 
-            Assert.IsTrue(collection.Any(pair => pair.Key == typeof(IMockNotificationSet)));
+            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(IMockNotificationSet)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
 
-            var notificationType = ProxyExtensions.FromEventInfo(typeof(IMockNotificationSet).GetEvent("OnMyOtherEvent"));
-            collection.RegisterForNotification(knownEndpoint, notificationType);
+            var notificationData = new NotificationData(typeof(IMockNotificationSet), "OnMyOtherEvent");
+            collection.RegisterForNotification(knownEndpoint, notificationData);
 
             var args = new UnhandledExceptionEventArgs(new Exception(), false);
             obj.RaiseOnMyOtherEvent(args);
@@ -236,8 +201,8 @@ namespace Nuclei.Communication.Interaction
             Assert.IsInstanceOf<NotificationRaisedMessage>(msg);
 
             var notificationMsg = msg as NotificationRaisedMessage;
-            Assert.AreEqual(notificationType, notificationMsg.Notification);
-            Assert.AreSame(args, notificationMsg.Arguments);
+            Assert.AreEqual(notificationData, notificationMsg.Notification.Notification);
+            Assert.AreSame(args, notificationMsg.Notification.EventArgs);
         }
 
         [Test]
@@ -246,7 +211,7 @@ namespace Nuclei.Communication.Interaction
             var knownEndpoint = new EndpointId("other");
             EndpointId other = null;
             ICommunicationMessage msg = null;
-            var layer = new Mock<ISendDataViaChannels>();
+            var layer = new Mock<ICommunicationLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("mine"));
@@ -268,23 +233,17 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var store = new Mock<IStoreProtocolSubjects>();
-            {
-                store.Setup(l => l.RegisterNotificationType(It.IsAny<Type>()))
-                    .Verifiable();
-            }
-
             var collection = new LocalNotificationCollection(layer.Object);
 
             var obj = new MockNotificationSet();
             collection.Register(typeof(IMockNotificationSet), obj);
 
-            Assert.IsTrue(collection.Any(pair => pair.Key == typeof(IMockNotificationSet)));
+            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(IMockNotificationSet)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
 
-            var notificationType = ProxyExtensions.FromEventInfo(typeof(IMockNotificationSet).GetEvent("OnMyEvent"));
-            collection.RegisterForNotification(knownEndpoint, notificationType);
-            collection.UnregisterFromNotification(knownEndpoint, notificationType);
+            var notificationData = new NotificationData(typeof(IMockNotificationSet), "OnMyEvent");
+            collection.RegisterForNotification(knownEndpoint, notificationData);
+            collection.UnregisterFromNotification(knownEndpoint, notificationData);
 
             other = null;
             msg = null;
