@@ -70,6 +70,11 @@
     <Compile Include="Interaction\InteractionSubjectGroupStorageTest.cs" />
     <Compile Include="Interaction\NonTransformingObjectSerializerTest.cs" />
     <Compile Include="Interaction\NoSerializerForTypeFoundExceptionTest.cs" />
+    <Compile Include="Interaction\NotificationDataTest.cs" />
+    <Compile Include="Interaction\NotificationRaisedDataTest.cs" />
+    <Compile Include="Interaction\ObjectSerializerStorageTest.cs" />
+    <Compile Include="Interaction\OfflineTypeInformationTest.cs" />
+    <Compile Include="Interaction\SubjectGroupIdentifierTest.cs" />
     <Compile Include="Interaction\Transport\CommandInvocationFailedExceptionTest.cs" />
     <Compile Include="Interaction\Transport\CommandNotSupportedExceptionTest.cs" />
     <Compile Include="Interaction\Transport\CommandProxyBuilderTest.cs" />
@@ -80,6 +85,7 @@
     <Compile Include="Interaction\Transport\NotificationProxyBuilderTest.cs" />
     <Compile Include="Interaction\Transport\RemoteCommandHubTest.cs" />
     <Compile Include="Interaction\Transport\RemoteNotificationHubTest.cs" />
+    <Compile Include="Interaction\VersionedTypeFallbackTest.cs" />
     <Compile Include="MaximumNumberOfChannelRestartsExceededExceptionTest.cs" />
     <Compile Include="Protocol\CommunicationLayerTest.cs" />
     <Compile Include="Protocol\MessageHandlerTest.cs" />
