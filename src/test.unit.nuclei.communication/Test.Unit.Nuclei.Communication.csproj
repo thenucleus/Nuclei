@@ -67,6 +67,7 @@
     <Compile Include="Interaction\CommunicationSubjectGroupTest.cs" />
     <Compile Include="Interaction\DuplicateObjectSerializerExceptionTest.cs" />
     <Compile Include="Interaction\InteractionExtensionsTest.cs" />
+    <Compile Include="Interaction\InteractionHandshakeConductorTest.cs" />
     <Compile Include="Interaction\InteractionSubjectGroupStorageTest.cs" />
     <Compile Include="Interaction\NonTransformingObjectSerializerTest.cs" />
     <Compile Include="Interaction\NoSerializerForTypeFoundExceptionTest.cs" />

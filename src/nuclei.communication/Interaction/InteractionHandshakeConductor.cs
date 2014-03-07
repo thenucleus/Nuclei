@@ -218,7 +218,15 @@ namespace Nuclei.Communication.Interaction
             {
                 // Potentially a new endpoint so store it
                 StorePotentialEndpoint(e.Endpoint);
-                if (!m_EndpointApprovalState.ContainsKey(e.Endpoint))
+                InitiateHandshakeWith(e.Endpoint);
+            }
+        }
+
+        private void InitiateHandshakeWith(EndpointId endpoint)
+        {
+            lock(m_Lock)
+            {
+                if (!m_EndpointApprovalState.ContainsKey(endpoint))
                 {
                     return;
                 }
@@ -232,15 +240,15 @@ namespace Nuclei.Communication.Interaction
                     }
                 }
 
-                Debug.Assert(m_EndpointApprovalState.ContainsKey(e.Endpoint), "The endpoint tick list is not stored.");
-                var tickList = m_EndpointApprovalState[e.Endpoint];
+                Debug.Assert(m_EndpointApprovalState.ContainsKey(endpoint), "The endpoint tick list is not stored.");
+                var tickList = m_EndpointApprovalState[endpoint];
                 tickList.HaveSendSubjects = true;
 
                 // Send message and wait for response.
                 var message = new EndpointInteractionInformationMessage(
                     m_Layer.Id,
                     interactionInformation.ToArray());
-                var sendTask = m_Layer.SendMessageAndWaitForResponse(e.Endpoint, message);
+                var sendTask = m_Layer.SendMessageAndWaitForResponse(endpoint, message);
                 sendTask.ContinueWith(HandleResponseToInteractionMessage, TaskContinuationOptions.ExecuteSynchronously);
             }
         }
@@ -288,9 +296,9 @@ namespace Nuclei.Communication.Interaction
         /// <param name="messageId">The ID of the message that carried the handshake information.</param>
         public void ContinueHandshakeWith(EndpointId connection, CommunicationSubjectGroup[] subjectGroups, MessageId messageId)
         {
+            bool shouldSendConnect;
             lock(m_Lock)
             {
-                // Potentially a new endpoint so store it
                 StorePotentialEndpoint(connection);
                 if (!m_EndpointApprovalState.ContainsKey(connection))
                 {
@@ -369,6 +377,13 @@ namespace Nuclei.Communication.Interaction
                 {
                     CloseOrApproveConnection(connection);
                 }
+
+                shouldSendConnect = !tickList.HaveSendSubjects;
+            }
+
+            if (shouldSendConnect)
+            {
+                InitiateHandshakeWith(connection);
             }
         }
 
