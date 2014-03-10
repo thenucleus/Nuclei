@@ -86,6 +86,13 @@
     <Compile Include="Interaction\Transport\NotificationProxyBuilderTest.cs" />
     <Compile Include="Interaction\Transport\RemoteCommandHubTest.cs" />
     <Compile Include="Interaction\Transport\RemoteNotificationHubTest.cs" />
+    <Compile Include="Interaction\V1\Protocol\V1\DataObjects\Converters\CommandInvocationConverterTest.cs" />
+    <Compile Include="Interaction\V1\Protocol\V1\DataObjects\Converters\CommandInvocationResponseConverterTest.cs" />
+    <Compile Include="Interaction\V1\Protocol\V1\DataObjects\Converters\EndpointInteractionInformationConverterTest.cs" />
+    <Compile Include="Interaction\V1\Protocol\V1\DataObjects\Converters\EndpointInteractionInformationResponseConverterTest.cs" />
+    <Compile Include="Interaction\V1\Protocol\V1\DataObjects\Converters\NotificationRaisedConverterTest.cs" />
+    <Compile Include="Interaction\V1\Protocol\V1\DataObjects\Converters\NotificationRegistrationConverterTest.cs" />
+    <Compile Include="Interaction\V1\Protocol\V1\DataObjects\Converters\NotificationUnregistrationConverterTest.cs" />
     <Compile Include="Interaction\VersionedTypeFallbackTest.cs" />
     <Compile Include="MaximumNumberOfChannelRestartsExceededExceptionTest.cs" />
     <Compile Include="Protocol\CommunicationLayerTest.cs" />
@@ -141,9 +148,6 @@
     <Compile Include="Protocol\V1\RestoringDataTransferingEndpointTest.cs" />
     <Compile Include="Protocol\V1\RestoringMessageSendingEndpointTest.cs" />
     <Compile Include="Protocol\SendingEndpointTest.cs" />
-    <Compile Include="Interaction\V1\SerializedEventTest.cs" />
-    <Compile Include="Interaction\V1\SerializedMethodInvocationTest.cs" />
-    <Compile Include="Interaction\V1\SerializedTypeTest.cs" />
     <Compile Include="Interaction\TypeIsNotAValidCommandSetExceptionTest.cs" />
     <Compile Include="Interaction\TypeIsNotAValidNotificationSetExceptionTest.cs" />
     <Compile Include="Interaction\Transport\UnableToGenerateProxyExceptionTest.cs" />
@@ -187,9 +191,7 @@
       <Name>SolutionLevel</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interaction\V1\Protocol\V1\DataObjects\Converters\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
