@@ -7,12 +7,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Moq;
-using Nuclei.Communication.Interaction;
 using NUnit.Framework;
-using Nuclei.Communication.Interaction.Transport.Messages;
-using Nuclei.Communication.Interaction.Transport.Messages.Processors;
 
-namespace Nuclei.Communication.Protocol.Messages.Processors
+namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
@@ -37,11 +34,11 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         public void Invoke()
         {
             EndpointId processedId = null;
-            ISerializedEventRegistration registration = null;
+            NotificationData registration = null;
             var sink = new Mock<ISendNotifications>();
             {
-                sink.Setup(s => s.RegisterForNotification(It.IsAny<EndpointId>(), It.IsAny<ISerializedEventRegistration>()))
-                    .Callback<EndpointId, ISerializedEventRegistration>((e, s) =>
+                sink.Setup(s => s.RegisterForNotification(It.IsAny<EndpointId>(), It.IsAny<NotificationData>()))
+                    .Callback<EndpointId, NotificationData>((e, s) =>
                     {
                         processedId = e;
                         registration = s;
@@ -51,8 +48,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             var action = new RegisterForNotificationProcessAction(sink.Object);
 
             var id = new EndpointId("id");
-            ISerializedEventRegistration reg =
-                ProxyExtensions.FromEventInfo(typeof(IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent"));
+            NotificationData reg = new NotificationData(typeof(IMockNotificationSetWithTypedEventHandler), "OnMyEvent");
             var msg = new RegisterForNotificationMessage(id, reg);
             action.Invoke(msg);
 

@@ -12,28 +12,13 @@ using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Interaction.Transport
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
         Justification = "Unit tests do not need documentation.")]
     public sealed class RemoteNotificationHubTest
     {
-        [Serializable]
-        public sealed class MockEventArgs : EventArgs
-        {
-        }
-
-        public interface IMockNotificationSetWithEventHandlerEvent : INotificationSet
-        {
-            event EventHandler OnMyEvent;
-        }
-
-        public interface IMockNotificationSetWithTypedEventHandlerEvent : INotificationSet
-        {
-            event EventHandler<MockEventArgs> OnMyEvent;
-        }
-
         [Test]
         public void HandleEndpointSignIn()
         {

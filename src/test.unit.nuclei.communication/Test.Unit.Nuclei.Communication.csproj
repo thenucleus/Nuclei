@@ -82,6 +82,9 @@
     <Compile Include="Interaction\InteractionExtensionsTest.Interfaces.cs" />
     <Compile Include="Interaction\LocalCommandCollectionTest.cs" />
     <Compile Include="Interaction\LocalNotificationCollectionTest.cs" />
+    <Compile Include="Interaction\Transport\Messages\EndpointInteractionInformationMessageTest.cs" />
+    <Compile Include="Interaction\Transport\Messages\EndpointInteractionInformationResponseMessageTest.cs" />
+    <Compile Include="Interaction\Transport\Messages\Processors\EndpointInteractionInformationProcessActionTest.cs" />
     <Compile Include="Interaction\Transport\NotificationNotSupportedExceptionTest.cs" />
     <Compile Include="Interaction\Transport\NotificationProxyBuilderTest.cs" />
     <Compile Include="Interaction\Transport\RemoteCommandHubTest.cs" />
@@ -99,7 +102,7 @@
     <Compile Include="Protocol\MessageHandlerTest.cs" />
     <Compile Include="Protocol\MessageIdTest.cs" />
     <Compile Include="Discovery\MissingBindingTypeExceptionTest.cs" />
-    <Compile Include="Interaction\Transport\MissingCommandSetExceptionTest.cs" />
+    <Compile Include="Interaction\Transport\MissingObjectDataSerializerExceptionTest.cs" />
     <Compile Include="Discovery\MissingEndpointIdExceptionTest.cs" />
     <Compile Include="Protocol\MessageKindFilterTest.cs" />
     <Compile Include="Protocol\Messages\Processors\EndpointDisconnectProcessActionTest.cs" />

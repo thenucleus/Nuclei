@@ -11,13 +11,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Schedulers;
 using Moq;
-using Nuclei.Communication.Interaction;
-using Nuclei.Communication.Interaction.Transport.V1.Messages;
-using Nuclei.Communication.Interaction.Transport.V1.Messages.Processors;
+using Nuclei.Communication.Protocol;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Protocol.Messages.Processors
+namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
@@ -58,9 +57,9 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                     .Verifiable();
             }
 
-            var commandSets = new List<KeyValuePair<Type, ICommandSet>> 
+            var commandSets = new List<Tuple<Type, ICommandSet>> 
                 { 
-                    new KeyValuePair<Type, ICommandSet>(typeof(IMockCommandSet), actionObject.Object)
+                    new Tuple<Type, ICommandSet>(typeof(IMockCommandSet), actionObject.Object)
                 };
 
             var endpoint = new EndpointId("id");
@@ -73,7 +72,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             var commands = new Mock<ICommandCollection>();
             {
                 commands.Setup(c => c.CommandsFor(It.IsAny<Type>()))
-                    .Returns(commandSets[0].Value);
+                    .Returns(commandSets[0].Item2);
                 commands.Setup(c => c.GetEnumerator())
                     .Returns(commandSets.GetEnumerator());
             }
@@ -84,7 +83,12 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             action.Invoke(
                 new CommandInvokedMessage(
                     new EndpointId("otherId"),
-                    ProxyExtensions.FromMethodInfo(typeof(IMockCommandSet).GetMethod("MethodWithoutReturnValue"), new object[] { 1 })));
+                    new CommandInvokedData(
+                        new CommandData(typeof(IMockCommandSet), "MethodWithReturnValue"),
+                        new[]
+                            {
+                                new Tuple<Type, object>(typeof(int), 2), 
+                            })));
 
             actionObject.Verify(a => a.MethodWithoutReturnValue(It.IsAny<int>()), Times.Once());
             Assert.IsInstanceOf<SuccessMessage>(storedMsg);
@@ -104,9 +108,9 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                     .Verifiable();
             }
 
-            var commandSets = new List<KeyValuePair<Type, ICommandSet>> 
+            var commandSets = new List<Tuple<Type, ICommandSet>> 
                 { 
-                    new KeyValuePair<Type, ICommandSet>(typeof(IMockCommandSet), actionObject.Object)
+                    new Tuple<Type, ICommandSet>(typeof(IMockCommandSet), actionObject.Object)
                 };
 
             var endpoint = new EndpointId("id");
@@ -118,7 +122,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             var commands = new Mock<ICommandCollection>();
             {
                 commands.Setup(c => c.CommandsFor(It.IsAny<Type>()))
-                    .Returns(commandSets[0].Value);
+                    .Returns(commandSets[0].Item2);
                 commands.Setup(c => c.GetEnumerator())
                     .Returns(commandSets.GetEnumerator());
             }
@@ -129,7 +133,12 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             action.Invoke(
                 new CommandInvokedMessage(
                     new EndpointId("otherId"),
-                    ProxyExtensions.FromMethodInfo(typeof(IMockCommandSet).GetMethod("MethodWithReturnValue"), new object[] { 2 })));
+                    new CommandInvokedData(
+                        new CommandData(typeof(IMockCommandSet),"MethodWithReturnValue"), 
+                        new[]
+                            {
+                                new Tuple<Type, object>(typeof(int), 2), 
+                            })));
 
             actionObject.Verify(a => a.MethodWithReturnValue(It.IsAny<int>()), Times.Once());
             Assert.IsInstanceOf<CommandInvokedResponseMessage>(storedMsg);
@@ -153,9 +162,9 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                     .Verifiable();
             }
 
-            var commandSets = new List<KeyValuePair<Type, ICommandSet>> 
+            var commandSets = new List<Tuple<Type, ICommandSet>> 
                 { 
-                    new KeyValuePair<Type, ICommandSet>(typeof(IMockCommandSet), actionObject.Object)
+                    new Tuple<Type, ICommandSet>(typeof(IMockCommandSet), actionObject.Object)
                 };
 
             var endpoint = new EndpointId("id");
@@ -177,7 +186,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             var commands = new Mock<ICommandCollection>();
             {
                 commands.Setup(c => c.CommandsFor(It.IsAny<Type>()))
-                    .Returns(commandSets[0].Value);
+                    .Returns(commandSets[0].Item2);
                 commands.Setup(c => c.GetEnumerator())
                     .Returns(commandSets.GetEnumerator());
             }
@@ -189,7 +198,12 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             action.Invoke(
                 new CommandInvokedMessage(
                     new EndpointId("otherId"),
-                    ProxyExtensions.FromMethodInfo(typeof(IMockCommandSet).GetMethod("MethodWithoutReturnValue"), new object[] { 1 })));
+                    new CommandInvokedData(
+                        new CommandData(typeof(IMockCommandSet), "MethodWithReturnValue"),
+                        new[]
+                            {
+                                new Tuple<Type, object>(typeof(int), 2), 
+                            })));
 
             actionObject.Verify(a => a.MethodWithoutReturnValue(It.IsAny<int>()), Times.Once());
             Assert.AreEqual(2, count);
@@ -211,9 +225,9 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                     .Verifiable();
             }
 
-            var commandSets = new List<KeyValuePair<Type, ICommandSet>> 
+            var commandSets = new List<Tuple<Type, ICommandSet>> 
                 { 
-                    new KeyValuePair<Type, ICommandSet>(typeof(IMockCommandSet), actionObject.Object)
+                    new Tuple<Type, ICommandSet>(typeof(IMockCommandSet), actionObject.Object)
                 };
 
             var endpoint = new EndpointId("id");
@@ -225,7 +239,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             var commands = new Mock<ICommandCollection>();
             {
                 commands.Setup(c => c.CommandsFor(It.IsAny<Type>()))
-                    .Returns(commandSets[0].Value);
+                    .Returns(commandSets[0].Item2);
                 commands.Setup(c => c.GetEnumerator())
                     .Returns(commandSets.GetEnumerator());
             }
@@ -237,7 +251,12 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             action.Invoke(
                 new CommandInvokedMessage(
                     new EndpointId("otherId"),
-                    ProxyExtensions.FromMethodInfo(typeof(IMockCommandSet).GetMethod("MethodWithoutReturnValue"), new object[] { 1 })));
+                    new CommandInvokedData(
+                        new CommandData(typeof(IMockCommandSet), "MethodWithReturnValue"),
+                        new[]
+                            {
+                                new Tuple<Type, object>(typeof(int), 2), 
+                            })));
 
             // This is obviously pure evil but we need to wait for the tasks that get created by the Invoke method
             // Unfortunately we can't get to those tasks so we'll have to sleep the thread.

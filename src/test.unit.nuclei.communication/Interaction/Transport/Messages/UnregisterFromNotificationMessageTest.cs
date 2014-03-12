@@ -5,12 +5,9 @@
 //-----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
-using Nuclei.Communication.Interaction;
-using Nuclei.Communication.Interaction.Transport.Messages;
-using Nuclei.Nunit.Extensions;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Protocol.Messages
+namespace Nuclei.Communication.Interaction.Transport.Messages
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
@@ -21,23 +18,11 @@ namespace Nuclei.Communication.Protocol.Messages
         public void Create()
         {
             var id = new EndpointId("sendingEndpoint");
-            var notification = new SerializedEvent(new SerializedType("a", "a"), "b");
+            var notification = new NotificationData(typeof(int), "b");
             var msg = new UnregisterFromNotificationMessage(id, notification);
 
             Assert.AreSame(id, msg.Sender);
             Assert.AreSame(notification, msg.Notification);
-        }
-
-        [Test]
-        public void RoundTripSerialise()
-        {
-            var id = new EndpointId("sendingEndpoint");
-            var notification = new SerializedEvent(new SerializedType("a", "a"), "b");
-            var msg = new UnregisterFromNotificationMessage(id, notification);
-            var otherMsg = AssertExtensions.RoundTripSerialize(msg);
-
-            Assert.AreEqual(id, otherMsg.Sender);
-            Assert.AreEqual(notification, otherMsg.Notification);
         }
     }
 }

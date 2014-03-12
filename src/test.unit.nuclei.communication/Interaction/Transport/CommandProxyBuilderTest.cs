@@ -46,7 +46,7 @@ namespace Nuclei.Communication.Interaction.Transport
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
             var builder = new CommandProxyBuilder(local, sender, systemDiagnostics);
-            var proxy = builder.ProxyConnectingTo<IMockCommandSetWithTaskReturn>(remoteEndpoint);
+            var proxy = builder.ProxyConnectingTo<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>(remoteEndpoint);
 
             var result = proxy.MyMethod(10);
             result.Wait();
@@ -55,7 +55,7 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsFalse(result.IsCanceled);
             Assert.IsFalse(result.IsFaulted);
 
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(IMockCommandSetWithTaskReturn)), intermediateMsg.Invocation.Type);
+            Assert.AreEqual(ProxyExtensions.FromType(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)), intermediateMsg.Invocation.Type);
             Assert.AreEqual(1, intermediateMsg.Invocation.Parameters.Count);
             Assert.AreEqual(ProxyExtensions.FromType(typeof(int)), intermediateMsg.Invocation.Parameters[0].Item1);
             Assert.AreEqual(10, intermediateMsg.Invocation.Parameters[0].Item2);
@@ -81,7 +81,7 @@ namespace Nuclei.Communication.Interaction.Transport
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
             var builder = new CommandProxyBuilder(local, sender, systemDiagnostics);
-            var proxy = builder.ProxyConnectingTo<IMockCommandSetWithTaskReturn>(remoteEndpoint);
+            var proxy = builder.ProxyConnectingTo<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>(remoteEndpoint);
 
             var result = proxy.MyMethod(10);
             Assert.Throws<AggregateException>(result.Wait);
@@ -91,7 +91,7 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsTrue(result.IsFaulted);
             Assert.IsAssignableFrom(typeof(CommandInvocationFailedException), result.Exception.InnerExceptions[0]);
 
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(IMockCommandSetWithTaskReturn)), intermediateMsg.Invocation.Type);
+            Assert.AreEqual(ProxyExtensions.FromType(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)), intermediateMsg.Invocation.Type);
             Assert.AreEqual(1, intermediateMsg.Invocation.Parameters.Count);
             Assert.AreEqual(ProxyExtensions.FromType(typeof(int)), intermediateMsg.Invocation.Parameters[0].Item1);
             Assert.AreEqual(10, intermediateMsg.Invocation.Parameters[0].Item2);
@@ -117,7 +117,7 @@ namespace Nuclei.Communication.Interaction.Transport
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
             var builder = new CommandProxyBuilder(local, sender, systemDiagnostics);
-            var proxy = builder.ProxyConnectingTo<IMockCommandSetWithTypedTaskReturn>(remoteEndpoint);
+            var proxy = builder.ProxyConnectingTo<InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn>(remoteEndpoint);
 
             var result = proxy.MyMethod(10);
             result.Wait();
@@ -127,7 +127,7 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsFalse(result.IsFaulted);
             Assert.AreEqual(20, result.Result);
 
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(IMockCommandSetWithTypedTaskReturn)), intermediateMsg.Invocation.Type);
+            Assert.AreEqual(ProxyExtensions.FromType(typeof(InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn)), intermediateMsg.Invocation.Type);
             Assert.AreEqual(1, intermediateMsg.Invocation.Parameters.Count);
             Assert.AreEqual(ProxyExtensions.FromType(typeof(int)), intermediateMsg.Invocation.Parameters[0].Item1);
             Assert.AreEqual(10, intermediateMsg.Invocation.Parameters[0].Item2);
@@ -153,7 +153,7 @@ namespace Nuclei.Communication.Interaction.Transport
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
             var builder = new CommandProxyBuilder(local, sender, systemDiagnostics);
-            var proxy = builder.ProxyConnectingTo<IMockCommandSetWithTypedTaskReturn>(remoteEndpoint);
+            var proxy = builder.ProxyConnectingTo<InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn>(remoteEndpoint);
 
             var result = proxy.MyMethod(10);
             Assert.Throws<AggregateException>(result.Wait);
@@ -163,7 +163,7 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsTrue(result.IsFaulted);
             Assert.IsAssignableFrom(typeof(CommandInvocationFailedException), result.Exception.InnerExceptions[0]);
 
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(IMockCommandSetWithTypedTaskReturn)), intermediateMsg.Invocation.Type);
+            Assert.AreEqual(ProxyExtensions.FromType(typeof(InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn)), intermediateMsg.Invocation.Type);
             Assert.AreEqual(1, intermediateMsg.Invocation.Parameters.Count);
             Assert.AreEqual(ProxyExtensions.FromType(typeof(int)), intermediateMsg.Invocation.Parameters[0].Item1);
             Assert.AreEqual(10, intermediateMsg.Invocation.Parameters[0].Item2);

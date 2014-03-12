@@ -8,13 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Moq;
-using Nuclei.Communication.Interaction;
-using Nuclei.Communication.Interaction.Transport.Messages;
-using Nuclei.Communication.Interaction.Transport.Messages.Processors;
+using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Protocol.Messages.Processors
+namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
@@ -74,8 +72,8 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             action.Invoke(
                 new NotificationRaisedMessage(
                     new EndpointId("otherId"),
-                    ProxyExtensions.FromEventInfo(typeof(IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent")),
-                    eventArgs));
+                    new NotificationRaisedData(
+                        new NotificationData(typeof(IMockNotificationSetWithTypedEventHandler), "OnMyEvent"), eventArgs)));
 
             Assert.AreSame(proxy, sender);
             Assert.AreSame(eventArgs, args);

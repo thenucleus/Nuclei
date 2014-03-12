@@ -4,14 +4,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using Nuclei.Communication.Interaction;
-using Nuclei.Communication.Interaction.Transport.V1.Messages;
-using Nuclei.Nunit.Extensions;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Protocol.Messages
+namespace Nuclei.Communication.Interaction.Transport.Messages
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
@@ -22,27 +19,17 @@ namespace Nuclei.Communication.Protocol.Messages
         public void Create()
         {
             var id = new EndpointId("sendingEndpoint");
-            var methodInvocation = ProxyExtensions.FromMethodInfo(MethodInfo.GetCurrentMethod(), new object[0]);
-            var msg = new CommandInvokedMessage(id, methodInvocation);
+            var commandData = new CommandData(typeof(int), "a");
+            var invocationData = new CommandInvokedData(
+                commandData,
+                new[]
+                    {
+                        new Tuple<Type, object>(typeof(double), 1.0), 
+                    });
+            var msg = new CommandInvokedMessage(id, invocationData);
 
             Assert.AreSame(id, msg.Sender);
-            Assert.AreSame(methodInvocation, msg.Invocation);
-        }
-
-        [Test]
-        public void RoundTripSerialise()
-        {
-            var id = new EndpointId("sendingEndpoint");
-            var methodInvocation = ProxyExtensions.FromMethodInfo(MethodInfo.GetCurrentMethod(), new object[0]);
-            var msg = new CommandInvokedMessage(id, methodInvocation);
-            var otherMsg = AssertExtensions.RoundTripSerialize(msg);
-
-            Assert.AreEqual(id, otherMsg.Sender);
-            Assert.AreEqual(msg.Id, otherMsg.Id);
-            Assert.AreEqual(MessageId.None, otherMsg.InResponseTo);
-            Assert.That(
-                otherMsg.Invocation, 
-                Is.EqualTo(methodInvocation));
+            Assert.AreSame(invocationData, msg.Invocation);
         }
     }
 }

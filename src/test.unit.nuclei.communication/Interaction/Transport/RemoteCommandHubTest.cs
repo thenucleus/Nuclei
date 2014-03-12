@@ -16,23 +16,13 @@ using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Interaction.Transport
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
         Justification = "Unit tests do not need documentation.")]
     public sealed class RemoteCommandHubTest
     {
-        public interface IMockCommandSetWithTaskReturn : ICommandSet
-        {
-            Task MyMethod(int input);
-        }
-
-        public interface IMockCommandSetWithTypedTaskReturn : ICommandSet
-        {
-            Task<int> MyMethod(int input);
-        }
-
         [Test]
         public void HandleEndpointSignIn()
         {

@@ -6,7 +6,6 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 
@@ -17,20 +16,15 @@ namespace Nuclei.Communication.Interaction
                 Justification = "Unit tests do not need documentation.")]
     public sealed class LocalCommandCollectionTest
     {
-        public interface IMockCommandSetWithTaskReturn : ICommandSet
-        {
-            Task MyMethod(int input);
-        }
-
         [Test]
         public void Register()
         {
             var collection = new LocalCommandCollection();
 
-            var commands = new Mock<IMockCommandSetWithTaskReturn>();
-            collection.Register(typeof(IMockCommandSetWithTaskReturn), commands.Object);
+            var commands = new Mock<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>();
+            collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object);
 
-            Assert.IsTrue(collection.Any(pair => pair.Item1 == typeof(IMockCommandSetWithTaskReturn)));
+            Assert.IsTrue(collection.Any(pair => pair.Item1 == typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
         }
 
         [Test]
@@ -38,19 +32,19 @@ namespace Nuclei.Communication.Interaction
         {
             var collection = new LocalCommandCollection();
             
-            var commands = new Mock<IMockCommandSetWithTaskReturn>();
-            collection.Register(typeof(IMockCommandSetWithTaskReturn), commands.Object);
-            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(IMockCommandSetWithTaskReturn)));
+            var commands = new Mock<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>();
+            collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object);
+            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
 
-            Assert.Throws<CommandAlreadyRegisteredException>(() => collection.Register(typeof(IMockCommandSetWithTaskReturn), commands.Object));
-            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(IMockCommandSetWithTaskReturn)));
+            Assert.Throws<CommandAlreadyRegisteredException>(() => collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object));
+            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
         }
 
         [Test]
         public void CommandsForWithUnknownType()
         {
             var collection = new LocalCommandCollection();
-            Assert.IsNull(collection.CommandsFor(typeof(IMockCommandSetWithTaskReturn)));
+            Assert.IsNull(collection.CommandsFor(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
         }
 
         [Test]
@@ -58,10 +52,10 @@ namespace Nuclei.Communication.Interaction
         {
             var collection = new LocalCommandCollection();
 
-            var commands = new Mock<IMockCommandSetWithTaskReturn>();
-            collection.Register(typeof(IMockCommandSetWithTaskReturn), commands.Object);
+            var commands = new Mock<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>();
+            collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object);
 
-            var commandSet = collection.CommandsFor(typeof(IMockCommandSetWithTaskReturn));
+            var commandSet = collection.CommandsFor(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn));
             Assert.AreSame(commands.Object, commandSet);
         }
     }

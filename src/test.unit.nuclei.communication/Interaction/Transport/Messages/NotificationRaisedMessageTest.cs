@@ -6,12 +6,9 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using Nuclei.Communication.Interaction;
-using Nuclei.Communication.Interaction.Transport.Messages;
-using Nuclei.Nunit.Extensions;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Protocol.Messages
+namespace Nuclei.Communication.Interaction.Transport.Messages
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
@@ -37,28 +34,14 @@ namespace Nuclei.Communication.Protocol.Messages
         public void Create()
         {
             var id = new EndpointId("sendingEndpoint");
-            var notification = new SerializedEvent(new SerializedType("a", "a"), "b");
+            var notification = new NotificationData(typeof(int), "b");
             var args = new MockEventArgs(1);
-            var msg = new NotificationRaisedMessage(id, notification, args);
+            var notificationRaised = new NotificationRaisedData(notification, args);
+            var msg = new NotificationRaisedMessage(id, notificationRaised);
 
             Assert.AreSame(id, msg.Sender);
             Assert.AreSame(notification, msg.Notification);
-            Assert.AreSame(args, msg.Arguments);
-        }
-
-        [Test]
-        public void RoundTripSerialise()
-        {
-            var id = new EndpointId("sendingEndpoint");
-            var notification = new SerializedEvent(new SerializedType("a", "a"), "b");
-            var args = new MockEventArgs(1);
-            var msg = new NotificationRaisedMessage(id, notification, args);
-            var otherMsg = AssertExtensions.RoundTripSerialize(msg);
-
-            Assert.AreEqual(id, otherMsg.Sender);
-            Assert.AreEqual(notification, otherMsg.Notification);
-            Assert.AreEqual(args.GetType(), otherMsg.Arguments.GetType());
-            Assert.AreEqual(args.Value, ((MockEventArgs)otherMsg.Arguments).Value);
+            Assert.AreSame(args, msg.Notification.EventArgs);
         }
     }
 }
