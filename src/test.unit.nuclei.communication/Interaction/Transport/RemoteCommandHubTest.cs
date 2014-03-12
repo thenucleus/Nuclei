@@ -27,7 +27,7 @@ namespace Nuclei.Communication.Interaction.Transport
         public void HandleEndpointSignIn()
         {
             var localEndpoint = new EndpointId("local");
-            var notifier = new Mock<INotifyOfEndpointStateChange>();
+            var notifier = new Mock<IStoreInformationAboutEndpoints>();
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
             Func<EndpointId, ICommunicationMessage, Task<ICommunicationMessage>> sender =
                 (e, m) => Task<ICommunicationMessage>.Factory.StartNew(
@@ -44,26 +44,23 @@ namespace Nuclei.Communication.Interaction.Transport
                     systemDiagnostics), 
                 systemDiagnostics);
             
-            var connectionInfo = new ChannelConnectionInformation(
-                new EndpointId("other"), 
-                ChannelTemplate.NamedPipe, 
-                new Uri("net.pipe://localhost/apollo_test"));
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>
+            var endpoint = new EndpointId("other");
+            var types = new List<OfflineTypeInformation>
                     {
-                        ProxyExtensions.FromType(typeof(IMockCommandSetWithTaskReturn))
-                    },
-                new List<ISerializedType>());
+                        new OfflineTypeInformation(
+                            typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn).FullName,
+                            typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn).Assembly.GetName())
+                    };
 
             var eventWasTriggered = false;
-            hub.OnEndpointSignedIn += (s, e) =>
+            hub.OnEndpointConnected += (s, e) =>
                 {
                     eventWasTriggered = true;
-                    Assert.IsTrue(hub.HasCommandsFor(connectionInfo.Id));
-                    Assert.IsTrue(hub.HasCommandFor(connectionInfo.Id, typeof(IMockCommandSetWithTaskReturn)));
+                    Assert.AreEqual(endpoint, e.Endpoint);
+                    Assert.IsTrue(hub.HasCommandFor(e.Endpoint, typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
                 };
 
-            notifier.Raise(l => l.OnEndpointConnected += null, new EndpointSignInEventArgs(connectionInfo, description));
+            hub.OnReceiptOfEndpointCommands(endpoint, types);
             Assert.IsTrue(eventWasTriggered);
         }
 
@@ -71,7 +68,7 @@ namespace Nuclei.Communication.Interaction.Transport
         public void HandleEndpointSignOut()
         {
             var localEndpoint = new EndpointId("local");
-            var notifier = new Mock<INotifyOfEndpointStateChange>();
+            var notifier = new Mock<IStoreInformationAboutEndpoints>();
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
             Func<EndpointId, ICommunicationMessage, Task<ICommunicationMessage>> sender =
                 (e, m) => Task<ICommunicationMessage>.Factory.StartNew(
@@ -88,36 +85,33 @@ namespace Nuclei.Communication.Interaction.Transport
                     systemDiagnostics),
                 systemDiagnostics);
 
-            var connectionInfo = new ChannelConnectionInformation(
-                new EndpointId("other"),
-                ChannelTemplate.NamedPipe, 
-                new Uri("net.pipe://localhost/apollo_test"));
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>
+            var endpoint = new EndpointId("other");
+            var types = new List<OfflineTypeInformation>
                     {
-                        ProxyExtensions.FromType(typeof(IMockCommandSetWithTaskReturn))
-                    },
-                new List<ISerializedType>());
+                        new OfflineTypeInformation(
+                            typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn).FullName,
+                            typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn).Assembly.GetName())
+                    };
 
             var eventWasTriggered = false;
-            hub.OnEndpointSignedIn += (s, e) =>
+            hub.OnEndpointConnected += (s, e) =>
+            {
+                eventWasTriggered = true;
+                Assert.AreEqual(endpoint, e.Endpoint);
+                Assert.IsTrue(hub.HasCommandFor(e.Endpoint, typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
+            };
+            hub.OnEndpointDisconnected += (s, e) =>
                 {
                     eventWasTriggered = true;
-                    Assert.IsTrue(hub.HasCommandsFor(connectionInfo.Id));
-                    Assert.IsTrue(hub.HasCommandFor(connectionInfo.Id, typeof(IMockCommandSetWithTaskReturn)));
-                };
-            hub.OnEndpointSignedOff += (s, e) =>
-                {
-                    eventWasTriggered = true;
-                    Assert.IsFalse(hub.HasCommandsFor(connectionInfo.Id));
-                    Assert.IsFalse(hub.HasCommandFor(connectionInfo.Id, typeof(IMockCommandSetWithTaskReturn)));
+                    Assert.AreEqual(endpoint, e.Endpoint);
+                    Assert.IsFalse(hub.HasCommandFor(e.Endpoint, typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
                 };
 
-            notifier.Raise(l => l.OnEndpointConnected += null, new EndpointSignInEventArgs(connectionInfo, description));
+            hub.OnReceiptOfEndpointCommands(endpoint, types);
             Assert.IsTrue(eventWasTriggered);
 
             eventWasTriggered = false;
-            notifier.Raise(l => l.OnEndpointDisconnected += null, new EndpointSignedOutEventArgs(connectionInfo.Id, connectionInfo.ChannelTemplate));
+            notifier.Raise(l => l.OnEndpointDisconnected += null, new EndpointEventArgs(endpoint));
             Assert.IsTrue(eventWasTriggered);
         }
 
@@ -125,7 +119,7 @@ namespace Nuclei.Communication.Interaction.Transport
         public void CommandsForWithUnknownCommand()
         {
             var localEndpoint = new EndpointId("local");
-            var notifier = new Mock<INotifyOfEndpointStateChange>();
+            var notifier = new Mock<IStoreInformationAboutEndpoints>();
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
             Func<EndpointId, ICommunicationMessage, Task<ICommunicationMessage>> sender =
                 (e, m) => Task<ICommunicationMessage>.Factory.StartNew(
@@ -142,29 +136,26 @@ namespace Nuclei.Communication.Interaction.Transport
                     systemDiagnostics),
                 systemDiagnostics);
 
-            var connectionInfo = new ChannelConnectionInformation(
-                new EndpointId("other"),
-                ChannelTemplate.NamedPipe,
-                new Uri("net.pipe://localhost/apollo_test"));
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>
+            var endpoint = new EndpointId("other");
+            var types = new List<OfflineTypeInformation>
                     {
-                        ProxyExtensions.FromType(typeof(IMockCommandSetWithTaskReturn))
-                    },
-                new List<ISerializedType>());
+                        new OfflineTypeInformation(
+                            typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn).FullName,
+                            typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn).Assembly.GetName())
+                    };
 
             var eventWasTriggered = false;
-            hub.OnEndpointSignedIn += (s, e) =>
+            hub.OnEndpointConnected += (s, e) =>
             {
                 eventWasTriggered = true;
-                Assert.IsTrue(hub.HasCommandsFor(connectionInfo.Id));
-                Assert.IsTrue(hub.HasCommandFor(connectionInfo.Id, typeof(IMockCommandSetWithTaskReturn)));
+                Assert.AreEqual(endpoint, e.Endpoint);
+                Assert.IsTrue(hub.HasCommandFor(e.Endpoint, typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
             };
 
-            notifier.Raise(l => l.OnEndpointConnected += null, new EndpointSignInEventArgs(connectionInfo, description));
+            hub.OnReceiptOfEndpointCommands(endpoint, types);
             Assert.IsTrue(eventWasTriggered);
             
-            var commands = hub.CommandsFor<IMockCommandSetWithTypedTaskReturn>(connectionInfo.Id);
+            var commands = hub.CommandsFor<InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn>(endpoint);
             Assert.IsNull(commands);
         }
 
@@ -172,7 +163,7 @@ namespace Nuclei.Communication.Interaction.Transport
         public void CommandsFor()
         {
             var localEndpoint = new EndpointId("local");
-            var notifier = new Mock<INotifyOfEndpointStateChange>();
+            var notifier = new Mock<IStoreInformationAboutEndpoints>();
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
             Func<EndpointId, ICommunicationMessage, Task<ICommunicationMessage>> sender =
                 (e, m) => Task<ICommunicationMessage>.Factory.StartNew(
@@ -189,32 +180,29 @@ namespace Nuclei.Communication.Interaction.Transport
                     systemDiagnostics),
                 systemDiagnostics);
 
-            var connectionInfo = new ChannelConnectionInformation(
-                new EndpointId("other"),
-                ChannelTemplate.NamedPipe,
-                new Uri("net.pipe://localhost/apollo_test"));
-            var description = new CommunicationDescription(new List<CommunicationSubject>(),
-                new List<ISerializedType>
+            var endpoint = new EndpointId("other");
+            var types = new List<OfflineTypeInformation>
                     {
-                        ProxyExtensions.FromType(typeof(IMockCommandSetWithTaskReturn))
-                    },
-                new List<ISerializedType>());
+                        new OfflineTypeInformation(
+                            typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn).FullName,
+                            typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn).Assembly.GetName())
+                    };
 
             var eventWasTriggered = false;
-            hub.OnEndpointSignedIn += (s, e) =>
+            hub.OnEndpointConnected += (s, e) =>
             {
                 eventWasTriggered = true;
-                Assert.IsTrue(hub.HasCommandsFor(connectionInfo.Id));
-                Assert.IsTrue(hub.HasCommandFor(connectionInfo.Id, typeof(IMockCommandSetWithTaskReturn)));
+                Assert.AreEqual(endpoint, e.Endpoint);
+                Assert.IsTrue(hub.HasCommandFor(e.Endpoint, typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
             };
 
-            notifier.Raise(l => l.OnEndpointConnected += null, new EndpointSignInEventArgs(connectionInfo, description));
+            hub.OnReceiptOfEndpointCommands(endpoint, types);
             Assert.IsTrue(eventWasTriggered);
 
-            var proxy = hub.CommandsFor<IMockCommandSetWithTaskReturn>(connectionInfo.Id);
+            var proxy = hub.CommandsFor<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>(endpoint);
             Assert.IsNotNull(proxy);
             Assert.IsInstanceOf<CommandSetProxy>(proxy);
-            Assert.IsInstanceOf<IMockCommandSetWithTaskReturn>(proxy);
+            Assert.IsInstanceOf<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>(proxy);
         }
     }
 }

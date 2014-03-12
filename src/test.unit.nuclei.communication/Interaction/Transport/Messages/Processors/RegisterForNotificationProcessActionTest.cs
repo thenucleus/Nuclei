@@ -16,11 +16,6 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
         Justification = "Unit tests do not need documentation.")]
     public sealed class RegisterForNotificationProcessActionTest
     {
-        public interface IMockNotificationSetWithTypedEventHandler : INotificationSet
-        {
-            event EventHandler OnMyEvent;
-        }
-
         [Test]
         public void MessageTypeToProcess()
         {
@@ -48,7 +43,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
             var action = new RegisterForNotificationProcessAction(sink.Object);
 
             var id = new EndpointId("id");
-            NotificationData reg = new NotificationData(typeof(IMockNotificationSetWithTypedEventHandler), "OnMyEvent");
+            NotificationData reg = new NotificationData(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler), "OnMyEvent");
             var msg = new RegisterForNotificationMessage(id, reg);
             action.Invoke(msg);
 

@@ -19,11 +19,6 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
         Justification = "Unit tests do not need documentation.")]
     public sealed class NotificationRaisedProcessActionTest
     {
-        public interface IMockNotificationSetWithTypedEventHandler : INotificationSet
-        {
-            event EventHandler OnMyEvent;
-        }
-
         [Test]
         public void MessageTypeToProcess()
         {
@@ -44,11 +39,11 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
             var builder = new NotificationProxyBuilder(local, messageSender, systemDiagnostics);
 
             var remoteEndpoint = new EndpointId("other");
-            var proxy = builder.ProxyConnectingTo(remoteEndpoint, typeof(IMockNotificationSetWithTypedEventHandler));
+            var proxy = builder.ProxyConnectingTo(remoteEndpoint, typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler));
 
             object sender = null;
             EventArgs args = null;
-            ((IMockNotificationSetWithTypedEventHandler)proxy).OnMyEvent += 
+            ((InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler)proxy).OnMyEvent += 
                 (s, e) => 
                 {
                     sender = s;
@@ -57,7 +52,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
 
             var commandSets = new List<KeyValuePair<Type, INotificationSet>> 
                 { 
-                    new KeyValuePair<Type, INotificationSet>(typeof(IMockNotificationSetWithTypedEventHandler), proxy)
+                    new KeyValuePair<Type, INotificationSet>(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler), proxy)
                 };
 
             var notifications = new Mock<INotifyOfRemoteEndpointEvents>();
@@ -73,7 +68,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 new NotificationRaisedMessage(
                     new EndpointId("otherId"),
                     new NotificationRaisedData(
-                        new NotificationData(typeof(IMockNotificationSetWithTypedEventHandler), "OnMyEvent"), eventArgs)));
+                        new NotificationData(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler), "OnMyEvent"), eventArgs)));
 
             Assert.AreSame(proxy, sender);
             Assert.AreSame(eventArgs, args);

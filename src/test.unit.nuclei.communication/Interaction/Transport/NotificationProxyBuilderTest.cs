@@ -18,10 +18,8 @@ namespace Nuclei.Communication.Interaction.Transport
         Justification = "Unit tests do not need documentation.")]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1601:PartialElementsMustBeDocumented",
         Justification = "Unit tests do not need documentation. Especially not in partial classes.")]
-    public sealed partial class NotificationProxyBuilderTest
+    public sealed class NotificationProxyBuilderTest
     {
-        
-        
         [Test]
         public void ProxyConnectingToEventWithNormalEventHandler()
         {
@@ -37,7 +35,7 @@ namespace Nuclei.Communication.Interaction.Transport
             var builder = new NotificationProxyBuilder(local, messageSender, systemDiagnostics);
 
             var remoteEndpoint = new EndpointId("other");
-            var proxy = builder.ProxyConnectingTo<IMockNotificationSetWithEventHandler>(remoteEndpoint);
+            var proxy = builder.ProxyConnectingTo<InteractionExtensionsTest.IMockNotificationSetWithEventHandler>(remoteEndpoint);
 
             object sender = null;
             EventArgs receivedArgs = null;
@@ -48,8 +46,8 @@ namespace Nuclei.Communication.Interaction.Transport
                     receivedArgs = e;
                 };
 
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(IMockNotificationSetWithEventHandler)), intermediateMsg.Notification.Type);
-            Assert.AreEqual("OnMyEvent", intermediateMsg.Notification.MemberName);
+            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockNotificationSetWithEventHandler), intermediateMsg.Notification.InterfaceType);
+            Assert.AreEqual("OnMyEvent", intermediateMsg.Notification.EventName);
 
             var notificationObj = proxy as NotificationSetProxy;
             Assert.IsNotNull(notificationObj);
@@ -75,7 +73,7 @@ namespace Nuclei.Communication.Interaction.Transport
             var builder = new NotificationProxyBuilder(local, messageSender, systemDiagnostics);
 
             var remoteEndpoint = new EndpointId("other");
-            var proxy = builder.ProxyConnectingTo<IMockNotificationSetWithTypedEventHandler>(remoteEndpoint);
+            var proxy = builder.ProxyConnectingTo<InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler>(remoteEndpoint);
 
             object sender = null;
             EventArgs receivedArgs = null;
@@ -86,13 +84,13 @@ namespace Nuclei.Communication.Interaction.Transport
                     receivedArgs = e;
                 };
 
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(IMockNotificationSetWithTypedEventHandler)), intermediateMsg.Notification.Type);
-            Assert.AreEqual("OnMyEvent", intermediateMsg.Notification.MemberName);
+            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler), intermediateMsg.Notification.InterfaceType);
+            Assert.AreEqual("OnMyEvent", intermediateMsg.Notification.EventName);
 
             var notificationObj = proxy as NotificationSetProxy;
             Assert.IsNotNull(notificationObj);
 
-            var args = new MySerializableEventArgs();
+            var args = new InteractionExtensionsTest.MySerializableEventArgs();
             notificationObj.RaiseEvent("OnMyEvent", args);
 
             Assert.AreSame(proxy, sender);
@@ -113,7 +111,7 @@ namespace Nuclei.Communication.Interaction.Transport
             var builder = new NotificationProxyBuilder(local, messageSender, systemDiagnostics);
 
             var remoteEndpoint = new EndpointId("other");
-            var proxy = builder.ProxyConnectingTo<IMockNotificationSetWithEventHandler>(remoteEndpoint);
+            var proxy = builder.ProxyConnectingTo<InteractionExtensionsTest.IMockNotificationSetWithEventHandler>(remoteEndpoint);
 
             object sender = null;
             EventArgs receivedArgs = null;
@@ -141,8 +139,8 @@ namespace Nuclei.Communication.Interaction.Transport
             receivedArgs = null;
             proxy.OnMyEvent -= handler;
 
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(IMockNotificationSetWithEventHandler)), intermediateMsg.Notification.Type);
-            Assert.AreEqual("OnMyEvent", intermediateMsg.Notification.MemberName);
+            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockNotificationSetWithEventHandler), intermediateMsg.Notification.InterfaceType);
+            Assert.AreEqual("OnMyEvent", intermediateMsg.Notification.EventName);
 
             notificationObj.RaiseEvent("OnMyEvent", new EventArgs());
             Assert.IsNull(sender);
@@ -163,7 +161,7 @@ namespace Nuclei.Communication.Interaction.Transport
             var builder = new NotificationProxyBuilder(local, messageSender, systemDiagnostics);
 
             var remoteEndpoint = new EndpointId("other");
-            var proxy = builder.ProxyConnectingTo<IMockNotificationSetWithEventHandler>(remoteEndpoint);
+            var proxy = builder.ProxyConnectingTo<InteractionExtensionsTest.IMockNotificationSetWithEventHandler>(remoteEndpoint);
 
             object sender = null;
             EventArgs receivedArgs = null;

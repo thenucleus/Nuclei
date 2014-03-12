@@ -22,10 +22,8 @@ namespace Nuclei.Communication.Interaction.Transport
         Justification = "Unit tests do not need documentation.")]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1601:PartialElementsMustBeDocumented",
         Justification = "Unit tests do not need documentation. Especially not in partial classes.")]
-    public sealed partial class CommandProxyBuilderTest
+    public sealed class CommandProxyBuilderTest
     {
-        
-
         [Test]
         public void ProxyConnectingToMethodWithTaskReturnWithSuccessFullExecution()
         {
@@ -55,10 +53,10 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsFalse(result.IsCanceled);
             Assert.IsFalse(result.IsFaulted);
 
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)), intermediateMsg.Invocation.Type);
-            Assert.AreEqual(1, intermediateMsg.Invocation.Parameters.Count);
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(int)), intermediateMsg.Invocation.Parameters[0].Item1);
-            Assert.AreEqual(10, intermediateMsg.Invocation.Parameters[0].Item2);
+            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), intermediateMsg.Invocation.Command.InterfaceType);
+            Assert.AreEqual(1, intermediateMsg.Invocation.ParameterValues.Length);
+            Assert.AreEqual(typeof(int), intermediateMsg.Invocation.ParameterValues[0].Item1);
+            Assert.AreEqual(10, intermediateMsg.Invocation.ParameterValues[0].Item2);
         }
 
         [Test]
@@ -91,10 +89,10 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsTrue(result.IsFaulted);
             Assert.IsAssignableFrom(typeof(CommandInvocationFailedException), result.Exception.InnerExceptions[0]);
 
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)), intermediateMsg.Invocation.Type);
-            Assert.AreEqual(1, intermediateMsg.Invocation.Parameters.Count);
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(int)), intermediateMsg.Invocation.Parameters[0].Item1);
-            Assert.AreEqual(10, intermediateMsg.Invocation.Parameters[0].Item2);
+            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), intermediateMsg.Invocation.Command.InterfaceType);
+            Assert.AreEqual(1, intermediateMsg.Invocation.ParameterValues.Length);
+            Assert.AreEqual(typeof(int), intermediateMsg.Invocation.ParameterValues[0].Item1);
+            Assert.AreEqual(10, intermediateMsg.Invocation.ParameterValues[0].Item2);
         }
 
         [Test]
@@ -127,10 +125,10 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsFalse(result.IsFaulted);
             Assert.AreEqual(20, result.Result);
 
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn)), intermediateMsg.Invocation.Type);
-            Assert.AreEqual(1, intermediateMsg.Invocation.Parameters.Count);
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(int)), intermediateMsg.Invocation.Parameters[0].Item1);
-            Assert.AreEqual(10, intermediateMsg.Invocation.Parameters[0].Item2);
+            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn), intermediateMsg.Invocation.Command.InterfaceType);
+            Assert.AreEqual(1, intermediateMsg.Invocation.ParameterValues.Length);
+            Assert.AreEqual(typeof(int), intermediateMsg.Invocation.ParameterValues[0].Item1);
+            Assert.AreEqual(10, intermediateMsg.Invocation.ParameterValues[0].Item2);
         }
 
         [Test]
@@ -163,10 +161,10 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsTrue(result.IsFaulted);
             Assert.IsAssignableFrom(typeof(CommandInvocationFailedException), result.Exception.InnerExceptions[0]);
 
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn)), intermediateMsg.Invocation.Type);
-            Assert.AreEqual(1, intermediateMsg.Invocation.Parameters.Count);
-            Assert.AreEqual(ProxyExtensions.FromType(typeof(int)), intermediateMsg.Invocation.Parameters[0].Item1);
-            Assert.AreEqual(10, intermediateMsg.Invocation.Parameters[0].Item2);
+            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn), intermediateMsg.Invocation.Command.InterfaceType);
+            Assert.AreEqual(1, intermediateMsg.Invocation.ParameterValues.Length);
+            Assert.AreEqual(typeof(int), intermediateMsg.Invocation.ParameterValues[0].Item1);
+            Assert.AreEqual(10, intermediateMsg.Invocation.ParameterValues[0].Item2);
         }
     }
 }
