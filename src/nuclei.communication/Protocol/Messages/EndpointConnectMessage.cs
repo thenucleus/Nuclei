@@ -41,7 +41,7 @@ namespace Nuclei.Communication.Protocol.Messages
             EndpointId origin,
             DiscoveryInformation discoveryInformation,
             ProtocolInformation protocolInformation,
-            CommunicationDescription information)
+            ProtocolDescription information)
             : base(origin)
         {
             {
@@ -78,7 +78,7 @@ namespace Nuclei.Communication.Protocol.Messages
         /// used by the sender, the desired communication API's for the sender and 
         /// the available communication API's provided by the sender.
         /// </summary>
-        public CommunicationDescription Information
+        public ProtocolDescription Information
         {
             get;
             private set;

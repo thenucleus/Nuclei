@@ -55,7 +55,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// <returns>
         /// <see langword="true"/> if the remote endpoint is allowed to connect to the current endpoint; otherwise, <see langword="false" />.
         /// </returns>
-        public bool IsEndpointAllowedToConnect(CommunicationDescription information)
+        public bool IsEndpointAllowedToConnect(ProtocolDescription information)
         {
             return information.Subjects.Intersect(m_Descriptions.Subjects()).Any();
         }

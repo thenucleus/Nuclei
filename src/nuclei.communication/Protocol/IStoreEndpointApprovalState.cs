@@ -35,7 +35,7 @@ namespace Nuclei.Communication.Protocol
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        bool TryStartApproval(EndpointId endpoint, CommunicationDescription description);
+        bool TryStartApproval(EndpointId endpoint, ProtocolDescription description);
 
         /// <summary>
         /// Completes the approval of the endpoint.

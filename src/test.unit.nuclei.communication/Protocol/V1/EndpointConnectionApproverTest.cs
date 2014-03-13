@@ -32,7 +32,7 @@ namespace Nuclei.Communication.Protocol.V1
 
             var approver = new EndpointConnectionApprover(storage.Object);
 
-            var description = new CommunicationDescription(
+            var description = new ProtocolDescription(
                 new[]
                     {
                         new CommunicationSubject("b"), 
@@ -57,7 +57,7 @@ namespace Nuclei.Communication.Protocol.V1
 
             var approver = new EndpointConnectionApprover(storage.Object);
 
-            var description = new CommunicationDescription(
+            var description = new ProtocolDescription(
                 new[]
                     {
                         new CommunicationSubject("c"), 

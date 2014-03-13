@@ -62,7 +62,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
                 ProtocolVersion = new Version(1, 0),
                 MessageAddress = new Uri("http://localhost/protocol/message/invalid"),
                 DataAddress = new Uri("http://localhost/protocol/data/invalid"),
-                Information = new CommunicationDescription(
+                Information = new ProtocolDescription(
                     new[]
                         {
                             new CommunicationSubject("b"), 
@@ -105,7 +105,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
                 new ProtocolInformation(
                     new Version(1, 0), 
                     new Uri("http://localhost/protocol/invalid")), 
-                new CommunicationDescription(
+                new ProtocolDescription(
                     new[]
                         {
                             new CommunicationSubject("b"), 

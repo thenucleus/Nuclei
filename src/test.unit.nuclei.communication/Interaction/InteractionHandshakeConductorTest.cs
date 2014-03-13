@@ -91,7 +91,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var layer = new Mock<ICommunicationLayer>();
+            var layer = new Mock<IProtocolLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(id);
@@ -209,7 +209,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var layer = new Mock<ICommunicationLayer>();
+            var layer = new Mock<IProtocolLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(id);
@@ -323,7 +323,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var layer = new Mock<ICommunicationLayer>();
+            var layer = new Mock<IProtocolLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(id);
@@ -444,7 +444,7 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var layer = new Mock<ICommunicationLayer>();
+            var layer = new Mock<IProtocolLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(id);

@@ -20,7 +20,7 @@ namespace Nuclei.Communication.Protocol
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
         Justification = "Unit tests do not need documentation.")]
-    public sealed class CommunicationLayerTest
+    public sealed class ProtocolLayerTest
     {
         [Test]
         public void OnEndpointApproved()
@@ -32,13 +32,13 @@ namespace Nuclei.Communication.Protocol
                 {
                     discovery.Object,
                 };
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder = 
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder = 
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(null, null);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(null, null);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -70,13 +70,13 @@ namespace Nuclei.Communication.Protocol
                 {
                     discovery.Object,
                 };
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(null, null);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(null, null);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -133,7 +133,7 @@ namespace Nuclei.Communication.Protocol
                 new Version(1, 0), 
                 new Uri("http://localhost/protocol/message/invalid"),
                 new Uri("http://localhost/protocol/data/invalid"));
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.OpenChannel())
                     .Verifiable();
@@ -141,13 +141,13 @@ namespace Nuclei.Communication.Protocol
                     .Returns(protocolInfo);
             }
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -184,7 +184,7 @@ namespace Nuclei.Communication.Protocol
                 new Version(1, 0),
                 new Uri("http://localhost/protocol/message/invalid"),
                 new Uri("http://localhost/protocol/data/invalid"));
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(protocolInfo);
@@ -198,13 +198,13 @@ namespace Nuclei.Communication.Protocol
                     .Callback<EndpointId>(e => Assert.AreEqual(endpoint, e))
                     .Verifiable();
             }
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -242,7 +242,7 @@ namespace Nuclei.Communication.Protocol
                 new Version(1, 0),
                 new Uri("http://localhost/protocol/message/invalid"),
                 new Uri("http://localhost/protocol/data/invalid"));
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.OpenChannel())
                     .Verifiable();
@@ -250,13 +250,13 @@ namespace Nuclei.Communication.Protocol
                     .Returns(protocolInfo);
             }
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -300,7 +300,7 @@ namespace Nuclei.Communication.Protocol
                 new Version(1, 0),
                 new Uri("http://localhost/protocol/message/invalid"),
                 new Uri("http://localhost/protocol/data/invalid"));
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.OpenChannel())
                     .Verifiable();
@@ -310,13 +310,13 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -360,7 +360,7 @@ namespace Nuclei.Communication.Protocol
                 new Version(1, 0),
                 new Uri("http://localhost/protocol/message/invalid"),
                 new Uri("http://localhost/protocol/data/invalid"));
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.OpenChannel())
                     .Verifiable();
@@ -370,13 +370,13 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -408,15 +408,15 @@ namespace Nuclei.Communication.Protocol
                     discovery.Object,
                 };
 
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -445,15 +445,15 @@ namespace Nuclei.Communication.Protocol
                     discovery.Object,
                 };
 
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -482,15 +482,15 @@ namespace Nuclei.Communication.Protocol
                     discovery.Object,
                 };
 
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -525,7 +525,7 @@ namespace Nuclei.Communication.Protocol
                 new Uri("http://localhost/protocol/data/invalid"));
             var endpoint = new EndpointId("A");
             var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.OpenChannel())
                     .Verifiable();
@@ -541,13 +541,13 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -583,7 +583,7 @@ namespace Nuclei.Communication.Protocol
                 new Uri("http://localhost/protocol/data/invalid"));
             var endpoint = new EndpointId("A");
             var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.OpenChannel())
                     .Verifiable();
@@ -599,13 +599,13 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -637,15 +637,15 @@ namespace Nuclei.Communication.Protocol
                     discovery.Object,
                 };
 
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -680,7 +680,7 @@ namespace Nuclei.Communication.Protocol
                 new Uri("http://localhost/protocol/data/invalid"));
             var endpoint = new EndpointId("A");
             var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.OpenChannel())
                     .Verifiable();
@@ -713,13 +713,13 @@ namespace Nuclei.Communication.Protocol
                     .Returns(responseTask)
                     .Verifiable();
             }
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -758,7 +758,7 @@ namespace Nuclei.Communication.Protocol
                 new Uri("http://localhost/protocol/data/invalid"));
             var endpoint = new EndpointId("A");
             var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.OpenChannel())
                     .Verifiable();
@@ -791,13 +791,13 @@ namespace Nuclei.Communication.Protocol
                     .Returns(responseTask)
                     .Verifiable();
             }
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -838,7 +838,7 @@ namespace Nuclei.Communication.Protocol
                 new Uri("http://localhost/protocol/data/invalid"));
             var endpoint = new EndpointId("A");
             var file = "B";
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.OpenChannel())
                     .Verifiable();
@@ -857,13 +857,13 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -904,7 +904,7 @@ namespace Nuclei.Communication.Protocol
                 new Uri("http://localhost/protocol/data/invalid"));
             var endpoint = new EndpointId("A");
             var file = "B";
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.OpenChannel())
                     .Verifiable();
@@ -923,13 +923,13 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,
@@ -969,7 +969,7 @@ namespace Nuclei.Communication.Protocol
                 new Uri("http://localhost/protocol/data/invalid"));
             var endpoint = new EndpointId("A");
             var file = "B";
-            var channel = new Mock<ICommunicationChannel>();
+            var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.OpenChannel())
                     .Verifiable();
@@ -988,13 +988,13 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
             var pipe = new Mock<IDirectIncomingMessages>();
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
-                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
                 };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new CommunicationLayer(
+            var layer = new ProtocolLayer(
                 endpoints.Object,
                 discoverySources,
                 channelBuilder,

@@ -49,7 +49,7 @@ namespace Nuclei.Communication.Protocol
                             });
                 communicationDescriptions.Setup(c => c.ToStorage())
                     .Returns(
-                        new CommunicationDescription(
+                        new ProtocolDescription(
                             new[]
                                 {
                                     subject
@@ -60,7 +60,7 @@ namespace Nuclei.Communication.Protocol
             {
                 endpointApprover.Setup(e => e.ProtocolVersion)
                     .Returns(new Version(1, 0));
-                endpointApprover.Setup(e => e.IsEndpointAllowedToConnect(It.IsAny<CommunicationDescription>()))
+                endpointApprover.Setup(e => e.IsEndpointAllowedToConnect(It.IsAny<ProtocolDescription>()))
                     .Returns(true);
             }
 
@@ -76,7 +76,7 @@ namespace Nuclei.Communication.Protocol
                 };
 
             var discovery = new Mock<IDiscoverOtherServices>();
-            var communicationLayer = new Mock<ICommunicationLayer>();
+            var communicationLayer = new Mock<IProtocolLayer>();
             {
                 communicationLayer.Setup(l => l.Id)
                     .Returns(id);
@@ -172,7 +172,7 @@ namespace Nuclei.Communication.Protocol
                             });
                 communicationDescriptions.Setup(c => c.ToStorage())
                     .Returns(
-                        new CommunicationDescription(
+                        new ProtocolDescription(
                             new[]
                                 {
                                     subject
@@ -183,7 +183,7 @@ namespace Nuclei.Communication.Protocol
             {
                 endpointApprover.Setup(e => e.ProtocolVersion)
                     .Returns(new Version(1, 0));
-                endpointApprover.Setup(e => e.IsEndpointAllowedToConnect(It.IsAny<CommunicationDescription>()))
+                endpointApprover.Setup(e => e.IsEndpointAllowedToConnect(It.IsAny<ProtocolDescription>()))
                     .Returns(true);
             }
 
@@ -199,7 +199,7 @@ namespace Nuclei.Communication.Protocol
                 };
 
             var discovery = new Mock<IDiscoverOtherServices>();
-            var communicationLayer = new Mock<ICommunicationLayer>();
+            var communicationLayer = new Mock<IProtocolLayer>();
             {
                 communicationLayer.Setup(l => l.Id)
                     .Returns(id);
@@ -283,7 +283,7 @@ namespace Nuclei.Communication.Protocol
                             });
                 communicationDescriptions.Setup(c => c.ToStorage())
                     .Returns(
-                        new CommunicationDescription(
+                        new ProtocolDescription(
                             new[]
                                 {
                                     subject
@@ -294,7 +294,7 @@ namespace Nuclei.Communication.Protocol
             {
                 endpointApprover.Setup(e => e.ProtocolVersion)
                     .Returns(new Version(1, 0));
-                endpointApprover.Setup(e => e.IsEndpointAllowedToConnect(It.IsAny<CommunicationDescription>()))
+                endpointApprover.Setup(e => e.IsEndpointAllowedToConnect(It.IsAny<ProtocolDescription>()))
                     .Returns(true);
             }
 
@@ -310,7 +310,7 @@ namespace Nuclei.Communication.Protocol
                 };
 
             var discovery = new Mock<IDiscoverOtherServices>();
-            var communicationLayer = new Mock<ICommunicationLayer>();
+            var communicationLayer = new Mock<IProtocolLayer>();
             {
                 communicationLayer.Setup(l => l.Id)
                     .Returns(id);
@@ -398,7 +398,7 @@ namespace Nuclei.Communication.Protocol
                             });
                 communicationDescriptions.Setup(c => c.ToStorage())
                     .Returns(
-                        new CommunicationDescription(
+                        new ProtocolDescription(
                             new[]
                                 {
                                     subject
@@ -409,7 +409,7 @@ namespace Nuclei.Communication.Protocol
             {
                 endpointApprover.Setup(e => e.ProtocolVersion)
                     .Returns(new Version(1, 0));
-                endpointApprover.Setup(e => e.IsEndpointAllowedToConnect(It.IsAny<CommunicationDescription>()))
+                endpointApprover.Setup(e => e.IsEndpointAllowedToConnect(It.IsAny<ProtocolDescription>()))
                     .Returns(true);
             }
 
@@ -425,7 +425,7 @@ namespace Nuclei.Communication.Protocol
                 };
 
             var discovery = new Mock<IDiscoverOtherServices>();
-            var communicationLayer = new Mock<ICommunicationLayer>();
+            var communicationLayer = new Mock<IProtocolLayer>();
             {
                 communicationLayer.Setup(l => l.Id)
                     .Returns(id);
@@ -474,7 +474,7 @@ namespace Nuclei.Communication.Protocol
                         new Version(1, 0), 
                         new Uri(remoteMessageAddress), 
                         new Uri(remoteDataAddress))), 
-                new CommunicationDescription(new List<CommunicationSubject>
+                new ProtocolDescription(new List<CommunicationSubject>
                         {
                             new CommunicationSubject("b")
                         }),

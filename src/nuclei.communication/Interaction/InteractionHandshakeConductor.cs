@@ -163,7 +163,7 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// The object responsible for sending messages to remote endpoints.
         /// </summary>
-        private readonly ICommunicationLayer m_Layer;
+        private readonly IProtocolLayer m_Layer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="InteractionHandshakeConductor"/> class.
@@ -193,7 +193,7 @@ namespace Nuclei.Communication.Interaction
             IStoreInteractionSubjects interactionSubjects,
             IStoreRemoteCommandProxies commandProxyHub,
             IStoreRemoteNotificationProxies notificationProxyHub,
-            ICommunicationLayer layer)
+            IProtocolLayer layer)
         {
             {
                 Lokad.Enforce.Argument(() => endpointInformationStorage);

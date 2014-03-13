@@ -102,7 +102,7 @@ namespace Nuclei.Communication
                         ActivateNotifications();
 
                         // Start the communication layer so that we can actuallly use it.
-                        var layer = m_Context.Resolve<ICommunicationLayer>();
+                        var layer = m_Context.Resolve<IProtocolLayer>();
                         layer.SignIn();
 
                         foreach (var template in m_AllowedChannelTemplates)

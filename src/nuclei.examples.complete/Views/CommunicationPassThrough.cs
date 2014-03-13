@@ -21,7 +21,7 @@ namespace Nuclei.Examples.Complete.Views
         /// <summary>
         /// The communication layer which does the actual communication work.
         /// </summary>
-        private readonly ICommunicationLayer m_Layer;
+        private readonly IProtocolLayer m_Layer;
 
         /// <summary>
         /// The object that sends commands to the remote endpoints.
@@ -39,7 +39,7 @@ namespace Nuclei.Examples.Complete.Views
         /// <param name="layer">The communication layer which does the actual communication work.</param>
         /// <param name="commands">The object that sends commands to the remote endpoints.</param>
         /// <param name="uploads">The object that tracks files registered for upload.</param>
-        public CommunicationPassThrough(ICommunicationLayer layer, ISendCommandsToRemoteEndpoints commands, IStoreUploads uploads)
+        public CommunicationPassThrough(IProtocolLayer layer, ISendCommandsToRemoteEndpoints commands, IStoreUploads uploads)
         {
             m_Layer = layer;
             m_Commands = commands;

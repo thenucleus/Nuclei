@@ -26,7 +26,7 @@ namespace Nuclei.Communication.Protocol.Messages
                 new Version(1, 0),
                 new Uri("http://localhost/protocol/message/invalid"),
                 new Uri("http://localhost/protocol/data/invalid"));
-            var description = new CommunicationDescription(new List<CommunicationSubject>());
+            var description = new ProtocolDescription(new List<CommunicationSubject>());
             var msg = new EndpointConnectMessage(
                 id, 
                 discovery, 
@@ -48,7 +48,7 @@ namespace Nuclei.Communication.Protocol.Messages
                 new Version(1, 0),
                 new Uri("http://localhost/protocol/message/invalid"),
                 new Uri("http://localhost/protocol/data/invalid"));
-            var description = new CommunicationDescription(
+            var description = new ProtocolDescription(
                 new List<CommunicationSubject>
                     {
                         new CommunicationSubject("a")

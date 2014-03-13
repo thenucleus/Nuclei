@@ -96,7 +96,7 @@ namespace Nuclei.Communication.Protocol
         {
             var storage = new EndpointInformationStorage();
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>());
+            var description = new ProtocolDescription(new List<CommunicationSubject>());
             Assert.IsFalse(storage.TryStartApproval(null, description));
         }
 
@@ -115,7 +115,7 @@ namespace Nuclei.Communication.Protocol
             var storage = new EndpointInformationStorage();
 
             var endpoint = new EndpointId("a");
-            var description = new CommunicationDescription(new List<CommunicationSubject>());
+            var description = new ProtocolDescription(new List<CommunicationSubject>());
             Assert.IsFalse(storage.TryStartApproval(endpoint, description));
         }
 
@@ -136,7 +136,7 @@ namespace Nuclei.Communication.Protocol
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>());
+            var description = new ProtocolDescription(new List<CommunicationSubject>());
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
             Assert.IsTrue(storage.TryCompleteApproval(endpoint));
             Assert.IsFalse(storage.TryStartApproval(endpoint, description));
@@ -159,7 +159,7 @@ namespace Nuclei.Communication.Protocol
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>());
+            var description = new ProtocolDescription(new List<CommunicationSubject>());
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(endpoint));
             Assert.IsFalse(storage.HasBeenContacted(endpoint));
@@ -190,7 +190,7 @@ namespace Nuclei.Communication.Protocol
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>());
+            var description = new ProtocolDescription(new List<CommunicationSubject>());
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
             Assert.IsTrue(storage.TryCompleteApproval(endpoint));
             Assert.IsFalse(storage.TryCompleteApproval(endpoint));
@@ -216,7 +216,7 @@ namespace Nuclei.Communication.Protocol
                     new Version(),
                     new Uri("http://localhost/protocol/invalid")));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>());
+            var description = new ProtocolDescription(new List<CommunicationSubject>());
             var storage = new EndpointInformationStorage();
 
             var wasApproved = false;
@@ -258,7 +258,7 @@ namespace Nuclei.Communication.Protocol
                     new Version(),
                     new Uri("http://localhost/protocol/invalid")));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>());
+            var description = new ProtocolDescription(new List<CommunicationSubject>());
             var storage = new EndpointInformationStorage();
 
             var wasApproved = false;
@@ -321,7 +321,7 @@ namespace Nuclei.Communication.Protocol
                     new Version(),
                     new Uri("http://localhost/protocol/invalid")));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>());
+            var description = new ProtocolDescription(new List<CommunicationSubject>());
             var storage = new EndpointInformationStorage();
             Assert.IsTrue(storage.TryAdd(endpoint, connection));
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
@@ -394,7 +394,7 @@ namespace Nuclei.Communication.Protocol
             Assert.IsTrue(storage.HasBeenContacted(endpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(endpoint));
 
-            var description = new CommunicationDescription(new List<CommunicationSubject>());
+            var description = new ProtocolDescription(new List<CommunicationSubject>());
             Assert.IsTrue(storage.TryStartApproval(endpoint, description));
             Assert.IsTrue(storage.TryCompleteApproval(endpoint));
             Assert.IsTrue(storage.CanCommunicateWithEndpoint(endpoint));

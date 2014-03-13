@@ -211,8 +211,8 @@
     <Compile Include="Interaction\Transport\CommandSetProxy.cs" />
     <Compile Include="CommunicationConfigurationKeys.cs" />
     <Compile Include="CommunicationConstants.cs" />
-    <Compile Include="Protocol\CommunicationChannel.cs" />
-    <Compile Include="Protocol\CommunicationLayer.cs" />
+    <Compile Include="Protocol\ProtocolChannel.cs" />
+    <Compile Include="Protocol\ProtocolLayer.cs" />
     <Compile Include="CommunicationLayerStarter.cs" />
     <Compile Include="CommunicationModule.cs" />
     <Compile Include="Protocol\DataHandler.cs" />
@@ -235,8 +235,8 @@
     <Compile Include="IChannelTemplate.cs" />
     <Compile Include="Interaction\ICommandCollection.cs" />
     <Compile Include="Interaction\ICommandSet.cs" />
-    <Compile Include="Protocol\ICommunicationChannel.cs" />
-    <Compile Include="Protocol\ICommunicationLayer.cs" />
+    <Compile Include="Protocol\IProtocolChannel.cs" />
+    <Compile Include="Protocol\IProtocolLayer.cs" />
     <Compile Include="Discovery\IDiscoverOtherServices.cs" />
     <Compile Include="Interaction\INotificationCollection.cs" />
     <Compile Include="Interaction\INotificationSet.cs" />
@@ -293,7 +293,7 @@
     <Compile Include="Protocol\ProtocolVersions.cs" />
     <Compile Include="Protocol\SendingEndpoint.cs" />
     <Compile Include="Interaction\V1\SerializedType.cs" />
-    <Compile Include="Protocol\CommunicationDescription.cs" />
+    <Compile Include="Protocol\ProtocolDescription.cs" />
     <Compile Include="CommunicationSubject.cs" />
     <Compile Include="UnknownCommunicationSubjectException.cs" />
     <Compile Include="UriExtensions.cs" />

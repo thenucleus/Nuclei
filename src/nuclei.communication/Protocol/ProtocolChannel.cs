@@ -28,7 +28,7 @@ namespace Nuclei.Communication.Protocol
     /// be one. If there are multiple communication channels sharing the receiving endpoint then
     /// we don't know which channel should get the messages.
     /// </remarks>
-    internal sealed class CommunicationChannel : ICommunicationChannel, IDisposable
+    internal sealed class ProtocolChannel : IProtocolChannel, IDisposable
     {
         /// <summary>
         /// The object used to lock on.
@@ -125,7 +125,7 @@ namespace Nuclei.Communication.Protocol
         private readonly BuildSendingEndpoint m_SenderBuilder;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommunicationChannel"/> class.
+        /// Initializes a new instance of the <see cref="ProtocolChannel"/> class.
         /// </summary>
         /// <param name="id">The ID number of the current endpoint.</param>
         /// <param name="connectionMap">The object that stores the connection information for the endpoints.</param>
@@ -169,7 +169,7 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="versionedDataSenderBuilder"/> is <see langword="null" />.
         /// </exception>
-        public CommunicationChannel(
+        public ProtocolChannel(
             EndpointId id, 
             IStoreInformationAboutEndpoints connectionMap,
             IProtocolChannelTemplate channelTemplate,
@@ -513,16 +513,6 @@ namespace Nuclei.Communication.Protocol
                 throw new EndpointNotContactableException();
             }
 
-            /*
-                var endpoint = new EndpointAddress(connectionInfo.MessageAddress);
-                Debug.Assert(
-                    m_Template.ChannelTemplate == connectionInfo.ChannelTemplate, 
-                    "Trying to connect to a channel with a different binding type.");
-                var binding = m_Template.GenerateMessageBinding();
-
-                var factory = new ChannelFactory<IMessageReceivingEndpointProxy>(binding, endpoint);
-                return new RestoringMessageSendingEndpoint(factory, m_Diagnostics);
-             */
             return m_VersionedMessageSenderBuilder(connectionInfo.ProtocolInformation.Version, connectionInfo.ProtocolInformation.MessageAddress);
         }
 
@@ -536,17 +526,6 @@ namespace Nuclei.Communication.Protocol
                 throw new EndpointNotContactableException();
             }
 
-            /*
-            var endpoint = new EndpointAddress(connectionInfo.DataAddress);
-
-            Debug.Assert(
-                m_Template.ChannelTemplate == connectionInfo.ChannelTemplate, 
-                "Trying to connect to a channel with a different binding type.");
-            var binding = m_Template.GenerateDataBinding();
-
-            var factory = new ChannelFactory<IDataReceivingEndpointProxy>(binding, endpoint);
-            return new RestoringDataTransferingEndpoint(factory, m_Diagnostics);
-             * */
             return m_VersionedDataSenderBuilder(connectionInfo.ProtocolInformation.Version, connectionInfo.ProtocolInformation.DataAddress);
         }
 

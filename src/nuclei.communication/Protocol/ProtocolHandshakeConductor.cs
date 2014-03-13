@@ -128,7 +128,7 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// The object responsible for sending messages to remote endpoints.
         /// </summary>
-        private readonly ICommunicationLayer m_Layer;
+        private readonly IProtocolLayer m_Layer;
 
         /// <summary>
         /// The object that stores information about the available communication APIs.
@@ -186,7 +186,7 @@ namespace Nuclei.Communication.Protocol
             IStoreEndpointApprovalState potentialEndpoints,
             IProvideLocalConnectionInformation discoveryChannel,
             IEnumerable<IDiscoverOtherServices> discoverySources,
-            ICommunicationLayer layer,
+            IProtocolLayer layer,
             IStoreProtocolSubjects descriptions,
             IEnumerable<IApproveEndpointConnections> connectionApprovers,
             IEnumerable<ChannelTemplate> allowedChannelTypes,
@@ -397,7 +397,7 @@ namespace Nuclei.Communication.Protocol
         /// <param name="messageId">The ID of the message that carried the handshake information.</param>
         public void ContinueHandshakeWith(
             EndpointInformation connection,
-            CommunicationDescription information,
+            ProtocolDescription information,
             MessageId messageId)
         {
             bool shouldSendConnect;
@@ -495,7 +495,7 @@ namespace Nuclei.Communication.Protocol
             }
         }
 
-        private bool AllowConnection(Version requiredProtocolVersion, CommunicationDescription information)
+        private bool AllowConnection(Version requiredProtocolVersion, ProtocolDescription information)
         {
             if (!m_ConnectionApprovers.ContainsKey(requiredProtocolVersion))
             {

@@ -33,6 +33,6 @@ namespace Nuclei.Communication.Protocol
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        bool IsEndpointAllowedToConnect(CommunicationDescription information);
+        bool IsEndpointAllowedToConnect(ProtocolDescription information);
     }
 }

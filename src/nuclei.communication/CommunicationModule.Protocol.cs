@@ -36,16 +36,16 @@ namespace Nuclei.Communication
                     // Autofac 2.4.5 forces the 'c' variable to disappear. See here:
                     // http://stackoverflow.com/questions/5383888/autofac-registration-issue-in-release-v2-4-5-724
                     var ctx = c.Resolve<IComponentContext>();
-                    return new CommunicationLayer(
+                    return new ProtocolLayer(
                         c.Resolve<IStoreInformationAboutEndpoints>(),
                         c.Resolve<IEnumerable<IDiscoverOtherServices>>(),
                         (t, id) => Tuple.Create(
-                            ctx.ResolveKeyed<ICommunicationChannel>(t, new TypedParameter(typeof(EndpointId), id)),
+                            ctx.ResolveKeyed<IProtocolChannel>(t, new TypedParameter(typeof(EndpointId), id)),
                             ctx.Resolve<IDirectIncomingMessages>()),
                         allowedChannelTemplates,
                         c.Resolve<SystemDiagnostics>());
                 })
-                .As<ICommunicationLayer>()
+                .As<IProtocolLayer>()
                 .As<IStoreInformationForActiveChannels>()
                 .SingleInstance();
         }
@@ -57,7 +57,7 @@ namespace Nuclei.Communication
                     c.Resolve<IStoreEndpointApprovalState>(),
                     c.Resolve<IProvideLocalConnectionInformation>(),
                     c.Resolve<IEnumerable<IDiscoverOtherServices>>(),
-                    c.Resolve<ICommunicationLayer>(),
+                    c.Resolve<IProtocolLayer>(),
                     c.Resolve<IStoreProtocolSubjects>(),
                     c.Resolve<IEnumerable<IApproveEndpointConnections>>(),
                     allowedChannelTemplates,
@@ -102,7 +102,7 @@ namespace Nuclei.Communication
         private static void AttachLayer(IActivatedEventArgs<DataHandler> args)
         {
             var handler = args.Instance;
-            var layer = args.Context.Resolve<ICommunicationLayer>();
+            var layer = args.Context.Resolve<IProtocolLayer>();
             layer.OnEndpointDisconnected += (s, e) => handler.OnEndpointSignedOff(e.Endpoint);
         }
 
@@ -110,7 +110,7 @@ namespace Nuclei.Communication
         {
             builder.Register(c => new DataDownloadProcessAction(
                     c.Resolve<IStoreUploads>(),
-                    c.Resolve<ICommunicationLayer>(),
+                    c.Resolve<IProtocolLayer>(),
                     c.Resolve<SystemDiagnostics>()))
                 .As<IMessageProcessAction>();
 
@@ -139,7 +139,7 @@ namespace Nuclei.Communication
                         (endpoint, msg) =>
                         {
                             var config = ctx.Resolve<IConfiguration>();
-                            var layer = ctx.Resolve<ICommunicationLayer>();
+                            var layer = ctx.Resolve<IProtocolLayer>();
                             SendMessageWithoutResponse(config, layer, endpoint, msg);
                         },
                         c.Resolve<SystemDiagnostics>());
@@ -149,7 +149,7 @@ namespace Nuclei.Communication
 
         private static void SendMessageWithoutResponse(
             IConfiguration configuration,
-            ICommunicationLayer layer,
+            IProtocolLayer layer,
             EndpointId endpoint,
             ICommunicationMessage message)
         {
@@ -181,7 +181,7 @@ namespace Nuclei.Communication
 
         private static Task<ICommunicationMessage> SendMessageWithResponse(
             IConfiguration configuration,
-            ICommunicationLayer layer,
+            IProtocolLayer layer,
             EndpointId endpoint,
             ICommunicationMessage message)
         {
@@ -231,7 +231,7 @@ namespace Nuclei.Communication
                     var channelTemplate = c.ResolveKeyed<IProtocolChannelTemplate>(ChannelTemplate.NamedPipe);
                     var ctx = c.Resolve<IComponentContext>();
 
-                    return new CommunicationChannel(
+                    return new ProtocolChannel(
                         p.TypedAs<EndpointId>(),
                         c.Resolve<IStoreInformationAboutEndpoints>(),
                         channelTemplate,
@@ -252,7 +252,7 @@ namespace Nuclei.Communication
                         BuildDataTransferSelector(ctx));
                 })
                 .OnActivated(ConnectToMessageHandler)
-                .Keyed<ICommunicationChannel>(ChannelTemplate.NamedPipe)
+                .Keyed<IProtocolChannel>(ChannelTemplate.NamedPipe)
                 .SingleInstance();
 
             builder.Register(
@@ -260,7 +260,7 @@ namespace Nuclei.Communication
                 {
                     var channelTemplate = c.ResolveKeyed<IProtocolChannelTemplate>(ChannelTemplate.TcpIP);
                     var ctx = c.Resolve<IComponentContext>();
-                    return new CommunicationChannel(
+                    return new ProtocolChannel(
                         p.TypedAs<EndpointId>(),
                         c.Resolve<IStoreInformationAboutEndpoints>(),
                         channelTemplate,
@@ -281,7 +281,7 @@ namespace Nuclei.Communication
                         BuildDataTransferSelector(ctx));
                 })
                 .OnActivated(ConnectToMessageHandler)
-                .Keyed<ICommunicationChannel>(ChannelTemplate.TcpIP)
+                .Keyed<IProtocolChannel>(ChannelTemplate.TcpIP)
                 .SingleInstance();
         }
 
@@ -379,7 +379,7 @@ namespace Nuclei.Communication
             return result;
         }
 
-        private static void ConnectToMessageHandler(IActivatedEventArgs<ICommunicationChannel> args)
+        private static void ConnectToMessageHandler(IActivatedEventArgs<IProtocolChannel> args)
         {
             var messageHandler = args.Context.Resolve<IProcessIncomingMessages>();
             args.Instance.OnMessageReception += (s, e) => messageHandler.ProcessMessage(e.Message);
@@ -439,7 +439,7 @@ namespace Nuclei.Communication
                                var handler = ctx.Resolve<IDirectIncomingData>();
                                var result = handler.ForwardData(endpoint, filePath);
 
-                               var layer = ctx.Resolve<ICommunicationLayer>();
+                               var layer = ctx.Resolve<IProtocolLayer>();
                                var msg = new DataDownloadRequestMessage(layer.Id, token);
                                var response = layer.SendMessageAndWaitForResponse(endpoint, msg);
                                return Task<FileInfo>.Factory.StartNew(

@@ -14,7 +14,7 @@ namespace Nuclei.Communication.Protocol
     /// <summary>
     /// Defines the interface for objects that handle communication with a remote application.
     /// </summary>
-    internal interface ICommunicationChannel
+    internal interface IProtocolChannel
     {
         /// <summary>
         /// Returns a collection containing the connection information for each of the available channels.

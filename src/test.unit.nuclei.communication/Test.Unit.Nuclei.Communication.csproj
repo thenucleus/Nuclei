@@ -98,7 +98,8 @@
     <Compile Include="Interaction\V1\Protocol\V1\DataObjects\Converters\NotificationUnregistrationConverterTest.cs" />
     <Compile Include="Interaction\VersionedTypeFallbackTest.cs" />
     <Compile Include="MaximumNumberOfChannelRestartsExceededExceptionTest.cs" />
-    <Compile Include="Protocol\CommunicationLayerTest.cs" />
+    <Compile Include="Protocol\CommunicationChannelTest.cs" />
+    <Compile Include="Protocol\ProtocolLayerTest.cs" />
     <Compile Include="Protocol\MessageHandlerTest.cs" />
     <Compile Include="Protocol\MessageIdTest.cs" />
     <Compile Include="Discovery\MissingBindingTypeExceptionTest.cs" />

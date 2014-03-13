@@ -36,15 +36,15 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         public void Invoke()
         {
             EndpointInformation processedChannel = null;
-            CommunicationDescription processedDescription = null;
+            ProtocolDescription processedDescription = null;
             MessageId processedMessageId = null;
             var sink = new Mock<IHandleProtocolHandshakes>();
             {
                 sink.Setup(s => s.ContinueHandshakeWith(
                         It.IsAny<EndpointInformation>(), 
-                        It.IsAny<CommunicationDescription>(), 
+                        It.IsAny<ProtocolDescription>(), 
                         It.IsAny<MessageId>()))
-                    .Callback<EndpointInformation, CommunicationDescription, MessageId>((e, t, u) => 
+                    .Callback<EndpointInformation, ProtocolDescription, MessageId>((e, t, u) => 
                         {
                             processedChannel = e;
                             processedDescription = t;
@@ -66,7 +66,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                 new Version(1, 0), 
                 new Uri("http://localhost/protocol/message/invalid"),
                 new Uri("http://localhost/protocol/data/invalid"));
-            var description = new CommunicationDescription(new List<CommunicationSubject>());
+            var description = new ProtocolDescription(new List<CommunicationSubject>());
             var msg = new EndpointConnectMessage(id, discovery, protocol, description);
             action.Invoke(msg);
 

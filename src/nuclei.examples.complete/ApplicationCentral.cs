@@ -18,7 +18,7 @@ namespace Nuclei.Examples.Complete
         /// <summary>
         /// The layer from which the incoming messages are received.
         /// </summary>
-        private readonly ICommunicationLayer m_CommunicationLayer;
+        private readonly IProtocolLayer m_CommunicationLayer;
 
         /// <summary>
         /// The object that stores information about the current connections and the messages 
@@ -32,7 +32,7 @@ namespace Nuclei.Examples.Complete
         /// <param name="communicationLayer">The layer from which incoming messages are received.</param>
         /// <param name="connectionStateInformation">The object that stores information about the current connections and received messages.</param>
         public ApplicationCentral(
-            ICommunicationLayer communicationLayer, 
+            IProtocolLayer communicationLayer, 
             ConnectionViewModel connectionStateInformation)
         {
             m_CommunicationLayer = communicationLayer;

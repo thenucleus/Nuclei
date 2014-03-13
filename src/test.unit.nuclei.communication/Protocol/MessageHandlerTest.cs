@@ -156,7 +156,7 @@ namespace Nuclei.Communication.Protocol
                     new Version(), 
                     new Uri(@"net.pipe://localhost/test"), 
                     new Uri(@"net.pipe://localhost/test/data")),
-                new CommunicationDescription(new List<CommunicationSubject>()));
+                new ProtocolDescription(new List<CommunicationSubject>()));
             handler.ProcessMessage(msg);
 
             Assert.AreSame(msg, storedMessage);
@@ -193,7 +193,7 @@ namespace Nuclei.Communication.Protocol
                     new Version(),
                     new Uri(@"net.pipe://localhost/test"),
                     new Uri(@"net.pipe://localhost/test/data")),
-                new CommunicationDescription(new List<CommunicationSubject>()));
+                new ProtocolDescription(new List<CommunicationSubject>()));
             handler.ProcessMessage(msg);
 
             Assert.IsInstanceOf<UnknownMessageTypeMessage>(storedMsg);

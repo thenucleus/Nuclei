@@ -40,7 +40,7 @@ namespace Nuclei.Communication
                         (endpoint, msg) =>
                         {
                             var config = ctx.Resolve<IConfiguration>();
-                            var layer = ctx.Resolve<ICommunicationLayer>();
+                            var layer = ctx.Resolve<IProtocolLayer>();
                             return SendMessageWithResponse(config, layer, endpoint, msg);
                         },
                         c.Resolve<SystemDiagnostics>());
@@ -73,7 +73,7 @@ namespace Nuclei.Communication
                         (endpoint, msg) =>
                         {
                             var config = ctx.Resolve<IConfiguration>();
-                            var layer = ctx.Resolve<ICommunicationLayer>();
+                            var layer = ctx.Resolve<IProtocolLayer>();
                             SendMessageWithResponse(config, layer, endpoint, msg);
                         },
                         c.Resolve<SystemDiagnostics>());
@@ -83,7 +83,7 @@ namespace Nuclei.Communication
         private static void RegisterNotificationCollection(ContainerBuilder builder)
         {
             builder.Register(c => new LocalNotificationCollection(
-                    c.Resolve<ICommunicationLayer>()))
+                    c.Resolve<IProtocolLayer>()))
                 .As<INotificationCollection>()
                 .As<ISendNotifications>()
                 .SingleInstance();
@@ -100,7 +100,7 @@ namespace Nuclei.Communication
                             (endpoint, msg) =>
                             {
                                 var config = ctx.Resolve<IConfiguration>();
-                                var layer = ctx.Resolve<ICommunicationLayer>();
+                                var layer = ctx.Resolve<IProtocolLayer>();
                                 SendMessageWithoutResponse(config, layer, endpoint, msg);
                             },
                             c.Resolve<ICommandCollection>(),
@@ -134,7 +134,7 @@ namespace Nuclei.Communication
                     c.Resolve<IStoreInteractionSubjects>(),
                     c.Resolve<IStoreRemoteCommandProxies>(),
                     c.Resolve<IStoreRemoteNotificationProxies>(),
-                    c.Resolve<ICommunicationLayer>()))
+                    c.Resolve<IProtocolLayer>()))
                 .As<IHandleInteractionHandshakes>()
                 .SingleInstance();
         }

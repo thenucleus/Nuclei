@@ -19,7 +19,7 @@ namespace Nuclei.Communication.Protocol
         /// <param name="messageId">The ID of the message that carried the handshake information.</param>
         void ContinueHandshakeWith(
             EndpointInformation connection, 
-            CommunicationDescription information, 
+            ProtocolDescription information, 
             MessageId messageId);
     }
 }

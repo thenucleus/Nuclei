@@ -31,8 +31,8 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// The collection of endpoints that have been discovered but have not been approved for connection.
         /// </summary>
-        private readonly Dictionary<EndpointId, Tuple<EndpointInformation, CommunicationDescription>> m_EndpointsWaitingForApproval
-            = new Dictionary<EndpointId, Tuple<EndpointInformation, CommunicationDescription>>();
+        private readonly Dictionary<EndpointId, Tuple<EndpointInformation, ProtocolDescription>> m_EndpointsWaitingForApproval
+            = new Dictionary<EndpointId, Tuple<EndpointInformation, ProtocolDescription>>();
 
         /// <summary>
         /// The collection of endpoints that have been discovered and approved for connection.
@@ -77,7 +77,7 @@ namespace Nuclei.Communication.Protocol
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        public bool TryStartApproval(EndpointId endpoint, CommunicationDescription description)
+        public bool TryStartApproval(EndpointId endpoint, ProtocolDescription description)
         {
             if ((endpoint != null) && (description != null))
             {
@@ -92,7 +92,7 @@ namespace Nuclei.Communication.Protocol
                         
                         m_EndpointsWaitingForApproval.Add(
                             endpoint,
-                            new Tuple<EndpointInformation, CommunicationDescription>(
+                            new Tuple<EndpointInformation, ProtocolDescription>(
                                 info, 
                                 description));
                         return true;
@@ -163,7 +163,7 @@ namespace Nuclei.Communication.Protocol
                         m_EndpointsWaitingForApproval.Remove(connectionInformation.Id);
                         m_EndpointsWaitingForApproval.Add(
                             connectionInformation.Id,
-                            new Tuple<EndpointInformation, CommunicationDescription>(connectionInformation, tuple.Item2));
+                            new Tuple<EndpointInformation, ProtocolDescription>(connectionInformation, tuple.Item2));
 
                         return true;
                     }

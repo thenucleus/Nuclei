@@ -296,13 +296,13 @@ namespace Nuclei.Communication.Interaction
         }
 
         /// <summary>
-        /// Creates a new <see cref="CommunicationDescription"/> instance which contains all the 
+        /// Creates a new <see cref="ProtocolDescription"/> instance which contains all the 
         /// information about the current state of the communication system.
         /// </summary>
-        /// <returns>The new <see cref="CommunicationDescription"/> instance.</returns>
-        public CommunicationDescription ToStorage()
+        /// <returns>The new <see cref="ProtocolDescription"/> instance.</returns>
+        public ProtocolDescription ToStorage()
         {
-            return new CommunicationDescription(m_ProvidedSubjects.Keys);
+            return new ProtocolDescription(m_ProvidedSubjects.Keys);
         }
 
         /// <summary>

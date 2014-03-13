@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Protocol
     /// <summary>
     /// Defines the methods needed to communicate with one or more remote applications.
     /// </summary>
-    internal sealed class CommunicationLayer : ICommunicationLayer
+    internal sealed class ProtocolLayer : IProtocolLayer
     {
         /// <summary>
         /// The object used to lock on.
@@ -38,8 +38,8 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// The collection of <see cref="IChannelTemplate"/> objects which refer to a communication.
         /// </summary>
-        private readonly Dictionary<ChannelTemplate, Tuple<ICommunicationChannel, IDirectIncomingMessages>> m_OpenConnections =
-            new Dictionary<ChannelTemplate, Tuple<ICommunicationChannel, IDirectIncomingMessages>>();
+        private readonly Dictionary<ChannelTemplate, Tuple<IProtocolChannel, IDirectIncomingMessages>> m_OpenConnections =
+            new Dictionary<ChannelTemplate, Tuple<IProtocolChannel, IDirectIncomingMessages>>();
 
         /// <summary>
         /// The ID number of the current endpoint.
@@ -52,11 +52,11 @@ namespace Nuclei.Communication.Protocol
         private readonly IEnumerable<IDiscoverOtherServices> m_DiscoverySources;
 
         /// <summary>
-        /// The function that returns a tuple of a <see cref="ICommunicationChannel"/> and
+        /// The function that returns a tuple of a <see cref="IProtocolChannel"/> and
         /// a <see cref="IDirectIncomingMessages"/> which belong together. The return values
         /// are based on the type of the <see cref="IChannelTemplate"/> for the channel.
         /// </summary>
-        private readonly Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> m_ChannelBuilder;
+        private readonly Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> m_ChannelBuilder;
 
         /// <summary>
         /// The collection containing the types of channel that should be opened.
@@ -74,12 +74,12 @@ namespace Nuclei.Communication.Protocol
         private volatile bool m_AlreadySignedOn;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommunicationLayer"/> class.
+        /// Initializes a new instance of the <see cref="ProtocolLayer"/> class.
         /// </summary>
         /// <param name="endpoints">The collection that contains all the potential endpoints.</param>
         /// <param name="discoverySources">The object that handles the discovery of remote endpoints.</param>
         /// <param name="channelBuilder">
-        ///     The function that returns a tuple of a <see cref="ICommunicationChannel"/> and a <see cref="IDirectIncomingMessages"/>
+        ///     The function that returns a tuple of a <see cref="IProtocolChannel"/> and a <see cref="IDirectIncomingMessages"/>
         ///     based on the type of the <see cref="IChannelTemplate"/> that is related to the channel.
         /// </param>
         /// <param name="channelTypesToUse">The collection that contains all the channel types for which a channel should be opened.</param>
@@ -99,10 +99,10 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
-        public CommunicationLayer(
+        public ProtocolLayer(
             IStoreInformationAboutEndpoints endpoints,
             IEnumerable<IDiscoverOtherServices> discoverySources,
-            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder,
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder,
             IEnumerable<ChannelTemplate> channelTypesToUse,
             SystemDiagnostics systemDiagnostics)
         {
@@ -289,9 +289,9 @@ namespace Nuclei.Communication.Protocol
             }
         }
 
-        private Tuple<ICommunicationChannel, IDirectIncomingMessages> ChannelInformationForType(ChannelTemplate connection)
+        private Tuple<IProtocolChannel, IDirectIncomingMessages> ChannelInformationForType(ChannelTemplate connection)
         {
-            Tuple<ICommunicationChannel, IDirectIncomingMessages> channel = null;
+            Tuple<IProtocolChannel, IDirectIncomingMessages> channel = null;
             lock (m_Lock)
             {
                 if (m_OpenConnections.ContainsKey(connection))
@@ -447,12 +447,12 @@ namespace Nuclei.Communication.Protocol
             }
         }
 
-        private ICommunicationChannel ChannelFor(EndpointInformation connection)
+        private IProtocolChannel ChannelFor(EndpointInformation connection)
         {
             return ChannelPairFor(connection).Item1;
         }
 
-        private Tuple<ICommunicationChannel, IDirectIncomingMessages> ChannelPairFor(EndpointInformation connection)
+        private Tuple<IProtocolChannel, IDirectIncomingMessages> ChannelPairFor(EndpointInformation connection)
         {
             var template = connection.ProtocolInformation.MessageAddress.ToChannelTemplate();
             Debug.Assert(

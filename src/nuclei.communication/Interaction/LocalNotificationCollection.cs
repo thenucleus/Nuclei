@@ -43,7 +43,7 @@ namespace Nuclei.Communication.Interaction
         /// The communication layer that is used to send out messages about newly
         /// registered commands.
         /// </summary>
-        private readonly ICommunicationLayer m_Layer;
+        private readonly IProtocolLayer m_Layer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalNotificationCollection"/> class.
@@ -54,7 +54,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="layer"/> is <see langword="null" />.
         /// </exception>
-        public LocalNotificationCollection(ICommunicationLayer layer)
+        public LocalNotificationCollection(IProtocolLayer layer)
         {
             {
                 Lokad.Enforce.Argument(() => layer);

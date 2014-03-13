@@ -56,7 +56,7 @@ namespace Nuclei.Communication.Interaction
         public void Register()
         {
             var knownEndpoint = new EndpointId("other");
-            var layer = new Mock<ICommunicationLayer>();
+            var layer = new Mock<IProtocolLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("mine"));
@@ -84,7 +84,7 @@ namespace Nuclei.Communication.Interaction
         [Test]
         public void RegisterWithoutBeingSignedIn()
         {
-            var layer = new Mock<ICommunicationLayer>();
+            var layer = new Mock<IProtocolLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("mine"));
@@ -109,7 +109,7 @@ namespace Nuclei.Communication.Interaction
             var knownEndpoint = new EndpointId("other");
             EndpointId other = null;
             ICommunicationMessage msg = null;
-            var layer = new Mock<ICommunicationLayer>();
+            var layer = new Mock<IProtocolLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("mine"));
@@ -160,7 +160,7 @@ namespace Nuclei.Communication.Interaction
             var knownEndpoint = new EndpointId("other");
             EndpointId other = null;
             ICommunicationMessage msg = null;
-            var layer = new Mock<ICommunicationLayer>();
+            var layer = new Mock<IProtocolLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("mine"));
@@ -211,7 +211,7 @@ namespace Nuclei.Communication.Interaction
             var knownEndpoint = new EndpointId("other");
             EndpointId other = null;
             ICommunicationMessage msg = null;
-            var layer = new Mock<ICommunicationLayer>();
+            var layer = new Mock<IProtocolLayer>();
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("mine"));

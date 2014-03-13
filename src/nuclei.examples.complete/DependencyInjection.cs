@@ -94,7 +94,7 @@ namespace Nuclei.Examples.Complete
                     .SingleInstance();
 
                 builder.Register(c => new ApplicationCentral(
-                        c.Resolve<ICommunicationLayer>(),
+                        c.Resolve<IProtocolLayer>(),
                         c.Resolve<ConnectionViewModel>()))
                     .As<IFormTheApplicationCenter>()
                     .As<IStartable>()
@@ -112,7 +112,7 @@ namespace Nuclei.Examples.Complete
                     .SingleInstance();
 
                 builder.Register(c => new CommunicationPassThrough(
-                        c.Resolve<ICommunicationLayer>(),
+                        c.Resolve<IProtocolLayer>(),
                         c.Resolve<ISendCommandsToRemoteEndpoints>(),
                         c.Resolve<IStoreUploads>()))
                     .As<IHandleCommunication>();

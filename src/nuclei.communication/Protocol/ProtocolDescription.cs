@@ -14,7 +14,7 @@ namespace Nuclei.Communication.Protocol
     /// Stores information about the current connection.
     /// </summary>
     [Serializable]
-    internal sealed class CommunicationDescription
+    internal sealed class ProtocolDescription
     {
         /// <summary>
         /// The collection of subjects for the communication system.
@@ -22,13 +22,13 @@ namespace Nuclei.Communication.Protocol
         private readonly List<CommunicationSubject> m_Subjects;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommunicationDescription"/> class.
+        /// Initializes a new instance of the <see cref="ProtocolDescription"/> class.
         /// </summary>
         /// <param name="subjects">The collection of subjects for the current application.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="subjects"/> is <see langword="null" />.
         /// </exception>
-        public CommunicationDescription(IEnumerable<CommunicationSubject> subjects)
+        public ProtocolDescription(IEnumerable<CommunicationSubject> subjects)
         {
             {
                 Lokad.Enforce.Argument(() => subjects);

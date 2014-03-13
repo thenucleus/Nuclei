@@ -21,10 +21,10 @@ namespace Nuclei.Communication.Protocol
         IEnumerable<CommunicationSubject> Subjects();
 
         /// <summary>
-        /// Creates a new <see cref="CommunicationDescription"/> instance which contains all the 
+        /// Creates a new <see cref="ProtocolDescription"/> instance which contains all the 
         /// information about the current state of the communication system.
         /// </summary>
-        /// <returns>The new <see cref="CommunicationDescription"/> instance.</returns>
-        CommunicationDescription ToStorage();
+        /// <returns>The new <see cref="ProtocolDescription"/> instance.</returns>
+        ProtocolDescription ToStorage();
     }
 }

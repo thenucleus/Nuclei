@@ -62,7 +62,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects
         /// the available communication API's provided by the sender.
         /// </summary>
         [DataMember]
-        public CommunicationDescription Information
+        public ProtocolDescription Information
         {
             get;
             set;
