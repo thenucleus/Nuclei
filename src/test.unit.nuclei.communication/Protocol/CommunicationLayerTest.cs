@@ -5,11 +5,15 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Threading.Tasks.Schedulers;
+using Moq;
 using NUnit.Framework;
+using Nuclei.Communication.Discovery;
+using Nuclei.Communication.Protocol.Messages;
+using Nuclei.Diagnostics;
 
 namespace Nuclei.Communication.Protocol
 {
@@ -21,127 +25,992 @@ namespace Nuclei.Communication.Protocol
         [Test]
         public void OnEndpointApproved()
         {
-            Assert.Ignore();
+            var endpoint = new EndpointId("a");
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder = 
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(null, null);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            var eventWasRaised = false;
+            layer.OnEndpointConnected +=
+                (s, e) =>
+                {
+                    eventWasRaised = true;
+                    Assert.AreEqual(endpoint, e.Endpoint);
+                };
+
+            discovery.Raise(d => d.OnEndpointBecomingAvailable += null, new EndpointEventArgs(endpoint));
+            Assert.IsTrue(eventWasRaised);
         }
 
         [Test]
         public void OnEndpointDisconnected()
         {
-            Assert.Ignore();
+            var endpoint = new EndpointId("a");
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(null, null);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            var connectedEventWasRaised = false;
+            layer.OnEndpointConnected +=
+                (s, e) =>
+                {
+                    connectedEventWasRaised = true;
+                    Assert.AreEqual(endpoint, e.Endpoint);
+                };
+
+            var disconnectedEventWasRaised = false;
+            layer.OnEndpointDisconnected +=
+                (s, e) =>
+                {
+                    disconnectedEventWasRaised = true;
+                    Assert.AreEqual(endpoint, e.Endpoint);
+                };
+
+            discovery.Raise(d => d.OnEndpointBecomingAvailable += null, new EndpointEventArgs(endpoint));
+            Assert.IsTrue(connectedEventWasRaised);
+            Assert.IsFalse(disconnectedEventWasRaised);
+
+            connectedEventWasRaised = false;
+            discovery.Raise(d => d.OnEndpointBecomingUnavailable += null, new EndpointEventArgs(endpoint));
+            Assert.IsFalse(connectedEventWasRaised);
+            Assert.IsTrue(disconnectedEventWasRaised);
         }
 
         [Test]
         public void SignIn()
         {
-            Assert.Ignore();
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            var discovery = new Mock<IDiscoverOtherServices>();
+            {
+                discovery.Setup(d => d.StartDiscovery())
+                    .Verifiable();
+                discovery.Setup(d => d.EndDiscovery())
+                    .Verifiable();
+            }
+
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var protocolInfo = new ProtocolInformation(
+                new Version(1, 0), 
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var channel = new Mock<ICommunicationChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(protocolInfo);
+            }
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            layer.SignIn();
+            Assert.IsTrue(layer.IsSignedIn);
+
+            var connection = layer.LocalConnectionFor(new Version(1, 0), ChannelTemplate.NamedPipe);
+            Assert.AreSame(protocolInfo.MessageAddress, connection.Item2);
+            Assert.AreSame(protocolInfo.DataAddress, connection.Item3);
+
+            discovery.Verify(d => d.StartDiscovery(), Times.Once());
+            discovery.Verify(d => d.EndDiscovery(), Times.Never());
+            channel.Verify(c => c.OpenChannel(), Times.Once());
+        }
+
+        [Test]
+        public void OnEndpointDisconnectedAfterSigningIn()
+        {
+            var endpoint = new EndpointId("a");
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var protocolInfo = new ProtocolInformation(
+                new Version(1, 0),
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var channel = new Mock<ICommunicationChannel>();
+            {
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(protocolInfo);
+                channel.Setup(c => c.EndpointDisconnected(It.IsAny<EndpointId>()))
+                    .Callback<EndpointId>(e => Assert.AreEqual(endpoint, e))
+                    .Verifiable();
+            }
+            var pipe = new Mock<IDirectIncomingMessages>();
+            {
+                pipe.Setup(p => p.OnEndpointDisconnected(It.IsAny<EndpointId>()))
+                    .Callback<EndpointId>(e => Assert.AreEqual(endpoint, e))
+                    .Verifiable();
+            }
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            layer.SignIn();
+            discovery.Raise(d => d.OnEndpointBecomingUnavailable += null, new EndpointEventArgs(endpoint));
+
+            channel.Verify(c => c.EndpointDisconnected(It.IsAny<EndpointId>()), Times.Once());
+            pipe.Verify(p => p.OnEndpointDisconnected(It.IsAny<EndpointId>()), Times.Once());
         }
 
         [Test]
         public void SignInWhileSignedIn()
         {
-            Assert.Ignore();
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            var discovery = new Mock<IDiscoverOtherServices>();
+            {
+                discovery.Setup(d => d.StartDiscovery())
+                    .Verifiable();
+                discovery.Setup(d => d.EndDiscovery())
+                    .Verifiable();
+            }
+
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var protocolInfo = new ProtocolInformation(
+                new Version(1, 0),
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var channel = new Mock<ICommunicationChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(protocolInfo);
+            }
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            layer.SignIn();
+            Assert.IsTrue(layer.IsSignedIn);
+            discovery.Verify(d => d.StartDiscovery(), Times.Once());
+            discovery.Verify(d => d.EndDiscovery(), Times.Never());
+            channel.Verify(c => c.OpenChannel(), Times.Once());
+
+            layer.SignIn();
+            Assert.IsTrue(layer.IsSignedIn);
+            discovery.Verify(d => d.StartDiscovery(), Times.Once());
+            discovery.Verify(d => d.EndDiscovery(), Times.Never());
+            channel.Verify(c => c.OpenChannel(), Times.Once());
         }
 
         [Test]
         public void SignOut()
         {
-            Assert.Ignore();
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            var discovery = new Mock<IDiscoverOtherServices>();
+            {
+                discovery.Setup(d => d.StartDiscovery())
+                    .Verifiable();
+                discovery.Setup(d => d.EndDiscovery())
+                    .Verifiable();
+            }
+
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var protocolInfo = new ProtocolInformation(
+                new Version(1, 0),
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var channel = new Mock<ICommunicationChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(protocolInfo);
+                channel.Setup(c => c.CloseChannel())
+                    .Verifiable();
+            }
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            layer.SignIn();
+            Assert.IsTrue(layer.IsSignedIn);
+            discovery.Verify(d => d.StartDiscovery(), Times.Once());
+            discovery.Verify(d => d.EndDiscovery(), Times.Never());
+            channel.Verify(c => c.OpenChannel(), Times.Once());
+
+            layer.SignOut();
+            Assert.IsFalse(layer.IsSignedIn);
+            discovery.Verify(d => d.StartDiscovery(), Times.Once());
+            discovery.Verify(d => d.EndDiscovery(), Times.Once());
+            channel.Verify(c => c.CloseChannel(), Times.Once());
         }
 
         [Test]
         public void SignOutWithoutBeingSignedIn()
         {
-            Assert.Ignore();
-        }
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            var discovery = new Mock<IDiscoverOtherServices>();
+            {
+                discovery.Setup(d => d.StartDiscovery())
+                    .Verifiable();
+                discovery.Setup(d => d.EndDiscovery())
+                    .Verifiable();
+            }
 
-        [Test]
-        public void IsEndpointContactableWithUnknownEndpoint()
-        {
-            Assert.Ignore();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var protocolInfo = new ProtocolInformation(
+                new Version(1, 0),
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var channel = new Mock<ICommunicationChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(protocolInfo);
+                channel.Setup(c => c.CloseChannel())
+                    .Verifiable();
+            }
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            layer.SignOut();
+            Assert.IsFalse(layer.IsSignedIn);
+            discovery.Verify(d => d.StartDiscovery(), Times.Never());
+            discovery.Verify(d => d.EndDiscovery(), Times.Never());
+            channel.Verify(c => c.CloseChannel(), Times.Never());
         }
 
         [Test]
         public void IsEndpointContactableWithNonContactableEndpoint()
         {
-            Assert.Ignore();
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
+
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var channel = new Mock<ICommunicationChannel>();
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            var endpoint = new EndpointId("a");
+            Assert.IsFalse(layer.IsEndpointContactable(endpoint));
         }
 
         [Test]
         public void IsEndpointContactableWithContactableEndpoint()
         {
-            Assert.Ignore();
-        }
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(true);
+            }
 
-        [Test]
-        public void SendMessageToWithUnknownEndpoint()
-        {
-            Assert.Ignore();
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var channel = new Mock<ICommunicationChannel>();
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            var endpoint = new EndpointId("a");
+            Assert.IsFalse(layer.IsEndpointContactable(endpoint));
         }
 
         [Test]
         public void SendMessageToWithUncontactableEndpoint()
         {
-            Assert.Ignore();
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
+
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var channel = new Mock<ICommunicationChannel>();
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            Assert.Throws<EndpointNotContactableException>(
+                () => layer.SendMessageTo(new EndpointId("A"), new SuccessMessage(new EndpointId("B"), new MessageId())));
         }
 
         [Test]
         public void SendMessageToWithUnopenedChannel()
         {
-            Assert.Ignore();
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
+
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var protocolInfo = new ProtocolInformation(
+                new Version(1, 0),
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var endpoint = new EndpointId("A");
+            var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
+            var channel = new Mock<ICommunicationChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(protocolInfo);
+                channel.Setup(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<EndpointId, ICommunicationMessage>(
+                        (e, m) =>
+                        {
+                            Assert.AreSame(endpoint, e);
+                            Assert.AreSame(msg, m);
+                        })
+                    .Verifiable();
+            }
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            layer.SendMessageTo(endpoint, msg);
+            channel.Verify(c => c.OpenChannel(), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
         }
 
         [Test]
         public void SendMessageToWithOpenChannel()
         {
-            Assert.Ignore();
-        }
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
 
-        [Test]
-        public void SendMessageToAndWaitForResponseWithUnknownEndpoint()
-        {
-            Assert.Ignore();
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var protocolInfo = new ProtocolInformation(
+                new Version(1, 0),
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var endpoint = new EndpointId("A");
+            var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
+            var channel = new Mock<ICommunicationChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(protocolInfo);
+                channel.Setup(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<EndpointId, ICommunicationMessage>(
+                        (e, m) =>
+                        {
+                            Assert.AreSame(endpoint, e);
+                            Assert.AreSame(msg, m);
+                        })
+                    .Verifiable();
+            }
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            layer.SignIn();
+
+            layer.SendMessageTo(endpoint, msg);
+            channel.Verify(c => c.OpenChannel(), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
         }
 
         [Test]
         public void SendMessageToAndWaitForResponseWithUncontactableEndpoint()
         {
-            Assert.Ignore();
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
+
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var channel = new Mock<ICommunicationChannel>();
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            Assert.Throws<EndpointNotContactableException>(
+                () => layer.SendMessageAndWaitForResponse(new EndpointId("A"), new SuccessMessage(new EndpointId("B"), new MessageId())));
         }
 
         [Test]
         public void SendMessageToAndWaitForResponseWithUnopenedChannel()
         {
-            Assert.Ignore();
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
+
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var protocolInfo = new ProtocolInformation(
+                new Version(1, 0),
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var endpoint = new EndpointId("A");
+            var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
+            var channel = new Mock<ICommunicationChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(protocolInfo);
+                channel.Setup(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<EndpointId, ICommunicationMessage>(
+                        (e, m) =>
+                        {
+                            Assert.AreSame(endpoint, e);
+                            Assert.AreSame(msg, m);
+                        })
+                    .Verifiable();
+            }
+
+            var responseTask = Task<ICommunicationMessage>.Factory.StartNew(
+                () => new SuccessMessage(endpoint, msg.Id),
+                new CancellationToken(),
+                TaskCreationOptions.None,
+                new CurrentThreadTaskScheduler());
+            var pipe = new Mock<IDirectIncomingMessages>();
+            {
+                pipe.Setup(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>()))
+                    .Callback<EndpointId, MessageId>(
+                        (e, m) =>
+                        {
+                            Assert.AreSame(endpoint, e);
+                            Assert.AreSame(msg.Id, m);
+                        })
+                    .Returns(responseTask)
+                    .Verifiable();
+            }
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            var response = layer.SendMessageAndWaitForResponse(endpoint, msg);
+            Assert.AreSame(responseTask, response);
+            
+            channel.Verify(c => c.OpenChannel(), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>()), Times.Once());
         }
 
         [Test]
         public void SendMessageToAndWaitForResponseWithOpenedChannel()
         {
-            Assert.Ignore();
-        }
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
 
-        [Test]
-        public void UploadDataWithUnknownEndpoint()
-        {
-            Assert.Ignore();
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var protocolInfo = new ProtocolInformation(
+                new Version(1, 0),
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var endpoint = new EndpointId("A");
+            var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
+            var channel = new Mock<ICommunicationChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(protocolInfo);
+                channel.Setup(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<EndpointId, ICommunicationMessage>(
+                        (e, m) =>
+                        {
+                            Assert.AreSame(endpoint, e);
+                            Assert.AreSame(msg, m);
+                        })
+                    .Verifiable();
+            }
+
+            var responseTask = Task<ICommunicationMessage>.Factory.StartNew(
+                () => new SuccessMessage(endpoint, msg.Id),
+                new CancellationToken(),
+                TaskCreationOptions.None,
+                new CurrentThreadTaskScheduler());
+            var pipe = new Mock<IDirectIncomingMessages>();
+            {
+                pipe.Setup(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>()))
+                    .Callback<EndpointId, MessageId>(
+                        (e, m) =>
+                        {
+                            Assert.AreSame(endpoint, e);
+                            Assert.AreSame(msg.Id, m);
+                        })
+                    .Returns(responseTask)
+                    .Verifiable();
+            }
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            layer.SignIn();
+
+            var response = layer.SendMessageAndWaitForResponse(endpoint, msg);
+            Assert.AreSame(responseTask, response);
+
+            channel.Verify(c => c.OpenChannel(), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>()), Times.Once());
         }
 
         [Test]
         public void UploadDataWithUncontactableEndpoint()
         {
-            Assert.Ignore();
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
+
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var protocolInfo = new ProtocolInformation(
+                new Version(1, 0),
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var endpoint = new EndpointId("A");
+            var file = "B";
+            var channel = new Mock<ICommunicationChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(protocolInfo);
+                channel.Setup(
+                    c => c.TransferData(It.IsAny<EndpointId>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()))
+                    .Callback<EndpointId, string, CancellationToken, TaskScheduler>(
+                        (e, p, c, s) =>
+                        {
+                            Assert.AreSame(endpoint, e);
+                            Assert.AreSame(file, p);
+                        })
+                    .Returns<EndpointId, string, CancellationToken, TaskScheduler>(
+                        (e, p, c, s) => Task.Factory.StartNew(() => { }, c, TaskCreationOptions.None, s))
+                    .Verifiable();
+            }
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            layer.SignIn();
+
+            Assert.Throws<EndpointNotContactableException>(
+                () => layer.UploadData(endpoint, file, new CancellationToken(), new CurrentThreadTaskScheduler()));
+            channel.Verify(c => c.OpenChannel(), Times.Never());
+            channel.Verify(
+                c => c.TransferData(It.IsAny<EndpointId>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()),
+                Times.Never());
         }
 
         [Test]
         public void UploadDataWithUnopenedChannel()
         {
-            Assert.Ignore();
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
+
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var protocolInfo = new ProtocolInformation(
+                new Version(1, 0),
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var endpoint = new EndpointId("A");
+            var file = "B";
+            var channel = new Mock<ICommunicationChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(protocolInfo);
+                channel.Setup(
+                    c => c.TransferData(It.IsAny<EndpointId>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()))
+                    .Callback<EndpointId, string, CancellationToken, TaskScheduler>(
+                        (e, p, c, s) =>
+                        {
+                            Assert.AreSame(endpoint, e);
+                            Assert.AreSame(file, p);
+                        })
+                    .Returns<EndpointId, string, CancellationToken, TaskScheduler>(
+                        (e, p, c, s) => Task.Factory.StartNew(() => { }, c, TaskCreationOptions.None, s))
+                    .Verifiable();
+            }
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            layer.SignIn();
+
+            layer.UploadData(endpoint, file, new CancellationToken(), new CurrentThreadTaskScheduler());
+            channel.Verify(c => c.OpenChannel(), Times.Once());
+            channel.Verify(
+                c => c.TransferData(It.IsAny<EndpointId>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()),
+                Times.Once());
         }
 
         [Test]
         public void UploadDataWithOpenedChannel()
         {
-            Assert.Ignore();
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
+
+            var discovery = new Mock<IDiscoverOtherServices>();
+            var discoverySources = new[]
+                {
+                    discovery.Object,
+                };
+
+            var protocolInfo = new ProtocolInformation(
+                new Version(1, 0),
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var endpoint = new EndpointId("A");
+            var file = "B";
+            var channel = new Mock<ICommunicationChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(protocolInfo);
+                channel.Setup(
+                    c => c.TransferData(It.IsAny<EndpointId>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()))
+                    .Callback<EndpointId, string, CancellationToken, TaskScheduler>(
+                        (e, p, c, s) =>
+                        {
+                            Assert.AreSame(endpoint, e);
+                            Assert.AreSame(file, p);
+                        })
+                    .Returns<EndpointId, string, CancellationToken, TaskScheduler>(
+                        (e, p, c, s) => Task.Factory.StartNew(() => { }, c, TaskCreationOptions.None, s))
+                    .Verifiable();
+            }
+            var pipe = new Mock<IDirectIncomingMessages>();
+            Func<ChannelTemplate, EndpointId, Tuple<ICommunicationChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) =>
+                {
+                    return new Tuple<ICommunicationChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new CommunicationLayer(
+                endpoints.Object,
+                discoverySources,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            layer.SignIn();
+
+            layer.UploadData(endpoint, file, new CancellationToken(), new CurrentThreadTaskScheduler());
+            channel.Verify(c => c.OpenChannel(), Times.Once());
+            channel.Verify(
+                c => c.TransferData(It.IsAny<EndpointId>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()), 
+                Times.Once());
         }
     }
 }
