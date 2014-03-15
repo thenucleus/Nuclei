@@ -58,7 +58,7 @@ namespace Nuclei.Communication
                         var translators = TranslatorsByVersion(ctx);
                         return new ManualDiscoverySource(
                             translators,
-                            template => ctx.ResolveKeyed<IDiscoveryChannelTemplate>(ctx),
+                            template => ctx.ResolveKeyed<IDiscoveryChannelTemplate>(template),
                             c.Resolve<SystemDiagnostics>());
                     })
                 .As<IDiscoverOtherServices>()

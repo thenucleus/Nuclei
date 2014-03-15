@@ -55,7 +55,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                                         new Version(1, 2))),
                             }),
                 };
-            var message = new EndpointInteractionInformationMessage(endpoint, groups);
+            var message = new EndpointInteractionInformationMessage(endpoint, group);
 
             var handshake = new Mock<IHandleInteractionHandshakes>();
             {

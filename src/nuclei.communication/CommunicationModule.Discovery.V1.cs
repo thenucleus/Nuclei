@@ -35,20 +35,16 @@ namespace Nuclei.Communication
 
         private static void RegisterDiscoveryV1ChannelInformationTranslators(ContainerBuilder builder)
         {
-            builder.Register(c => new DiscoveryChannelTranslator(
-                    Protocol.ProtocolVersions.SupportedVersions().ToArray(),
-                    c.ResolveKeyed<IDiscoveryChannelTemplate>(ChannelTemplate.NamedPipe),
-                    c.Resolve<SystemDiagnostics>()))
-                .Keyed<ITranslateVersionedChannelInformation>(ChannelTemplate.NamedPipe)
-                .SingleInstance()
-                .WithMetadata<IDiscoveryVersionMetaData>(
-                    m => m.For(meta => meta.Version, DiscoveryVersions.V1));
-
-            builder.Register(c => new DiscoveryChannelTranslator(
-                    Protocol.ProtocolVersions.SupportedVersions().ToArray(),
-                    c.ResolveKeyed<IDiscoveryChannelTemplate>(ChannelTemplate.TcpIP),
-                    c.Resolve<SystemDiagnostics>()))
-                .Keyed<ITranslateVersionedChannelInformation>(ChannelTemplate.TcpIP)
+            builder.Register(
+                    c =>
+                    {
+                        var ctx = c.Resolve<IComponentContext>();
+                        return new DiscoveryChannelTranslator(
+                            Protocol.ProtocolVersions.SupportedVersions().ToArray(),
+                            template => ctx.ResolveKeyed<IDiscoveryChannelTemplate>(ctx),
+                            c.Resolve<SystemDiagnostics>());
+                    })
+                .As<ITranslateVersionedChannelInformation>()
                 .SingleInstance()
                 .WithMetadata<IDiscoveryVersionMetaData>(
                     m => m.For(meta => meta.Version, DiscoveryVersions.V1));

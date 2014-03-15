@@ -28,9 +28,9 @@ namespace Nuclei.Communication.Discovery.V1
         private readonly SortedSet<Version> m_ProtocolVersions;
 
         /// <summary>
-        /// The channel type used for discovery purposes.
+        /// The function that is used to get the channel template used for discovery purposes.
         /// </summary>
-        private readonly IDiscoveryChannelTemplate m_Template;
+        private readonly Func<ChannelTemplate, IDiscoveryChannelTemplate> m_TemplateBuilder;
 
         /// <summary>
         /// The object that provides the diagnostics for the application.
@@ -43,30 +43,30 @@ namespace Nuclei.Communication.Discovery.V1
         /// <param name="protocolVersions">
         ///     The collection containing all the versions of the protocol layer.
         /// </param>
-        /// <param name="template">The channel type used for discovery purposes.</param>
+        /// <param name="templateBuilder">The function that is used to create the channel template that is used to create WCF channels.</param>
         /// <param name="diagnostics">The object that provides the diagnostics for the application.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="protocolVersions"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="template"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="templateBuilder"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
         /// </exception>
         public DiscoveryChannelTranslator(
             Version[] protocolVersions,
-            IDiscoveryChannelTemplate template,
+            Func<ChannelTemplate, IDiscoveryChannelTemplate> templateBuilder,
             SystemDiagnostics diagnostics)
         {
             {
                 Lokad.Enforce.Argument(() => protocolVersions);
-                Lokad.Enforce.Argument(() => template);
+                Lokad.Enforce.Argument(() => templateBuilder);
                 Lokad.Enforce.Argument(() => diagnostics);
             }
 
             m_ProtocolVersions = new SortedSet<Version>(protocolVersions);
-            m_Template = template;
+            m_TemplateBuilder = templateBuilder;
             m_Diagnostics = diagnostics;
         }
 
@@ -192,8 +192,10 @@ namespace Nuclei.Communication.Discovery.V1
 
         private ChannelFactory<IInformationEndpointProxy> CreateFactoryForDiscoveryChannel(Uri address)
         {
+            var template = m_TemplateBuilder(address.ToChannelTemplate());
+
             var endpoint = new EndpointAddress(address);
-            var binding = m_Template.GenerateBinding();
+            var binding = template.GenerateBinding();
 
             return new ChannelFactory<IInformationEndpointProxy>(binding, endpoint);
         }

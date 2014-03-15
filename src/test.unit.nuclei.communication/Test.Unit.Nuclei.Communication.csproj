@@ -55,8 +55,10 @@
     <Compile Include="CommunicationEntryPointTest.cs" />
     <Compile Include="Discovery\BootstrapChannelTest.cs" />
     <Compile Include="Discovery\BootstrapEndpointTest.cs" />
+    <Compile Include="Discovery\ManualDiscoverySourceTest.cs" />
     <Compile Include="Discovery\IncorrectTranslatorVersionExceptionTest.cs" />
     <Compile Include="Discovery\V1\ChannelInformationToTransportConverterTest.cs" />
+    <Compile Include="Discovery\V1\DiscoveryChannelTranslatorTest.cs" />
     <Compile Include="Discovery\V1\InformationEndpointTest.cs" />
     <Compile Include="EndpointEventArgsTest.cs" />
     <Compile Include="EndpointIdExtensionsTest.cs" />
@@ -116,7 +118,6 @@
     <Compile Include="Protocol\DataHandlerTest.cs" />
     <Compile Include="Protocol\EndpointInformationStorageTest.cs" />
     <Compile Include="Protocol\EndpointNotContactableExceptionTest.cs" />
-    <Compile Include="Protocol\EndpointSignInEventArgsTest.cs" />
     <Compile Include="Protocol\FailedToSendMessageExceptionTest.cs" />
     <Compile Include="Protocol\FileRegistrationNotFoundExceptionTest.cs" />
     <Compile Include="Protocol\ProtocolHandshakeConductorTest.cs" />

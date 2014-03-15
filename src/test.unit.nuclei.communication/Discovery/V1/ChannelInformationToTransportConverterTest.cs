@@ -12,7 +12,7 @@ namespace Nuclei.Communication.Discovery.V1
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
-                Justification = "Unit tests do not need documentation.")]
+        Justification = "Unit tests do not need documentation.")]
     public sealed class ChannelInformationToTransportConverterTest
     {
         [Test]
