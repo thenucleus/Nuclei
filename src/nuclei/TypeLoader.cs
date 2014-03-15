@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright company="Nuclei">
+//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -27,7 +33,11 @@ namespace Nuclei
         /// <exception cref="UnableToLoadTypeException">
         /// Thrown when the <see cref="Type"/> could not be loaded and <paramref name="throwOnError"/> was set to <see langword="true" />.
         /// </exception>
-        public static Type FromPartialInformation(string typeName, string assemblyName = null, Version assemblyVersion = null, bool throwOnError = true)
+        public static Type FromPartialInformation(
+            string typeName, 
+            string assemblyName = null, 
+            Version assemblyVersion = null, 
+            bool throwOnError = true)
         {
             {
                 Lokad.Enforce.Argument(() => typeName);
