@@ -51,7 +51,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var endpointConnectData = data as EndpointConnectData;
             if (endpointConnectData == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
             }
 
             return new EndpointConnectMessage(
@@ -74,7 +74,12 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var endpointConnectMessage = message as EndpointConnectMessage;
             if (endpointConnectMessage == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeData
+                    {
+                        Id = message.Id,
+                        InResponseTo = message.InResponseTo,
+                        Sender = message.Sender,
+                    };
             }
 
             return new EndpointConnectData

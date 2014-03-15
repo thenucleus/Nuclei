@@ -51,7 +51,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var downloadData = data as DownloadRequestData;
             if (downloadData == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
             }
 
             return new DataDownloadRequestMessage(downloadData.Sender, downloadData.Token);
@@ -67,7 +67,12 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var downloadMessage = message as DataDownloadRequestMessage;
             if (downloadMessage == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeData
+                    {
+                        Id = message.Id,
+                        InResponseTo = message.InResponseTo,
+                        Sender = message.Sender,
+                    };
             }
 
             return new DownloadRequestData

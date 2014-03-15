@@ -99,7 +99,7 @@ namespace Nuclei.Communication.Interaction
             var data = new OfflineTypeInformation(type.FullName, type.Assembly.GetName());
 
             Assert.AreSame(type.FullName, data.TypeFullName);
-            Assert.AreSame(type.Assembly.GetName(), data.AssemblyName);
+            Assert.AreEqual(type.Assembly.GetName(), data.AssemblyName);
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace Nuclei.Communication.Interaction
         {
             var first = new OfflineTypeInformation(typeof(int).FullName, typeof(int).Assembly.GetName());
             var second = new OfflineTypeInformation(typeof(TestAttribute).FullName, typeof(TestAttribute).Assembly.GetName());
-            Assert.IsTrue(first.AreSimilarContract(second));
+            Assert.IsFalse(first.AreSimilarContract(second));
         }
 
         [Test]

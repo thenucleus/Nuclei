@@ -67,7 +67,12 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var successMessage = message as SuccessMessage;
             if (successMessage == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeData
+                    {
+                        Id = message.Id,
+                        InResponseTo = message.InResponseTo,
+                        Sender = message.Sender,
+                    };
             }
 
             return new SuccessData

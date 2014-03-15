@@ -55,7 +55,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             var unregistrationMessage = data as NotificationRegistrationData;
             if (unregistrationMessage == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
             }
 
             try
@@ -86,7 +86,12 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             var unregistrationMessage = message as RegisterForNotificationMessage;
             if (unregistrationMessage == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeData
+                    {
+                        Id = message.Id,
+                        InResponseTo = message.InResponseTo,
+                        Sender = message.Sender,
+                    };
             }
 
             try

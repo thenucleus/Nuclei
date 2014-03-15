@@ -63,8 +63,7 @@ namespace Nuclei.Communication.Protocol
             Assert.IsFalse(task.IsCompleted);
             Assert.IsFalse(task.IsCanceled);
 
-            var msg = new EndpointDisconnectMessage(endpoint);
-            handler.ProcessMessage(msg);
+            handler.OnEndpointDisconnected(endpoint);
 
             Assert.Throws<AggregateException>(task.Wait);
             Assert.IsTrue(task.IsCompleted);

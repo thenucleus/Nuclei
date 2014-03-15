@@ -51,7 +51,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var disconnectData = data as EndpointDisconnectData;
             if (disconnectData == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
             }
 
             return new EndpointDisconnectMessage(data.Sender);
@@ -67,7 +67,12 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var disconnectMessage = message as EndpointDisconnectMessage;
             if (disconnectMessage == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeData
+                    {
+                        Id = message.Id,
+                        InResponseTo = message.InResponseTo,
+                        Sender = message.Sender,
+                    };
             }
 
             return new EndpointDisconnectData

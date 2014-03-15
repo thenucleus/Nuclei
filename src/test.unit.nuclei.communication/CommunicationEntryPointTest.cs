@@ -144,7 +144,7 @@ namespace Nuclei.Communication
             Assert.IsNull(entryPoint.FromUri(address));
 
             notifications.Raise(n => n.OnEndpointDisconnected += null, new EndpointEventArgs(endpoint));
-            Assert.AreSame(endpoint, eventEndpoint);
+            Assert.IsNull(eventEndpoint);
             endpoints.Verify(e => e.TryGetConnectionFor(It.IsAny<EndpointId>(), out endpointInfo), Times.Once());
             Assert.IsFalse(entryPoint.KnownEndpoints().Any());
             Assert.IsNull(entryPoint.FromUri(address));
@@ -182,7 +182,7 @@ namespace Nuclei.Communication
             Assert.IsNull(entryPoint.FromUri(address));
 
             notifications.Raise(n => n.OnEndpointDisconnected += null, new EndpointEventArgs(endpoint));
-            Assert.AreSame(endpoint, eventEndpoint);
+            Assert.IsNull(eventEndpoint);
             Assert.IsFalse(entryPoint.KnownEndpoints().Any());
             Assert.IsNull(entryPoint.FromUri(address));
         }

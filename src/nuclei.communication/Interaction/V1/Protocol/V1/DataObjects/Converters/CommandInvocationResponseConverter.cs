@@ -74,7 +74,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             var invocationData = data as CommandInvocationResponseData;
             if (invocationData == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
             }
 
             try
@@ -112,7 +112,12 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             var invocationMessage = message as CommandInvokedResponseMessage;
             if (invocationMessage == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeData
+                    {
+                        Id = message.Id,
+                        InResponseTo = message.InResponseTo,
+                        Sender = message.Sender,
+                    };
             }
 
             try

@@ -17,6 +17,60 @@ namespace Nuclei.Communication.Interaction
     internal sealed class CommandData : IEquatable<CommandData>
     {
         /// <summary>
+        /// Implements the operator ==.
+        /// </summary>
+        /// <param name="first">The first object.</param>
+        /// <param name="second">The second object.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator ==(CommandData first, CommandData second)
+        {
+            // Check if first is a null reference by using ReferenceEquals because
+            // we overload the == operator. If first isn't actually null then
+            // we get an infinite loop where we're constantly trying to compare to null.
+            if (ReferenceEquals(first, null) && ReferenceEquals(second, null))
+            {
+                return true;
+            }
+
+            var nonNullObject = first;
+            var possibleNullObject = second;
+            if (ReferenceEquals(first, null))
+            {
+                nonNullObject = second;
+                possibleNullObject = first;
+            }
+
+            return nonNullObject.Equals(possibleNullObject);
+        }
+
+        /// <summary>
+        /// Implements the operator !=.
+        /// </summary>
+        /// <param name="first">The first object.</param>
+        /// <param name="second">The second object.</param>
+        /// <returns>The result of the operator.</returns>
+        public static bool operator !=(CommandData first, CommandData second)
+        {
+            // Check if first is a null reference by using ReferenceEquals because
+            // we overload the == operator. If first isn't actually null then
+            // we get an infinite loop where we're constantly trying to compare to null.
+            if (ReferenceEquals(first, null) && ReferenceEquals(second, null))
+            {
+                return false;
+            }
+
+            var nonNullObject = first;
+            var possibleNullObject = second;
+            if (ReferenceEquals(first, null))
+            {
+                nonNullObject = second;
+                possibleNullObject = first;
+            }
+
+            return !nonNullObject.Equals(possibleNullObject);
+        }
+
+        /// <summary>
         /// The type of interface that provides the methods for the commands.
         /// </summary>
         private readonly Type m_InterfaceType;

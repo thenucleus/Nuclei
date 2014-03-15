@@ -163,7 +163,7 @@ namespace Nuclei.Communication
                         m_EndpointMap.Add(id, information.DiscoveryInformation.Address);
                     }
 
-                    if (m_UriMap.ContainsKey(information.DiscoveryInformation.Address))
+                    if (!m_UriMap.ContainsKey(information.DiscoveryInformation.Address))
                     {
                         m_UriMap.Add(information.DiscoveryInformation.Address, id);
                     }
@@ -182,11 +182,14 @@ namespace Nuclei.Communication
         private void HandleOnEndpointDisconnected(object sender, EndpointEventArgs e)
         {
             var id = e.Endpoint;
+
+            var wasRemoved = false;
             lock (m_Lock)
             {
                 if (m_EndpointConnectionProgress.ContainsKey(id))
                 {
                     m_EndpointConnectionProgress.Remove(id);
+                    wasRemoved = true;
                 }
 
                 Uri matchingUri = null;
@@ -194,15 +197,20 @@ namespace Nuclei.Communication
                 {
                     matchingUri = m_EndpointMap[id];
                     m_EndpointMap.Remove(id);
+                    wasRemoved = true;
                 }
 
                 if ((matchingUri != null) && m_UriMap.ContainsKey(matchingUri))
                 {
                     m_UriMap.Remove(matchingUri);
+                    wasRemoved = true;
                 }
             }
 
-            RaiseOnEndpointDisconnected(id);
+            if (wasRemoved)
+            {
+                RaiseOnEndpointDisconnected(id);
+            }
         }
 
         /// <summary>

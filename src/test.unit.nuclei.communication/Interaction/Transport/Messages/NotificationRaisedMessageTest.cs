@@ -40,7 +40,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
             var msg = new NotificationRaisedMessage(id, notificationRaised);
 
             Assert.AreSame(id, msg.Sender);
-            Assert.AreSame(notification, msg.Notification);
+            Assert.AreSame(notification, msg.Notification.Notification);
             Assert.AreSame(args, msg.Notification.EventArgs);
         }
     }

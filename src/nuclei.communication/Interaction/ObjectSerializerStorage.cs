@@ -220,10 +220,14 @@ namespace Nuclei.Communication.Interaction
                 m_TypeGraph.AddEdge(new Edge<TypeMap>(map, baseMap));
             }
 
-            if (type.GetGenericTypeDefinition() != null)
+            if (type.IsGenericType && !type.IsGenericTypeDefinition && (type.GetGenericTypeDefinition() != null))
             {
-                var definitionMap = AddTypeToGraph(type.GetGenericTypeDefinition());
-                m_TypeGraph.AddEdge(new Edge<TypeMap>(map, definitionMap));
+                var genericBaseType = type.GetGenericTypeDefinition();
+                if (genericBaseType != type)
+                {
+                    var definitionMap = AddTypeToGraph(genericBaseType);
+                    m_TypeGraph.AddEdge(new Edge<TypeMap>(map, definitionMap));
+                }
             }
 
             foreach (var baseInterface in type.GetInterfaces())

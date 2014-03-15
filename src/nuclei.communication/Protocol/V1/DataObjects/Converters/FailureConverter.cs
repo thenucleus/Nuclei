@@ -51,7 +51,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var failureData = data as FailureData;
             if (failureData == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
             }
 
             return new FailureMessage(failureData.Sender, failureData.InResponseTo);
@@ -67,7 +67,12 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var failureMessage = message as FailureMessage;
             if (failureMessage == null)
             {
-                throw new UnknownMessageTypeException();
+                return new UnknownMessageTypeData
+                    {
+                        Id = message.Id,
+                        InResponseTo = message.InResponseTo,
+                        Sender = message.Sender,
+                    };
             }
 
             return new FailureData

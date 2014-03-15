@@ -78,7 +78,7 @@ namespace Nuclei.Communication.Discovery
             var uri = new Uri("net.pipe://localhost/pipe/discovery");
             var channels = new[]
                 {
-                    new Tuple<Version, Uri>(new Version(2, 0), new Uri(uri, new Uri("/2.0"))), 
+                    new Tuple<Version, Uri>(new Version(2, 0), new Uri(uri, new Uri("/2.0", UriKind.Relative))), 
                 };
             var receiver = new BootstrapEndpoint(channels);
 
@@ -180,7 +180,7 @@ namespace Nuclei.Communication.Discovery
                     .Throws(new ArgumentException());
             }
 
-            var host = new ServiceHost(receiver, uri);
+            var host = new ServiceHost(receiver.Object, uri);
             var binding = new NetNamedPipeBinding();
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             var endpoint = host.AddServiceEndpoint(typeof(IBootstrapEndpoint), binding, address);
@@ -199,8 +199,8 @@ namespace Nuclei.Communication.Discovery
         [Test]
         public void RecentlyConnectedEndpoint()
         {
-            var uri = new Uri("net.pipe://localhost/pipe/discovery");
-            var versionedUri = new Uri(uri, new Uri("/1.0"));
+            var uri = new Uri("net.pipe://localhost/pipe/discovery/");
+            var versionedUri = new Uri(uri, new Uri("/1.0", UriKind.Relative));
             var protocolInfo = new ProtocolInformation(
                 new Version(2, 0),
                 new Uri("http://localhost/protocol/message/invalid"),

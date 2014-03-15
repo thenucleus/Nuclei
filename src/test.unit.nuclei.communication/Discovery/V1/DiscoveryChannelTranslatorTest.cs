@@ -51,7 +51,7 @@ namespace Nuclei.Communication.Discovery.V1
                     .Verifiable();
             }
 
-            var host = new ServiceHost(receiver, uri);
+            var host = new ServiceHost(receiver.Object, uri);
             var binding = new NetNamedPipeBinding();
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             var endpoint = host.AddServiceEndpoint(typeof(IInformationEndpoint), binding, address);
@@ -101,7 +101,7 @@ namespace Nuclei.Communication.Discovery.V1
                     .Verifiable();
             }
 
-            var host = new ServiceHost(receiver, uri);
+            var host = new ServiceHost(receiver.Object, uri);
             var binding = new NetNamedPipeBinding();
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             var endpoint = host.AddServiceEndpoint(typeof(IInformationEndpoint), binding, address);
@@ -159,7 +159,7 @@ namespace Nuclei.Communication.Discovery.V1
             }
 
             var uri = new Uri("net.pipe://localhost/pipe/discovery");
-            var host = new ServiceHost(receiver, uri);
+            var host = new ServiceHost(receiver.Object, uri);
             var binding = new NetNamedPipeBinding();
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             var endpoint = host.AddServiceEndpoint(typeof(IInformationEndpoint), binding, address);

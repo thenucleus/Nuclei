@@ -116,6 +116,7 @@ namespace Nuclei.Communication.Protocol
         {
             if (endpoint != null)
             {
+                EndpointInformation info = null;
                 lock (m_Lock)
                 {
                     if (!m_ContactedEndpoints.ContainsKey(endpoint)
@@ -126,10 +127,14 @@ namespace Nuclei.Communication.Protocol
                         m_EndpointsWaitingForApproval.Remove(endpoint);
                         m_ApprovedEndpoints.Add(endpoint, pair.Item1);
 
-                        RaiseOnEndpointConnected(pair.Item1);
-
-                        return true;
+                        info = pair.Item1;
                     }
+                }
+
+                if (info != null)
+                {
+                    RaiseOnEndpointConnected(info);
+                    return true;
                 }
             }
 
@@ -297,38 +302,36 @@ namespace Nuclei.Communication.Protocol
         {
             if (endpoint != null)
             {
+                EndpointInformation info = null;
                 lock (m_Lock)
                 {
                     if (m_ApprovedEndpoints.ContainsKey(endpoint))
                     {
-                        var info = m_ApprovedEndpoints[endpoint];
-                        RaiseOnEndpointDisconnected(info);
-
+                        info = m_ApprovedEndpoints[endpoint];
                         m_ApprovedEndpoints.Remove(endpoint);
-                        return true;
                     }
 
                     if (m_EndpointsWaitingForApproval.ContainsKey(endpoint))
                     {
                         // Always notify because we can send messages to an endpoint
                         // while we're establishing if an endpoint is worth connecting to
-                        var info = m_EndpointsWaitingForApproval[endpoint].Item1;
-                        RaiseOnEndpointDisconnected(info);
-
+                        info = m_EndpointsWaitingForApproval[endpoint].Item1;
                         m_EndpointsWaitingForApproval.Remove(endpoint);
-                        return true;
                     }
 
                     if (m_ContactedEndpoints.ContainsKey(endpoint))
                     {
                         // Always notify because we can send messages to an endpoint
                         // while we're establishing if an endpoint is worth connecting to
-                        var info = m_ContactedEndpoints[endpoint];
-                        RaiseOnEndpointDisconnected(info);
-
+                        info = m_ContactedEndpoints[endpoint];
                         m_ContactedEndpoints.Remove(endpoint);
-                        return true;
                     }
+                }
+
+                if (info != null)
+                {
+                    RaiseOnEndpointDisconnected(info);
+                    return true;
                 }
             }
 

@@ -392,7 +392,7 @@ namespace Nuclei.Communication.Interaction
             {
                 Lokad.Enforce.Argument(() => subject);
                 Lokad.Enforce.With<UnknownCommunicationSubjectException>(
-                    m_RequiredSubjects.ContainsKey(subject),
+                    m_ProvidedSubjects.ContainsKey(subject),
                     Resources.Exceptions_Messages_UnknownCommunicationSubject);
             }
 
