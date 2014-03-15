@@ -61,7 +61,7 @@ namespace Nuclei
                 !string.IsNullOrEmpty(assemblyFullName) ? ", " : string.Empty,
                 assemblyFullName);
 
-            return FromFullyQualifiedName(assemblyQualifiedName);
+            return FromFullyQualifiedName(assemblyQualifiedName, throwOnError);
         }
 
         /// <summary>
@@ -94,11 +94,11 @@ namespace Nuclei
                 if (throwOnError)
                 {
                     throw new UnableToLoadTypeException(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadType_WithTypeName,
-                        assemblyQualifiedName),
-                    e);
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            Resources.Exceptions_Messages_UnableToLoadType_WithTypeName,
+                            assemblyQualifiedName),
+                        e);
                 }
             }
             catch (TypeLoadException e)
@@ -106,11 +106,11 @@ namespace Nuclei
                 if (throwOnError)
                 {
                     throw new UnableToLoadTypeException(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadType_WithTypeName,
-                        assemblyQualifiedName),
-                    e);
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            Resources.Exceptions_Messages_UnableToLoadType_WithTypeName,
+                            assemblyQualifiedName),
+                        e);
                 }
             }
             catch (FileNotFoundException e)
@@ -118,11 +118,11 @@ namespace Nuclei
                 if (throwOnError)
                 {
                     throw new UnableToLoadTypeException(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadType_WithTypeName,
-                        assemblyQualifiedName),
-                    e);
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            Resources.Exceptions_Messages_UnableToLoadType_WithTypeName,
+                            assemblyQualifiedName),
+                        e);
                 }
             }
             catch (FileLoadException e)
@@ -130,11 +130,11 @@ namespace Nuclei
                 if (throwOnError)
                 {
                     throw new UnableToLoadTypeException(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadType_WithTypeName,
-                        assemblyQualifiedName),
-                    e);
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            Resources.Exceptions_Messages_UnableToLoadType_WithTypeName,
+                            assemblyQualifiedName),
+                        e);
                 }
             }
             catch (BadImageFormatException e)
@@ -142,11 +142,11 @@ namespace Nuclei
                 if (throwOnError)
                 {
                     throw new UnableToLoadTypeException(
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        Resources.Exceptions_Messages_UnableToLoadType_WithTypeName,
-                        assemblyQualifiedName),
-                    e);
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            Resources.Exceptions_Messages_UnableToLoadType_WithTypeName,
+                            assemblyQualifiedName),
+                        e);
                 }
             }
 
