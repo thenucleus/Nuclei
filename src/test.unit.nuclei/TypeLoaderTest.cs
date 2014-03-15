@@ -18,7 +18,7 @@ namespace Nuclei
         public void FromPartialInformationWithTypeName()
         {
             var type = typeof(TypeLoader);
-            var loadedType = TypeLoader.FromPartialInformation(type.FullName, throwOnError: false);
+            var loadedType = TypeLoader.FromPartialInformation(type.FullName, throwOnError: true);
             Assert.AreEqual(type, loadedType);
         }
 
@@ -26,7 +26,7 @@ namespace Nuclei
         public void FromPartialInformationWithTypeNameAndAssemblyName()
         {
             var type = typeof(TypeLoader);
-            var loadedType = TypeLoader.FromPartialInformation(type.FullName, type.Assembly.GetName().Name, throwOnError: false);
+            var loadedType = TypeLoader.FromPartialInformation(type.FullName, type.Assembly.GetName().Name, throwOnError: true);
             Assert.AreEqual(type, loadedType);
         }
 
@@ -34,7 +34,7 @@ namespace Nuclei
         public void FromPartialInformationWithTypeNameAssemblyNameAndAssemblyVersion()
         {
             var type = typeof(TypeLoader);
-            var loadedType = TypeLoader.FromPartialInformation(type.FullName, type.Assembly.GetName().Name, type.Assembly.GetName().Version, false);
+            var loadedType = TypeLoader.FromPartialInformation(type.FullName, type.Assembly.GetName().Name, type.Assembly.GetName().Version, true);
             Assert.AreEqual(type, loadedType);
         }
 
@@ -42,7 +42,7 @@ namespace Nuclei
         public void FromFullyQualifiedName()
         {
             var type = typeof(TypeLoader);
-            var loadedType = TypeLoader.FromFullyQualifiedName(type.AssemblyQualifiedName, false);
+            var loadedType = TypeLoader.FromFullyQualifiedName(type.AssemblyQualifiedName, true);
             Assert.AreEqual(type, loadedType);
         }
     }
