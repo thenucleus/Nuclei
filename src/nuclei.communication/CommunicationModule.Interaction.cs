@@ -153,7 +153,7 @@ namespace Nuclei.Communication
                     c =>
                     {
                         var ctx = c.Resolve<IComponentContext>();
-                        RegisterLocalCommand func = (type, command, subjects) =>
+                        RegisterCommand func = (type, command, subjects) =>
                         {
                             type.VerifyThatTypeIsACorrectCommandSet();
                             if (!type.IsInstanceOfType(command))
@@ -173,7 +173,7 @@ namespace Nuclei.Communication
 
                         return func;
                     })
-                .As<RegisterLocalCommand>()
+                .As<RegisterCommand>()
                 .SingleInstance();
 
             builder.Register(
@@ -203,7 +203,7 @@ namespace Nuclei.Communication
                     c =>
                     {
                         var ctx = c.Resolve<IComponentContext>();
-                        RegisterLocalNotification func = (type, notification, subjects) =>
+                        RegisterNotification func = (type, notification, subjects) =>
                         {
                             type.VerifyThatTypeIsACorrectNotificationSet();
                             if (!type.IsInstanceOfType(notification))
@@ -223,7 +223,7 @@ namespace Nuclei.Communication
 
                         return func;
                     })
-                .As<RegisterLocalNotification>()
+                .As<RegisterNotification>()
                 .SingleInstance();
 
             builder.Register(

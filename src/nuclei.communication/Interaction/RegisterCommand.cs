@@ -43,5 +43,5 @@ namespace Nuclei.Communication.Interaction
     /// <param name="commandInterface">The interface that defines the command methods.</param>
     /// <param name="commands">The command object.</param>
     /// <param name="subject">The communication subjects to which the current commands belongs</param>
-    public delegate void RegisterLocalCommand(Type commandInterface, ICommandSet commands, params SubjectGroupIdentifier[] subject);
+    public delegate void RegisterCommand(Type commandInterface, ICommandSet commands, params SubjectGroupIdentifier[] subject);
 }

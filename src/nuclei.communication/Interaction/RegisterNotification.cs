@@ -36,5 +36,5 @@ namespace Nuclei.Communication.Interaction
     /// <param name="commandInterface">The interface that defines the notification events.</param>
     /// <param name="notifications">The notification object.</param>
     /// <param name="subject">The communication subjects to which the current notifications belongs</param>
-    public delegate void RegisterLocalNotification(Type commandInterface, INotificationSet notifications, params SubjectGroupIdentifier[] subject);
+    public delegate void RegisterNotification(Type commandInterface, INotificationSet notifications, params SubjectGroupIdentifier[] subject);
 }

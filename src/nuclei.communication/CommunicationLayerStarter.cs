@@ -98,6 +98,9 @@ namespace Nuclei.Communication
                 {
                     try
                     {
+                        RegisterRequiredCommands();
+                        RegisterRequiredNotifications();
+
                         ActivateCommands();
                         ActivateNotifications();
 
@@ -124,6 +127,34 @@ namespace Nuclei.Communication
                         throw;
                     }
                 });
+        }
+
+        private void RegisterRequiredCommands()
+        {
+            var commandMapBuilders = m_Context.Resolve<IEnumerable<RequiredCommandsMappedBySubject>>();
+            var registration = m_Context.Resolve<RegisterRequiredCommand>();
+            foreach (var builder in commandMapBuilders)
+            {
+                var mappedCommands = builder();
+                foreach (var map in mappedCommands)
+                {
+                    registration(map.Item1, map.Item2);
+                }
+            }
+        }
+
+        private void RegisterRequiredNotifications()
+        {
+            var notificationMapBuilders = m_Context.Resolve<IEnumerable<RequiredNotificationsMappedBySubject>>();
+            var registration = m_Context.Resolve<RegisterRequiredNotification>();
+            foreach (var builder in notificationMapBuilders)
+            {
+                var mappedNotifications = builder();
+                foreach (var map in mappedNotifications)
+                {
+                    registration(map.Item1, map.Item2);
+                }
+            }
         }
 
         private void ActivateCommands()
