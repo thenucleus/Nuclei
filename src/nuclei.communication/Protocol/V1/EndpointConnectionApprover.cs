@@ -23,6 +23,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// <summary>
         /// Initializes a new instance of the <see cref="EndpointConnectionApprover"/> class.
         /// </summary>
+        /// <param name="descriptions">The object that stores the protocol subjects for the current endpoint.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="descriptions"/> is <see langword="null" />.
         /// </exception>
@@ -36,7 +37,7 @@ namespace Nuclei.Communication.Protocol.V1
         }
 
         /// <summary>
-        /// The version of the protocol for which the current instance can approve endpoint connections.
+        /// Gets the version of the protocol for which the current instance can approve endpoint connections.
         /// </summary>
         public Version ProtocolVersion
         {

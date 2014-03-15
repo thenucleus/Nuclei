@@ -36,7 +36,8 @@ namespace Nuclei.Communication.Interaction
             collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object);
             Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
 
-            Assert.Throws<CommandAlreadyRegisteredException>(() => collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object));
+            Assert.Throws<CommandAlreadyRegisteredException>(
+                () => collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object));
             Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
         }
 

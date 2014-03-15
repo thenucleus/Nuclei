@@ -12,10 +12,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Schedulers;
 using Moq;
-using NUnit.Framework;
 using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
+using NUnit.Framework;
 
 namespace Nuclei.Communication.Interaction
 {
@@ -486,10 +486,7 @@ namespace Nuclei.Communication.Interaction
                 remoteEndpoint,
                 new[]
                     {
-                        new CommunicationSubjectGroup(
-                            new CommunicationSubject("b"),
-                            new VersionedTypeFallback[0], 
-                            new VersionedTypeFallback[0]), 
+                        new CommunicationSubjectGroup(new CommunicationSubject("b"), new VersionedTypeFallback[0], new VersionedTypeFallback[0]), 
                     },
                 new MessageId());
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());

@@ -26,6 +26,7 @@ namespace Nuclei.Communication.Protocol
         /// Returns the connection information for the channel that handles messages for the given version
         /// of the protocol.
         /// </summary>
+        /// <param name="protocolVersion">The version of the protocol for which the protocol information should be returned.</param>
         /// <returns>The connection information for the channel that handles messages for the given version of the protocol.</returns>
         ProtocolInformation LocalConnectionPointForVersion(Version protocolVersion);
 

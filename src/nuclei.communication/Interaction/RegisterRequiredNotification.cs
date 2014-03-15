@@ -16,7 +16,7 @@ namespace Nuclei.Communication.Interaction
     /// A proper notification set class has the following characteristics:
     /// <list type="bullet">
     ///     <item>
-    ///         <description>The interface must derrive from <see cref="INotificationSet"/>.</description>
+    ///         <description>The interface must derive from <see cref="INotificationSet"/>.</description>
     ///     </item>
     ///     <item>
     ///         <description>The interface must only have events, no properties or methods.</description>
@@ -34,6 +34,6 @@ namespace Nuclei.Communication.Interaction
     /// </para>
     /// </remarks>
     /// <param name="commandInterface">The interface that defines the command methods.</param>
-    /// <param name="subject">The communication subjects to which the current commands belongs</param>
+    /// <param name="subject">The communication subjects to which the current commands belongs.</param>
     internal delegate void RegisterRequiredNotification(Type commandInterface, params SubjectGroupIdentifier[] subject);
 }

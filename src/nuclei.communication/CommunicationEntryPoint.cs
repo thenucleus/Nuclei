@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright company="Nuclei">
+//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using Nuclei.Communication.Interaction;
 
@@ -35,7 +41,7 @@ namespace Nuclei.Communication
             }
 
             /// <summary>
-            /// Gets or sets a value indicating whether the endpont has been approved
+            /// Gets or sets a value indicating whether the endpoint has been approved
             /// for use of notifications.
             /// </summary>
             public bool HasBeenApprovedForNotifications
@@ -104,8 +110,8 @@ namespace Nuclei.Communication
         ///     Thrown if <paramref name="notifications"/> is <see langword="null" />.
         /// </exception>
         public CommunicationEntryPoint(
-            IStoreInformationAboutEndpoints endpointStorage, 
-            ISendCommandsToRemoteEndpoints commands, 
+            IStoreInformationAboutEndpoints endpointStorage,
+            ISendCommandsToRemoteEndpoints commands,
             INotifyOfRemoteEndpointEvents notifications)
         {
             {
@@ -132,9 +138,8 @@ namespace Nuclei.Communication
             var hasEndpointBeenApproved = false;
 
             var id = e.Endpoint;
-            lock(m_Lock)
+            lock (m_Lock)
             {
-                
                 if (!m_EndpointConnectionProgress.ContainsKey(id))
                 {
                     m_EndpointConnectionProgress.Add(id, new EndpointConnectionCompletionMap());
@@ -177,7 +182,7 @@ namespace Nuclei.Communication
         private void HandleOnEndpointDisconnected(object sender, EndpointEventArgs e)
         {
             var id = e.Endpoint;
-            lock(m_Lock)
+            lock (m_Lock)
             {
                 if (m_EndpointConnectionProgress.ContainsKey(id))
                 {
@@ -191,7 +196,7 @@ namespace Nuclei.Communication
                     m_EndpointMap.Remove(id);
                 }
 
-                if ((matchingUri != null) && (m_UriMap.ContainsKey(matchingUri)))
+                if ((matchingUri != null) && m_UriMap.ContainsKey(matchingUri))
                 {
                     m_UriMap.Remove(matchingUri);
                 }

@@ -202,7 +202,7 @@ namespace Nuclei.Communication.Interaction.Transport
         }
 
         /// <summary>
-        /// The object used to lock on. Provided to allow derivative classes to use the same lock as the base class.
+        /// Gets the object used to lock on. Provided to allow derivative classes to use the same lock as the base class.
         /// </summary>
         protected object Lock
         {

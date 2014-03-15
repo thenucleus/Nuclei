@@ -16,7 +16,7 @@ namespace Nuclei.Communication.Protocol
     internal interface IApproveEndpointConnections
     {
         /// <summary>
-        /// The version of the protocol for which the current instance can approve endpoint connections.
+        /// Gets the version of the protocol for which the current instance can approve endpoint connections.
         /// </summary>
         Version ProtocolVersion
         {

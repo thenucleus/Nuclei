@@ -114,7 +114,7 @@ namespace Nuclei.Communication.Protocol
         private readonly Func<Version, Uri, IMessageSendingEndpoint> m_VersionedMessageSenderBuilder;
 
         /// <summary>
-        /// The function that is used to create a specific version of the the data transfering endpoint 
+        /// The function that is used to create a specific version of the the data transferring endpoint 
         /// to connect to a given URL.
         /// </summary>
         private readonly Func<Version, Uri, IDataTransferingEndpoint> m_VersionedDataSenderBuilder;
@@ -170,7 +170,7 @@ namespace Nuclei.Communication.Protocol
         ///     Thrown if <paramref name="versionedDataSenderBuilder"/> is <see langword="null" />.
         /// </exception>
         public ProtocolChannel(
-            EndpointId id, 
+            EndpointId id,
             IStoreInformationAboutEndpoints connectionMap,
             IProtocolChannelTemplate channelTemplate,
             Func<IHoldServiceConnections> hostBuilder,
@@ -199,7 +199,7 @@ namespace Nuclei.Communication.Protocol
 
             m_MessageMessageReceiverBuilder = messageReceiverBuilder;
             m_DataReceiverBuilder = dataReceiverBuilder;
-            
+
             m_SenderBuilder = senderBuilder;
             m_VersionedMessageSenderBuilder = versionedMessageSenderBuilder;
             m_VersionedDataSenderBuilder = versionedDataSenderBuilder;
@@ -211,7 +211,7 @@ namespace Nuclei.Communication.Protocol
         /// <returns>The collection that contains the connection information for each of the available channels.</returns>
         public IEnumerable<ProtocolInformation> LocalConnectionPoints()
         {
-            lock(m_Lock)
+            lock (m_Lock)
             {
                 return m_LocalConnectionPoints.ToList();
             }
@@ -221,6 +221,7 @@ namespace Nuclei.Communication.Protocol
         /// Returns the connection information for the channel that handles messages for the given version
         /// of the protocol.
         /// </summary>
+        /// <param name="protocolVersion">The version of the protocol for which the protocol information should be returned.</param>
         /// <returns>The connection information for the channel that handles messages for the given version of the protocol.</returns>
         public ProtocolInformation LocalConnectionPointForVersion(Version protocolVersion)
         {
@@ -228,7 +229,7 @@ namespace Nuclei.Communication.Protocol
                 Lokad.Enforce.Argument(() => protocolVersion);
             }
 
-            lock(m_Lock)
+            lock (m_Lock)
             {
                 var result = m_LocalConnectionPoints.Find(p => p.Version == protocolVersion);
                 return result;
@@ -240,7 +241,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         public void OpenChannel()
         {
-            lock(m_Lock)
+            lock (m_Lock)
             {
                 foreach (var version in ProtocolVersions.SupportedVersions())
                 {
@@ -307,7 +308,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         public void CloseChannel()
         {
-            lock(m_Lock)
+            lock (m_Lock)
             {
                 var versions = m_MessageHostsByVersion.Keys.ToList();
                 foreach (var version in versions)
@@ -321,7 +322,7 @@ namespace Nuclei.Communication.Protocol
 
         private void CloseChannel(Version version)
         {
-            lock(m_Lock)
+            lock (m_Lock)
             {
                 if (m_SendingEndpoints.ContainsKey(version))
                 {
@@ -390,7 +391,7 @@ namespace Nuclei.Communication.Protocol
         /// <param name="endpoint">The ID number of the endpoint that has disconnected.</param>
         public void EndpointDisconnected(EndpointId endpoint)
         {
-            lock(m_Lock)
+            lock (m_Lock)
             {
                 if (m_ChannelConnectionMap.CanCommunicateWithEndpoint(endpoint))
                 {
@@ -467,7 +468,7 @@ namespace Nuclei.Communication.Protocol
                 }
 
                 var protocolVersion = channelInfo.ProtocolInformation.Version;
-                lock(m_Lock)
+                lock (m_Lock)
                 {
                     if (!m_SendingEndpoints.ContainsKey(protocolVersion))
                     {

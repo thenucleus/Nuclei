@@ -5,8 +5,8 @@
 //-----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
-using NUnit.Framework;
 using Nuclei.Nunit.Extensions;
+using NUnit.Framework;
 
 namespace Nuclei.Communication.Discovery
 {

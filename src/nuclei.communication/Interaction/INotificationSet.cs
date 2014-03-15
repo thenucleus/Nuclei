@@ -20,6 +20,5 @@ namespace Nuclei.Communication.Interaction
         Justification = "This interface is used as marker interface for sets of notifications.")]
     public interface INotificationSet
     {
-
     }
 }

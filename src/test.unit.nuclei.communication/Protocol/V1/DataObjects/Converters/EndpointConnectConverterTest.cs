@@ -6,8 +6,8 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using NUnit.Framework;
 using Nuclei.Communication.Protocol.Messages;
+using NUnit.Framework;
 
 namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
 {
@@ -78,7 +78,6 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             Assert.AreSame(data.MessageAddress, ((EndpointConnectMessage)msg).ProtocolInformation.MessageAddress);
             Assert.AreSame(data.DataAddress, ((EndpointConnectMessage)msg).ProtocolInformation.DataAddress);
             Assert.AreSame(data.Information, ((EndpointConnectMessage)msg).Information);
-
         }
 
         [Test]

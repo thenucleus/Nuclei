@@ -22,7 +22,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         private readonly CommunicationSubjectGroup[] m_Groups;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommunicationMessage"/> class.
+        /// Initializes a new instance of the <see cref="EndpointInteractionInformationMessage"/> class.
         /// </summary>
         /// <param name="origin">The endpoint that send the original message.</param>
         /// <param name="groups">The collection containing communication subjects for the endpoint.</param>

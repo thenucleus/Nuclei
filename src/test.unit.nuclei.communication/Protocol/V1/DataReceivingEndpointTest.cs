@@ -7,9 +7,9 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using NUnit.Framework;
 using Nuclei.Communication.Protocol.V1.DataObjects;
 using Nuclei.Diagnostics;
+using NUnit.Framework;
 
 namespace Nuclei.Communication.Protocol.V1
 {

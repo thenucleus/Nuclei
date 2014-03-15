@@ -8,8 +8,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Moq;
-using NUnit.Framework;
 using Nuclei.Communication.Interaction;
+using NUnit.Framework;
 
 namespace Nuclei.Communication
 {
@@ -52,7 +52,6 @@ namespace Nuclei.Communication
                     eventEndpoint = e.Endpoint;
                 };
 
-            
             endpoints.Raise(e => e.OnEndpointConnected += null, new EndpointEventArgs(endpoint));
             Assert.IsNull(eventEndpoint);
             endpoints.Verify(e => e.TryGetConnectionFor(It.IsAny<EndpointId>(), out endpointInfo), Times.Never());
@@ -111,7 +110,6 @@ namespace Nuclei.Communication
                 {
                     eventEndpoint = e.Endpoint;
                 };
-
 
             endpoints.Raise(e => e.OnEndpointConnected += null, new EndpointEventArgs(endpoint));
             Assert.IsNull(eventEndpoint);
@@ -172,7 +170,6 @@ namespace Nuclei.Communication
                 {
                     eventEndpoint = e.Endpoint;
                 };
-
 
             endpoints.Raise(e => e.OnEndpointDisconnected += null, new EndpointEventArgs(endpoint));
             Assert.IsNull(eventEndpoint);

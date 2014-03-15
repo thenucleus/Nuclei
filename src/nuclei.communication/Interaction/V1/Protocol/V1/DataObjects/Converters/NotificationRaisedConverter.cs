@@ -16,7 +16,8 @@ using Nuclei.Communication.Protocol.V1.DataObjects;
 namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 {
     /// <summary>
-    /// Converts <see cref="NotificationRaisedMessage"/> objects to <see cref="Protocol.V1.DataObjects.NotificationRaisedData"/> objects and visa versa.
+    /// Converts <see cref="NotificationRaisedMessage"/> objects to <see cref="Protocol.V1.DataObjects.NotificationRaisedData"/> objects
+    /// and visa versa.
     /// </summary>
     internal sealed class NotificationRaisedConverter : IConvertCommunicationMessages
     {

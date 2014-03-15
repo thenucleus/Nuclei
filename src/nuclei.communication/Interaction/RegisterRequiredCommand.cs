@@ -17,7 +17,7 @@ namespace Nuclei.Communication.Interaction
     /// A proper command set class has the following characteristics:
     /// <list type="bullet">
     ///     <item>
-    ///         <description>The interface must derrive from <see cref="ICommandSet"/>.</description>
+    ///         <description>The interface must derive from <see cref="ICommandSet"/>.</description>
     ///     </item>
     ///     <item>
     ///         <description>The interface must only have methods, no properties or events.</description>
@@ -41,6 +41,6 @@ namespace Nuclei.Communication.Interaction
     /// </para>
     /// </remarks>
     /// <param name="commandInterface">The interface that defines the command methods.</param>
-    /// <param name="subject">The communication subjects to which the current commands belongs</param>
+    /// <param name="subject">The communication subjects to which the current commands belongs.</param>
     internal delegate void RegisterRequiredCommand(Type commandInterface, params SubjectGroupIdentifier[] subject);
 }

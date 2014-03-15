@@ -25,8 +25,10 @@ namespace Nuclei.Communication.Interaction
             /// <param name="x">The first object to compare.</param>
             /// <param name="y">The second object to compare.</param>
             /// <returns>
-            /// true if the specified objects are equal; otherwise, false.
+            /// <see langword="true" /> if the specified objects are equal; otherwise, <see langword="false" />.
             /// </returns>
+            [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
+                Justification = "Documentation can start with a language keyword")]
             public bool Equals(Tuple<OfflineTypeInformation, Version> x, Tuple<OfflineTypeInformation, Version> y)
             {
                 if (ReferenceEquals(x, null) && ReferenceEquals(y, null))

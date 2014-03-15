@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Diagnostics;
 
 namespace Nuclei.Communication
@@ -30,8 +31,20 @@ namespace Nuclei.Communication
         private readonly ProtocolInformation m_ProtocolInformation;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:System.Object"/> class.
+        /// Initializes a new instance of the <see cref="EndpointInformation"/> class.
         /// </summary>
+        /// <param name="id">The endpoint ID of the endpoint which is being described by the current information instance.</param>
+        /// <param name="discoveryInformation">The discovery information for the endpoint.</param>
+        /// <param name="protocolInformation">The protocol information for the endpoint.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="discoveryInformation"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="protocolInformation"/> is <see langword="null" />.
+        /// </exception>
         public EndpointInformation(EndpointId id, DiscoveryInformation discoveryInformation, ProtocolInformation protocolInformation)
         {
             {
@@ -58,7 +71,7 @@ namespace Nuclei.Communication
         }
 
         /// <summary>
-        /// The object describing the discovery channel for the endpoint.
+        /// Gets the object describing the discovery channel for the endpoint.
         /// </summary>
         public DiscoveryInformation DiscoveryInformation
         {
@@ -70,7 +83,7 @@ namespace Nuclei.Communication
         }
 
         /// <summary>
-        /// The object describing the protocol information for the endpoint.
+        /// Gets the object describing the protocol information for the endpoint.
         /// </summary>
         public ProtocolInformation ProtocolInformation
         {

@@ -9,9 +9,9 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.ServiceModel;
 using Moq;
-using NUnit.Framework;
 using Nuclei.Configuration;
 using Nuclei.Diagnostics;
+using NUnit.Framework;
 
 namespace Nuclei.Communication.Discovery.V1
 {
@@ -47,7 +47,7 @@ namespace Nuclei.Communication.Discovery.V1
             var receiver = new Mock<IInformationEndpoint>();
             {
                 receiver.Setup(r => r.ProtocolVersions())
-                    .Returns(new[]{ new Version(2, 0), })
+                    .Returns(new[] { new Version(2, 0), })
                     .Verifiable();
             }
 

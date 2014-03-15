@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Interaction
         /// A proper notification set class has the following characteristics:
         /// <list type="bullet">
         ///     <item>
-        ///         <description>The interface must derrive from <see cref="INotificationSet"/>.</description>
+        ///         <description>The interface must derive from <see cref="INotificationSet"/>.</description>
         ///     </item>
         ///     <item>
         ///         <description>The interface must only have events, no properties or methods.</description>

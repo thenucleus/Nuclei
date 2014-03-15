@@ -47,7 +47,7 @@ namespace Nuclei.Communication.Interaction
         }
 
         /// <summary>
-        /// The notification that was raised.
+        /// Gets the notification that was raised.
         /// </summary>
         public NotificationData Notification
         {
@@ -59,7 +59,7 @@ namespace Nuclei.Communication.Interaction
         }
 
         /// <summary>
-        /// The event arguments for the notification.
+        /// Gets the event arguments for the notification.
         /// </summary>
         public EventArgs EventArgs
         {

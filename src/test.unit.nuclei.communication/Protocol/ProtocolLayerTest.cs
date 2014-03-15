@@ -10,10 +10,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Schedulers;
 using Moq;
-using NUnit.Framework;
 using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
+using NUnit.Framework;
 
 namespace Nuclei.Communication.Protocol
 {
@@ -140,6 +140,7 @@ namespace Nuclei.Communication.Protocol
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(protocolInfo);
             }
+
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
@@ -192,12 +193,14 @@ namespace Nuclei.Communication.Protocol
                     .Callback<EndpointId>(e => Assert.AreEqual(endpoint, e))
                     .Verifiable();
             }
+
             var pipe = new Mock<IDirectIncomingMessages>();
             {
                 pipe.Setup(p => p.OnEndpointDisconnected(It.IsAny<EndpointId>()))
                     .Callback<EndpointId>(e => Assert.AreEqual(endpoint, e))
                     .Verifiable();
             }
+
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
@@ -249,6 +252,7 @@ namespace Nuclei.Communication.Protocol
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(protocolInfo);
             }
+
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
@@ -309,6 +313,7 @@ namespace Nuclei.Communication.Protocol
                 channel.Setup(c => c.CloseChannel())
                     .Verifiable();
             }
+
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
@@ -369,6 +374,7 @@ namespace Nuclei.Communication.Protocol
                 channel.Setup(c => c.CloseChannel())
                     .Verifiable();
             }
+
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
@@ -540,6 +546,7 @@ namespace Nuclei.Communication.Protocol
                         })
                     .Verifiable();
             }
+
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
@@ -598,6 +605,7 @@ namespace Nuclei.Communication.Protocol
                         })
                     .Verifiable();
             }
+
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
@@ -713,6 +721,7 @@ namespace Nuclei.Communication.Protocol
                     .Returns(responseTask)
                     .Verifiable();
             }
+
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
@@ -791,6 +800,7 @@ namespace Nuclei.Communication.Protocol
                     .Returns(responseTask)
                     .Verifiable();
             }
+
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
@@ -856,6 +866,7 @@ namespace Nuclei.Communication.Protocol
                         (e, p, c, s) => Task.Factory.StartNew(() => { }, c, TaskCreationOptions.None, s))
                     .Verifiable();
             }
+
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
@@ -922,6 +933,7 @@ namespace Nuclei.Communication.Protocol
                         (e, p, c, s) => Task.Factory.StartNew(() => { }, c, TaskCreationOptions.None, s))
                     .Verifiable();
             }
+
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
@@ -987,6 +999,7 @@ namespace Nuclei.Communication.Protocol
                         (e, p, c, s) => Task.Factory.StartNew(() => { }, c, TaskCreationOptions.None, s))
                     .Verifiable();
             }
+
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>

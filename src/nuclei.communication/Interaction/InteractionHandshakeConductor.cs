@@ -18,7 +18,7 @@ using Nuclei.Communication.Protocol.Messages;
 namespace Nuclei.Communication.Interaction
 {
     /// <summary>
-    /// Defines the handshake behaviour for the interaction layer.
+    /// Defines the handshake behavior for the interaction layer.
     /// </summary>
     internal sealed class InteractionHandshakeConductor : IHandleInteractionHandshakes
     {
@@ -124,7 +124,7 @@ namespace Nuclei.Communication.Interaction
                 Justification = "Documentation can start with a language keyword")]
             public bool IsComplete()
             {
-                return HaveSendSubjects && HaveReceivedSubjects 
+                return HaveSendSubjects && HaveReceivedSubjects
                     && (SendResponse != InteractionConnectionState.None) && (ReceivedResponse != InteractionConnectionState.None);
             }
         }
@@ -214,7 +214,7 @@ namespace Nuclei.Communication.Interaction
 
         private void HandleEndpointSignIn(object sender, EndpointEventArgs e)
         {
-            lock(m_Lock)
+            lock (m_Lock)
             {
                 // Potentially a new endpoint so store it
                 StorePotentialEndpoint(e.Endpoint);
@@ -224,7 +224,7 @@ namespace Nuclei.Communication.Interaction
 
         private void InitiateHandshakeWith(EndpointId endpoint)
         {
-            lock(m_Lock)
+            lock (m_Lock)
             {
                 if (!m_EndpointApprovalState.ContainsKey(endpoint))
                 {
@@ -297,7 +297,7 @@ namespace Nuclei.Communication.Interaction
         public void ContinueHandshakeWith(EndpointId connection, CommunicationSubjectGroup[] subjectGroups, MessageId messageId)
         {
             bool shouldSendConnect;
-            lock(m_Lock)
+            lock (m_Lock)
             {
                 StorePotentialEndpoint(connection);
                 if (!m_EndpointApprovalState.ContainsKey(connection))
@@ -400,7 +400,7 @@ namespace Nuclei.Communication.Interaction
 
         private void CloseOrApproveConnection(EndpointId connection)
         {
-            lock(m_Lock)
+            lock (m_Lock)
             {
                 if (!m_EndpointApprovalState.ContainsKey(connection))
                 {
@@ -408,12 +408,14 @@ namespace Nuclei.Communication.Interaction
                 }
 
                 var tickList = m_EndpointApprovalState[connection];
-                if ((tickList.ReceivedResponse == InteractionConnectionState.Denied) || (tickList.SendResponse == InteractionConnectionState.Denied))
+                if ((tickList.ReceivedResponse == InteractionConnectionState.Denied) 
+                    || (tickList.SendResponse == InteractionConnectionState.Denied))
                 {
                     RemoveEndpoint(connection);
                 }
 
-                if ((tickList.ReceivedResponse == InteractionConnectionState.Desired) || (tickList.SendResponse == InteractionConnectionState.Desired))
+                if ((tickList.ReceivedResponse == InteractionConnectionState.Desired) 
+                    || (tickList.SendResponse == InteractionConnectionState.Desired))
                 {
                     try
                     {
@@ -421,7 +423,7 @@ namespace Nuclei.Communication.Interaction
                     }
                     catch (Exception)
                     {
-
+                        // Can only ignore it at the moment...
                     }
 
                     try
@@ -430,7 +432,7 @@ namespace Nuclei.Communication.Interaction
                     }
                     catch (Exception)
                     {
-
+                        // Can only ignore it ...
                     }
 
                     m_EndpointApprovalState.Remove(connection);

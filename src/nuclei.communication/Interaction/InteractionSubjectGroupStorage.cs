@@ -85,6 +85,7 @@ namespace Nuclei.Communication.Interaction
             /// <summary>
             /// Creates a new <see cref="CommunicationSubjectGroup"/>.
             /// </summary>
+            /// <param name="subject">The subject for the group.</param>
             /// <returns>The new group.</returns>
             public CommunicationSubjectGroup ToGroup(CommunicationSubject subject)
             {
@@ -174,7 +175,7 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="subject">The subject for the group.</param>
         /// <param name="commandType">The type of the command.</param>
-        /// <param name="version">The version of the command which is used to order commands that provide similar functionality</param>
+        /// <param name="version">The version of the command which is used to order commands that provide similar functionality.</param>
         /// <param name="groupIdentifier">
         /// The identifier which is used to group different versions of commands that provide similar functionality.
         /// </param>
@@ -229,7 +230,11 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="groupIdentifier"/> is <see langword="null" />.
         /// </exception>
-        public void RegisterNotificationForProvidedSubjectGroup(CommunicationSubject subject, Type notificationType, Version version, string groupIdentifier)
+        public void RegisterNotificationForProvidedSubjectGroup(
+            CommunicationSubject subject, 
+            Type notificationType, 
+            Version version, 
+            string groupIdentifier)
         {
             {
                 Lokad.Enforce.Argument(() => subject);
@@ -268,7 +273,11 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="groupIdentifier"/> is <see langword="null" />.
         /// </exception>
-        public void RegisterNotificationForRequiredSubjectGroup(CommunicationSubject subject, Type notificationType, Version version, string groupIdentifier)
+        public void RegisterNotificationForRequiredSubjectGroup(
+            CommunicationSubject subject, 
+            Type notificationType, 
+            Version version, 
+            string groupIdentifier)
         {
             {
                 Lokad.Enforce.Argument(() => subject);

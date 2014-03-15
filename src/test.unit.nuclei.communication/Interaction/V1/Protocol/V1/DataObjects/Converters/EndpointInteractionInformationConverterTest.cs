@@ -6,11 +6,11 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
-using NUnit.Framework;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Communication.Protocol.V1.DataObjects;
+using NUnit.Framework;
 
 namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 {

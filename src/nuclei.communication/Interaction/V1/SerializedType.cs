@@ -25,7 +25,7 @@ namespace Nuclei.Communication.Interaction.V1
         }
 
         /// <summary>
-        /// Gets the full name of the type.
+        /// Gets or sets the full name of the type.
         /// </summary>
         [DataMember]
         public string FullName

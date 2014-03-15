@@ -134,7 +134,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 new CommandInvokedMessage(
                     new EndpointId("otherId"),
                     new CommandInvokedData(
-                        new CommandData(typeof(IMockCommandSet),"MethodWithReturnValue"), 
+                        new CommandData(typeof(IMockCommandSet), "MethodWithReturnValue"),
                         new[]
                             {
                                 new Tuple<Type, object>(typeof(int), 2), 
@@ -142,7 +142,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
 
             actionObject.Verify(a => a.MethodWithReturnValue(It.IsAny<int>()), Times.Once());
             Assert.IsInstanceOf<CommandInvokedResponseMessage>(storedMsg);
-            
+
             var responseMsg = storedMsg as CommandInvokedResponseMessage;
             Assert.IsInstanceOf<int>(responseMsg.Result);
             Assert.AreEqual(1, (int)responseMsg.Result);
@@ -218,9 +218,9 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
             {
                 actionObject.Setup(a => a.MethodWithoutReturnValue(It.IsAny<int>()))
                     .Returns(Task.Factory.StartNew(
-                        () => { }, 
-                        new CancellationToken(), 
-                        TaskCreationOptions.None, 
+                        () => { },
+                        new CancellationToken(),
+                        TaskCreationOptions.None,
                         new CurrentThreadTaskScheduler()))
                     .Verifiable();
             }
@@ -231,10 +231,10 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 };
 
             var endpoint = new EndpointId("id");
-            Action<EndpointId, ICommunicationMessage> sendAction = 
-                (e, m) => 
-                { 
-                    throw new Exception(); 
+            Action<EndpointId, ICommunicationMessage> sendAction =
+                (e, m) =>
+                {
+                    throw new Exception();
                 };
             var commands = new Mock<ICommandCollection>();
             {

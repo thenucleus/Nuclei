@@ -42,13 +42,13 @@ namespace Nuclei.Communication.Protocol
             var id = new EndpointId("a");
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
             var template = new Mock<IProtocolChannelTemplate>();
-            
+
             var host = new Mock<IHoldServiceConnections>();
             Func<IHoldServiceConnections> hostBuilder = () => host.Object;
-            
+
             Func<Version, Tuple<Type, IMessagePipe>> messageReceiverBuilder = version => new Tuple<Type, IMessagePipe>(null, null);
-            Func<Version, Tuple<Type, IDataPipe> > dataReceiverBuilder = version => new Tuple<Type, IDataPipe>(null, null);
-            
+            Func<Version, Tuple<Type, IDataPipe>> dataReceiverBuilder = version => new Tuple<Type, IDataPipe>(null, null);
+
             var sendingEndpoint = new Mock<ISendingEndpoint>();
             BuildSendingEndpoint senderBuilder = (endpoint, builder, endpointBuilder) => sendingEndpoint.Object;
 
@@ -97,11 +97,11 @@ namespace Nuclei.Communication.Protocol
             Func<IHoldServiceConnections> hostBuilder = () => host.Object;
 
             var messagePipe = new Mock<IMessagePipe>();
-            Func<Version, Tuple<Type, IMessagePipe>> messageReceiverBuilder = 
+            Func<Version, Tuple<Type, IMessagePipe>> messageReceiverBuilder =
                 version => new Tuple<Type, IMessagePipe>(typeof(IMessagePipe), messagePipe.Object);
 
             var dataPipe = new Mock<IDataPipe>();
-            Func<Version, Tuple<Type, IDataPipe>> dataReceiverBuilder = 
+            Func<Version, Tuple<Type, IDataPipe>> dataReceiverBuilder =
                 version => new Tuple<Type, IDataPipe>(typeof(IDataPipe), dataPipe.Object);
 
             var sendingEndpoint = new Mock<ISendingEndpoint>();
@@ -789,7 +789,7 @@ namespace Nuclei.Communication.Protocol
             var path = TempFile();
 
             var text = "Some random text";
-            using(var writer = new StreamWriter(path, false))
+            using (var writer = new StreamWriter(path, false))
             {
                 writer.WriteLine(text);
             }
@@ -841,7 +841,7 @@ namespace Nuclei.Communication.Protocol
                         (e, m) =>
                         {
                             string fileText;
-                            using(var reader = new StreamReader(m))
+                            using (var reader = new StreamReader(m))
                             {
                                 fileText = reader.ReadToEnd();
                             }
@@ -919,7 +919,7 @@ namespace Nuclei.Communication.Protocol
 
             var eventWasRaised = false;
             var msg = new SuccessMessage(id, new MessageId());
-            channel.OnMessageReception += 
+            channel.OnMessageReception +=
                 (s, e) =>
                 {
                     eventWasRaised = true;

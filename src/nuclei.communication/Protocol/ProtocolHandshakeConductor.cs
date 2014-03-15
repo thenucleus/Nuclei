@@ -19,7 +19,7 @@ using Nuclei.Diagnostics.Logging;
 namespace Nuclei.Communication.Protocol
 {
     /// <summary>
-    /// Defines the handshake behaviour for the protocol layer.
+    /// Defines the handshake behavior for the protocol layer.
     /// </summary>
     internal sealed class ProtocolHandshakeConductor : IHandleProtocolHandshakes
     {
@@ -87,7 +87,7 @@ namespace Nuclei.Communication.Protocol
             var endpointChannelTemplate = info.ProtocolInformation.MessageAddress.ToChannelTemplate();
             if (info.Id.IsOnLocalMachine())
             {
-                return  endpointChannelTemplate == ChannelTemplate.NamedPipe;
+                return endpointChannelTemplate == ChannelTemplate.NamedPipe;
             }
 
             return endpointChannelTemplate == ChannelTemplate.TcpIP;

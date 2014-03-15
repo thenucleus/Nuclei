@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright company="Nuclei">
+//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Diagnostics;
 
 namespace Nuclei.Communication.Interaction
@@ -29,17 +35,17 @@ namespace Nuclei.Communication.Interaction
         /// <param name="subject">The communication subject that is related to the subject group.</param>
         /// <param name="version">The 'version' of the interaction object that is related to the subject group.</param>
         /// <param name="group">The identifier that is used to group interaction objects that perform similar functions.</param>
-        public SubjectGroupIdentifier(CommunicationSubject subject, Version version, string @group)
+        public SubjectGroupIdentifier(CommunicationSubject subject, Version version, string group)
         {
             {
                 Lokad.Enforce.Argument(() => subject);
                 Lokad.Enforce.Argument(() => version);
-                Lokad.Enforce.Argument(() => @group);
+                Lokad.Enforce.Argument(() => group);
             }
 
             m_Subject = subject;
             m_Version = version;
-            m_Group = @group;
+            m_Group = group;
         }
 
         /// <summary>

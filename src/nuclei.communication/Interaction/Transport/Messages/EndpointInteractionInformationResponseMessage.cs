@@ -24,7 +24,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         private readonly InteractionConnectionState m_State;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommunicationMessage"/> class.
+        /// Initializes a new instance of the <see cref="EndpointInteractionInformationResponseMessage"/> class.
         /// </summary>
         /// <param name="origin">The endpoint that send the original message.</param>
         /// <param name="inResponseTo">The ID number of the message to which the current message is a response.</param>

@@ -20,8 +20,11 @@
       <Value>parameterless</Value>
       <Value>performant</Value>
       <Value>rmbyers</Value>
+      <Value>serializer</Value>
+      <Value>serializers</Value>
       <Value>simple-auto-update-for-wpf-apps</Value>
       <Value>tcp</Value>
+      <Value>unregistration</Value>
       <Value>UUID</Value>
       <Value>xaml</Value>
     </CollectionProperty>
@@ -259,6 +262,7 @@
         <StringProperty Name="AdvancedNaming_Words">FxCop IP StyleCop x64 x86</StringProperty>
         <StringProperty Name="AdvancedNaming_MethodGeneral">$(AaBb):$(AaBb)A$(AaBb)</StringProperty>
         <StringProperty Name="AdvancedNaming_ClassNotInternal">$(AaBb):$(AaBb)A$(AaBb)</StringProperty>
+        <StringProperty Name="SP2101_Limit">150</StringProperty>
       </AnalyzerSettings>
     </Analyzer>
   </Analyzers>
