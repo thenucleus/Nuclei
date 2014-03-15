@@ -21,7 +21,7 @@ namespace Nuclei.Examples.Complete.Views
         /// <summary>
         /// The communication layer which does the actual communication work.
         /// </summary>
-        private readonly IProtocolLayer m_Layer;
+        private readonly ICommunicationFacade m_Facade;
 
         /// <summary>
         /// The object that sends commands to the remote endpoints.
@@ -36,12 +36,12 @@ namespace Nuclei.Examples.Complete.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="CommunicationPassThrough"/> class.
         /// </summary>
-        /// <param name="layer">The communication layer which does the actual communication work.</param>
+        /// <param name="facade">The communication layer which does the actual communication work.</param>
         /// <param name="commands">The object that sends commands to the remote endpoints.</param>
         /// <param name="uploads">The object that tracks files registered for upload.</param>
-        public CommunicationPassThrough(IProtocolLayer layer, ISendCommandsToRemoteEndpoints commands, IStoreUploads uploads)
+        public CommunicationPassThrough(ICommunicationFacade facade, ISendCommandsToRemoteEndpoints commands, IStoreUploads uploads)
         {
-            m_Layer = layer;
+            m_Facade = facade;
             m_Commands = commands;
             m_Uploads = uploads;
         }
@@ -54,7 +54,7 @@ namespace Nuclei.Examples.Complete.Views
         {
             get
             {
-                return m_Layer.IsSignedIn;
+                return true;
             }
         }
 
@@ -71,7 +71,7 @@ namespace Nuclei.Examples.Complete.Views
             Justification = "Documentation can start with a language keyword")]
         public bool CanContactEndpoint(EndpointId endpoint)
         {
-            return m_Layer.IsEndpointContactable(endpoint) && m_Commands.HasCommandsFor(endpoint);
+            return m_Commands.HasCommandFor(endpoint, typeof(ITestCommandSet));
         }
 
         /// <summary>
@@ -106,16 +106,8 @@ namespace Nuclei.Examples.Complete.Views
                 var token = m_Uploads.Register(path);
 
                 var commands = m_Commands.CommandsFor<ITestCommandSet>(endpoint);
-                commands.StartDownload(m_Layer.Id, token);
+                commands.StartDownload(m_Facade.Id, token);
             }
-        }
-
-        /// <summary>
-        /// Closes the connections to all endpoints.
-        /// </summary>
-        public void Close()
-        {
-            m_Layer.SignOut();
         }
     }
 }

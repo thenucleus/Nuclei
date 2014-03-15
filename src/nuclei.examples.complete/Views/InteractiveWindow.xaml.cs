@@ -115,8 +115,6 @@ namespace Nuclei.Examples.Complete.Views
         /// <param name="e">The <see cref="System.ComponentModel.CancelEventArgs"/> instance containing the event data.</param>
         private void HandleWindowClosing(object sender, CancelEventArgs e)
         {
-            m_Communicator.Close();
-
             e.Cancel = false;
             m_Context.ExitThread();
         }

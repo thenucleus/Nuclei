@@ -41,7 +41,6 @@ namespace Nuclei.Examples.Complete
             {
                 builder.RegisterModule(
                     new CommunicationModule(
-                        subjects,
                         new[]
                             {
                                 ChannelTemplate.NamedPipe,
@@ -66,11 +65,32 @@ namespace Nuclei.Examples.Complete
                     .OnActivated(
                         a =>
                         {
-                            var collection = a.Context.Resolve<ICommandCollection>();
-                            collection.Register(typeof(ITestCommandSet), a.Instance);
+                            var collection = a.Context.Resolve<RegisterCommand>();
+                            collection(
+                                typeof(ITestCommandSet), 
+                                a.Instance, 
+                                subjects.Select(s => new SubjectGroupIdentifier(s, new Version(1, 0), "a")).ToArray());
                         })
                     .As<ITestCommandSet>()
                     .As<ICommandSet>()
+                    .SingleInstance();
+
+                builder.Register(
+                        c =>
+                        {
+                            RequiredCommandsMappedBySubject func = () =>
+                            {
+                                return new[]
+                                    {
+                                        new Tuple<Type, SubjectGroupIdentifier[]>(
+                                            typeof(ITestCommandSet),
+                                            subjects.Select(s => new SubjectGroupIdentifier(s, new Version(1, 0), "a")).ToArray()), 
+                                    };
+                            };
+
+                            return func;
+                        })
+                    .As<RequiredCommandsMappedBySubject>()
                     .SingleInstance();
 
                 // Register the elements from the current assembly
@@ -94,7 +114,7 @@ namespace Nuclei.Examples.Complete
                     .SingleInstance();
 
                 builder.Register(c => new ApplicationCentral(
-                        c.Resolve<IProtocolLayer>(),
+                        c.Resolve<ICommunicationFacade>(),
                         c.Resolve<ConnectionViewModel>()))
                     .As<IFormTheApplicationCenter>()
                     .As<IStartable>()
@@ -112,7 +132,7 @@ namespace Nuclei.Examples.Complete
                     .SingleInstance();
 
                 builder.Register(c => new CommunicationPassThrough(
-                        c.Resolve<IProtocolLayer>(),
+                        c.Resolve<ICommunicationFacade>(),
                         c.Resolve<ISendCommandsToRemoteEndpoints>(),
                         c.Resolve<IStoreUploads>()))
                     .As<IHandleCommunication>();
