@@ -25,7 +25,27 @@ namespace Nuclei.Communication.Protocol.Messages
         ///     Thrown if <paramref name="token"/> is <see langword="null" />.
         /// </exception>
         public DataDownloadRequestMessage(EndpointId origin, UploadToken token)
-            : base(origin)
+            : this(origin, new MessageId(), token)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DataDownloadRequestMessage"/> class.
+        /// </summary>
+        /// <param name="origin">The ID of the endpoint that send the message.</param>
+        /// <param name="id">The ID of the current message.</param>
+        /// <param name="token">The token that indicates which file should be uploaded.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="token"/> is <see langword="null" />.
+        /// </exception>
+        public DataDownloadRequestMessage(EndpointId origin, MessageId id, UploadToken token)
+            : base(origin, id)
         {
             {
                 Lokad.Enforce.Argument(() => token);

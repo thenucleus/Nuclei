@@ -6,6 +6,7 @@
 
 using System;
 using System.Diagnostics;
+using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
 
 namespace Nuclei.Communication.Interaction.Transport.Messages
@@ -32,8 +33,28 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="groups"/> is <see langword="null" />.
         /// </exception>
-        public EndpointInteractionInformationMessage(EndpointId origin, CommunicationSubjectGroup[] groups) : 
-            base(origin)
+        public EndpointInteractionInformationMessage(EndpointId origin, CommunicationSubjectGroup[] groups) :
+            this(origin, new MessageId(), groups)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EndpointInteractionInformationMessage"/> class.
+        /// </summary>
+        /// <param name="origin">The endpoint that send the original message.</param>
+        /// <param name="id">The ID of the current message.</param>
+        /// <param name="groups">The collection containing communication subjects for the endpoint.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="groups"/> is <see langword="null" />.
+        /// </exception>
+        public EndpointInteractionInformationMessage(EndpointId origin, MessageId id, CommunicationSubjectGroup[] groups) : 
+            base(origin, id)
         {
             {
                 Lokad.Enforce.Argument(() => groups);

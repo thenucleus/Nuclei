@@ -63,7 +63,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
 
             var action = new NotificationRaisedProcessAction(notifications.Object, systemDiagnostics);
 
-            var eventArgs = new EventArgs();
+            var eventArgs = new InteractionExtensionsTest.MySerializableEventArgs();
             action.Invoke(
                 new NotificationRaisedMessage(
                     new EndpointId("otherId"),

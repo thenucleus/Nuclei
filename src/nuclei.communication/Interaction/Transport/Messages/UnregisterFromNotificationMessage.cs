@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
 
 namespace Nuclei.Communication.Interaction.Transport.Messages
@@ -17,9 +18,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         /// <summary>
         /// Initializes a new instance of the <see cref="UnregisterFromNotificationMessage"/> class.
         /// </summary>
-        /// <param name="origin">
-        /// The ID of the endpoint that send the message.
-        /// </param>
+        /// <param name="origin"> The ID of the endpoint that send the message. </param>
         /// <param name="notificationToUnsubscribeFrom">The notification from which the sender wants to unsubscribe.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
@@ -28,7 +27,27 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         ///     Thrown if <paramref name="notificationToUnsubscribeFrom"/> is <see langword="null" />.
         /// </exception>
         public UnregisterFromNotificationMessage(EndpointId origin, NotificationData notificationToUnsubscribeFrom)
-            : base(origin)
+            : this(origin, new MessageId(), notificationToUnsubscribeFrom)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnregisterFromNotificationMessage"/> class.
+        /// </summary>
+        /// <param name="origin"> The ID of the endpoint that send the message. </param>
+        /// <param name="id">The ID of the current message.</param>
+        /// <param name="notificationToUnsubscribeFrom">The notification from which the sender wants to unsubscribe.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="notificationToUnsubscribeFrom"/> is <see langword="null" />.
+        /// </exception>
+        public UnregisterFromNotificationMessage(EndpointId origin, MessageId id, NotificationData notificationToUnsubscribeFrom)
+            : base(origin, id)
         {
             {
                 Lokad.Enforce.Argument(() => notificationToUnsubscribeFrom);

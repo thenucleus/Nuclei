@@ -51,10 +51,10 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var successData = data as SuccessData;
             if (successData == null)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
-            return new SuccessMessage(successData.Sender, successData.InResponseTo);
+            return new SuccessMessage(successData.Sender, data.Id, successData.InResponseTo);
         }
 
         /// <summary>

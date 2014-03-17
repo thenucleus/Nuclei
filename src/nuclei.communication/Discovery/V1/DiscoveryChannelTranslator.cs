@@ -91,7 +91,7 @@ namespace Nuclei.Communication.Discovery.V1
                 var versions = service.ProtocolVersions();
                 var intersection = versions
                     .Intersect(m_ProtocolVersions)
-                    .OrderBy(v => v);
+                    .OrderByDescending(v => v);
                 if (!intersection.Any())
                 {
                     return null;

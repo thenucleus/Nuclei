@@ -51,10 +51,10 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var disconnectData = data as EndpointDisconnectData;
             if (disconnectData == null)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
-            return new EndpointDisconnectMessage(data.Sender);
+            return new EndpointDisconnectMessage(data.Sender, data.Id, string.Empty);
         }
 
         /// <summary>

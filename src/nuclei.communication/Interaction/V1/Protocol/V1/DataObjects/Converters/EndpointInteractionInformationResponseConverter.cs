@@ -57,7 +57,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             var msg = data as EndpointInteractionInformationResponseData;
             if (msg == null)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
             try
@@ -65,12 +65,13 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                 var state = (InteractionConnectionState)Enum.Parse(typeof(InteractionConnectionState), msg.State);
                 return new EndpointInteractionInformationResponseMessage(
                     data.Sender,
+                    data.Id,
                     data.InResponseTo,
                     state);
             }
             catch (Exception)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
         }
 

@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
 
 namespace Nuclei.Communication.Interaction.Transport.Messages
@@ -17,9 +18,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         /// <summary>
         /// Initializes a new instance of the <see cref="RegisterForNotificationMessage"/> class.
         /// </summary>
-        /// <param name="origin">
-        /// The ID of the endpoint that send the message.
-        /// </param>
+        /// <param name="origin">The ID of the endpoint that send the message.</param>
         /// <param name="notificationToSubscribeTo">The notification to which the sender wants to subscribe.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
@@ -28,7 +27,27 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         ///     Thrown if <paramref name="notificationToSubscribeTo"/> is <see langword="null" />.
         /// </exception>
         public RegisterForNotificationMessage(EndpointId origin, NotificationData notificationToSubscribeTo)
-            : base(origin)
+            : this(origin, new MessageId(), notificationToSubscribeTo)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegisterForNotificationMessage"/> class.
+        /// </summary>
+        /// <param name="origin">The ID of the endpoint that send the message.</param>
+        /// <param name="id">The ID of the current message.</param>
+        /// <param name="notificationToSubscribeTo">The notification to which the sender wants to subscribe.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="notificationToSubscribeTo"/> is <see langword="null" />.
+        /// </exception>
+        public RegisterForNotificationMessage(EndpointId origin, MessageId id, NotificationData notificationToSubscribeTo)
+            : base(origin, id)
         {
             {
                 Lokad.Enforce.Argument(() => notificationToSubscribeTo);

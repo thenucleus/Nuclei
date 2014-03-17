@@ -56,22 +56,7 @@ namespace Nuclei.Communication.Interaction
             /// </exception>
             public int GetHashCode(Tuple<OfflineTypeInformation, Version> obj)
             {
-                // As obtained from the Jon Skeet answer to:
-                // http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
-                // And adapted towards the Modified Bernstein (shown here: http://eternallyconfuzzled.com/tuts/algorithms/jsw_tut_hashing.aspx)
-                //
-                // Overflow is fine, just wrap
-                unchecked
-                {
-                    // Pick a random prime number
-                    int hash = 17;
-
-                    // Mash the hash together with yet another random prime number
-                    hash = (hash * 23) ^ obj.Item1.GetHashCode();
-                    hash = (hash * 23) ^ obj.Item2.GetHashCode();
-
-                    return hash;
-                }
+                return obj.Item1.GetHashCode();
             }
         }
 
@@ -108,6 +93,16 @@ namespace Nuclei.Communication.Interaction
             Justification = "Documentation can start with a language keyword")]
         public bool IsPartialMatch(VersionedTypeFallback other)
         {
+            if (other == null)
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
             return m_Types.Intersect(other.m_Types, new VersionedOfflineTypeEqualityComparer()).Any();
         }
 
@@ -118,10 +113,17 @@ namespace Nuclei.Communication.Interaction
         /// <returns>
         /// The type information for the type which is in both collections and has the highest version number.
         /// </returns>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="other"/> is <see langword="null" />.
+        /// </exception>
         public OfflineTypeInformation HighestVersionMatch(VersionedTypeFallback other)
         {
+            {
+                Lokad.Enforce.Argument(() => other);
+            }
+
             var bestMatchPair = m_Types.Intersect(other.m_Types, new VersionedOfflineTypeEqualityComparer())
-                .OrderBy(t => t.Item2)
+                .OrderByDescending(t => t.Item2)
                 .FirstOrDefault();
 
             return bestMatchPair != null ? bestMatchPair.Item1 : null;

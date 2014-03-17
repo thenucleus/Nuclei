@@ -49,7 +49,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
         public ICommunicationMessage ToMessage(IStoreV1CommunicationData data)
         {
             // Don't verify this just send the expected data otherwise we may end up in an infinite loop
-            return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+            return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
         }
 
         /// <summary>

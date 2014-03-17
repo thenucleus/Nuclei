@@ -76,16 +76,16 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                 Sender = new EndpointId("a"),
                 InterfaceType = new SerializedType
                 {
-                    FullName = typeof(int).FullName,
-                    AssemblyName = typeof(int).Assembly.GetName().Name
+                    FullName = typeof(double).FullName,
+                    AssemblyName = typeof(double).Assembly.GetName().Name
                 },
                 MethodName = "method",
                 ParameterTypes = new[]
                     {
                         new SerializedType
                             {
-                                FullName = typeof(object).FullName,
-                                AssemblyName = typeof(object).Assembly.GetName().Name
+                                FullName = typeof(int).FullName,
+                                AssemblyName = typeof(int).Assembly.GetName().Name
                             }, 
                     },
                 ParameterValues = new object[]
@@ -97,14 +97,13 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             Assert.IsInstanceOf(typeof(CommandInvokedMessage), msg);
             Assert.AreSame(data.Id, msg.Id);
             Assert.AreSame(data.Sender, msg.Sender);
-            Assert.AreSame(data.InResponseTo, msg.InResponseTo);
             Assert.AreEqual(data.InterfaceType.FullName, ((CommandInvokedMessage)msg).Invocation.Command.InterfaceType.FullName);
             Assert.AreEqual(
                 data.InterfaceType.AssemblyName,
                 ((CommandInvokedMessage)msg).Invocation.Command.InterfaceType.Assembly.GetName().Name);
             Assert.AreSame(data.MethodName, ((CommandInvokedMessage)msg).Invocation.Command.MethodName);
             Assert.AreEqual(data.ParameterTypes.Length, ((CommandInvokedMessage)msg).Invocation.ParameterValues.Length);
-            Assert.AreEqual(typeof(object), ((CommandInvokedMessage)msg).Invocation.ParameterValues[0].Item1);
+            Assert.AreEqual(typeof(int), ((CommandInvokedMessage)msg).Invocation.ParameterValues[0].Item1);
             Assert.AreEqual(1, ((CommandInvokedMessage)msg).Invocation.ParameterValues[0].Item2);
         }
 

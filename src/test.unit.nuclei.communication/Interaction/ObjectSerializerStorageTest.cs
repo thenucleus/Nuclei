@@ -27,11 +27,11 @@ namespace Nuclei.Communication.Interaction
         {
         }
 
-        private sealed class MockDerived : IMockDerived
+        private class MockDerived : IMockDerived
         {
         }
 
-        private sealed class MockMoreDerived
+        private sealed class MockMoreDerived : MockDerived
         {
         }
 

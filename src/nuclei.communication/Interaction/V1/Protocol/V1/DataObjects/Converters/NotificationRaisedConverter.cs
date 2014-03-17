@@ -61,7 +61,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             [DebuggerStepThrough]
             get
             {
-                return typeof(Protocol.V1.DataObjects.NotificationRaisedData);
+                return typeof(NotificationRaisedData);
             }
         }
 
@@ -75,7 +75,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             var msg = data as NotificationRaisedData;
             if (msg == null)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
             try
@@ -89,7 +89,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                     msg.EventArgumentsType.AssemblyName);
 
                 var serializedObjectData = msg.EventArguments;
-                if (m_TypeSerializers.HasSerializerFor(eventArgsType))
+                if (!m_TypeSerializers.HasSerializerFor(eventArgsType))
                 {
                     throw new MissingObjectDataSerializerException();
                 }
@@ -99,6 +99,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 
                 return new NotificationRaisedMessage(
                     data.Sender,
+                    data.Id,
                     new Interaction.NotificationRaisedData(
                         new NotificationData(
                             interfaceType,
@@ -107,7 +108,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             }
             catch (Exception)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
         }
 
@@ -139,7 +140,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                         AssemblyName = eventArgsType.Assembly.GetName().Name
                     };
 
-                if (m_TypeSerializers.HasSerializerFor(eventArgsType))
+                if (!m_TypeSerializers.HasSerializerFor(eventArgsType))
                 {
                     throw new MissingObjectDataSerializerException();
                 }

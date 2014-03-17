@@ -74,7 +74,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             var msg = data as CommandInvocationData;
             if (msg == null)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
             try
@@ -90,7 +90,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                     var type = TypeLoader.FromPartialInformation(typeInfo.FullName, typeInfo.AssemblyName);
 
                     var serializedObjectData = msg.ParameterValues[i];
-                    if (m_TypeSerializers.HasSerializerFor(type))
+                    if (!m_TypeSerializers.HasSerializerFor(type))
                     {
                         throw new MissingObjectDataSerializerException();
                     }
@@ -102,6 +102,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 
                 return new CommandInvokedMessage(
                     data.Sender,
+                    data.Id,
                     new CommandInvokedData(
                         new CommandData(
                             interfaceType,
@@ -110,7 +111,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             }
             catch (Exception)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
         }
 
@@ -146,7 +147,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                             AssemblyName = pair.Item1.Assembly.GetName().Name
                         };
 
-                    if (m_TypeSerializers.HasSerializerFor(pair.Item1))
+                    if (!m_TypeSerializers.HasSerializerFor(pair.Item1))
                     {
                         throw new MissingObjectDataSerializerException();
                     }

@@ -51,11 +51,12 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var endpointConnectData = data as EndpointConnectData;
             if (endpointConnectData == null)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
             return new EndpointConnectMessage(
                 endpointConnectData.Sender,
+                data.Id,
                 new DiscoveryInformation(endpointConnectData.DiscoveryAddress), 
                 new ProtocolInformation(
                     endpointConnectData.ProtocolVersion,

@@ -58,7 +58,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             var msg = data as EndpointInteractionInformationData;
             if (msg == null)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
             try
@@ -98,11 +98,11 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                         notifications);
                 }
 
-                return new EndpointInteractionInformationMessage(data.Sender, groups);
+                return new EndpointInteractionInformationMessage(data.Sender, data.Id, groups);
             }
             catch (Exception)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
         }
 

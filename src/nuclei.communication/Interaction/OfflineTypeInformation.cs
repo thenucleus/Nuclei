@@ -147,9 +147,9 @@ namespace Nuclei.Communication.Interaction
             // Check if other is a null reference by using ReferenceEquals because
             // we overload the == operator. If other isn't actually null then
             // we get an infinite loop where we're constantly trying to compare to null.
-            return !ReferenceEquals(other, null) 
-                && string.Equals(TypeFullName, other.TypeFullName, StringComparison.OrdinalIgnoreCase) 
-                && AssemblyName.Name.Equals(other.AssemblyName.Name);
+            return !ReferenceEquals(other, null)
+                && string.Equals(TypeFullName, other.TypeFullName, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(AssemblyName.Name, other.AssemblyName.Name, StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -172,9 +172,9 @@ namespace Nuclei.Communication.Interaction
             // Check if other is a null reference by using ReferenceEquals because
             // we overload the == operator. If other isn't actually null then
             // we get an infinite loop where we're constantly trying to compare to null.
-            return !ReferenceEquals(other, null) 
-                && string.Equals(TypeFullName, other.TypeFullName, StringComparison.OrdinalIgnoreCase) 
-                && AssemblyName.Equals(other.AssemblyName);
+            return !ReferenceEquals(other, null)
+                && string.Equals(TypeFullName, other.TypeFullName, StringComparison.OrdinalIgnoreCase)
+                && string.Equals(AssemblyName.FullName, other.AssemblyName.FullName, StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace Nuclei.Communication.Interaction
 
                 // Mash the hash together with yet another random prime number
                 hash = (hash * 23) ^ m_TypeFullName.GetHashCode();
-                hash = (hash * 23) ^ m_AssemblyName.GetHashCode();
+                hash = (hash * 23) ^ m_AssemblyName.Name.GetHashCode();
 
                 return hash;
             }

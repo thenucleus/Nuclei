@@ -127,7 +127,7 @@ namespace Nuclei.Communication.Interaction
                             new Version(1, 0)),
                     });
 
-            Assert.IsNull(fallback.HighestVersionMatch(null));
+            Assert.Throws<ArgumentNullException>(() => fallback.HighestVersionMatch(null));
         }
 
         [Test]
@@ -262,7 +262,7 @@ namespace Nuclei.Communication.Interaction
                     });
 
             var type = first.HighestVersionMatch(second);
-            Assert.AreSame(firstType, type);
+            Assert.AreEqual(firstType, type);
         }
     }
 }

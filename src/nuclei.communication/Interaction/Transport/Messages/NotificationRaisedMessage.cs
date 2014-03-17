@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
 
 namespace Nuclei.Communication.Interaction.Transport.Messages
@@ -27,7 +28,27 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         ///     Thrown if <paramref name="eventNotification"/> is <see langword="null" />.
         /// </exception>
         public NotificationRaisedMessage(EndpointId origin, NotificationRaisedData eventNotification)
-            : base(origin)
+            : this(origin, new MessageId(), eventNotification)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotificationRaisedMessage"/> class.
+        /// </summary>
+        /// <param name="origin">The endpoint that send the original message.</param>
+        /// <param name="id">The ID of the current message.</param>
+        /// <param name="eventNotification">The information about the <see cref="INotificationSet"/> notification that was raised.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="eventNotification"/> is <see langword="null" />.
+        /// </exception>
+        public NotificationRaisedMessage(EndpointId origin, MessageId id, NotificationRaisedData eventNotification)
+            : base(origin, id)
         {
             {
                 Lokad.Enforce.Argument(() => eventNotification);

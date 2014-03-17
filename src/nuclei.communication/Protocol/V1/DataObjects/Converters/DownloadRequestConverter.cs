@@ -51,10 +51,10 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             var downloadData = data as DownloadRequestData;
             if (downloadData == null)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
-            return new DataDownloadRequestMessage(downloadData.Sender, downloadData.Token);
+            return new DataDownloadRequestMessage(downloadData.Sender, data.Id, downloadData.Token);
         }
 
         /// <summary>

@@ -74,7 +74,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             var invocationData = data as CommandInvocationResponseData;
             if (invocationData == null)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
             try
@@ -83,7 +83,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                 var type = TypeLoader.FromPartialInformation(typeInfo.FullName, typeInfo.AssemblyName);
 
                 var serializedObjectData = invocationData.Result;
-                if (m_TypeSerializers.HasSerializerFor(type))
+                if (!m_TypeSerializers.HasSerializerFor(type))
                 {
                     throw new MissingObjectDataSerializerException();
                 }
@@ -93,12 +93,13 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 
                 return new CommandInvokedResponseMessage(
                     data.Sender,
+                    data.Id,
                     data.InResponseTo,
                     returnValue);
             }
             catch (Exception)
             {
-                return new UnknownMessageTypeMessage(data.Sender, data.InResponseTo);
+                return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
         }
 
@@ -129,7 +130,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                         AssemblyName = type.Assembly.GetName().Name
                     };
 
-                if (m_TypeSerializers.HasSerializerFor(type))
+                if (!m_TypeSerializers.HasSerializerFor(type))
                 {
                     throw new MissingObjectDataSerializerException();
                 }

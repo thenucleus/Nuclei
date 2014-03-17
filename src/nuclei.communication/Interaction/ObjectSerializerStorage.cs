@@ -214,7 +214,7 @@ namespace Nuclei.Communication.Interaction
         {
             var map = new TypeMap(type);
             m_TypeGraph.AddVertex(map);
-            if (type.BaseType != null)
+            if ((type.BaseType != null) && (!type.BaseType.Equals(type)))
             {
                 var baseMap = AddTypeToGraph(type.BaseType);
                 m_TypeGraph.AddEdge(new Edge<TypeMap>(map, baseMap));
@@ -289,22 +289,22 @@ namespace Nuclei.Communication.Interaction
             {
                 var queuedType = typeQueue.Dequeue();
                 var directMap = TypeMapFor(queuedType);
-                if (selector(directMap))
+                if ((directMap != null) && selector(directMap))
                 {
                     return directMap;
                 }
 
-                if (type.BaseType != null)
+                if ((queuedType.BaseType != null) && (!queuedType.BaseType.Equals(queuedType)))
                 {
-                    typeQueue.Enqueue(type.BaseType);
+                    typeQueue.Enqueue(queuedType.BaseType);
                 }
 
-                if (type.GetGenericTypeDefinition() != null)
+                if (queuedType.IsGenericType && !queuedType.IsGenericTypeDefinition && (queuedType.GetGenericTypeDefinition() != null))
                 {
-                    typeQueue.Enqueue(type.GetGenericTypeDefinition());
+                    typeQueue.Enqueue(queuedType.GetGenericTypeDefinition());
                 }
 
-                foreach (var baseInterface in type.GetInterfaces())
+                foreach (var baseInterface in queuedType.GetInterfaces())
                 {
                     if (baseInterface != null)
                     {

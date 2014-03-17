@@ -42,7 +42,44 @@ namespace Nuclei.Communication.Protocol.Messages
             DiscoveryInformation discoveryInformation,
             ProtocolInformation protocolInformation,
             ProtocolDescription information)
-            : base(origin)
+            : this(origin, new MessageId(), discoveryInformation, protocolInformation, information)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EndpointConnectMessage"/> class.
+        /// </summary>
+        /// <param name="origin">The ID of the endpoint that send the message.</param>
+        /// <param name="id">The ID of the current message.</param>
+        /// <param name="discoveryInformation">The object containing the information about the discovery channel for the remote endpoint.</param>
+        /// <param name="protocolInformation">The object containing the information about the protocol channels for the remote endpoint.</param>
+        /// <param name="information">
+        ///     The information describing the version of the communication protocol
+        ///     used by the sender, the desired communication API's for the sender and 
+        ///     the available communication API's provided by the sender.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="discoveryInformation"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="protocolInformation"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="information"/> is <see langword="null" />.
+        /// </exception>
+        public EndpointConnectMessage(
+            EndpointId origin,
+            MessageId id, 
+            DiscoveryInformation discoveryInformation,
+            ProtocolInformation protocolInformation,
+            ProtocolDescription information)
+            : base(origin, id)
         {
             {
                 Lokad.Enforce.Argument(() => discoveryInformation);

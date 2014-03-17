@@ -44,7 +44,27 @@ namespace Nuclei.Communication.Protocol.Messages
         ///     Thrown if <paramref name="closingReason"/> is <see langword="null" />.
         /// </exception>
         public EndpointDisconnectMessage(EndpointId origin, string closingReason)
-            : base(origin)
+            : this(origin, new MessageId(), closingReason)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EndpointDisconnectMessage"/> class.
+        /// </summary>
+        /// <param name="origin">The ID of the endpoint that send the message.</param>
+        /// <param name="id">The ID of the current message.</param>
+        /// <param name="closingReason">The reason the channel is about to be closed.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="closingReason"/> is <see langword="null" />.
+        /// </exception>
+        public EndpointDisconnectMessage(EndpointId origin, MessageId id, string closingReason)
+            : base(origin, id)
         {
             {
                 Lokad.Enforce.Argument(() => closingReason);

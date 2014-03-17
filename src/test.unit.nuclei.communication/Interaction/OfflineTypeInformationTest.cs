@@ -99,7 +99,7 @@ namespace Nuclei.Communication.Interaction
             var data = new OfflineTypeInformation(type.FullName, type.Assembly.GetName());
 
             Assert.AreSame(type.FullName, data.TypeFullName);
-            Assert.AreEqual(type.Assembly.GetName(), data.AssemblyName);
+            Assert.AreEqual(type.Assembly.GetName().FullName, data.AssemblyName.FullName);
         }
 
         [Test]

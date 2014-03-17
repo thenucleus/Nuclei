@@ -84,7 +84,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 new CommandInvokedMessage(
                     new EndpointId("otherId"),
                     new CommandInvokedData(
-                        new CommandData(typeof(IMockCommandSet), "MethodWithReturnValue"),
+                        new CommandData(typeof(IMockCommandSet), "MethodWithoutReturnValue"),
                         new[]
                             {
                                 new Tuple<Type, object>(typeof(int), 2), 
@@ -199,7 +199,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 new CommandInvokedMessage(
                     new EndpointId("otherId"),
                     new CommandInvokedData(
-                        new CommandData(typeof(IMockCommandSet), "MethodWithReturnValue"),
+                        new CommandData(typeof(IMockCommandSet), "MethodWithoutReturnValue"),
                         new[]
                             {
                                 new Tuple<Type, object>(typeof(int), 2), 
@@ -252,7 +252,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 new CommandInvokedMessage(
                     new EndpointId("otherId"),
                     new CommandInvokedData(
-                        new CommandData(typeof(IMockCommandSet), "MethodWithReturnValue"),
+                        new CommandData(typeof(IMockCommandSet), "MethodWithoutReturnValue"),
                         new[]
                             {
                                 new Tuple<Type, object>(typeof(int), 2), 

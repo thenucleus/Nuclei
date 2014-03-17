@@ -109,7 +109,6 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             Assert.IsInstanceOf(typeof(EndpointInteractionInformationMessage), msg);
             Assert.AreSame(data.Id, msg.Id);
             Assert.AreSame(data.Sender, msg.Sender);
-            Assert.AreSame(data.InResponseTo, msg.InResponseTo);
             Assert.AreEqual(data.Groups.Length, ((EndpointInteractionInformationMessage)msg).SubjectGroups.Length);
             Assert.AreEqual(new CommunicationSubject(data.Groups[0].Subject), ((EndpointInteractionInformationMessage)msg).SubjectGroups[0].Subject);
             Assert.AreEqual(data.Groups[0].Commands.Length, ((EndpointInteractionInformationMessage)msg).SubjectGroups[0].Commands.Length);
@@ -217,16 +216,16 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             Assert.AreEqual(
                 msg.SubjectGroups[0].Notifications.Length,
                 ((EndpointInteractionInformationData)data).Groups[0].Notifications.Length);
-            Assert.AreEqual(1, ((EndpointInteractionInformationData)data).Groups[0].Commands[0].Types.Length);
+            Assert.AreEqual(1, ((EndpointInteractionInformationData)data).Groups[0].Notifications[0].Types.Length);
             Assert.AreEqual(
                 typeof(double).FullName,
-                ((EndpointInteractionInformationData)data).Groups[0].Commands[0].Types[0].Type.FullName);
+                ((EndpointInteractionInformationData)data).Groups[0].Notifications[0].Types[0].Type.FullName);
             Assert.AreEqual(
                 typeof(double).Assembly.GetName().Name,
-                ((EndpointInteractionInformationData)data).Groups[0].Commands[0].Types[0].Type.AssemblyName);
+                ((EndpointInteractionInformationData)data).Groups[0].Notifications[0].Types[0].Type.AssemblyName);
             Assert.AreEqual(
                 new Version(1, 2),
-                ((EndpointInteractionInformationData)data).Groups[0].Commands[0].Types[0].Version);
+                ((EndpointInteractionInformationData)data).Groups[0].Notifications[0].Types[0].Version);
         }
     }
 }

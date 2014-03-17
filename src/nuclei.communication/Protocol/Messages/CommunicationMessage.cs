@@ -17,11 +17,15 @@ namespace Nuclei.Communication.Protocol.Messages
         /// Initializes a new instance of the <see cref="CommunicationMessage"/> class.
         /// </summary>
         /// <param name="origin">The endpoint that send the original message.</param>
+        /// <param name="id">The ID of the current message.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
         /// </exception>
-        protected CommunicationMessage(EndpointId origin)
-            : this(origin, MessageId.None)
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        protected CommunicationMessage(EndpointId origin, MessageId id)
+            : this(origin, id, MessageId.None)
         { 
         }
 
@@ -29,21 +33,26 @@ namespace Nuclei.Communication.Protocol.Messages
         /// Initializes a new instance of the <see cref="CommunicationMessage"/> class.
         /// </summary>
         /// <param name="origin">The endpoint that send the original message.</param>
+        /// <param name="id">The ID of the current message.</param>
         /// <param name="inResponseTo">The ID number of the message to which the current message is a response.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="origin"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="inResponseTo"/> is <see langword="null" />.
         /// </exception>
-        protected CommunicationMessage(EndpointId origin, MessageId inResponseTo)
+        protected CommunicationMessage(EndpointId origin, MessageId id, MessageId inResponseTo)
         {
             {
                 Lokad.Enforce.Argument(() => origin);
+                Lokad.Enforce.Argument(() => id);
                 Lokad.Enforce.Argument(() => inResponseTo);
             }
 
-            Id = new MessageId();
+            Id = id;
             InResponseTo = inResponseTo;
             Sender = origin;
         }

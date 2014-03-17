@@ -121,7 +121,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                 new MessageId(), 
                 new object());
             var data = translator.FromMessage(msg);
-            Assert.IsInstanceOf(typeof(NotificationRaisedData), data);
+            Assert.IsInstanceOf(typeof(CommandInvocationResponseData), data);
             Assert.AreSame(msg.Id, data.Id);
             Assert.AreSame(msg.Sender, data.Sender);
             Assert.AreSame(msg.InResponseTo, data.InResponseTo);

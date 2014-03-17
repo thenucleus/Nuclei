@@ -25,7 +25,27 @@ namespace Nuclei.Communication.Protocol.Messages
         ///     Thrown if <paramref name="inResponseTo"/> is <see langword="null" />.
         /// </exception>
         public FailureMessage(EndpointId endpoint, MessageId inResponseTo)
-            : base(endpoint, inResponseTo)
+            : this(endpoint, new MessageId(), inResponseTo)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FailureMessage"/> class.
+        /// </summary>
+        /// <param name="endpoint">The endpoint which send the current message.</param>
+        /// <param name="id">The ID of the current message.</param>
+        /// <param name="inResponseTo">The ID number of the message to which the current message is a response.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="inResponseTo"/> is <see langword="null" />.
+        /// </exception>
+        public FailureMessage(EndpointId endpoint, MessageId id, MessageId inResponseTo)
+            : base(endpoint, id, inResponseTo)
         {
         }
     }

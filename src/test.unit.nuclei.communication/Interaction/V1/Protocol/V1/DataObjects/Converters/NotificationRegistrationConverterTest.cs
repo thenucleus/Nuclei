@@ -71,8 +71,10 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             Assert.IsInstanceOf(typeof(RegisterForNotificationMessage), msg);
             Assert.AreSame(data.Id, msg.Id);
             Assert.AreSame(data.Sender, msg.Sender);
-            Assert.AreSame(data.InResponseTo, msg.InResponseTo);
-            Assert.AreSame(data.InterfaceType, ((RegisterForNotificationMessage)msg).Notification.InterfaceType.FullName);
+            Assert.AreEqual(data.InterfaceType.FullName, ((RegisterForNotificationMessage)msg).Notification.InterfaceType.FullName);
+            Assert.AreEqual(
+                data.InterfaceType.AssemblyName, 
+                ((RegisterForNotificationMessage)msg).Notification.InterfaceType.Assembly.GetName().Name);
             Assert.AreSame(data.EventName, ((RegisterForNotificationMessage)msg).Notification.EventName);
         }
 
@@ -92,7 +94,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
         [Test]
         public void FromMessage()
         {
-            var translator = new NotificationUnregistrationConverter();
+            var translator = new NotificationRegistrationConverter();
 
             var msg = new RegisterForNotificationMessage(
                 new EndpointId("a"),
@@ -105,7 +107,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             Assert.AreSame(msg.Sender, data.Sender);
             Assert.AreSame(msg.InResponseTo, data.InResponseTo);
             Assert.AreSame(msg.Notification.InterfaceType.FullName, ((NotificationRegistrationData)data).InterfaceType.FullName);
-            Assert.AreSame(
+            Assert.AreEqual(
                 msg.Notification.InterfaceType.Assembly.GetName().Name,
                 ((NotificationRegistrationData)data).InterfaceType.AssemblyName);
             Assert.AreSame(msg.Notification.EventName, ((NotificationRegistrationData)data).EventName);

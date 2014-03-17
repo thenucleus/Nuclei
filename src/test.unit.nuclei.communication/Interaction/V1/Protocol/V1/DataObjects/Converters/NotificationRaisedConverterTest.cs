@@ -91,7 +91,6 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             Assert.IsInstanceOf(typeof(NotificationRaisedMessage), msg);
             Assert.AreSame(data.Id, msg.Id);
             Assert.AreSame(data.Sender, msg.Sender);
-            Assert.AreSame(data.InResponseTo, msg.InResponseTo);
             Assert.AreEqual(data.InterfaceType.FullName, ((NotificationRaisedMessage)msg).Notification.Notification.InterfaceType.FullName);
             Assert.AreEqual(
                 data.InterfaceType.AssemblyName, 

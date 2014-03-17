@@ -177,7 +177,7 @@ namespace Nuclei.Communication.Discovery
 
                 var intersection = versions
                     .Intersect(m_TranslatorMap.Keys)
-                    .OrderBy(v => v);
+                    .OrderByDescending(v => v);
                 if (!intersection.Any())
                 {
                     return null;
