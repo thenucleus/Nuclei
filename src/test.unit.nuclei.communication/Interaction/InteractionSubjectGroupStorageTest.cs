@@ -26,7 +26,7 @@ namespace Nuclei.Communication.Interaction
             var version = new Version(1, 0);
             var groupId = "group1";
             storage.RegisterCommandForProvidedSubjectGroup(subject, type, version, groupId);
-            Assert.IsTrue(storage.Any(s => s.Equals(subject)));
+            Assert.IsTrue(storage.ProvidedSubjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.Subjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.ContainsGroupProvisionsForSubject(subject));
             Assert.IsFalse(storage.ContainsGroupRequirementsForSubject(subject));
@@ -59,7 +59,7 @@ namespace Nuclei.Communication.Interaction
             var secondType = typeof(InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn);
             var secondVersion = new Version(1, 1);
             storage.RegisterCommandForProvidedSubjectGroup(subject, secondType, secondVersion, groupId);
-            Assert.IsTrue(storage.Any(s => s.Equals(subject)));
+            Assert.IsTrue(storage.ProvidedSubjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.Subjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.ContainsGroupProvisionsForSubject(subject));
             Assert.IsFalse(storage.ContainsGroupRequirementsForSubject(subject));
@@ -101,7 +101,7 @@ namespace Nuclei.Communication.Interaction
             var secondVersion = new Version(1, 0);
             var secondGroupId = "group2";
             storage.RegisterCommandForProvidedSubjectGroup(subject, secondType, secondVersion, secondGroupId);
-            Assert.IsTrue(storage.Any(s => s.Equals(subject)));
+            Assert.IsTrue(storage.ProvidedSubjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.Subjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.ContainsGroupProvisionsForSubject(subject));
             Assert.IsFalse(storage.ContainsGroupRequirementsForSubject(subject));
@@ -135,7 +135,7 @@ namespace Nuclei.Communication.Interaction
                                 secondType.FullName,
                                 secondType.Assembly.GetName()),
                             new Version(1, 0)))));
-            Assert.IsTrue(
+            Assert.IsFalse(
                 group.Commands[1].IsPartialMatch(
                     new VersionedTypeFallback(
                         new Tuple<OfflineTypeInformation, Version>(
@@ -155,7 +155,7 @@ namespace Nuclei.Communication.Interaction
             var version = new Version(1, 0);
             var groupId = "group1";
             storage.RegisterNotificationForProvidedSubjectGroup(subject, type, version, groupId);
-            Assert.IsTrue(storage.Any(s => s.Equals(subject)));
+            Assert.IsTrue(storage.ProvidedSubjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.Subjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.ContainsGroupProvisionsForSubject(subject));
             Assert.IsFalse(storage.ContainsGroupRequirementsForSubject(subject));
@@ -188,7 +188,7 @@ namespace Nuclei.Communication.Interaction
             var secondType = typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler);
             var secondVersion = new Version(1, 1);
             storage.RegisterNotificationForProvidedSubjectGroup(subject, secondType, secondVersion, groupId);
-            Assert.IsTrue(storage.Any(s => s.Equals(subject)));
+            Assert.IsTrue(storage.ProvidedSubjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.Subjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.ContainsGroupProvisionsForSubject(subject));
             Assert.IsFalse(storage.ContainsGroupRequirementsForSubject(subject));
@@ -230,7 +230,7 @@ namespace Nuclei.Communication.Interaction
             var secondVersion = new Version(1, 0);
             var secondGroupId = "group2";
             storage.RegisterNotificationForProvidedSubjectGroup(subject, secondType, secondVersion, secondGroupId);
-            Assert.IsTrue(storage.Any(s => s.Equals(subject)));
+            Assert.IsTrue(storage.ProvidedSubjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.Subjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.ContainsGroupProvisionsForSubject(subject));
             Assert.IsFalse(storage.ContainsGroupRequirementsForSubject(subject));
@@ -264,7 +264,7 @@ namespace Nuclei.Communication.Interaction
                                 secondType.FullName,
                                 secondType.Assembly.GetName()),
                             new Version(1, 0)))));
-            Assert.IsTrue(
+            Assert.IsFalse(
                 group.Notifications[1].IsPartialMatch(
                     new VersionedTypeFallback(
                         new Tuple<OfflineTypeInformation, Version>(
@@ -284,7 +284,7 @@ namespace Nuclei.Communication.Interaction
             var version = new Version(1, 0);
             var groupId = "group1";
             storage.RegisterCommandForRequiredSubjectGroup(subject, type, version, groupId);
-            Assert.IsTrue(storage.Any(s => s.Equals(subject)));
+            Assert.IsTrue(storage.RequiredSubjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.Subjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.ContainsGroupRequirementsForSubject(subject));
             Assert.IsFalse(storage.ContainsGroupProvisionsForSubject(subject));
@@ -317,7 +317,7 @@ namespace Nuclei.Communication.Interaction
             var secondType = typeof(InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn);
             var secondVersion = new Version(1, 1);
             storage.RegisterCommandForRequiredSubjectGroup(subject, secondType, secondVersion, groupId);
-            Assert.IsTrue(storage.Any(s => s.Equals(subject)));
+            Assert.IsTrue(storage.RequiredSubjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.Subjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.ContainsGroupRequirementsForSubject(subject));
             Assert.IsFalse(storage.ContainsGroupProvisionsForSubject(subject));
@@ -359,7 +359,7 @@ namespace Nuclei.Communication.Interaction
             var secondVersion = new Version(1, 0);
             var secondGroupId = "group2";
             storage.RegisterCommandForRequiredSubjectGroup(subject, secondType, secondVersion, secondGroupId);
-            Assert.IsTrue(storage.Any(s => s.Equals(subject)));
+            Assert.IsTrue(storage.RequiredSubjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.Subjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.ContainsGroupRequirementsForSubject(subject));
             Assert.IsFalse(storage.ContainsGroupProvisionsForSubject(subject));
@@ -393,7 +393,7 @@ namespace Nuclei.Communication.Interaction
                                 secondType.FullName,
                                 secondType.Assembly.GetName()),
                             new Version(1, 0)))));
-            Assert.IsTrue(
+            Assert.IsFalse(
                 group.Commands[1].IsPartialMatch(
                     new VersionedTypeFallback(
                         new Tuple<OfflineTypeInformation, Version>(
@@ -413,7 +413,7 @@ namespace Nuclei.Communication.Interaction
             var version = new Version(1, 0);
             var groupId = "group1";
             storage.RegisterNotificationForRequiredSubjectGroup(subject, type, version, groupId);
-            Assert.IsTrue(storage.Any(s => s.Equals(subject)));
+            Assert.IsTrue(storage.RequiredSubjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.Subjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.ContainsGroupRequirementsForSubject(subject));
             Assert.IsFalse(storage.ContainsGroupProvisionsForSubject(subject));
@@ -446,7 +446,7 @@ namespace Nuclei.Communication.Interaction
             var secondType = typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler);
             var secondVersion = new Version(1, 1);
             storage.RegisterNotificationForRequiredSubjectGroup(subject, secondType, secondVersion, groupId);
-            Assert.IsTrue(storage.Any(s => s.Equals(subject)));
+            Assert.IsTrue(storage.RequiredSubjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.Subjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.ContainsGroupRequirementsForSubject(subject));
             Assert.IsFalse(storage.ContainsGroupProvisionsForSubject(subject));
@@ -488,7 +488,7 @@ namespace Nuclei.Communication.Interaction
             var secondVersion = new Version(1, 0);
             var secondGroupId = "group2";
             storage.RegisterNotificationForRequiredSubjectGroup(subject, secondType, secondVersion, secondGroupId);
-            Assert.IsTrue(storage.Any(s => s.Equals(subject)));
+            Assert.IsTrue(storage.RequiredSubjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.Subjects().Any(s => s.Equals(subject)));
             Assert.IsTrue(storage.ContainsGroupRequirementsForSubject(subject));
             Assert.IsFalse(storage.ContainsGroupProvisionsForSubject(subject));
@@ -522,7 +522,7 @@ namespace Nuclei.Communication.Interaction
                                 secondType.FullName,
                                 secondType.Assembly.GetName()),
                             new Version(1, 0)))));
-            Assert.IsTrue(
+            Assert.IsFalse(
                 group.Notifications[1].IsPartialMatch(
                     new VersionedTypeFallback(
                         new Tuple<OfflineTypeInformation, Version>(

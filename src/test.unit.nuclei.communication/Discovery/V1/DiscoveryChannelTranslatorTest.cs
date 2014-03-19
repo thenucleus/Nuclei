@@ -20,6 +20,50 @@ namespace Nuclei.Communication.Discovery.V1
         Justification = "Unit tests do not need documentation.")]
     public sealed class DiscoveryChannelTranslatorTest
     {
+        [ServiceBehavior(
+            ConcurrencyMode = ConcurrencyMode.Multiple,
+            InstanceContextMode = InstanceContextMode.Single)]
+        private sealed class MockEndpoint : IInformationEndpoint
+        {
+            private Func<Version> m_Version;
+            private Func<Version[]> m_ProtocolVersions;
+            private Func<Version, VersionedChannelInformation> m_ConnectionInformationForProtocol;
+
+            public MockEndpoint(
+                Func<Version> version, 
+                Func<Version[]> protocolVersions, 
+                Func<Version, VersionedChannelInformation> connectionInformationForProtocol)
+            {
+                m_Version = version;
+                m_ProtocolVersions = protocolVersions;
+                m_ConnectionInformationForProtocol = connectionInformationForProtocol;
+            }
+
+            public Version Version()
+            {
+                return m_Version();
+            }
+
+            /// <summary>
+            /// Returns an array containing all the versions of the supported communication protocols.
+            /// </summary>
+            /// <returns>An array containing the versions of the supported communication protocols.</returns>
+            public Version[] ProtocolVersions()
+            {
+                return m_ProtocolVersions();
+            }
+
+            /// <summary>
+            /// Returns the discovery information for the communication protocol with the given version.
+            /// </summary>
+            /// <param name="version">The version of the protocol for which the discovery information should be provided.</param>
+            /// <returns>The discovery information for the communication protocol with the given version.</returns>
+            public VersionedChannelInformation ConnectionInformationForProtocol(Version version)
+            {
+                return m_ConnectionInformationForProtocol(version);
+            }
+        }
+
         [Test]
         public void FromUriWithNonMatchingVersions()
         {
@@ -44,15 +88,16 @@ namespace Nuclei.Communication.Discovery.V1
                 diagnostics);
 
             var uri = new Uri("net.pipe://localhost/pipe/discovery");
-            var receiver = new Mock<IInformationEndpoint>();
-            {
-                receiver.Setup(r => r.ProtocolVersions())
-                    .Returns(new[] { new Version(2, 0), })
-                    .Verifiable();
-            }
+            var receiver = new MockEndpoint(
+                () => DiscoveryVersions.V1,
+                () => new[] { new Version(2, 0), },
+                null);
 
-            var host = new ServiceHost(receiver.Object, uri);
-            var binding = new NetNamedPipeBinding();
+            var host = new ServiceHost(receiver, uri);
+            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
+                {
+                    TransferMode = TransferMode.Buffered,
+                };
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             var endpoint = host.AddServiceEndpoint(typeof(IInformationEndpoint), binding, address);
 
@@ -66,8 +111,6 @@ namespace Nuclei.Communication.Discovery.V1
             {
                 host.Close();
             }
-
-            receiver.Verify(r => r.ProtocolVersions(), Times.Once());
         }
 
         [Test]
@@ -94,15 +137,19 @@ namespace Nuclei.Communication.Discovery.V1
                 diagnostics);
 
             var uri = new Uri("net.pipe://localhost/pipe/discovery");
-            var receiver = new Mock<IInformationEndpoint>();
-            {
-                receiver.Setup(r => r.ProtocolVersions())
-                    .Throws(new ArgumentException())
-                    .Verifiable();
-            }
+            var receiver = new MockEndpoint(
+                () => DiscoveryVersions.V1,
+                () =>
+                {
+                    throw new ArgumentException();
+                },
+                null);
 
-            var host = new ServiceHost(receiver.Object, uri);
-            var binding = new NetNamedPipeBinding();
+            var host = new ServiceHost(receiver, uri);
+            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
+                {
+                    TransferMode = TransferMode.Buffered,
+                };
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             var endpoint = host.AddServiceEndpoint(typeof(IInformationEndpoint), binding, address);
 
@@ -116,8 +163,6 @@ namespace Nuclei.Communication.Discovery.V1
             {
                 host.Close();
             }
-
-            receiver.Verify(r => r.ProtocolVersions(), Times.Once());
         }
 
         [Test]
@@ -148,19 +193,17 @@ namespace Nuclei.Communication.Discovery.V1
                     ProtocolVersion = new Version(1, 0),
                     Address = new Uri("http://localhost/protocol/invalid")
                 };
-            var receiver = new Mock<IInformationEndpoint>();
-            {
-                receiver.Setup(r => r.ProtocolVersions())
-                    .Returns(new[] { new Version(1, 0), })
-                    .Verifiable();
-                receiver.Setup(r => r.ConnectionInformationForProtocol(It.IsAny<Version>()))
-                    .Returns(info)
-                    .Verifiable();
-            }
+            var receiver = new MockEndpoint(
+                () => DiscoveryVersions.V1,
+                () => new[] { new Version(1, 0), },
+                v => info);
 
             var uri = new Uri("net.pipe://localhost/pipe/discovery");
-            var host = new ServiceHost(receiver.Object, uri);
-            var binding = new NetNamedPipeBinding();
+            var host = new ServiceHost(receiver, uri);
+            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
+                {
+                    TransferMode = TransferMode.Buffered,
+                };
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             var endpoint = host.AddServiceEndpoint(typeof(IInformationEndpoint), binding, address);
 
@@ -170,15 +213,13 @@ namespace Nuclei.Communication.Discovery.V1
                 var receivedInfo = translator.FromUri(endpoint.ListenUri);
                 Assert.IsNotNull(receivedInfo);
                 Assert.AreEqual(info.ProtocolVersion, receivedInfo.Version);
-                Assert.AreEqual(info.ProtocolVersion, receivedInfo.MessageAddress);
+                Assert.AreEqual(info.Address, receivedInfo.MessageAddress);
                 Assert.IsNull(receivedInfo.DataAddress);
             }
             finally
             {
                 host.Close();
             }
-
-            receiver.Verify(r => r.ProtocolVersions(), Times.Once());
         }
     }
 }

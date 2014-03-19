@@ -16,15 +16,14 @@ namespace Nuclei.Communication.Protocol.Messages
     public sealed class UnknownMessageTypeMessageTest
     {
         [Test]
-        public void RoundTripSerialise()
+        public void Create()
         {
             var id = new EndpointId("sendingEndpoint");
             var response = new MessageId();
             var msg = new UnknownMessageTypeMessage(id, response);
-            var otherMsg = AssertExtensions.RoundTripSerialize(msg);
 
-            Assert.AreEqual(id, otherMsg.Sender);
-            Assert.AreEqual(response, otherMsg.InResponseTo);
+            Assert.AreEqual(id, msg.Sender);
+            Assert.AreEqual(response, msg.InResponseTo);
         }
     }
 }

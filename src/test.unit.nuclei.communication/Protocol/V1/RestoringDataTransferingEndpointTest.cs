@@ -51,9 +51,13 @@ namespace Nuclei.Communication.Protocol.V1
             var uri = new Uri("net.pipe://localhost/test/pipe");
             var host = new ServiceHost(receiver, uri);
 
-            var binding = new NetNamedPipeBinding();
+            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
+                {
+                    TransferMode = TransferMode.Streamed,
+                };
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             host.AddServiceEndpoint(typeof(IDataReceivingEndpoint), binding, address);
+            host.Faulted += (s, e) => Assert.Fail();
 
             host.Open();
             try
@@ -116,7 +120,10 @@ namespace Nuclei.Communication.Protocol.V1
             var uri = new Uri("net.pipe://localhost/test/pipe");
             var host = new ServiceHost(receiver, uri);
 
-            var binding = new NetNamedPipeBinding();
+            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
+                {
+                    TransferMode = TransferMode.Streamed,
+                };
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             host.AddServiceEndpoint(typeof(IDataReceivingEndpoint), binding, address);
 

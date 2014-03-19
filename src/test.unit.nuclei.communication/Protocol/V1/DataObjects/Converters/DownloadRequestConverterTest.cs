@@ -63,7 +63,6 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             Assert.IsInstanceOf(typeof(DataDownloadRequestMessage), msg);
             Assert.AreSame(data.Id, msg.Id);
             Assert.AreSame(data.Sender, msg.Sender);
-            Assert.AreSame(data.InResponseTo, msg.InResponseTo);
             Assert.AreSame(data.Token, ((DataDownloadRequestMessage)msg).Token);
         }
 

@@ -65,8 +65,10 @@ namespace Nuclei.Communication.Interaction
                 };
             var interactionSubjects = new Mock<IStoreInteractionSubjects>();
             {
-                interactionSubjects.Setup(i => i.GetEnumerator())
-                    .Returns(providedSubjects.Keys.GetEnumerator());
+                interactionSubjects.Setup(i => i.ProvidedSubjects())
+                    .Returns(providedSubjects.Keys);
+                interactionSubjects.Setup(i => i.RequiredSubjects())
+                    .Returns(requiredSubjects.Keys);
                 interactionSubjects.Setup(i => i.ContainsGroupProvisionsForSubject(It.IsAny<CommunicationSubject>()))
                     .Returns<CommunicationSubject>(providedSubjects.ContainsKey);
                 interactionSubjects.Setup(i => i.GroupProvisionsFor(It.IsAny<CommunicationSubject>()))
@@ -183,8 +185,10 @@ namespace Nuclei.Communication.Interaction
                 };
             var interactionSubjects = new Mock<IStoreInteractionSubjects>();
             {
-                interactionSubjects.Setup(i => i.GetEnumerator())
-                    .Returns(providedSubjects.Keys.GetEnumerator());
+                interactionSubjects.Setup(i => i.ProvidedSubjects())
+                    .Returns(providedSubjects.Keys);
+                interactionSubjects.Setup(i => i.RequiredSubjects())
+                    .Returns(requiredSubjects.Keys);
                 interactionSubjects.Setup(i => i.ContainsGroupProvisionsForSubject(It.IsAny<CommunicationSubject>()))
                     .Returns<CommunicationSubject>(providedSubjects.ContainsKey);
                 interactionSubjects.Setup(i => i.GroupProvisionsFor(It.IsAny<CommunicationSubject>()))
@@ -297,8 +301,10 @@ namespace Nuclei.Communication.Interaction
                 };
             var interactionSubjects = new Mock<IStoreInteractionSubjects>();
             {
-                interactionSubjects.Setup(i => i.GetEnumerator())
-                    .Returns(providedSubjects.Keys.GetEnumerator());
+                interactionSubjects.Setup(i => i.ProvidedSubjects())
+                    .Returns(providedSubjects.Keys);
+                interactionSubjects.Setup(i => i.RequiredSubjects())
+                    .Returns(requiredSubjects.Keys);
                 interactionSubjects.Setup(i => i.ContainsGroupProvisionsForSubject(It.IsAny<CommunicationSubject>()))
                     .Returns<CommunicationSubject>(providedSubjects.ContainsKey);
                 interactionSubjects.Setup(i => i.GroupProvisionsFor(It.IsAny<CommunicationSubject>()))
@@ -333,7 +339,7 @@ namespace Nuclei.Communication.Interaction
                         {
                             var msg = m as EndpointInteractionInformationResponseMessage;
                             Assert.IsNotNull(msg);
-                            Assert.AreEqual(InteractionConnectionState.Desired, msg.State);
+                            Assert.AreEqual(InteractionConnectionState.Neutral, msg.State);
                         })
                     .Verifiable();
                 layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
@@ -418,8 +424,10 @@ namespace Nuclei.Communication.Interaction
                 };
             var interactionSubjects = new Mock<IStoreInteractionSubjects>();
             {
-                interactionSubjects.Setup(i => i.GetEnumerator())
-                    .Returns(providedSubjects.Keys.GetEnumerator());
+                interactionSubjects.Setup(i => i.ProvidedSubjects())
+                    .Returns(providedSubjects.Keys);
+                interactionSubjects.Setup(i => i.RequiredSubjects())
+                    .Returns(requiredSubjects.Keys);
                 interactionSubjects.Setup(i => i.ContainsGroupProvisionsForSubject(It.IsAny<CommunicationSubject>()))
                     .Returns<CommunicationSubject>(providedSubjects.ContainsKey);
                 interactionSubjects.Setup(i => i.GroupProvisionsFor(It.IsAny<CommunicationSubject>()))
@@ -454,7 +462,7 @@ namespace Nuclei.Communication.Interaction
                         {
                             var msg = m as EndpointInteractionInformationResponseMessage;
                             Assert.IsNotNull(msg);
-                            Assert.AreEqual(InteractionConnectionState.Desired, msg.State);
+                            Assert.AreEqual(InteractionConnectionState.Neutral, msg.State);
                         })
                     .Verifiable();
                 layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
@@ -492,10 +500,11 @@ namespace Nuclei.Communication.Interaction
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
-                Times.Once());
+                Times.Never());
             notificationProxies.Verify(
                 c => c.OnReceiptOfEndpointNotifications(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
-                Times.Once());
+                Times.Never());
+            endpointStorage.Verify(e => e.TryRemoveEndpoint(It.IsAny<EndpointId>()), Times.Once());
         }
     }
 }

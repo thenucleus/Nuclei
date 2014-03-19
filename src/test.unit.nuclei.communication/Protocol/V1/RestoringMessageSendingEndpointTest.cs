@@ -40,7 +40,7 @@ namespace Nuclei.Communication.Protocol.V1
             var uri = new Uri("net.pipe://localhost/test/pipe");
             var host = new ServiceHost(receiver, uri);
             
-            var binding = new NetNamedPipeBinding();
+            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None);
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             host.AddServiceEndpoint(typeof(IMessageReceivingEndpoint), binding, address);
 
@@ -101,7 +101,7 @@ namespace Nuclei.Communication.Protocol.V1
             var uri = new Uri("net.pipe://localhost/test/pipe");
             var host = new ServiceHost(receiver, uri);
 
-            var binding = new NetNamedPipeBinding();
+            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None);
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             host.AddServiceEndpoint(typeof(IMessageReceivingEndpoint), binding, address);
 

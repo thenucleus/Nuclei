@@ -20,6 +20,31 @@ namespace Nuclei.Communication.Discovery
         Justification = "Unit tests do not need documentation.")]
     public sealed class ManualDiscoverySourceTest
     {
+        [ServiceBehavior(
+            ConcurrencyMode = ConcurrencyMode.Multiple,
+            InstanceContextMode = InstanceContextMode.Single)]
+        private sealed class MockEndpoint : IBootstrapEndpoint
+        {
+            private readonly Func<Version[]> m_Versions;
+            private readonly Func<Version, Uri> m_UriForVersion;
+
+            public MockEndpoint(Func<Version[]> versions, Func<Version, Uri> uriForVersion)
+            {
+                m_Versions = versions;
+                m_UriForVersion = uriForVersion;
+            }
+
+            public Version[] DiscoveryVersions()
+            {
+                return m_Versions();
+            }
+
+            public Uri UriForVersion(Version version)
+            {
+                return m_UriForVersion(version);
+            }
+        }
+
         [Test]
         public void RecentlyConnectedEndpointWithoutDiscoveryPermissions()
         {
@@ -83,7 +108,10 @@ namespace Nuclei.Communication.Discovery
             var receiver = new BootstrapEndpoint(channels);
 
             var host = new ServiceHost(receiver, uri);
-            var binding = new NetNamedPipeBinding();
+            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
+                {
+                    TransferMode = TransferMode.Buffered,
+                };
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             var endpoint = host.AddServiceEndpoint(typeof(IBootstrapEndpoint), binding, address);
 
@@ -132,7 +160,10 @@ namespace Nuclei.Communication.Discovery
             var receiver = new BootstrapEndpoint(channels);
 
             var host = new ServiceHost(receiver, uri);
-            var binding = new NetNamedPipeBinding();
+            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
+                {
+                    TransferMode = TransferMode.Buffered,
+                };
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             var endpoint = host.AddServiceEndpoint(typeof(IBootstrapEndpoint), binding, address);
 
@@ -174,14 +205,18 @@ namespace Nuclei.Communication.Discovery
             discovery.StartDiscovery();
 
             var uri = new Uri("net.pipe://localhost/pipe/discovery");
-            var receiver = new Mock<IBootstrapEndpoint>();
-            {
-                receiver.Setup(r => r.DiscoveryVersions())
-                    .Throws(new ArgumentException());
-            }
+            var receiver = new MockEndpoint(
+                () =>
+                {
+                    throw new ArgumentException();
+                },
+                null);
 
-            var host = new ServiceHost(receiver.Object, uri);
-            var binding = new NetNamedPipeBinding();
+            var host = new ServiceHost(receiver, uri);
+            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
+                {
+                    TransferMode = TransferMode.Buffered,
+                };
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             var endpoint = host.AddServiceEndpoint(typeof(IBootstrapEndpoint), binding, address);
 
@@ -245,7 +280,10 @@ namespace Nuclei.Communication.Discovery
             var receiver = new BootstrapEndpoint(channels);
 
             var host = new ServiceHost(receiver, uri);
-            var binding = new NetNamedPipeBinding();
+            var binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None)
+                {
+                    TransferMode = TransferMode.Buffered,
+                };
             var address = string.Format("{0}_{1}", "ThroughNamedPipe", Process.GetCurrentProcess().Id);
             var endpoint = host.AddServiceEndpoint(typeof(IBootstrapEndpoint), binding, address);
 
@@ -316,6 +354,7 @@ namespace Nuclei.Communication.Discovery
                 translators,
                 templateBuilder,
                 diagnostics);
+            discovery.StartDiscovery();
 
             var eventWasRaised = false;
             discovery.OnEndpointBecomingUnavailable += (s, e) =>

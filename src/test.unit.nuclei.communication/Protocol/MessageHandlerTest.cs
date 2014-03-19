@@ -195,7 +195,7 @@ namespace Nuclei.Communication.Protocol
                 new ProtocolDescription(new List<CommunicationSubject>()));
             handler.ProcessMessage(msg);
 
-            Assert.IsInstanceOf<UnknownMessageTypeMessage>(storedMsg);
+            Assert.IsInstanceOf<FailureMessage>(storedMsg);
         }
 
         [Test]

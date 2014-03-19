@@ -16,17 +16,14 @@ namespace Nuclei.Communication.Protocol.Messages
     public sealed class EndpointDisconnectMessageTest
     {
         [Test]
-        public void RoundTripSerialise()
+        public void Create()
         {
             var id = new EndpointId("sendingEndpoint");
             var reason = "reason";
             var msg = new EndpointDisconnectMessage(id, reason);
-            var otherMsg = AssertExtensions.RoundTripSerialize(msg);
-
-            Assert.AreEqual(id, otherMsg.Sender);
-            Assert.AreEqual(reason, otherMsg.ClosingReason);
-            Assert.AreEqual(msg.Id, otherMsg.Id);
-            Assert.AreEqual(MessageId.None, otherMsg.InResponseTo);
+            Assert.AreEqual(id, msg.Sender);
+            Assert.AreEqual(reason, msg.ClosingReason);
+            Assert.AreEqual(MessageId.None, msg.InResponseTo);
         }
     }
 }

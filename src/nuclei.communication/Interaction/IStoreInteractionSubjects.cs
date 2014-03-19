@@ -13,7 +13,7 @@ namespace Nuclei.Communication.Interaction
     /// <summary>
     /// Defines the interface for objects that store <see cref="CommunicationSubjectGroup"/> instances.
     /// </summary>
-    internal interface IStoreInteractionSubjects : IStoreProtocolSubjects, IEnumerable<CommunicationSubject>
+    internal interface IStoreInteractionSubjects : IStoreProtocolSubjects
     {
         /// <summary>
         /// Returns a value indicating if a subject group with required commands and notifications exists for 
@@ -54,5 +54,17 @@ namespace Nuclei.Communication.Interaction
         /// <param name="subject">The subject.</param>
         /// <returns>The provided subject group that is related with the given subject.</returns>
         CommunicationSubjectGroup GroupProvisionsFor(CommunicationSubject subject);
+
+        /// <summary>
+        /// Returns a collection containing all the subjects for which commands or notifications are required.
+        /// </summary>
+        /// <returns>A collection containing all the subjects for which commands or notifications are required.</returns>
+        IEnumerable<CommunicationSubject> RequiredSubjects();
+
+        /// <summary>
+        /// Returns a collection containing all the subjects for which commands or notifications are registered.
+        /// </summary>
+        /// <returns>A collection containing all the subjects for which commands or notifications are registered.</returns>
+        IEnumerable<CommunicationSubject> ProvidedSubjects();
     }
 }

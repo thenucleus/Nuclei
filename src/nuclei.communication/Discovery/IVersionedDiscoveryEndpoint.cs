@@ -13,6 +13,7 @@ namespace Nuclei.Communication.Discovery
     /// <summary>
     /// Defines the base interface for version specific discovery WCF endpoints.
     /// </summary>
+    [ServiceContract]
     internal interface IVersionedDiscoveryEndpoint : IDiscoveryEndpoint
     {
         /// <summary>

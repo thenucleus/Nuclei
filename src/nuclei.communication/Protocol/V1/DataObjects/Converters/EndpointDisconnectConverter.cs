@@ -54,7 +54,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
                 return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
-            return new EndpointDisconnectMessage(data.Sender, data.Id, string.Empty);
+            return new EndpointDisconnectMessage(data.Sender, data.Id, disconnectData.DisconnectReason);
         }
 
         /// <summary>

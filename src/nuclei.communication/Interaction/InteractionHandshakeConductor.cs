@@ -232,7 +232,7 @@ namespace Nuclei.Communication.Interaction
                 }
 
                 var interactionInformation = new List<CommunicationSubjectGroup>();
-                foreach (var subject in m_InteractionSubjects)
+                foreach (var subject in m_InteractionSubjects.ProvidedSubjects())
                 {
                     if (m_InteractionSubjects.ContainsGroupProvisionsForSubject(subject))
                     {
@@ -309,7 +309,7 @@ namespace Nuclei.Communication.Interaction
                 tickList.HaveReceivedSubjects = true;
 
                 bool foundAtLeastOneSubjectMatch = false;
-                foreach (var subject in m_InteractionSubjects)
+                foreach (var subject in m_InteractionSubjects.RequiredSubjects())
                 {
                     if (!m_InteractionSubjects.ContainsGroupRequirementsForSubject(subject))
                     {

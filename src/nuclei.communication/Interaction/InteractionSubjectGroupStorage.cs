@@ -301,7 +301,7 @@ namespace Nuclei.Communication.Interaction
         /// <returns>A collection containing all the subjects registered for the current application.</returns>
         public IEnumerable<CommunicationSubject> Subjects()
         {
-            return m_ProvidedSubjects.Keys;
+            return m_ProvidedSubjects.Keys.Append(m_RequiredSubjects.Keys);
         }
 
         /// <summary>
@@ -312,28 +312,6 @@ namespace Nuclei.Communication.Interaction
         public ProtocolDescription ToStorage()
         {
             return new ProtocolDescription(m_ProvidedSubjects.Keys);
-        }
-
-        /// <summary>
-        /// Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
-        /// </returns>
-        public IEnumerator<CommunicationSubject> GetEnumerator()
-        {
-            return m_ProvidedSubjects.Keys.GetEnumerator();
-        }
-
-        /// <summary>
-        /// Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
-        /// </returns>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
 
         /// <summary>
@@ -398,6 +376,24 @@ namespace Nuclei.Communication.Interaction
 
             var map = m_ProvidedSubjects[subject];
             return map.ToGroup(subject);
+        }
+
+        /// <summary>
+        /// Returns a collection containing all the subjects for which commands or notifications are required.
+        /// </summary>
+        /// <returns>A collection containing all the subjects for which commands or notifications are required.</returns>
+        public IEnumerable<CommunicationSubject> RequiredSubjects()
+        {
+            return m_RequiredSubjects.Keys;
+        }
+
+        /// <summary>
+        /// Returns a collection containing all the subjects for which commands or notifications are registered.
+        /// </summary>
+        /// <returns>A collection containing all the subjects for which commands or notifications are registered.</returns>
+        public IEnumerable<CommunicationSubject> ProvidedSubjects()
+        {
+            return m_ProvidedSubjects.Keys;
         }
     }
 }

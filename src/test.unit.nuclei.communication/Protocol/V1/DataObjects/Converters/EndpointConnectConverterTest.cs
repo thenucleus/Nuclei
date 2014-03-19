@@ -72,7 +72,6 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             Assert.IsInstanceOf(typeof(EndpointConnectMessage), msg);
             Assert.AreSame(data.Id, msg.Id);
             Assert.AreSame(data.Sender, msg.Sender);
-            Assert.AreSame(data.InResponseTo, msg.InResponseTo);
             Assert.AreSame(data.DiscoveryAddress, ((EndpointConnectMessage)msg).DiscoveryInformation.Address);
             Assert.AreSame(data.ProtocolVersion, ((EndpointConnectMessage)msg).ProtocolInformation.Version);
             Assert.AreSame(data.MessageAddress, ((EndpointConnectMessage)msg).ProtocolInformation.MessageAddress);

@@ -48,7 +48,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             action.Invoke(new SuccessMessage(otherEndpoint, new MessageId()));
 
             Assert.AreSame(otherEndpoint, storedEndpoint);
-            Assert.IsInstanceOf<UnknownMessageTypeMessage>(storedMsg);
+            Assert.IsInstanceOf<FailureMessage>(storedMsg);
         }
 
         [Test]
@@ -57,7 +57,6 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             var endpoint = new EndpointId("id");
 
             int count = 0;
-            ICommunicationMessage storedMsg = null;
             Action<EndpointId, ICommunicationMessage> sendAction = (e, m) =>
             {
                 count++;
@@ -65,8 +64,6 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                 {
                     throw new Exception();
                 }
-                
-                storedMsg = m;
             };
 
             int loggerCount = 0;
@@ -75,9 +72,8 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             var action = new UnknownMessageTypeProcessAction(endpoint, sendAction, systemDiagnostics);
             action.Invoke(new SuccessMessage(new EndpointId("otherId"), new MessageId()));
 
-            Assert.AreEqual(2, count);
+            Assert.AreEqual(1, count);
             Assert.AreEqual(1, loggerCount);
-            Assert.IsInstanceOf<FailureMessage>(storedMsg);
         }
 
         [Test]
@@ -92,7 +88,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             var action = new UnknownMessageTypeProcessAction(endpoint, sendAction, systemDiagnostics);
             action.Invoke(new SuccessMessage(new EndpointId("otherId"), new MessageId()));
 
-            Assert.AreEqual(2, count);
+            Assert.AreEqual(1, count);
         }
     }
 }

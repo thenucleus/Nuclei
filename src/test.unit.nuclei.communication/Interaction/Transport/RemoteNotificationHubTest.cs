@@ -82,6 +82,12 @@ namespace Nuclei.Communication.Interaction.Transport
                 Assert.AreEqual(endpoint, e.Endpoint);
                 Assert.IsTrue(hub.HasNotificationFor(e.Endpoint, typeof(InteractionExtensionsTest.IMockNotificationSetWithEventHandler)));
             };
+            hub.OnEndpointDisconnected += (s, e) =>
+            {
+                eventWasTriggered = true;
+                Assert.AreEqual(endpoint, e.Endpoint);
+                Assert.IsFalse(hub.HasNotificationFor(e.Endpoint, typeof(InteractionExtensionsTest.IMockNotificationSetWithEventHandler)));
+            };
 
             hub.OnReceiptOfEndpointNotifications(endpoint, types);
             Assert.IsTrue(eventWasTriggered);

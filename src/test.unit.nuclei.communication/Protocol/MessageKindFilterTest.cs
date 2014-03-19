@@ -26,7 +26,7 @@ namespace Nuclei.Communication.Protocol
         public void PassThroughWithNonAllowedMessage()
         {
             var filter = new MessageKindFilter(typeof(SuccessMessage));
-            Assert.IsTrue(filter.PassThrough(new FailureMessage(new EndpointId("a"), new MessageId())));
+            Assert.IsFalse(filter.PassThrough(new FailureMessage(new EndpointId("a"), new MessageId())));
         }
     }
 }

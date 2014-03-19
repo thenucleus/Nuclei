@@ -25,19 +25,5 @@ namespace Nuclei.Communication.Protocol.Messages
             Assert.AreSame(id, msg.Sender);
             Assert.AreSame(token, msg.Token);
         }
-
-        [Test]
-        public void RoundTripSerialise()
-        {
-            var id = new EndpointId("sendingEndpoint");
-            var token = new UploadToken();
-            var msg = new DataDownloadRequestMessage(id, token);
-            var otherMsg = AssertExtensions.RoundTripSerialize(msg);
-
-            Assert.AreEqual(id, otherMsg.Sender);
-            Assert.AreEqual(msg.Id, otherMsg.Id);
-            Assert.AreEqual(MessageId.None, otherMsg.InResponseTo);
-            Assert.AreEqual(token, otherMsg.Token);
-        }
     }
 }

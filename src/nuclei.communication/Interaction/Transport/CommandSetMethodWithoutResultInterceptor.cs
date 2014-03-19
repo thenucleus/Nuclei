@@ -161,7 +161,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 result = m_TransmitCommandInvocation(
                     new CommandInvokedData(
                         new CommandData(
-                            invocation.TargetType,
+                            invocation.Method.DeclaringType,
                             invocation.Method.Name),
                         ToParameterArray(invocation.Method, invocation.Arguments)));
             }

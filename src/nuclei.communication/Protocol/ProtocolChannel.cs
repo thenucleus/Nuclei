@@ -442,6 +442,11 @@ namespace Nuclei.Communication.Protocol
             }
 
             var sender = SenderForEndpoint(receivingEndpoint);
+            if (sender == null)
+            {
+                throw new EndpointNotContactableException();
+            }
+
             return Task.Factory.StartNew(
                 () =>
                 {
@@ -502,6 +507,11 @@ namespace Nuclei.Communication.Protocol
             }
 
             var sender = SenderForEndpoint(endpoint);
+            if (sender == null)
+            {
+                throw new EndpointNotContactableException();
+            }
+
             sender.Send(endpoint, message);
         }
 

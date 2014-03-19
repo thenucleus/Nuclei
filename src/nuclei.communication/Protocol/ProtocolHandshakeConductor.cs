@@ -460,21 +460,6 @@ namespace Nuclei.Communication.Protocol
                     return;
                 }
 
-                /*
-                if (!info.IsComplete)
-                {
-                    m_Diagnostics.Log(
-                        LevelToLog.Trace,
-                        CommunicationConstants.DefaultLogTextPrefix,
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "Trying to approve endpoint {0} while connection information is incomplete.",
-                            connection));
-
-                    return;
-                }
-                 */
-
                 if (m_PotentialEndpoints.TryCompleteApproval(connection))
                 {
                     m_Diagnostics.Log(

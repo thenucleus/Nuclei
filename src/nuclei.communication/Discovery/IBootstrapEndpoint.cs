@@ -33,6 +33,11 @@ namespace Nuclei.Communication.Discovery
         /// </summary>
         /// <param name="version">The version of the discovery channel.</param>
         /// <returns>The URI of the discovery channel with the given version.</returns>
+        [OperationContract(
+            IsOneWay = false,
+            IsInitiating = true,
+            IsTerminating = false,
+            ProtectionLevel = ProtectionLevel.None)]
         Uri UriForVersion(Version version);
     }
 }

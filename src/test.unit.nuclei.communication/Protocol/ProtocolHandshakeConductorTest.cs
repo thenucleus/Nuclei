@@ -30,14 +30,14 @@ namespace Nuclei.Communication.Protocol
             var subject = new CommunicationSubject("a");
             var connection = new EndpointInformation(
                 new EndpointId("a"),
-                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")),
                 new ProtocolInformation(
                     new Version(1, 0),
-                    new Uri("http://localhost/protocol/invalid")));
+                    new Uri("net.tcp://localhost/protocol/invalid")));
 
             var remoteEndpoint = new EndpointId("b:10");
-            var remoteMessageAddress = @"http://othermachine";
-            var remoteDataAddress = @"http://othermachine/data";
+            var remoteMessageAddress = @"net.tcp://othermachine";
+            var remoteDataAddress = @"net.tcp://othermachine/data";
 
             var communicationDescriptions = new Mock<IStoreProtocolSubjects>();
             {
@@ -122,7 +122,7 @@ namespace Nuclei.Communication.Protocol
                 new EndpointDiscoveredEventArgs(
                     new EndpointInformation(
                         remoteEndpoint, 
-                        new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")), 
+                        new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")), 
                         new ProtocolInformation(new Version(1, 0), new Uri(remoteMessageAddress)))));
 
             Assert.IsTrue(storage.HasBeenContacted(remoteEndpoint));
@@ -153,14 +153,14 @@ namespace Nuclei.Communication.Protocol
             var subject = new CommunicationSubject("a");
             var connection = new EndpointInformation(
                 new EndpointId("a"),
-                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")),
                 new ProtocolInformation(
                     new Version(1, 0),
-                    new Uri("http://localhost/protocol/invalid")));
+                    new Uri("net.tcp://localhost/protocol/invalid")));
 
             var remoteEndpoint = new EndpointId("b:10");
-            var remoteMessageAddress = @"http://othermachine";
-            var remoteDataAddress = @"http://othermachine/data";
+            var remoteMessageAddress = @"net.tcp://othermachine";
+            var remoteDataAddress = @"net.tcp://othermachine/data";
 
             var communicationDescriptions = new Mock<IStoreProtocolSubjects>();
             {
@@ -187,7 +187,7 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var discoveryInformation = new LocalConnectionInformation(id, new Uri("http://localhost/discovery/invalid"));
+            var discoveryInformation = new LocalConnectionInformation(id, new Uri("net.tcp://localhost/discovery/invalid"));
             var storage = new EndpointInformationStorage();
 
             var endpointConnected = false;
@@ -243,8 +243,8 @@ namespace Nuclei.Communication.Protocol
             layer.ContinueHandshakeWith(
                 new EndpointInformation(
                     remoteEndpoint,
-                    new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")), 
-                    new ProtocolInformation(new Version(), new Uri(remoteMessageAddress), new Uri(remoteDataAddress))),
+                    new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")), 
+                    new ProtocolInformation(new Version(1, 0), new Uri(remoteMessageAddress), new Uri(remoteDataAddress))),
                 communicationDescriptions.Object.ToStorage(),
                 new MessageId());
 
@@ -265,13 +265,13 @@ namespace Nuclei.Communication.Protocol
             var subject = new CommunicationSubject("a");
             var connection = new EndpointInformation(
                 new EndpointId("a"),
-                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")),
                 new ProtocolInformation(
                     new Version(1, 0),
-                    new Uri("http://localhost/protocol/invalid")));
+                    new Uri("net.tcp://localhost/protocol/invalid")));
 
             var remoteEndpoint = new EndpointId("b:10");
-            var remoteMessageAddress = @"http://othermachine";
+            var remoteMessageAddress = @"net.tcp://othermachine";
 
             var communicationDescriptions = new Mock<IStoreProtocolSubjects>();
             {
@@ -298,7 +298,7 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var discoveryInformation = new LocalConnectionInformation(id, new Uri("http://localhost/discovery/invalid"));
+            var discoveryInformation = new LocalConnectionInformation(id, new Uri("net.tcp://localhost/discovery/invalid"));
             var storage = new EndpointInformationStorage();
 
             var endpointConnected = false;
@@ -324,7 +324,7 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 communicationLayer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
-                        () => new SuccessMessage(remoteEndpoint, new MessageId()),
+                        () => new FailureMessage(remoteEndpoint, new MessageId()),
                         new CancellationTokenSource().Token,
                         TaskCreationOptions.None,
                         new CurrentThreadTaskScheduler()))
@@ -357,7 +357,7 @@ namespace Nuclei.Communication.Protocol
                 new EndpointDiscoveredEventArgs(
                     new EndpointInformation(
                         remoteEndpoint,
-                        new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")), 
+                        new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")), 
                         new ProtocolInformation(
                             new Version(1, 0), 
                             new Uri(remoteMessageAddress)))));
@@ -379,14 +379,14 @@ namespace Nuclei.Communication.Protocol
             var subject = new CommunicationSubject("a");
             var connection = new EndpointInformation(
                 new EndpointId("a"),
-                new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")),
+                new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")),
                 new ProtocolInformation(
                     new Version(1, 0),
-                    new Uri("http://localhost/protocol/invalid")));
+                    new Uri("net.tcp://localhost/protocol/invalid")));
 
             var remoteEndpoint = new EndpointId("b:10");
-            var remoteMessageAddress = @"http://othermachine";
-            var remoteDataAddress = @"http://othermachine/data";
+            var remoteMessageAddress = @"net.tcp://othermachine";
+            var remoteDataAddress = @"net.tcp://othermachine/data";
 
             var communicationDescriptions = new Mock<IStoreProtocolSubjects>();
             {
@@ -410,10 +410,10 @@ namespace Nuclei.Communication.Protocol
                 endpointApprover.Setup(e => e.ProtocolVersion)
                     .Returns(new Version(1, 0));
                 endpointApprover.Setup(e => e.IsEndpointAllowedToConnect(It.IsAny<ProtocolDescription>()))
-                    .Returns(true);
+                    .Returns(false);
             }
 
-            var discoveryInformation = new LocalConnectionInformation(id, new Uri("http://localhost/discovery/invalid"));
+            var discoveryInformation = new LocalConnectionInformation(id, new Uri("net.tcp://localhost/discovery/invalid"));
             var storage = new EndpointInformationStorage();
 
             var endpointConnected = false;
@@ -468,8 +468,8 @@ namespace Nuclei.Communication.Protocol
 
             layer.ContinueHandshakeWith(
                 new EndpointInformation(
-                    remoteEndpoint, 
-                    new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")), 
+                    remoteEndpoint,
+                    new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")), 
                     new ProtocolInformation(
                         new Version(1, 0), 
                         new Uri(remoteMessageAddress), 
