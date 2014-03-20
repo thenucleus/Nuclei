@@ -97,7 +97,7 @@ namespace Nuclei.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An type of type {0} could not be loaded..
+        ///   Looks up a localized string similar to A type of {0} could not be loaded..
         /// </summary>
         internal static string Exceptions_Messages_UnableToLoadType_WithTypeName {
             get {

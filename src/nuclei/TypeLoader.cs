@@ -57,7 +57,7 @@ namespace Nuclei
                     (assemblyVersion != null) 
                         ? string.Format(
                             CultureInfo.InvariantCulture,
-                            "Version={0}",
+                            ", Version={0}",
                             assemblyVersion.ToString(4))
                         : string.Empty,
                     string.Empty,
