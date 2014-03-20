@@ -130,6 +130,6 @@
     <value>An offline type could not be loaded.</value>
   </data>
   <data name="Exceptions_Messages_UnableToLoadType_WithTypeName" xml:space="preserve">
-    <value>An type of type {0} could not be loaded.</value>
+    <value>A type of {0} could not be loaded.</value>
   </data>
 </root>
