@@ -24,13 +24,24 @@ namespace Nuclei.Communication
                 {
                     var storage = c.Resolve<IStoreInformationForActiveChannels>();
                     return new InformationEndpoint(
-                        storage.ActiveChannels().ToArray());
+                        storage.ActiveChannels().Where(a => a.MessageAddress.ToChannelTemplate() == ChannelTemplate.NamedPipe).ToArray());
                 })
-                .As<IInformationEndpoint>()
-                .As<IVersionedDiscoveryEndpoint>()
+                .Keyed<IVersionedDiscoveryEndpoint>(ChannelTemplate.NamedPipe)
                 .SingleInstance()
-                .WithMetadata<IDiscoveryVersionMetaData>(
-                    m => m.For(meta => meta.Version, DiscoveryVersions.V1));
+                .WithMetadata<IDiscoveryVersionMetaData>(m => m.For(meta => meta.Version, DiscoveryVersions.V1))
+                .WithMetadata<ITypeMetaData>(m => m.For(meta => meta.RegisteredType, typeof(IInformationEndpoint)));
+
+            builder.Register(
+                c =>
+                {
+                    var storage = c.Resolve<IStoreInformationForActiveChannels>();
+                    return new InformationEndpoint(
+                        storage.ActiveChannels().Where(a => a.MessageAddress.ToChannelTemplate() == ChannelTemplate.TcpIP).ToArray());
+                })
+                .Keyed<IVersionedDiscoveryEndpoint>(ChannelTemplate.TcpIP)
+                .SingleInstance()
+                .WithMetadata<IDiscoveryVersionMetaData>(m => m.For(meta => meta.Version, DiscoveryVersions.V1))
+                .WithMetadata<ITypeMetaData>(m => m.For(meta => meta.RegisteredType, typeof(IInformationEndpoint)));
         }
 
         private static void RegisterDiscoveryV1ChannelInformationTranslators(ContainerBuilder builder)
@@ -41,7 +52,7 @@ namespace Nuclei.Communication
                         var ctx = c.Resolve<IComponentContext>();
                         return new DiscoveryChannelTranslator(
                             Protocol.ProtocolVersions.SupportedVersions().ToArray(),
-                            template => ctx.ResolveKeyed<IDiscoveryChannelTemplate>(ctx),
+                            template => ctx.ResolveKeyed<IDiscoveryChannelTemplate>(template),
                             c.Resolve<SystemDiagnostics>());
                     })
                 .As<ITranslateVersionedChannelInformation>()

@@ -9,14 +9,14 @@ using System;
 namespace Nuclei.Communication
 {
     /// <summary>
-    /// Defines the interface for strong-typed meta data describing an versioned protocol element.
+    /// Defines the interface for strong-typed meta data describing an the registered type of an element.
     /// </summary>
-    internal interface IProtocolVersionMetaData
+    internal interface ITypeMetaData
     {
         /// <summary>
-        /// Gets the version of the protocol that the attached endpoint can handle.
+        /// Gets the registered type.
         /// </summary>
-        Version Version
+        Type RegisteredType
         {
             get;
         }

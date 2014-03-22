@@ -144,6 +144,7 @@ namespace Nuclei.Communication
             builder.Register(c => new InteractionSubjectGroupStorage())
                 .As<IRegisterSubjectGroups>()
                 .As<IStoreInteractionSubjects>()
+                .As<IStoreProtocolSubjects>()
                 .SingleInstance();
         }
 

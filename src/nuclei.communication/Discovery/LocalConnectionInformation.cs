@@ -22,14 +22,14 @@ namespace Nuclei.Communication.Discovery
         /// <summary>
         /// The URI of the local entry channel.
         /// </summary>
-        private readonly Uri m_EntryChannel;
+        private readonly Func<Uri> m_EntryChannel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalConnectionInformation"/> class.
         /// </summary>
         /// <param name="id">The ID of the local endpoint.</param>
         /// <param name="entryChannel">The URI of the local entry channel.</param>
-        public LocalConnectionInformation(EndpointId id, Uri entryChannel)
+        public LocalConnectionInformation(EndpointId id, Func<Uri> entryChannel)
         {
             {
                 Lokad.Enforce.Argument(() => id);
@@ -60,7 +60,7 @@ namespace Nuclei.Communication.Discovery
             [DebuggerStepThrough]
             get
             {
-                return m_EntryChannel;
+                return m_EntryChannel();
             }
         }
     }

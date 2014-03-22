@@ -25,12 +25,14 @@ namespace Nuclei.Communication
                     c.Resolve<IEnumerable<IConvertCommunicationMessages>>(),
                     c.Resolve<SystemDiagnostics>()))
                 .As<IMessagePipe>()
-                .WithMetadata<IProtocolVersionMetaData>(m => m.For(meta => meta.Version, ProtocolVersions.V1));
+                .WithMetadata<IProtocolVersionMetaData>(m => m.For(meta => meta.Version, ProtocolVersions.V1))
+                .WithMetadata<ITypeMetaData>(m => m.For(meta => meta.RegisteredType, typeof(IMessageReceivingEndpoint)));
 
             builder.Register(c => new DataReceivingEndpoint(
                     c.Resolve<SystemDiagnostics>()))
                 .As<IDataPipe>()
-                .WithMetadata<IProtocolVersionMetaData>(m => m.For(meta => meta.Version, ProtocolVersions.V1));
+                .WithMetadata<IProtocolVersionMetaData>(m => m.For(meta => meta.Version, ProtocolVersions.V1))
+                .WithMetadata<ITypeMetaData>(m => m.For(meta => meta.RegisteredType, typeof(IDataReceivingEndpoint)));
         }
 
         private static void RegisterProtocolV1MessageConverters(ContainerBuilder builder)

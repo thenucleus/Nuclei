@@ -119,13 +119,13 @@ namespace Nuclei.Communication
 
         private void RegisterProtocolLayer(ContainerBuilder builder)
         {
-            RegisterCommunicationLayer(builder, m_AllowedChannelTemplates);
+            RegisterProtocolLayer(builder, m_AllowedChannelTemplates);
             RegisterProtocolHandshakeConductor(builder, m_AllowedChannelTemplates);
             RegisterMessageHandler(builder);
             RegisterDataHandler(builder);
             RegisterProtocolMessageProcessingActions(builder);
             RegisterConnectionHolders(builder);
-            RegisterCommunicationChannel(builder);
+            RegisterProtocolChannel(builder);
             RegisterEndpoints(builder);
             RegisterProtocolChannelTemplates(builder);
             RegisterEndpointStorage(builder);

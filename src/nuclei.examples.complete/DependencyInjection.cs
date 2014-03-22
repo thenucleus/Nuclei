@@ -117,7 +117,6 @@ namespace Nuclei.Examples.Complete
                         c.Resolve<ICommunicationFacade>(),
                         c.Resolve<ConnectionViewModel>()))
                     .As<IFormTheApplicationCenter>()
-                    .As<IStartable>()
                     .SingleInstance();
 
                 builder.Register(c => new ConnectionViewModel(c.Resolve<InteractiveWindow>().Dispatcher))

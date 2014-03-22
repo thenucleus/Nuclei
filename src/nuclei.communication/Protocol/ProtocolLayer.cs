@@ -47,11 +47,6 @@ namespace Nuclei.Communication.Protocol
         private readonly EndpointId m_Id = EndpointIdExtensions.CreateEndpointIdForCurrentProcess();
 
         /// <summary>
-        /// The collection of endpoint discovery objects.
-        /// </summary>
-        private readonly IEnumerable<IDiscoverOtherServices> m_DiscoverySources;
-
-        /// <summary>
         /// The function that returns a tuple of a <see cref="IProtocolChannel"/> and
         /// a <see cref="IDirectIncomingMessages"/> which belong together. The return values
         /// are based on the type of the <see cref="IChannelTemplate"/> for the channel.
@@ -116,7 +111,6 @@ namespace Nuclei.Communication.Protocol
 
             m_Endpoints = endpoints;
             m_ChannelBuilder = channelBuilder;
-            m_DiscoverySources = discoverySources;
             m_ChannelTypesToUse = channelTypesToUse;
             m_Diagnostics = systemDiagnostics;
 
@@ -234,12 +228,6 @@ namespace Nuclei.Communication.Protocol
                     OpenChannel(channelType);
                 }
 
-                // Initiate discovery of other services. 
-                foreach (var source in m_DiscoverySources)
-                {
-                    source.StartDiscovery();
-                }
-
                 m_AlreadySignedOn = true;
             }
 
@@ -315,12 +303,6 @@ namespace Nuclei.Communication.Protocol
 
             using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "CommunicationLayer: signing out"))
             {
-                // Stop discovering other services. We just stopped caring.
-                foreach (var source in m_DiscoverySources)
-                {
-                    source.EndDiscovery();
-                }
-
                 // There may be a race condition here. We could be disconnecting while
                 // others may be trying to connect, so we might have to put a 
                 // lock in here to block things from happening.

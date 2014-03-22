@@ -64,7 +64,8 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var discoveryInformation = new LocalConnectionInformation(id, new Uri("http://localhost/discovery/invalid"));
+            Func<Uri> discoveryUri = () => new Uri("net.tcp://localhost/discovery/invalid");
+            var discoveryInformation = new LocalConnectionInformation(id, discoveryUri);
             var storage = new EndpointInformationStorage();
 
             var endpointConnected = false;
@@ -132,7 +133,7 @@ namespace Nuclei.Communication.Protocol
             layer.ContinueHandshakeWith(
                 new EndpointInformation(
                     remoteEndpoint,
-                    new DiscoveryInformation(new Uri("http://localhost/discovery/invalid")), 
+                    new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")), 
                     new ProtocolInformation(new Version(1, 0), new Uri(remoteMessageAddress), new Uri(remoteDataAddress))),
                 communicationDescriptions.Object.ToStorage(),
                 new MessageId());
@@ -187,7 +188,8 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var discoveryInformation = new LocalConnectionInformation(id, new Uri("net.tcp://localhost/discovery/invalid"));
+            Func<Uri> discoveryUri = () => new Uri("net.tcp://localhost/discovery/invalid");
+            var discoveryInformation = new LocalConnectionInformation(id, discoveryUri);
             var storage = new EndpointInformationStorage();
 
             var endpointConnected = false;
@@ -298,7 +300,8 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var discoveryInformation = new LocalConnectionInformation(id, new Uri("net.tcp://localhost/discovery/invalid"));
+            Func<Uri> discoveryUri = () => new Uri("net.tcp://localhost/discovery/invalid");
+            var discoveryInformation = new LocalConnectionInformation(id, discoveryUri);
             var storage = new EndpointInformationStorage();
 
             var endpointConnected = false;
@@ -413,7 +416,8 @@ namespace Nuclei.Communication.Protocol
                     .Returns(false);
             }
 
-            var discoveryInformation = new LocalConnectionInformation(id, new Uri("net.tcp://localhost/discovery/invalid"));
+            Func<Uri> discoveryUri = () => new Uri("net.tcp://localhost/discovery/invalid");
+            var discoveryInformation = new LocalConnectionInformation(id, discoveryUri);
             var storage = new EndpointInformationStorage();
 
             var endpointConnected = false;

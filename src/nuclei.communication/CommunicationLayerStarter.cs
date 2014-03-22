@@ -113,6 +113,13 @@ namespace Nuclei.Communication
                             var discovery = m_Context.ResolveKeyed<IBootstrapChannel>(template);
                             discovery.OpenChannel(m_AllowAutomaticChannelDiscovery);
                         }
+
+                        // Initiate discovery of other services. 
+                        var discoverySources = m_Context.Resolve<IEnumerable<IDiscoverOtherServices>>();
+                        foreach (var source in discoverySources)
+                        {
+                            source.StartDiscovery();
+                        }
                     }
                     catch (Exception e)
                     {

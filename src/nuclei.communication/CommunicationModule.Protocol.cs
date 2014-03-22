@@ -28,7 +28,7 @@ namespace Nuclei.Communication
     /// </content>
     public sealed partial class CommunicationModule
     {
-        private static void RegisterCommunicationLayer(ContainerBuilder builder, IEnumerable<ChannelTemplate> allowedChannelTemplates)
+        private static void RegisterProtocolLayer(ContainerBuilder builder, IEnumerable<ChannelTemplate> allowedChannelTemplates)
         {
             builder.Register(
                 c =>
@@ -220,7 +220,7 @@ namespace Nuclei.Communication
                 .As<IHoldServiceConnections>();
         }
 
-        private static void RegisterCommunicationChannel(ContainerBuilder builder)
+        private static void RegisterProtocolChannel(ContainerBuilder builder)
         {
             // CommunicationChannel.
             // Register one channel for each communication type. At the moment
@@ -235,7 +235,7 @@ namespace Nuclei.Communication
                         p.TypedAs<EndpointId>(),
                         c.Resolve<IStoreInformationAboutEndpoints>(),
                         channelTemplate,
-                        () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IProtocolChannelTemplate), channelTemplate)),
+                        () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
                         BuildMessagePipeSelector(ctx),
                         BuildDataPipeSelector(ctx),
                         (id, msgProxy, dataProxy) => ctx.Resolve<ISendingEndpoint>(
@@ -292,17 +292,20 @@ namespace Nuclei.Communication
                 {
                     var allPipesLazy = context.Resolve<IEnumerable<Meta<IMessagePipe>>>();
 
+                    Type selectedType = null;
                     IMessagePipe selectedPipe = null;
                     foreach (var pipe in allPipesLazy)
                     {
                         var storedVersion = pipe.Metadata["Version"] as Version;
+                        var storedType = pipe.Metadata["RegisteredType"] as Type;
                         if (storedVersion.Equals(version))
                         {
                             selectedPipe = pipe.Value;
+                            selectedType = storedType;
                         }
                     }
 
-                    return new Tuple<Type, IMessagePipe>(selectedPipe.GetType(), selectedPipe);
+                    return new Tuple<Type, IMessagePipe>(selectedType, selectedPipe);
                 };
 
             return result;
@@ -315,17 +318,20 @@ namespace Nuclei.Communication
                 {
                     var allPipesLazy = context.Resolve<IEnumerable<Meta<IDataPipe>>>();
 
+                    Type selectedType = null;
                     IDataPipe selectedPipe = null;
                     foreach (var pipe in allPipesLazy)
                     {
                         var storedVersion = pipe.Metadata["Version"] as Version;
+                        var storedType = pipe.Metadata["RegisteredType"] as Type;
                         if (storedVersion.Equals(version))
                         {
                             selectedPipe = pipe.Value;
+                            selectedType = storedType;
                         }
                     }
 
-                    return new Tuple<Type, IDataPipe>(selectedPipe.GetType(), selectedPipe);
+                    return new Tuple<Type, IDataPipe>(selectedType, selectedPipe);
                 };
 
             return result;
@@ -417,6 +423,7 @@ namespace Nuclei.Communication
         private static void RegisterEndpointStorage(ContainerBuilder builder)
         {
             builder.Register(c => new EndpointInformationStorage())
+                .As<IStoreEndpointApprovalState>()
                 .As<IStoreInformationAboutEndpoints>()
                 .As<INotifyOfEndpointStateChange>()
                 .SingleInstance();

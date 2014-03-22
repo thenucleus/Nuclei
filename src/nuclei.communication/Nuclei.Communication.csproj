@@ -198,6 +198,7 @@
     <Compile Include="IProtocolVersionMetaData.cs" />
     <Compile Include="IProvideLocalConnectionInformation.cs" />
     <Compile Include="IStoreInformationForActiveChannels.cs" />
+    <Compile Include="ITypeMetaData.cs" />
     <Compile Include="NamedPipeChannelTemplate.cs" />
     <Compile Include="ProtocolInformation.cs" />
     <Compile Include="Protocol\BuildSendingEndpoint.cs" />

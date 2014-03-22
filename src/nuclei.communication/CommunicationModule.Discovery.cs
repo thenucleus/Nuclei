@@ -145,7 +145,7 @@ namespace Nuclei.Communication
                         EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
                         channelTemplate,
                         c.Resolve<Func<Version, ChannelTemplate, Tuple<Type, IVersionedDiscoveryEndpoint>>>(),
-                        () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IDiscoveryChannelTemplate), channelTemplate)),
+                        () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
                         uri => s_BootstrapChannelUri = uri);
                 })
                 .Keyed<IBootstrapChannel>(ChannelTemplate.NamedPipe)
@@ -161,7 +161,7 @@ namespace Nuclei.Communication
                         EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
                         channelTemplate,
                         c.Resolve<Func<Version, ChannelTemplate, Tuple<Type, IVersionedDiscoveryEndpoint>>>(),
-                        () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IDiscoveryChannelTemplate), channelTemplate)),
+                        () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
                         uri => s_BootstrapChannelUri = uri);
                 })
                 .Keyed<IBootstrapChannel>(ChannelTemplate.TcpIP)
@@ -173,7 +173,7 @@ namespace Nuclei.Communication
         {
             builder.Register(c => new LocalConnectionInformation(
                     EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                    s_BootstrapChannelUri))
+                    () => s_BootstrapChannelUri))
                 .As<IProvideLocalConnectionInformation>();
         }
 
@@ -198,17 +198,20 @@ namespace Nuclei.Communication
                             // This is based on the idea that if we change the
                             // XML config format then we have to increment at least
                             // the minor version number.
+                            Type selectedType = null;
                             IVersionedDiscoveryEndpoint selectedEndpoint = null;
                             foreach (var endpoint in allEndpointsLazy)
                             {
                                 var storedVersion = endpoint.Metadata["Version"] as Version;
+                                var storedType = endpoint.Metadata["RegisteredType"] as Type;
                                 if (storedVersion.Equals(version))
                                 {
                                     selectedEndpoint = endpoint.Value;
+                                    selectedType = storedType;
                                 }
                             }
 
-                            return new Tuple<Type, IVersionedDiscoveryEndpoint>(selectedEndpoint.GetType(), selectedEndpoint);
+                            return new Tuple<Type, IVersionedDiscoveryEndpoint>(selectedType, selectedEndpoint);
                         };
 
                     return selector;
