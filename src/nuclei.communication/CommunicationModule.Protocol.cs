@@ -402,12 +402,14 @@ namespace Nuclei.Communication
         private static void RegisterProtocolChannelTemplates(ContainerBuilder builder)
         {
             builder.Register(c => new NamedPipeProtocolChannelTemplate(
-                    c.Resolve<IConfiguration>()))
+                    c.Resolve<IConfiguration>(),
+                    c.Resolve<ProtocolDataContractResolver>()))
                 .As<IChannelTemplate>()
                 .Keyed<IProtocolChannelTemplate>(ChannelTemplate.NamedPipe);
 
             builder.Register(c => new TcpProtocolChannelTemplate(
-                    c.Resolve<IConfiguration>()))
+                    c.Resolve<IConfiguration>(),
+                    c.Resolve<ProtocolDataContractResolver>()))
                 .As<IChannelTemplate>()
                 .Keyed<IProtocolChannelTemplate>(ChannelTemplate.TcpIP);
         }
@@ -453,6 +455,11 @@ namespace Nuclei.Communication
                        return func;
                    })
                .SingleInstance();
+        }
+
+        private static void RegisterDataContractResolver(ContainerBuilder builder)
+        {
+            builder.Register(c => new ProtocolDataContractResolver());
         }
     }
 }

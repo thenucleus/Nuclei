@@ -214,6 +214,7 @@
     <Compile Include="CommunicationConfigurationKeys.cs" />
     <Compile Include="CommunicationConstants.cs" />
     <Compile Include="Protocol\ProtocolChannel.cs" />
+    <Compile Include="Protocol\ProtocolDataContractResolver.cs" />
     <Compile Include="Protocol\ProtocolLayer.cs" />
     <Compile Include="CommunicationLayerStarter.cs" />
     <Compile Include="CommunicationModule.cs" />

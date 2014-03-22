@@ -64,6 +64,7 @@ namespace Nuclei.Communication
                         return new RestoringMessageSendingEndpoint(
                             uri,
                             template,
+                            c.Resolve<ProtocolDataContractResolver>(),
                             c.Resolve<IEnumerable<IConvertCommunicationMessages>>(),
                             c.Resolve<SystemDiagnostics>());
                     })

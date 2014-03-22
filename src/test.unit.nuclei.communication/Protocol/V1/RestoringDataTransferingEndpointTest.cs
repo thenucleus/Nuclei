@@ -69,7 +69,7 @@ namespace Nuclei.Communication.Protocol.V1
                 }
 
                 var localAddress = string.Format("{0}/{1}", uri.OriginalString, address);
-                var template = new NamedPipeProtocolChannelTemplate(configuration.Object);
+                var template = new NamedPipeProtocolChannelTemplate(configuration.Object, new ProtocolDataContractResolver());
                 var sender = new RestoringDataTransferingEndpoint(
                     new Uri(localAddress),
                     template,
@@ -137,7 +137,7 @@ namespace Nuclei.Communication.Protocol.V1
                 }
 
                 var localAddress = string.Format("{0}/{1}", uri.OriginalString, address);
-                var template = new NamedPipeProtocolChannelTemplate(configuration.Object);
+                var template = new NamedPipeProtocolChannelTemplate(configuration.Object, new ProtocolDataContractResolver());
                 var sender = new RestoringDataTransferingEndpoint(
                     new Uri(localAddress),
                     template,

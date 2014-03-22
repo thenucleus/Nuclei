@@ -82,7 +82,11 @@ namespace Nuclei.Communication.Protocol.V1
 
             var endpoint = new EndpointAddress(address);
             var binding = template.GenerateDataBinding();
+
+            // No need to put a DataContractResolver on this factory because the message type
+            // for this endpoint is completely known.
             m_Factory = new ChannelFactory<IDataReceivingEndpointProxy>(binding, endpoint);
+
             m_Diagnostics = systemDiagnostics;
         }
 

@@ -8,8 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
@@ -67,6 +69,7 @@ namespace Nuclei.Communication.Protocol.V1
         /// </summary>
         /// <param name="address">The address of the remote endpoint.</param>
         /// <param name="template">The template that is used to create the binding used to connect to the remote endpoint.</param>
+        /// <param name="dataContractResolver">The <see cref="DataContractResolver"/> that is used for the endpoint.</param>
         /// <param name="messageConverters">The collection that contains all the message converters.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostic methods for the system.</param>
         /// <exception cref="ArgumentNullException">
@@ -74,6 +77,9 @@ namespace Nuclei.Communication.Protocol.V1
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="template"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="dataContractResolver"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="messageConverters"/> is <see langword="null" />.
@@ -84,12 +90,14 @@ namespace Nuclei.Communication.Protocol.V1
         public RestoringMessageSendingEndpoint(
             Uri address,
             IProtocolChannelTemplate template,
+            ProtocolDataContractResolver dataContractResolver,
             IEnumerable<IConvertCommunicationMessages> messageConverters,
             SystemDiagnostics systemDiagnostics)
         {
             {
                 Lokad.Enforce.Argument(() => address);
                 Lokad.Enforce.Argument(() => template);
+                Lokad.Enforce.Argument(() => dataContractResolver);
                 Lokad.Enforce.Argument(() => messageConverters);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
@@ -97,6 +105,18 @@ namespace Nuclei.Communication.Protocol.V1
             var endpoint = new EndpointAddress(address);
             var binding = template.GenerateMessageBinding();
             m_Factory = new ChannelFactory<IMessageReceivingEndpointProxy>(binding, endpoint);
+            foreach (var operation in m_Factory.Endpoint.Contract.Operations)
+            {
+                var behavior = operation.Behaviors.Find<DataContractSerializerOperationBehavior>();
+                if (behavior == null)
+                {
+                    behavior = new DataContractSerializerOperationBehavior(operation);
+                    operation.Behaviors.Add(behavior);
+                }
+
+                behavior.DataContractResolver = dataContractResolver;
+            }
+
             m_Diagnostics = systemDiagnostics;
 
             foreach (var converter in messageConverters)

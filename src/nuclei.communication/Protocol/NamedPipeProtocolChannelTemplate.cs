@@ -6,6 +6,7 @@
 
 using System;
 using System.Globalization;
+using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -20,15 +21,29 @@ namespace Nuclei.Communication.Protocol
     internal sealed class NamedPipeProtocolChannelTemplate : NamedPipeChannelTemplate, IProtocolChannelTemplate
     {
         /// <summary>
+        /// The data contract resolver that is used for the endpoints.
+        /// </summary>
+        private readonly ProtocolDataContractResolver m_DataContractResolver;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="NamedPipeProtocolChannelTemplate"/> class.
         /// </summary>
         /// <param name="namedPipeConfiguration">The configuration for the WCF named pipe channel.</param>
+        /// <param name="dataContractResolver">The <see cref="DataContractResolver"/> that is used for the endpoints.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="namedPipeConfiguration"/> is <see langword="null" />.
         /// </exception>
-        public NamedPipeProtocolChannelTemplate(IConfiguration namedPipeConfiguration)
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="dataContractResolver"/> is <see langword="null" />.
+        /// </exception>
+        public NamedPipeProtocolChannelTemplate(IConfiguration namedPipeConfiguration, ProtocolDataContractResolver dataContractResolver)
             : base(namedPipeConfiguration)
         {
+            {
+                Lokad.Enforce.Argument(() => dataContractResolver);
+            }
+
+            m_DataContractResolver = dataContractResolver;
         }
 
         /// <summary>
@@ -97,6 +112,18 @@ namespace Nuclei.Communication.Protocol
         public ServiceEndpoint AttachMessageEndpoint(ServiceHost host, Type implementedContract, EndpointId localEndpoint)
         {
             var endpoint = host.AddServiceEndpoint(implementedContract, GenerateMessageBinding(), GenerateNewMessageAddress());
+            foreach (var operation in endpoint.Contract.Operations)
+            {
+                var behavior = operation.Behaviors.Find<DataContractSerializerOperationBehavior>();
+                if (behavior == null)
+                {
+                    behavior = new DataContractSerializerOperationBehavior(operation);
+                    operation.Behaviors.Add(behavior);
+                }
+
+                behavior.DataContractResolver = m_DataContractResolver;
+            }
+
             return endpoint;
         }
 
@@ -115,7 +142,10 @@ namespace Nuclei.Communication.Protocol
         /// <returns>The newly attached endpoint.</returns>
         public ServiceEndpoint AttachDataEndpoint(ServiceHost host, Type implementedContract)
         {
-            return host.AddServiceEndpoint(implementedContract, GenerateDataBinding(), GenerateNewDataAddress());
+            // No need for a DataContractResolver on the data channel because there will not be any
+            // unknown types
+            var endpoint = host.AddServiceEndpoint(implementedContract, GenerateDataBinding(), GenerateNewDataAddress());
+            return endpoint;
         }
 
         /// <summary>
