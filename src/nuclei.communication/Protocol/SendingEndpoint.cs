@@ -24,8 +24,8 @@ namespace Nuclei.Communication.Protocol
         /// The collection that maps between the endpoint ID and the channel that is used to
         /// send messages to the given endpoint.
         /// </summary>
-        private readonly Dictionary<EndpointId, Tuple<IMessageSendingEndpoint, IDataTransferingEndpoint>> m_EndpointMap
-            = new Dictionary<EndpointId, Tuple<IMessageSendingEndpoint, IDataTransferingEndpoint>>();
+        private readonly Dictionary<ProtocolInformation, Tuple<IMessageSendingEndpoint, IDataTransferingEndpoint>> m_EndpointMap
+            = new Dictionary<ProtocolInformation, Tuple<IMessageSendingEndpoint, IDataTransferingEndpoint>>();
 
         /// <summary>
         /// The endpoint ID of the local endpoint.
@@ -35,12 +35,12 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// The function that is used to retrieve the message sending channel for a given endpoint.
         /// </summary>
-        private readonly Func<EndpointId, IMessageSendingEndpoint> m_MessageSenderBuilder;
+        private readonly Func<ProtocolInformation, IMessageSendingEndpoint> m_MessageSenderBuilder;
 
         /// <summary>
         /// The function that is used to retrieve the data sending channel for a given endpoint.
         /// </summary>
-        private readonly Func<EndpointId, IDataTransferingEndpoint> m_DataSenderBuilder;
+        private readonly Func<ProtocolInformation, IDataTransferingEndpoint> m_DataSenderBuilder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SendingEndpoint"/> class.
@@ -63,8 +63,8 @@ namespace Nuclei.Communication.Protocol
         /// </exception>
         public SendingEndpoint(
             EndpointId localEndpoint,
-            Func<EndpointId, IMessageSendingEndpoint> messageSenderBuilder,
-            Func<EndpointId, IDataTransferingEndpoint> dataSenderBuilder)
+            Func<ProtocolInformation, IMessageSendingEndpoint> messageSenderBuilder,
+            Func<ProtocolInformation, IDataTransferingEndpoint> dataSenderBuilder)
         {
             {
                 Lokad.Enforce.Argument(() => localEndpoint);
@@ -83,7 +83,7 @@ namespace Nuclei.Communication.Protocol
         /// <returns>
         /// The collection of known endpoints.
         /// </returns>
-        public IEnumerable<EndpointId> KnownEndpoints()
+        public IEnumerable<ProtocolInformation> KnownEndpoints()
         {
             return m_EndpointMap.Keys;
         }
@@ -99,7 +99,7 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="message"/> is <see langword="null" />.
         /// </exception>
-        public void Send(EndpointId endpoint, ICommunicationMessage message)
+        public void Send(ProtocolInformation endpoint, ICommunicationMessage message)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
@@ -110,7 +110,7 @@ namespace Nuclei.Communication.Protocol
             channel.Send(message);
         }
 
-        private IMessageSendingEndpoint MessageChannelFor(EndpointId endpoint)
+        private IMessageSendingEndpoint MessageChannelFor(ProtocolInformation endpoint)
         {
             lock (m_Lock)
             {
@@ -124,16 +124,14 @@ namespace Nuclei.Communication.Protocol
                     var messageChannel = m_MessageSenderBuilder(endpoint);
 
                     var tuple = m_EndpointMap[endpoint];
-                    m_EndpointMap[endpoint] = new Tuple<IMessageSendingEndpoint, IDataTransferingEndpoint>(
-                        messageChannel,
-                        tuple.Item2);
+                    m_EndpointMap[endpoint] = new Tuple<IMessageSendingEndpoint, IDataTransferingEndpoint>(messageChannel, tuple.Item2);
                 }
 
                 return m_EndpointMap[endpoint].Item1;
             }
         }
 
-        private IDataTransferingEndpoint DataChannelFor(EndpointId endpoint)
+        private IDataTransferingEndpoint DataChannelFor(ProtocolInformation endpoint)
         {
             lock (m_Lock)
             {
@@ -147,9 +145,7 @@ namespace Nuclei.Communication.Protocol
                     var dataChannel = m_DataSenderBuilder(endpoint);
 
                     var tuple = m_EndpointMap[endpoint];
-                    m_EndpointMap[endpoint] = new Tuple<IMessageSendingEndpoint, IDataTransferingEndpoint>(
-                        tuple.Item1,
-                        dataChannel);
+                    m_EndpointMap[endpoint] = new Tuple<IMessageSendingEndpoint, IDataTransferingEndpoint>(tuple.Item1, dataChannel);
                 }
 
                 return m_EndpointMap[endpoint].Item2;
@@ -167,7 +163,7 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="data"/> is <see langword="null" />.
         /// </exception>
-        public void Send(EndpointId endpoint, Stream data)
+        public void Send(ProtocolInformation endpoint, Stream data)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
@@ -178,7 +174,6 @@ namespace Nuclei.Communication.Protocol
             var msg = new DataTransferMessage
                 {
                     SendingEndpoint = m_LocalEndpoint,
-                    ReceivingEndpoint = endpoint,
                     Data = data,
                 };
             channel.Send(msg);
@@ -188,7 +183,7 @@ namespace Nuclei.Communication.Protocol
         /// Closes the channel that connects to the given endpoint.
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint to which the connection should be closed.</param>
-        public void CloseChannelTo(EndpointId endpoint)
+        public void CloseChannelTo(ProtocolInformation endpoint)
         {
             lock (m_Lock)
             {

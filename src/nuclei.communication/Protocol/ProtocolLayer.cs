@@ -12,7 +12,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Properties;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
@@ -72,7 +71,6 @@ namespace Nuclei.Communication.Protocol
         /// Initializes a new instance of the <see cref="ProtocolLayer"/> class.
         /// </summary>
         /// <param name="endpoints">The collection that contains all the potential endpoints.</param>
-        /// <param name="discoverySources">The object that handles the discovery of remote endpoints.</param>
         /// <param name="channelBuilder">
         ///     The function that returns a tuple of a <see cref="IProtocolChannel"/> and a <see cref="IDirectIncomingMessages"/>
         ///     based on the type of the <see cref="IChannelTemplate"/> that is related to the channel.
@@ -81,9 +79,6 @@ namespace Nuclei.Communication.Protocol
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoints"/> is <see langword="null" />.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="discoverySources"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="channelBuilder"/> is <see langword="null" />.
@@ -96,14 +91,12 @@ namespace Nuclei.Communication.Protocol
         /// </exception>
         public ProtocolLayer(
             IStoreInformationAboutEndpoints endpoints,
-            IEnumerable<IDiscoverOtherServices> discoverySources,
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder,
             IEnumerable<ChannelTemplate> channelTypesToUse,
             SystemDiagnostics systemDiagnostics)
         {
             {
                 Lokad.Enforce.Argument(() => endpoints);
-                Lokad.Enforce.Argument(() => discoverySources);
                 Lokad.Enforce.Argument(() => channelBuilder);
                 Lokad.Enforce.Argument(() => channelTypesToUse);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
@@ -140,9 +133,15 @@ namespace Nuclei.Communication.Protocol
 
             RaiseOnEndpointDisconnected(args.Endpoint);
 
+            var connection = RetrieveEndpointConnection(args.Endpoint);
+            if (connection == null)
+            {
+                return;
+            }
+
             foreach (var pair in m_OpenConnections)
             {
-                pair.Value.Item1.EndpointDisconnected(args.Endpoint);
+                pair.Value.Item1.EndpointDisconnected(connection.ProtocolInformation);
                 pair.Value.Item2.OnEndpointDisconnected(args.Endpoint);
             }
         }
@@ -219,7 +218,7 @@ namespace Nuclei.Communication.Protocol
                 return;
             }
 
-            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "CommunicationLayer: Signing in"))
+            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "ProtocolLayer: Signing in"))
             {
                 // Always open our own channels so that the message processors and the handshake protocol
                 // are all created and initialized
@@ -301,7 +300,7 @@ namespace Nuclei.Communication.Protocol
                 return;
             }
 
-            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "CommunicationLayer: signing out"))
+            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "ProtocolLayer: signing out"))
             {
                 // There may be a race condition here. We could be disconnecting while
                 // others may be trying to connect, so we might have to put a 
@@ -382,6 +381,36 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Sends the given message to the specified endpoint.
         /// </summary>
+        /// <param name="connection">The connection information for the endpoint to which the message has to be send.</param>
+        /// <param name="message">The message that has to be send.</param>
+        public void SendMessageToUnregisteredEndpoint(EndpointInformation connection, ICommunicationMessage message)
+        {
+            {
+                Lokad.Enforce.Argument(() => connection);
+                Lokad.Enforce.Argument(() => message);
+            }
+
+            using (m_Diagnostics.Profiler.Measure(
+                CommunicationConstants.TimingGroup,
+                "ProtocolLayer: sending message without waiting for response"))
+            {
+                var channel = ChannelFor(connection);
+                m_Diagnostics.Log(
+                    LevelToLog.Trace,
+                    CommunicationConstants.DefaultLogTextPrefix,
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        "Sending msg of type {0} to endpoint ({1}) without waiting for the response.",
+                        message.GetType(),
+                        connection.Id));
+
+                channel.Send(connection.ProtocolInformation, message);
+            }
+        }
+
+        /// <summary>
+        /// Sends the given message to the specified endpoint.
+        /// </summary>
         /// <param name="endpoint">The endpoint to which the message has to be send.</param>
         /// <param name="message">The message that has to be send.</param>
         /// <exception cref="ArgumentNullException">
@@ -405,28 +434,13 @@ namespace Nuclei.Communication.Protocol
                 Lokad.Enforce.Argument(() => message);
             }
 
-            using (m_Diagnostics.Profiler.Measure(
-                CommunicationConstants.TimingGroup, 
-                "CommunicationLayer: sending message without waiting for response"))
+            var connection = RetrieveEndpointConnection(endpoint);
+            if (connection == null)
             {
-                var connection = RetrieveEndpointConnection(endpoint);
-                if (connection == null)
-                {
-                    throw new EndpointNotContactableException(endpoint);
-                }
-
-                var channel = ChannelFor(connection);
-                m_Diagnostics.Log(
-                    LevelToLog.Trace,
-                    CommunicationConstants.DefaultLogTextPrefix,
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Sending msg of type {0} to endpoint ({1}) without waiting for the response.",
-                        message.GetType(),
-                        endpoint));
-
-                channel.Send(endpoint, message);
+                throw new EndpointNotContactableException(endpoint);
             }
+
+            SendMessageToUnregisteredEndpoint(connection, message);
         }
 
         private IProtocolChannel ChannelFor(EndpointInformation connection)
@@ -449,6 +463,41 @@ namespace Nuclei.Communication.Protocol
             var pair = ChannelInformationForType(template);
             Debug.Assert(pair != null, "The channel should exist.");
             return pair;
+        }
+
+        /// <summary>
+        /// Sends the given message to the specified endpoint and returns a task that
+        /// will eventually contain the return message.
+        /// </summary>
+        /// <param name="connection">The connection information for the endpoint to which the message has to be send.</param>
+        /// <param name="message">The message that has to be send.</param>
+        /// <returns>A task object that will eventually contain the response message.</returns>
+        public Task<ICommunicationMessage> SendMessageToUnregisteredEndpointAndWaitForResponse(
+            EndpointInformation connection, 
+            ICommunicationMessage message)
+        {
+            {
+                Lokad.Enforce.Argument(() => connection);
+                Lokad.Enforce.Argument(() => message);
+            }
+
+            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "ProtocolLayer: sending message and waiting for response"))
+            {
+                var pair = ChannelPairFor(connection);
+                var result = pair.Item2.ForwardResponse(connection.Id, message.Id);
+
+                m_Diagnostics.Log(
+                    LevelToLog.Trace,
+                    CommunicationConstants.DefaultLogTextPrefix,
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        "Sending msg of type {0} to endpoint ({1}) while waiting for the response.",
+                        message.GetType(),
+                        connection));
+
+                pair.Item1.Send(connection.ProtocolInformation, message);
+                return result;
+            }
         }
 
         /// <summary>
@@ -479,29 +528,13 @@ namespace Nuclei.Communication.Protocol
                 Lokad.Enforce.Argument(() => message);
             }
 
-            using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "CommunicationLayer: sending message and waiting for response"))
+            var connection = RetrieveEndpointConnection(endpoint);
+            if (connection == null)
             {
-                var connection = RetrieveEndpointConnection(endpoint);
-                if (connection == null)
-                {
-                    throw new EndpointNotContactableException(endpoint);
-                }
-
-                var pair = ChannelPairFor(connection);
-                var result = pair.Item2.ForwardResponse(endpoint, message.Id);
-
-                m_Diagnostics.Log(
-                    LevelToLog.Trace,
-                    CommunicationConstants.DefaultLogTextPrefix,
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Sending msg of type {0} to endpoint ({1}) while waiting for the response.",
-                        message.GetType(),
-                        endpoint));
-
-                pair.Item1.Send(endpoint, message);
-                return result;
+                throw new EndpointNotContactableException(endpoint);
             }
+
+            return SendMessageToUnregisteredEndpointAndWaitForResponse(connection, message);
         }
 
         /// <summary>
@@ -531,7 +564,7 @@ namespace Nuclei.Communication.Protocol
             }
 
             var channel = ChannelFor(connection);
-            return channel.TransferData(receivingEndpoint, filePath, token, scheduler);
+            return channel.TransferData(connection.ProtocolInformation, filePath, token, scheduler);
         }
 
         /// <summary>

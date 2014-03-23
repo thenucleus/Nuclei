@@ -23,6 +23,11 @@ namespace Nuclei.Communication.Protocol
         public void SendMessageToUnknownReceiver()
         {
             var endpointId = new EndpointId("id");
+            var endpointInfo = new ProtocolInformation(
+                ProtocolVersions.V1,
+                new Uri("http://localhost/messages"),
+                new Uri("http://localhost/data"));
+
             var msg = new EndpointDisconnectMessage(endpointId);
             var messageProxy = new Mock<IMessageSendingEndpoint>();
             {
@@ -37,11 +42,11 @@ namespace Nuclei.Communication.Protocol
             }
 
             var localEndpoint = new EndpointId("local");
-            Func<EndpointId, IMessageSendingEndpoint> builder = id => messageProxy.Object;
-            Func<EndpointId, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
+            Func<ProtocolInformation, IMessageSendingEndpoint> builder = id => messageProxy.Object;
+            Func<ProtocolInformation, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
             var sender = new SendingEndpoint(localEndpoint, builder, dataBuilder);
 
-            sender.Send(endpointId, msg);
+            sender.Send(endpointInfo, msg);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
             dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>()), Times.Never());
         }
@@ -50,6 +55,11 @@ namespace Nuclei.Communication.Protocol
         public void SendMessageToKnownReceiver()
         {
             var endpointId = new EndpointId("id");
+            var endpointInfo = new ProtocolInformation(
+                ProtocolVersions.V1,
+                new Uri("http://localhost/messages"),
+                new Uri("http://localhost/data"));
+
             var msg = new EndpointDisconnectMessage(endpointId);
             var messageProxy = new Mock<IMessageSendingEndpoint>();
             {
@@ -65,16 +75,16 @@ namespace Nuclei.Communication.Protocol
             }
 
             var localEndpoint = new EndpointId("local");
-            Func<EndpointId, IMessageSendingEndpoint> builder = id => messageProxy.Object;
-            Func<EndpointId, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
+            Func<ProtocolInformation, IMessageSendingEndpoint> builder = id => messageProxy.Object;
+            Func<ProtocolInformation, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
             var sender = new SendingEndpoint(localEndpoint, builder, dataBuilder);
 
-            sender.Send(endpointId, msg);
+            sender.Send(endpointInfo, msg);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
             messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>()), Times.Exactly(1));
             dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>()), Times.Never());
 
-            sender.Send(endpointId, msg);
+            sender.Send(endpointInfo, msg);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
             messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>()), Times.Exactly(2));
             dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>()), Times.Never());
@@ -90,7 +100,10 @@ namespace Nuclei.Communication.Protocol
             data.Position = 0;
 
             var localEndpoint = new EndpointId("local");
-            var endpointId = new EndpointId("id");
+            var endpointInfo = new ProtocolInformation(
+                ProtocolVersions.V1,
+                new Uri("http://localhost/messages"),
+                new Uri("http://localhost/data"));
             var messageProxy = new Mock<IMessageSendingEndpoint>();
             {
                 messageProxy.Setup(p => p.Send(It.IsAny<ICommunicationMessage>()))
@@ -104,17 +117,16 @@ namespace Nuclei.Communication.Protocol
                         msg =>
                         {
                             Assert.AreSame(localEndpoint, msg.SendingEndpoint);
-                            Assert.AreSame(endpointId, msg.ReceivingEndpoint);
                             Assert.AreSame(data, msg.Data);
                         })
                     .Verifiable();
             }
 
-            Func<EndpointId, IMessageSendingEndpoint> builder = id => messageProxy.Object;
-            Func<EndpointId, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
+            Func<ProtocolInformation, IMessageSendingEndpoint> builder = id => messageProxy.Object;
+            Func<ProtocolInformation, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
             var sender = new SendingEndpoint(localEndpoint, builder, dataBuilder);
 
-            sender.Send(endpointId, data);
+            sender.Send(endpointInfo, data);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
             messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>()), Times.Never());
             dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>()), Times.Exactly(1));
@@ -130,7 +142,10 @@ namespace Nuclei.Communication.Protocol
             data.Position = 0;
 
             var localEndpoint = new EndpointId("local");
-            var endpointId = new EndpointId("id");
+            var endpointInfo = new ProtocolInformation(
+                ProtocolVersions.V1,
+                new Uri("http://localhost/messages"),
+                new Uri("http://localhost/data"));
             var messageProxy = new Mock<IMessageSendingEndpoint>();
             {
                 messageProxy.Setup(p => p.Send(It.IsAny<ICommunicationMessage>()))
@@ -144,22 +159,21 @@ namespace Nuclei.Communication.Protocol
                         msg =>
                         {
                             Assert.AreSame(localEndpoint, msg.SendingEndpoint);
-                            Assert.AreSame(endpointId, msg.ReceivingEndpoint);
                             Assert.AreSame(data, msg.Data);
                         })
                     .Verifiable();
             }
 
-            Func<EndpointId, IMessageSendingEndpoint> builder = id => messageProxy.Object;
-            Func<EndpointId, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
+            Func<ProtocolInformation, IMessageSendingEndpoint> builder = id => messageProxy.Object;
+            Func<ProtocolInformation, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
             var sender = new SendingEndpoint(localEndpoint, builder, dataBuilder);
 
-            sender.Send(endpointId, data);
+            sender.Send(endpointInfo, data);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
             messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>()), Times.Never());
             dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>()), Times.Exactly(1));
 
-            sender.Send(endpointId, data);
+            sender.Send(endpointInfo, data);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
             messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>()), Times.Never());
             dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>()), Times.Exactly(2));
@@ -169,6 +183,10 @@ namespace Nuclei.Communication.Protocol
         public void CloseChannelTo()
         {
             var endpointId = new EndpointId("id");
+            var endpointInfo = new ProtocolInformation(
+                ProtocolVersions.V1,
+                new Uri("http://localhost/messages"),
+                new Uri("http://localhost/data"));
             var msg = new EndpointDisconnectMessage(endpointId);
             var messageProxy = new Mock<IMessageSendingEndpoint>();
             var messageDisposable = messageProxy.As<IDisposable>();
@@ -177,14 +195,14 @@ namespace Nuclei.Communication.Protocol
             var dataDisposable = dataProxy.As<IDisposable>();
 
             var localEndpoint = new EndpointId("local");
-            Func<EndpointId, IMessageSendingEndpoint> messageBuilder = id => messageProxy.Object;
-            Func<EndpointId, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
+            Func<ProtocolInformation, IMessageSendingEndpoint> messageBuilder = id => messageProxy.Object;
+            Func<ProtocolInformation, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
             var sender = new SendingEndpoint(localEndpoint, messageBuilder, dataBuilder);
 
-            sender.Send(endpointId, msg);
+            sender.Send(endpointInfo, msg);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
 
-            sender.CloseChannelTo(endpointId);
+            sender.CloseChannelTo(endpointInfo);
             Assert.AreEqual(0, sender.KnownEndpoints().Count());
         }
     }

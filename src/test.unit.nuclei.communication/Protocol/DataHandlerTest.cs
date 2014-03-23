@@ -43,11 +43,9 @@ namespace Nuclei.Communication.Protocol
             writer.Flush();
             data.Position = 0;
 
-            var receivingEndpoint = new EndpointId("receivingEndpoint");
             var msg = new DataTransferMessage 
                 {
                     SendingEndpoint = sendingEndpoint,
-                    ReceivingEndpoint = receivingEndpoint,
                     Data = data,
                 };
             handler.ProcessData(msg);

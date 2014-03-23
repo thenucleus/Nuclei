@@ -308,9 +308,8 @@ namespace Nuclei.Communication.Protocol
         /// <param name="information">The connection information for the endpoint.</param>
         private void InitiateHandshakeWith(EndpointInformation information)
         {
-            var connectionInfo = m_Layer.LocalConnectionFor(
-                information.ProtocolInformation.Version, 
-                information.ProtocolInformation.MessageAddress.ToChannelTemplate());
+            var template = information.ProtocolInformation.MessageAddress.ToChannelTemplate();
+            var connectionInfo = m_Layer.LocalConnectionFor(information.ProtocolInformation.Version, template);
             if (connectionInfo != null)
             {
                 lock (m_Lock)
@@ -324,13 +323,13 @@ namespace Nuclei.Communication.Protocol
 
                         var message = new EndpointConnectMessage(
                             m_Layer.Id,
-                            new DiscoveryInformation(m_DiscoveryChannel.EntryChannel), 
+                            new DiscoveryInformation(m_DiscoveryChannel.EntryChannel(template)), 
                             new ProtocolInformation(
                                 information.ProtocolInformation.Version,
                                 connectionInfo.Item2,
                                 connectionInfo.Item3), 
                             m_Descriptions.ToStorage());
-                        var task = m_Layer.SendMessageAndWaitForResponse(information.Id, message);
+                        var task = m_Layer.SendMessageToUnregisteredEndpointAndWaitForResponse(information, message);
                         task.ContinueWith(HandleResponseToConnectMessage, TaskContinuationOptions.ExecuteSynchronously);
                     }
                 }
@@ -416,14 +415,14 @@ namespace Nuclei.Communication.Protocol
                 if (!AllowConnection(connection.ProtocolInformation.Version, information))
                 {
                     var failMsg = new FailureMessage(m_Layer.Id, messageId);
-                    m_Layer.SendMessageTo(connection.Id, failMsg);
+                    m_Layer.SendMessageToUnregisteredEndpoint(connection, failMsg);
 
                     RemoveEndpoint(connection.Id);
                     return;
                 }
 
                 var successMessage = new SuccessMessage(m_Layer.Id, messageId);
-                m_Layer.SendMessageTo(connection.Id, successMessage);
+                m_Layer.SendMessageToUnregisteredEndpoint(connection, successMessage);
                 tickList.HaveSendConnectResponse = true;
 
                 m_PotentialEndpoints.TryStartApproval(connection.Id, information);

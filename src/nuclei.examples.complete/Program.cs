@@ -52,6 +52,11 @@ namespace Nuclei.Examples.Complete
         /// </summary>
         private static IContainer s_Container;
 
+        /// <summary>
+        /// The application controller.
+        /// </summary>
+        private static IFormTheApplicationCenter s_Center;
+
         [STAThread]
         [SuppressMessage("Microsoft.StyleCop.CSharp.MaintainabilityRules", "SA1400:AccessModifierMustBeDeclared",
             Justification = "Access modifiers should not be declared on the entry point for a command line application. See FxCop.")]
@@ -125,8 +130,10 @@ namespace Nuclei.Examples.Complete
                 return;
             }
 
+            context.ThreadExit += (s, e) => s_Container.Dispose();
             var allowChannelDiscovery = (hostIdText == null) || (channelUriText == null);
             s_Container = DependencyInjection.CreateContainer(context, communicationSubjects, allowChannelDiscovery);
+            s_Center = s_Container.Resolve<IFormTheApplicationCenter>();
 
             if (!allowChannelDiscovery)
             {

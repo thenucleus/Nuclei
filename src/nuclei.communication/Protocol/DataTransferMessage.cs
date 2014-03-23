@@ -26,16 +26,6 @@ namespace Nuclei.Communication.Protocol
         }
 
         /// <summary>
-        /// Gets or sets the ID of the receiving endpoint.
-        /// </summary>
-        [MessageHeader]
-        public EndpointId ReceivingEndpoint
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
         /// Gets or sets the data stream.
         /// </summary>
         [MessageBodyMember]

@@ -40,7 +40,6 @@ namespace Nuclei.Communication.Protocol
         public void LocalConnectionPointForVersionWithUnknownVersion()
         {
             var id = new EndpointId("a");
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
             var template = new Mock<IProtocolChannelTemplate>();
 
             var host = new Mock<IHoldServiceConnections>();
@@ -60,7 +59,6 @@ namespace Nuclei.Communication.Protocol
 
             var channel = new ProtocolChannel(
                 id,
-                endpoints.Object,
                 template.Object,
                 hostBuilder,
                 messageReceiverBuilder,
@@ -77,7 +75,6 @@ namespace Nuclei.Communication.Protocol
         public void OpenChannel()
         {
             var id = new EndpointId("a");
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
             var template = new Mock<IProtocolChannelTemplate>();
 
             var messageUri = new Uri("http://localhost/messages/invalid");
@@ -115,7 +112,6 @@ namespace Nuclei.Communication.Protocol
 
             var channel = new ProtocolChannel(
                 id,
-                endpoints.Object,
                 template.Object,
                 hostBuilder,
                 messageReceiverBuilder,
@@ -143,22 +139,10 @@ namespace Nuclei.Communication.Protocol
         public void OpenChannelWithAlreadyOpenChannel()
         {
             var id = new EndpointId("a");
-            var remoteEndpoint = new EndpointId("b");
-            var endpointInfo = new EndpointInformation(
-                remoteEndpoint,
-                new DiscoveryInformation(new Uri("http://localhost/discovery")),
-                new ProtocolInformation(
-                    ProtocolVersions.V1,
-                    new Uri("http://localhost/messages"),
-                    new Uri("http://localhost/data")));
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            {
-                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
-                    .Returns(true);
-                endpoints.Setup(e => e.TryGetConnectionFor(It.IsAny<EndpointId>(), out endpointInfo))
-                    .Returns(true);
-            }
-
+            var endpointInfo = new ProtocolInformation(
+                ProtocolVersions.V1,
+                new Uri("http://localhost/messages"),
+                new Uri("http://localhost/data"));
             var template = new Mock<IProtocolChannelTemplate>();
 
             var messageUri = new Uri("http://localhost/messages/invalid");
@@ -191,11 +175,11 @@ namespace Nuclei.Communication.Protocol
             var sendingEndpoint = new Mock<ISendingEndpoint>();
             {
                 sendingEndpoint.Setup(e => e.KnownEndpoints())
-                    .Returns(new[] { remoteEndpoint });
-                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<EndpointId>()))
+                    .Returns(new[] { endpointInfo });
+                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()))
                     .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
+                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
                     .Verifiable();
             }
 
@@ -209,7 +193,6 @@ namespace Nuclei.Communication.Protocol
 
             var channel = new ProtocolChannel(
                 id,
-                endpoints.Object,
                 template.Object,
                 hostBuilder,
                 messageReceiverBuilder,
@@ -224,14 +207,14 @@ namespace Nuclei.Communication.Protocol
                  h => h.OpenChannel(It.IsAny<IReceiveInformationFromRemoteEndpoints>(), It.IsAny<Func<ServiceHost, ServiceEndpoint>>()),
                  Times.Exactly(2));
 
-            channel.Send(remoteEndpoint, msg);
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Send(endpointInfo, msg);
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
 
             channel.OpenChannel();
             host.Verify(h => h.CloseConnection(), Times.Exactly(2));
             sendingEndpoint.Verify(e => e.KnownEndpoints(), Times.Once());
-            sendingEndpoint.Verify(e => e.CloseChannelTo(It.IsAny<EndpointId>()), Times.Once());
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Exactly(2));
+            sendingEndpoint.Verify(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()), Times.Once());
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Exactly(2));
             host.Verify(
                  h => h.OpenChannel(It.IsAny<IReceiveInformationFromRemoteEndpoints>(), It.IsAny<Func<ServiceHost, ServiceEndpoint>>()),
                  Times.Exactly(4));
@@ -241,22 +224,13 @@ namespace Nuclei.Communication.Protocol
         public void CloseChannel()
         {
             var id = new EndpointId("a");
-            var remoteEndpoint = new EndpointId("b");
             var endpointInfo = new EndpointInformation(
-                remoteEndpoint,
+                new EndpointId("b"),
                 new DiscoveryInformation(new Uri("http://localhost/discovery")), 
                 new ProtocolInformation(
                     ProtocolVersions.V1, 
                     new Uri("http://localhost/messages"),
                     new Uri("http://localhost/data")));
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            {
-                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
-                    .Returns(true);
-                endpoints.Setup(e => e.TryGetConnectionFor(It.IsAny<EndpointId>(), out endpointInfo))
-                    .Returns(true);
-            }
-
             var template = new Mock<IProtocolChannelTemplate>();
 
             var messageUri = new Uri("http://localhost/messages/invalid");
@@ -289,11 +263,11 @@ namespace Nuclei.Communication.Protocol
             var sendingEndpoint = new Mock<ISendingEndpoint>();
             {
                 sendingEndpoint.Setup(e => e.KnownEndpoints())
-                    .Returns(new[] { remoteEndpoint });
-                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<EndpointId>()))
+                    .Returns(new[] { endpointInfo.ProtocolInformation });
+                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()))
                     .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
+                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
                     .Verifiable();
             }
 
@@ -307,7 +281,6 @@ namespace Nuclei.Communication.Protocol
 
             var channel = new ProtocolChannel(
                 id,
-                endpoints.Object,
                 template.Object,
                 hostBuilder,
                 messageReceiverBuilder,
@@ -324,21 +297,20 @@ namespace Nuclei.Communication.Protocol
                  h => h.OpenChannel(It.IsAny<IReceiveInformationFromRemoteEndpoints>(), It.IsAny<Func<ServiceHost, ServiceEndpoint>>()),
                  Times.Exactly(2));
 
-            channel.Send(remoteEndpoint, msg);
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Send(endpointInfo.ProtocolInformation, msg);
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
 
             channel.CloseChannel();
             host.Verify(h => h.CloseConnection(), Times.Exactly(2));
             sendingEndpoint.Verify(e => e.KnownEndpoints(), Times.Once());
-            sendingEndpoint.Verify(e => e.CloseChannelTo(It.IsAny<EndpointId>()), Times.Once());
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Exactly(2));
+            sendingEndpoint.Verify(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()), Times.Once());
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Exactly(2));
         }
 
         [Test]
         public void CloseChannelWithNeverOpenedChannel()
         {
             var id = new EndpointId("a");
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
             var template = new Mock<IProtocolChannelTemplate>();
 
             var messageUri = new Uri("http://localhost/messages/invalid");
@@ -367,15 +339,18 @@ namespace Nuclei.Communication.Protocol
             Func<Version, Tuple<Type, IDataPipe>> dataReceiverBuilder =
                 version => new Tuple<Type, IDataPipe>(typeof(IDataPipe), dataPipe.Object);
 
-            var remoteEndpoint = new EndpointId("b");
+            var endpointInfo = new ProtocolInformation(
+                ProtocolVersions.V1,
+                new Uri("http://localhost/messages"),
+                new Uri("http://localhost/data"));
             var sendingEndpoint = new Mock<ISendingEndpoint>();
             {
                 sendingEndpoint.Setup(e => e.KnownEndpoints())
-                    .Returns(new[] { remoteEndpoint });
-                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<EndpointId>()))
+                    .Returns(new[] { endpointInfo });
+                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()))
                     .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
+                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
                     .Verifiable();
             }
 
@@ -389,7 +364,6 @@ namespace Nuclei.Communication.Protocol
 
             var channel = new ProtocolChannel(
                 id,
-                endpoints.Object,
                 template.Object,
                 hostBuilder,
                 messageReceiverBuilder,
@@ -401,30 +375,18 @@ namespace Nuclei.Communication.Protocol
             channel.CloseChannel();
             host.Verify(h => h.CloseConnection(), Times.Never());
             sendingEndpoint.Verify(e => e.KnownEndpoints(), Times.Never());
-            sendingEndpoint.Verify(e => e.CloseChannelTo(It.IsAny<EndpointId>()), Times.Never());
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
+            sendingEndpoint.Verify(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()), Times.Never());
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Never());
         }
 
         [Test]
         public void EndpointDisconnectedWithOpenConnection()
         {
             var id = new EndpointId("a");
-            var remoteEndpoint = new EndpointId("b");
-            var endpointInfo = new EndpointInformation(
-                remoteEndpoint,
-                new DiscoveryInformation(new Uri("http://localhost/discovery")),
-                new ProtocolInformation(
-                    ProtocolVersions.V1,
-                    new Uri("http://localhost/messages"),
-                    new Uri("http://localhost/data")));
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            {
-                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
-                    .Returns(true);
-                endpoints.Setup(e => e.TryGetConnectionFor(It.IsAny<EndpointId>(), out endpointInfo))
-                    .Returns(true);
-            }
-
+            var endpointInfo = new ProtocolInformation(
+                ProtocolVersions.V1,
+                new Uri("http://localhost/messages"),
+                new Uri("http://localhost/data"));
             var template = new Mock<IProtocolChannelTemplate>();
 
             var messageUri = new Uri("http://localhost/messages/invalid");
@@ -457,95 +419,11 @@ namespace Nuclei.Communication.Protocol
             var sendingEndpoint = new Mock<ISendingEndpoint>();
             {
                 sendingEndpoint.Setup(e => e.KnownEndpoints())
-                    .Returns(new[] { remoteEndpoint });
-                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<EndpointId>()))
+                    .Returns(new[] { endpointInfo });
+                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()))
                     .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
-                    .Verifiable();
-            }
-
-            BuildSendingEndpoint senderBuilder = (endpoint, builder, endpointBuilder) => sendingEndpoint.Object;
-
-            var messageEndpoint = new Mock<IMessageSendingEndpoint>();
-            Func<Version, Uri, IMessageSendingEndpoint> versionedMessageSenderBuilder = (version, uri) => messageEndpoint.Object;
-
-            var dataEndpoint = new Mock<IDataTransferingEndpoint>();
-            Func<Version, Uri, IDataTransferingEndpoint> versionedDataSenderBuilder = (version, uri) => dataEndpoint.Object;
-
-            var channel = new ProtocolChannel(
-                id,
-                endpoints.Object,
-                template.Object,
-                hostBuilder,
-                messageReceiverBuilder,
-                dataReceiverBuilder,
-                senderBuilder,
-                versionedMessageSenderBuilder,
-                versionedDataSenderBuilder);
-
-            channel.OpenChannel();
-            var protocols = channel.LocalConnectionPoints().ToList();
-            Assert.AreEqual(1, protocols.Count());
-
-            channel.Send(remoteEndpoint, msg);
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
-
-            host.Verify(
-                 h => h.OpenChannel(It.IsAny<IReceiveInformationFromRemoteEndpoints>(), It.IsAny<Func<ServiceHost, ServiceEndpoint>>()),
-                 Times.Exactly(2));
-
-            channel.EndpointDisconnected(remoteEndpoint);
-            sendingEndpoint.Verify(s => s.CloseChannelTo(It.IsAny<EndpointId>()), Times.Once());
-        }
-
-        [Test]
-        public void EndpointDisconnectedWithUncontactableEndpoint()
-        {
-            var id = new EndpointId("a");
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            {
-                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
-                    .Returns(false);
-            }
-
-            var template = new Mock<IProtocolChannelTemplate>();
-
-            var messageUri = new Uri("http://localhost/messages/invalid");
-            var dataUri = new Uri("http://localhost/data/invalid");
-            var host = new Mock<IHoldServiceConnections>();
-            {
-                host.Setup(
-                    h =>
-                        h.OpenChannel(
-                            It.IsAny<IReceiveInformationFromRemoteEndpoints>(),
-                            It.IsAny<Func<ServiceHost, ServiceEndpoint>>()))
-                    .Returns<IReceiveInformationFromRemoteEndpoints, Func<ServiceHost, ServiceEndpoint>>(
-                        (r, f) => r is IMessagePipe ? messageUri : dataUri)
-                    .Verifiable();
-                host.Setup(h => h.CloseConnection())
-                    .Verifiable();
-            }
-
-            Func<IHoldServiceConnections> hostBuilder = () => host.Object;
-
-            var messagePipe = new Mock<IMessagePipe>();
-            Func<Version, Tuple<Type, IMessagePipe>> messageReceiverBuilder =
-                version => new Tuple<Type, IMessagePipe>(typeof(IMessagePipe), messagePipe.Object);
-
-            var dataPipe = new Mock<IDataPipe>();
-            Func<Version, Tuple<Type, IDataPipe>> dataReceiverBuilder =
-                version => new Tuple<Type, IDataPipe>(typeof(IDataPipe), dataPipe.Object);
-
-            var remoteEndpoint = new EndpointId("b");
-            var sendingEndpoint = new Mock<ISendingEndpoint>();
-            {
-                sendingEndpoint.Setup(e => e.KnownEndpoints())
-                    .Returns(new[] { remoteEndpoint });
-                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<EndpointId>()))
-                    .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
+                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
                     .Verifiable();
             }
 
@@ -559,7 +437,6 @@ namespace Nuclei.Communication.Protocol
 
             var channel = new ProtocolChannel(
                 id,
-                endpoints.Object,
                 template.Object,
                 hostBuilder,
                 messageReceiverBuilder,
@@ -572,34 +449,25 @@ namespace Nuclei.Communication.Protocol
             var protocols = channel.LocalConnectionPoints().ToList();
             Assert.AreEqual(1, protocols.Count());
 
+            channel.Send(endpointInfo, msg);
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+
             host.Verify(
                  h => h.OpenChannel(It.IsAny<IReceiveInformationFromRemoteEndpoints>(), It.IsAny<Func<ServiceHost, ServiceEndpoint>>()),
                  Times.Exactly(2));
 
-            channel.EndpointDisconnected(remoteEndpoint);
-            sendingEndpoint.Verify(s => s.CloseChannelTo(It.IsAny<EndpointId>()), Times.Never());
+            channel.EndpointDisconnected(endpointInfo);
+            sendingEndpoint.Verify(s => s.CloseChannelTo(It.IsAny<ProtocolInformation>()), Times.Once());
         }
 
         [Test]
         public void Send()
         {
             var id = new EndpointId("a");
-            var remoteEndpoint = new EndpointId("b");
-            var endpointInfo = new EndpointInformation(
-                remoteEndpoint,
-                new DiscoveryInformation(new Uri("http://localhost/discovery")), 
-                new ProtocolInformation(
-                    ProtocolVersions.V1,
-                    new Uri("http://localhost/messages"),
-                    new Uri("http://localhost/data")));
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            {
-                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
-                    .Returns(true);
-                endpoints.Setup(e => e.TryGetConnectionFor(It.IsAny<EndpointId>(), out endpointInfo))
-                    .Returns(true);
-            }
-
+            var endpointInfo = new ProtocolInformation(
+                ProtocolVersions.V1,
+                new Uri("http://localhost/messages"),
+                new Uri("http://localhost/data"));
             var template = new Mock<IProtocolChannelTemplate>();
 
             var messageUri = new Uri("http://localhost/messages/invalid");
@@ -632,89 +500,11 @@ namespace Nuclei.Communication.Protocol
             var sendingEndpoint = new Mock<ISendingEndpoint>();
             {
                 sendingEndpoint.Setup(e => e.KnownEndpoints())
-                    .Returns(new[] { remoteEndpoint });
-                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<EndpointId>()))
+                    .Returns(new[] { endpointInfo });
+                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()))
                     .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>((e, m) => Assert.AreSame(msg, m))
-                    .Verifiable();
-            }
-
-            BuildSendingEndpoint senderBuilder = (endpoint, builder, endpointBuilder) => sendingEndpoint.Object;
-
-            var messageEndpoint = new Mock<IMessageSendingEndpoint>();
-            Func<Version, Uri, IMessageSendingEndpoint> versionedMessageSenderBuilder = (version, uri) => messageEndpoint.Object;
-
-            var dataEndpoint = new Mock<IDataTransferingEndpoint>();
-            Func<Version, Uri, IDataTransferingEndpoint> versionedDataSenderBuilder = (version, uri) => dataEndpoint.Object;
-
-            var channel = new ProtocolChannel(
-                id,
-                endpoints.Object,
-                template.Object,
-                hostBuilder,
-                messageReceiverBuilder,
-                dataReceiverBuilder,
-                senderBuilder,
-                versionedMessageSenderBuilder,
-                versionedDataSenderBuilder);
-
-            channel.OpenChannel();
-            var protocols = channel.LocalConnectionPoints().ToList();
-            Assert.AreEqual(1, protocols.Count());
-
-            channel.Send(remoteEndpoint, msg);
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
-        }
-
-        [Test]
-        public void SendWithUncontactableEndpoint()
-        {
-            var id = new EndpointId("a");
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            {
-                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
-                    .Returns(false);
-            }
-
-            var template = new Mock<IProtocolChannelTemplate>();
-
-            var messageUri = new Uri("http://localhost/messages/invalid");
-            var dataUri = new Uri("http://localhost/data/invalid");
-            var host = new Mock<IHoldServiceConnections>();
-            {
-                host.Setup(
-                    h =>
-                        h.OpenChannel(
-                            It.IsAny<IReceiveInformationFromRemoteEndpoints>(),
-                            It.IsAny<Func<ServiceHost, ServiceEndpoint>>()))
-                    .Returns<IReceiveInformationFromRemoteEndpoints, Func<ServiceHost, ServiceEndpoint>>(
-                        (r, f) => r is IMessagePipe ? messageUri : dataUri)
-                    .Verifiable();
-                host.Setup(h => h.CloseConnection())
-                    .Verifiable();
-            }
-
-            Func<IHoldServiceConnections> hostBuilder = () => host.Object;
-
-            var messagePipe = new Mock<IMessagePipe>();
-            Func<Version, Tuple<Type, IMessagePipe>> messageReceiverBuilder =
-                version => new Tuple<Type, IMessagePipe>(typeof(IMessagePipe), messagePipe.Object);
-
-            var dataPipe = new Mock<IDataPipe>();
-            Func<Version, Tuple<Type, IDataPipe>> dataReceiverBuilder =
-                version => new Tuple<Type, IDataPipe>(typeof(IDataPipe), dataPipe.Object);
-
-            var remoteEndpoint = new EndpointId("b");
-            var msg = new SuccessMessage(id, new MessageId());
-            var sendingEndpoint = new Mock<ISendingEndpoint>();
-            {
-                sendingEndpoint.Setup(e => e.KnownEndpoints())
-                    .Returns(new[] { remoteEndpoint });
-                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<EndpointId>()))
-                    .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>((e, m) => Assert.AreSame(msg, m))
+                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage>((e, m) => Assert.AreSame(msg, m))
                     .Verifiable();
             }
 
@@ -728,7 +518,6 @@ namespace Nuclei.Communication.Protocol
 
             var channel = new ProtocolChannel(
                 id,
-                endpoints.Object,
                 template.Object,
                 hostBuilder,
                 messageReceiverBuilder,
@@ -741,8 +530,8 @@ namespace Nuclei.Communication.Protocol
             var protocols = channel.LocalConnectionPoints().ToList();
             Assert.AreEqual(1, protocols.Count());
 
-            Assert.Throws<EndpointNotContactableException>(() => channel.Send(remoteEndpoint, msg));
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
+            channel.Send(endpointInfo, msg);
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
         }
 
         [Test]
@@ -757,22 +546,10 @@ namespace Nuclei.Communication.Protocol
             }
 
             var id = new EndpointId("a");
-            var remoteEndpoint = new EndpointId("b");
-            var endpointInfo = new EndpointInformation(
-                remoteEndpoint,
-                new DiscoveryInformation(new Uri("http://localhost/discovery")), 
-                new ProtocolInformation(
-                    ProtocolVersions.V1,
-                    new Uri("http://localhost/messages"),
-                    new Uri("http://localhost/data")));
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            {
-                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
-                    .Returns(true);
-                endpoints.Setup(e => e.TryGetConnectionFor(It.IsAny<EndpointId>(), out endpointInfo))
-                    .Returns(true);
-            }
-
+            var endpointInfo = new ProtocolInformation(
+                ProtocolVersions.V1,
+                new Uri("http://localhost/messages"),
+                new Uri("http://localhost/data"));
             var template = new Mock<IProtocolChannelTemplate>();
 
             var messageUri = new Uri("http://localhost/messages/invalid");
@@ -804,11 +581,11 @@ namespace Nuclei.Communication.Protocol
             var sendingEndpoint = new Mock<ISendingEndpoint>();
             {
                 sendingEndpoint.Setup(e => e.KnownEndpoints())
-                    .Returns(new[] { remoteEndpoint });
-                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<EndpointId>()))
+                    .Returns(new[] { endpointInfo });
+                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()))
                     .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<Stream>()))
-                    .Callback<EndpointId, Stream>(
+                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<Stream>()))
+                    .Callback<ProtocolInformation, Stream>(
                         (e, m) =>
                         {
                             string fileText;
@@ -832,7 +609,6 @@ namespace Nuclei.Communication.Protocol
 
             var channel = new ProtocolChannel(
                 id,
-                endpoints.Object,
                 template.Object,
                 hostBuilder,
                 messageReceiverBuilder,
@@ -845,112 +621,15 @@ namespace Nuclei.Communication.Protocol
             var protocols = channel.LocalConnectionPoints().ToList();
             Assert.AreEqual(1, protocols.Count());
 
-            var task = channel.TransferData(remoteEndpoint, path, new CancellationToken(), new CurrentThreadTaskScheduler());
+            var task = channel.TransferData(endpointInfo, path, new CancellationToken(), new CurrentThreadTaskScheduler());
             task.Wait();
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<Stream>()), Times.Once());
-        }
-
-        [Test]
-        public void TransferDataWithUncontactableEndpoint()
-        {
-            var path = TempFile();
-
-            var text = "Some random text";
-            using (var writer = new StreamWriter(path, false))
-            {
-                writer.WriteLine(text);
-            }
-
-            var id = new EndpointId("a");
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            {
-                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
-                    .Returns(false);
-            }
-
-            var template = new Mock<IProtocolChannelTemplate>();
-
-            var messageUri = new Uri("http://localhost/messages/invalid");
-            var dataUri = new Uri("http://localhost/data/invalid");
-            var host = new Mock<IHoldServiceConnections>();
-            {
-                host.Setup(
-                    h =>
-                        h.OpenChannel(
-                            It.IsAny<IReceiveInformationFromRemoteEndpoints>(),
-                            It.IsAny<Func<ServiceHost, ServiceEndpoint>>()))
-                    .Returns<IReceiveInformationFromRemoteEndpoints, Func<ServiceHost, ServiceEndpoint>>(
-                        (r, f) => r is IMessagePipe ? messageUri : dataUri)
-                    .Verifiable();
-                host.Setup(h => h.CloseConnection())
-                    .Verifiable();
-            }
-
-            Func<IHoldServiceConnections> hostBuilder = () => host.Object;
-
-            var messagePipe = new Mock<IMessagePipe>();
-            Func<Version, Tuple<Type, IMessagePipe>> messageReceiverBuilder =
-                version => new Tuple<Type, IMessagePipe>(typeof(IMessagePipe), messagePipe.Object);
-
-            var dataPipe = new Mock<IDataPipe>();
-            Func<Version, Tuple<Type, IDataPipe>> dataReceiverBuilder =
-                version => new Tuple<Type, IDataPipe>(typeof(IDataPipe), dataPipe.Object);
-
-            var remoteEndpoint = new EndpointId("b");
-            var sendingEndpoint = new Mock<ISendingEndpoint>();
-            {
-                sendingEndpoint.Setup(e => e.KnownEndpoints())
-                    .Returns(new[] { remoteEndpoint });
-                sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<EndpointId>()))
-                    .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<Stream>()))
-                    .Callback<EndpointId, Stream>(
-                        (e, m) =>
-                        {
-                            string fileText;
-                            using (var reader = new StreamReader(m))
-                            {
-                                fileText = reader.ReadToEnd();
-                            }
-
-                            Assert.AreEqual(text, fileText);
-                        })
-                    .Verifiable();
-            }
-
-            BuildSendingEndpoint senderBuilder = (endpoint, builder, endpointBuilder) => sendingEndpoint.Object;
-
-            var messageEndpoint = new Mock<IMessageSendingEndpoint>();
-            Func<Version, Uri, IMessageSendingEndpoint> versionedMessageSenderBuilder = (version, uri) => messageEndpoint.Object;
-
-            var dataEndpoint = new Mock<IDataTransferingEndpoint>();
-            Func<Version, Uri, IDataTransferingEndpoint> versionedDataSenderBuilder = (version, uri) => dataEndpoint.Object;
-
-            var channel = new ProtocolChannel(
-                id,
-                endpoints.Object,
-                template.Object,
-                hostBuilder,
-                messageReceiverBuilder,
-                dataReceiverBuilder,
-                senderBuilder,
-                versionedMessageSenderBuilder,
-                versionedDataSenderBuilder);
-
-            channel.OpenChannel();
-            var protocols = channel.LocalConnectionPoints().ToList();
-            Assert.AreEqual(1, protocols.Count());
-
-            Assert.Throws<EndpointNotContactableException>(
-                () => channel.TransferData(remoteEndpoint, path, new CancellationToken(), new CurrentThreadTaskScheduler()));
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<EndpointId>(), It.IsAny<Stream>()), Times.Never());
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<Stream>()), Times.Once());
         }
 
         [Test]
         public void OnMessageReception()
         {
             var id = new EndpointId("a");
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
             var template = new Mock<IProtocolChannelTemplate>();
 
             var messageUri = new Uri("http://localhost/messages/invalid");
@@ -988,7 +667,6 @@ namespace Nuclei.Communication.Protocol
 
             var channel = new ProtocolChannel(
                 id,
-                endpoints.Object,
                 template.Object,
                 hostBuilder,
                 messageReceiverBuilder,
@@ -1018,7 +696,6 @@ namespace Nuclei.Communication.Protocol
         public void OnDataReception()
         {
             var id = new EndpointId("a");
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
             var template = new Mock<IProtocolChannelTemplate>();
 
             var messageUri = new Uri("http://localhost/messages/invalid");
@@ -1056,7 +733,6 @@ namespace Nuclei.Communication.Protocol
 
             var channel = new ProtocolChannel(
                 id,
-                endpoints.Object,
                 template.Object,
                 hostBuilder,
                 messageReceiverBuilder,

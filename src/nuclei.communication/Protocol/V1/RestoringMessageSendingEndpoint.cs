@@ -155,15 +155,6 @@ namespace Nuclei.Communication.Protocol.V1
                 var service = m_Service;
                 if (!m_IsDisposed)
                 {
-                    m_Diagnostics.Log(
-                           LevelToLog.Trace,
-                           CommunicationConstants.DefaultLogTextPrefix,
-                           string.Format(
-                               CultureInfo.InvariantCulture,
-                               "Sending message [{0}] of type {1}.",
-                               message.Id,
-                               message.GetType()));
-
                     service.AcceptMessage(message);
                 }
             }

@@ -87,7 +87,6 @@ namespace Nuclei.Communication.Protocol.V1
             var result = new DataTransferMessage
                 {
                     SendingEndpoint = data.SendingEndpoint,
-                    ReceivingEndpoint = data.ReceivingEndpoint,
                     Data = data.Data,
                 };
 

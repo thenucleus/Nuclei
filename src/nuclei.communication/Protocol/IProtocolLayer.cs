@@ -89,9 +89,27 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Sends the given message to the specified endpoint.
         /// </summary>
+        /// <param name="connection">The connection information for the endpoint to which the message has to be send.</param>
+        /// <param name="message">The message that has to be send.</param>
+        void SendMessageToUnregisteredEndpoint(EndpointInformation connection, ICommunicationMessage message);
+
+        /// <summary>
+        /// Sends the given message to the specified endpoint.
+        /// </summary>
         /// <param name="endpoint">The endpoint to which the message has to be send.</param>
         /// <param name="message">The message that has to be send.</param>
         void SendMessageTo(EndpointId endpoint, ICommunicationMessage message);
+
+        /// <summary>
+        /// Sends the given message to the specified endpoint and returns a task that
+        /// will eventually contain the return message.
+        /// </summary>
+        /// <param name="connection">The connection information for the endpoint to which the message has to be send.</param>
+        /// <param name="message">The message that has to be send.</param>
+        /// <returns>A task object that will eventually contain the response message.</returns>
+        Task<ICommunicationMessage> SendMessageToUnregisteredEndpointAndWaitForResponse(
+            EndpointInformation connection, 
+            ICommunicationMessage message);
 
         /// <summary>
         /// Sends the given message to the specified endpoint and returns a task that

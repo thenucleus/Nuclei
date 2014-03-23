@@ -22,11 +22,10 @@ namespace Nuclei.Communication
         }
 
         /// <summary>
-        /// Gets the URI of the local entry channel.
+        /// Returns the URI of the local entry channel for the given channel template.
         /// </summary>
-        Uri EntryChannel
-        {
-            get;
-        }
+        /// <param name="template">The channel template for which the entry channel should be provided.</param>
+        /// <returns>The URI of the local entry channel.</returns>
+        Uri EntryChannel(ChannelTemplate template);
     }
 }

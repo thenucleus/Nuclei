@@ -31,11 +31,9 @@ namespace Nuclei.Communication.Protocol.V1
 
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
             var sendingEndpoint = new EndpointId("a");
-            var receivingEndpoint = new EndpointId("b");
             var msg = new DataTransferMessage
                 {
                     SendingEndpoint = sendingEndpoint,
-                    ReceivingEndpoint = receivingEndpoint,
                     Data = data,
                 };
 
@@ -44,7 +42,6 @@ namespace Nuclei.Communication.Protocol.V1
                 (s, e) =>
                 {
                     Assert.AreEqual(sendingEndpoint, e.Data.SendingEndpoint);
-                    Assert.AreEqual(receivingEndpoint, e.Data.ReceivingEndpoint);
                     Assert.AreEqual(text, new StreamReader(e.Data.Data).ReadToEnd());
                 };
 
@@ -93,11 +90,9 @@ namespace Nuclei.Communication.Protocol.V1
             
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
             var sendingEndpoint = new EndpointId("a");
-            var receivingEndpoint = new EndpointId("b");
             var msg = new DataTransferMessage
             {
                 SendingEndpoint = sendingEndpoint,
-                ReceivingEndpoint = receivingEndpoint,
                 Data = data,
             };
 
@@ -113,7 +108,6 @@ namespace Nuclei.Communication.Protocol.V1
                     }
                     
                     Assert.AreEqual(sendingEndpoint, e.Data.SendingEndpoint);
-                    Assert.AreEqual(receivingEndpoint, e.Data.ReceivingEndpoint);
                     Assert.AreEqual(text, new StreamReader(e.Data.Data).ReadToEnd());
                 };
 

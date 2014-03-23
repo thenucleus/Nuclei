@@ -105,7 +105,6 @@ namespace Nuclei.Communication.Protocol.V1
             var result = new StreamData
             {
                 SendingEndpoint = message.SendingEndpoint,
-                ReceivingEndpoint = message.ReceivingEndpoint,
                 Data = message.Data,
             };
 
@@ -121,14 +120,6 @@ namespace Nuclei.Communication.Protocol.V1
                 var service = m_Service;
                 if (!m_IsDisposed)
                 {
-                    m_Diagnostics.Log(
-                           LevelToLog.Trace,
-                           CommunicationConstants.DefaultLogTextPrefix,
-                           string.Format(
-                               CultureInfo.InvariantCulture,
-                               "Sending data to [{0}].",
-                               message.ReceivingEndpoint));
-
                     service.AcceptStream(message);
                 }
             }

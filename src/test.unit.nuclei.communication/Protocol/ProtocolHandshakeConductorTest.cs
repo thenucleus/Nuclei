@@ -64,7 +64,7 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            Func<Uri> discoveryUri = () => new Uri("net.tcp://localhost/discovery/invalid");
+            Func<ChannelTemplate, Uri> discoveryUri = t => new Uri("net.tcp://localhost/discovery/invalid");
             var discoveryInformation = new LocalConnectionInformation(id, discoveryUri);
             var storage = new EndpointInformationStorage();
 
@@ -77,19 +77,21 @@ namespace Nuclei.Communication.Protocol
                 };
 
             var discovery = new Mock<IDiscoverOtherServices>();
-            var communicationLayer = new Mock<IProtocolLayer>();
+            var protocolLayer = new Mock<IProtocolLayer>();
             {
-                communicationLayer.Setup(l => l.Id)
+                protocolLayer.Setup(l => l.Id)
                     .Returns(id);
-                communicationLayer.Setup(l => l.LocalConnectionFor(It.IsAny<Version>(), It.IsAny<ChannelTemplate>()))
+                protocolLayer.Setup(l => l.LocalConnectionFor(It.IsAny<Version>(), It.IsAny<ChannelTemplate>()))
                     .Returns(
                         new Tuple<EndpointId, Uri, Uri>(
                             connection.Id, 
                             connection.ProtocolInformation.MessageAddress, 
                             connection.ProtocolInformation.DataAddress));
-                communicationLayer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()))
                     .Verifiable();
-                communicationLayer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
+                        It.IsAny<EndpointInformation>(), 
+                        It.IsAny<ICommunicationMessage>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new SuccessMessage(remoteEndpoint, new MessageId()),
                         new CancellationTokenSource().Token,
@@ -105,7 +107,7 @@ namespace Nuclei.Communication.Protocol
                     {
                         discovery.Object
                     }, 
-                communicationLayer.Object,
+                protocolLayer.Object,
                 communicationDescriptions.Object,
                 new[]
                     {
@@ -142,9 +144,13 @@ namespace Nuclei.Communication.Protocol
             Assert.IsFalse(storage.IsWaitingForApproval(remoteEndpoint));
             Assert.IsTrue(storage.CanCommunicateWithEndpoint(remoteEndpoint));
             Assert.IsTrue(endpointConnected);
-            
-            communicationLayer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
-            communicationLayer.Verify(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+
+            protocolLayer.Verify(
+                l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 
+                Times.Once());
+            protocolLayer.Verify(
+                l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 
+                Times.Once());
         }
 
         [Test]
@@ -188,7 +194,7 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            Func<Uri> discoveryUri = () => new Uri("net.tcp://localhost/discovery/invalid");
+            Func<ChannelTemplate, Uri> discoveryUri = t => new Uri("net.tcp://localhost/discovery/invalid");
             var discoveryInformation = new LocalConnectionInformation(id, discoveryUri);
             var storage = new EndpointInformationStorage();
 
@@ -201,19 +207,21 @@ namespace Nuclei.Communication.Protocol
                 };
 
             var discovery = new Mock<IDiscoverOtherServices>();
-            var communicationLayer = new Mock<IProtocolLayer>();
+            var protocolLayer = new Mock<IProtocolLayer>();
             {
-                communicationLayer.Setup(l => l.Id)
+                protocolLayer.Setup(l => l.Id)
                     .Returns(id);
-                communicationLayer.Setup(l => l.LocalConnectionFor(It.IsAny<Version>(), It.IsAny<ChannelTemplate>()))
+                protocolLayer.Setup(l => l.LocalConnectionFor(It.IsAny<Version>(), It.IsAny<ChannelTemplate>()))
                     .Returns(
                         new Tuple<EndpointId, Uri, Uri>(
                             connection.Id,
                             connection.ProtocolInformation.MessageAddress,
                             connection.ProtocolInformation.DataAddress));
-                communicationLayer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()))
                     .Verifiable();
-                communicationLayer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
+                        It.IsAny<EndpointInformation>(),
+                        It.IsAny<ICommunicationMessage>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new SuccessMessage(remoteEndpoint, new MessageId()),
                         new CancellationTokenSource().Token,
@@ -229,7 +237,7 @@ namespace Nuclei.Communication.Protocol
                     {
                         discovery.Object
                     },
-                communicationLayer.Object,
+                protocolLayer.Object,
                 communicationDescriptions.Object,
                 new[]
                     {
@@ -256,8 +264,12 @@ namespace Nuclei.Communication.Protocol
 
             Assert.IsTrue(endpointConnected);
 
-            communicationLayer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
-            communicationLayer.Verify(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            protocolLayer.Verify(
+                l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 
+                Times.Once());
+            protocolLayer.Verify(
+                l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()),
+                Times.Once());
         }
 
         [Test]
@@ -300,7 +312,7 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            Func<Uri> discoveryUri = () => new Uri("net.tcp://localhost/discovery/invalid");
+            Func<ChannelTemplate, Uri> discoveryUri = t => new Uri("net.tcp://localhost/discovery/invalid");
             var discoveryInformation = new LocalConnectionInformation(id, discoveryUri);
             var storage = new EndpointInformationStorage();
 
@@ -313,19 +325,21 @@ namespace Nuclei.Communication.Protocol
                 };
 
             var discovery = new Mock<IDiscoverOtherServices>();
-            var communicationLayer = new Mock<IProtocolLayer>();
+            var protocolLayer = new Mock<IProtocolLayer>();
             {
-                communicationLayer.Setup(l => l.Id)
+                protocolLayer.Setup(l => l.Id)
                     .Returns(id);
-                communicationLayer.Setup(l => l.LocalConnectionFor(It.IsAny<Version>(), It.IsAny<ChannelTemplate>()))
+                protocolLayer.Setup(l => l.LocalConnectionFor(It.IsAny<Version>(), It.IsAny<ChannelTemplate>()))
                     .Returns(
                         new Tuple<EndpointId, Uri, Uri>(
                             connection.Id,
                             connection.ProtocolInformation.MessageAddress,
                             connection.ProtocolInformation.DataAddress));
-                communicationLayer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()))
                     .Verifiable();
-                communicationLayer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
+                        It.IsAny<EndpointInformation>(),
+                        It.IsAny<ICommunicationMessage>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new FailureMessage(remoteEndpoint, new MessageId()),
                         new CancellationTokenSource().Token,
@@ -341,7 +355,7 @@ namespace Nuclei.Communication.Protocol
                     {
                         discovery.Object
                     },
-                communicationLayer.Object,
+                protocolLayer.Object,
                 communicationDescriptions.Object,
                 new[]
                     {
@@ -371,8 +385,12 @@ namespace Nuclei.Communication.Protocol
             Assert.IsFalse(storage.IsWaitingForApproval(remoteEndpoint));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(remoteEndpoint));
 
-            communicationLayer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
-            communicationLayer.Verify(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            protocolLayer.Verify(
+                l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 
+                Times.Never());
+            protocolLayer.Verify(
+                l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()),
+                Times.Once());
         }
 
         [Test]
@@ -416,7 +434,7 @@ namespace Nuclei.Communication.Protocol
                     .Returns(false);
             }
 
-            Func<Uri> discoveryUri = () => new Uri("net.tcp://localhost/discovery/invalid");
+            Func<ChannelTemplate, Uri> discoveryUri = t => new Uri("net.tcp://localhost/discovery/invalid");
             var discoveryInformation = new LocalConnectionInformation(id, discoveryUri);
             var storage = new EndpointInformationStorage();
 
@@ -429,19 +447,21 @@ namespace Nuclei.Communication.Protocol
                 };
 
             var discovery = new Mock<IDiscoverOtherServices>();
-            var communicationLayer = new Mock<IProtocolLayer>();
+            var protocolLayer = new Mock<IProtocolLayer>();
             {
-                communicationLayer.Setup(l => l.Id)
+                protocolLayer.Setup(l => l.Id)
                     .Returns(id);
-                communicationLayer.Setup(l => l.LocalConnectionFor(It.IsAny<Version>(), It.IsAny<ChannelTemplate>()))
+                protocolLayer.Setup(l => l.LocalConnectionFor(It.IsAny<Version>(), It.IsAny<ChannelTemplate>()))
                     .Returns(
                         new Tuple<EndpointId, Uri, Uri>(
                             connection.Id,
                             connection.ProtocolInformation.MessageAddress,
                             connection.ProtocolInformation.DataAddress));
-                communicationLayer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()))
                     .Verifiable();
-                communicationLayer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
+                        It.IsAny<EndpointInformation>(),
+                        It.IsAny<ICommunicationMessage>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new SuccessMessage(remoteEndpoint, new MessageId()),
                         new CancellationTokenSource().Token,
@@ -457,7 +477,7 @@ namespace Nuclei.Communication.Protocol
                     {
                         discovery.Object
                     },
-                communicationLayer.Object,
+                protocolLayer.Object,
                 communicationDescriptions.Object,
                 new[]
                     {
@@ -490,7 +510,9 @@ namespace Nuclei.Communication.Protocol
             Assert.IsFalse(storage.IsWaitingForApproval(remoteEndpoint));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(remoteEndpoint));
 
-            communicationLayer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            protocolLayer.Verify(
+                l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()),
+                Times.Never());
         }
     }
 }

@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Schedulers;
 using Moq;
-using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
@@ -27,11 +26,6 @@ namespace Nuclei.Communication.Protocol
         {
             var endpoint = new EndpointId("a");
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder = 
                 (template, id) =>
                 {
@@ -40,7 +34,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -65,11 +58,6 @@ namespace Nuclei.Communication.Protocol
         {
             var endpoint = new EndpointId("a");
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) =>
                 {
@@ -78,7 +66,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -116,19 +103,6 @@ namespace Nuclei.Communication.Protocol
         public void SignIn()
         {
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            var discovery = new Mock<IDiscoverOtherServices>();
-            {
-                discovery.Setup(d => d.StartDiscovery())
-                    .Verifiable();
-                discovery.Setup(d => d.EndDiscovery())
-                    .Verifiable();
-            }
-
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
             var protocolInfo = new ProtocolInformation(
                 new Version(1, 0),
                 new Uri("net.pipe://localhost/protocol/message/invalid"),
@@ -150,7 +124,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -165,8 +138,6 @@ namespace Nuclei.Communication.Protocol
             Assert.AreSame(protocolInfo.MessageAddress, connection.Item2);
             Assert.AreSame(protocolInfo.DataAddress, connection.Item3);
 
-            discovery.Verify(d => d.StartDiscovery(), Times.Once());
-            discovery.Verify(d => d.EndDiscovery(), Times.Never());
             channel.Verify(c => c.OpenChannel(), Times.Once());
         }
 
@@ -174,23 +145,27 @@ namespace Nuclei.Communication.Protocol
         public void OnEndpointDisconnectedAfterSigningIn()
         {
             var endpoint = new EndpointId("a");
+            var endpointInfo = new EndpointInformation(
+                endpoint, 
+                new DiscoveryInformation(new Uri("net.pipe://localhost/discovery")),
+                new ProtocolInformation(
+                    ProtocolVersions.V1,
+                    new Uri("net.pipe://localhost/messages"),
+                    new Uri("net.pipe://localhost/data")));
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(true);
+                endpoints.Setup(e => e.TryGetConnectionFor(It.IsAny<EndpointId>(), out endpointInfo))
+                    .Returns(true);
+            }
 
-            var protocolInfo = new ProtocolInformation(
-                new Version(1, 0),
-                new Uri("net.pipe://localhost/protocol/message/invalid"),
-                new Uri("net.pipe://localhost/protocol/data/invalid"));
             var channel = new Mock<IProtocolChannel>();
             {
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
-                    .Returns(protocolInfo);
-                channel.Setup(c => c.EndpointDisconnected(It.IsAny<EndpointId>()))
-                    .Callback<EndpointId>(e => Assert.AreEqual(endpoint, e))
+                    .Returns(endpointInfo.ProtocolInformation);
+                channel.Setup(c => c.EndpointDisconnected(It.IsAny<ProtocolInformation>()))
+                    .Callback<ProtocolInformation>(e => Assert.AreEqual(endpointInfo.ProtocolInformation, e))
                     .Verifiable();
             }
 
@@ -209,7 +184,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -220,7 +194,7 @@ namespace Nuclei.Communication.Protocol
             layer.SignIn();
             endpoints.Raise(d => d.OnEndpointDisconnected += null, new EndpointEventArgs(endpoint));
 
-            channel.Verify(c => c.EndpointDisconnected(It.IsAny<EndpointId>()), Times.Once());
+            channel.Verify(c => c.EndpointDisconnected(It.IsAny<ProtocolInformation>()), Times.Once());
             pipe.Verify(p => p.OnEndpointDisconnected(It.IsAny<EndpointId>()), Times.Once());
         }
 
@@ -228,19 +202,7 @@ namespace Nuclei.Communication.Protocol
         public void SignInWhileSignedIn()
         {
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            var discovery = new Mock<IDiscoverOtherServices>();
-            {
-                discovery.Setup(d => d.StartDiscovery())
-                    .Verifiable();
-                discovery.Setup(d => d.EndDiscovery())
-                    .Verifiable();
-            }
-
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
+            
             var protocolInfo = new ProtocolInformation(
                 new Version(1, 0),
                 new Uri("net.pipe://localhost/protocol/message/invalid"),
@@ -262,7 +224,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -272,14 +233,10 @@ namespace Nuclei.Communication.Protocol
 
             layer.SignIn();
             Assert.IsTrue(layer.IsSignedIn);
-            discovery.Verify(d => d.StartDiscovery(), Times.Once());
-            discovery.Verify(d => d.EndDiscovery(), Times.Never());
             channel.Verify(c => c.OpenChannel(), Times.Once());
 
             layer.SignIn();
             Assert.IsTrue(layer.IsSignedIn);
-            discovery.Verify(d => d.StartDiscovery(), Times.Once());
-            discovery.Verify(d => d.EndDiscovery(), Times.Never());
             channel.Verify(c => c.OpenChannel(), Times.Once());
         }
 
@@ -287,19 +244,7 @@ namespace Nuclei.Communication.Protocol
         public void SignOut()
         {
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            var discovery = new Mock<IDiscoverOtherServices>();
-            {
-                discovery.Setup(d => d.StartDiscovery())
-                    .Verifiable();
-                discovery.Setup(d => d.EndDiscovery())
-                    .Verifiable();
-            }
-
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
+            
             var protocolInfo = new ProtocolInformation(
                 new Version(1, 0),
                 new Uri("net.pipe://localhost/protocol/message/invalid"),
@@ -323,7 +268,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -333,14 +277,10 @@ namespace Nuclei.Communication.Protocol
 
             layer.SignIn();
             Assert.IsTrue(layer.IsSignedIn);
-            discovery.Verify(d => d.StartDiscovery(), Times.Once());
-            discovery.Verify(d => d.EndDiscovery(), Times.Never());
             channel.Verify(c => c.OpenChannel(), Times.Once());
 
             layer.SignOut();
             Assert.IsFalse(layer.IsSignedIn);
-            discovery.Verify(d => d.StartDiscovery(), Times.Once());
-            discovery.Verify(d => d.EndDiscovery(), Times.Once());
             channel.Verify(c => c.CloseChannel(), Times.Once());
         }
 
@@ -348,19 +288,7 @@ namespace Nuclei.Communication.Protocol
         public void SignOutWithoutBeingSignedIn()
         {
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            var discovery = new Mock<IDiscoverOtherServices>();
-            {
-                discovery.Setup(d => d.StartDiscovery())
-                    .Verifiable();
-                discovery.Setup(d => d.EndDiscovery())
-                    .Verifiable();
-            }
-
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
+            
             var protocolInfo = new ProtocolInformation(
                 new Version(1, 0),
                 new Uri("net.pipe://localhost/protocol/message/invalid"),
@@ -384,7 +312,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -394,8 +321,6 @@ namespace Nuclei.Communication.Protocol
 
             layer.SignOut();
             Assert.IsFalse(layer.IsSignedIn);
-            discovery.Verify(d => d.StartDiscovery(), Times.Never());
-            discovery.Verify(d => d.EndDiscovery(), Times.Never());
             channel.Verify(c => c.CloseChannel(), Times.Never());
         }
 
@@ -408,12 +333,6 @@ namespace Nuclei.Communication.Protocol
                     .Returns(false);
             }
 
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
             var channel = new Mock<IProtocolChannel>();
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
@@ -424,7 +343,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -445,12 +363,6 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
             var channel = new Mock<IProtocolChannel>();
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
@@ -461,7 +373,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -482,12 +393,6 @@ namespace Nuclei.Communication.Protocol
                     .Returns(false);
             }
 
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
             var channel = new Mock<IProtocolChannel>();
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
@@ -498,7 +403,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -529,12 +433,6 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
             var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
             var channel = new Mock<IProtocolChannel>();
             {
@@ -542,11 +440,11 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
-                channel.Setup(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage>(
                         (e, m) =>
                         {
-                            Assert.AreSame(remoteEndpoint, e);
+                            Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(msg, m);
                         })
                     .Verifiable();
@@ -561,7 +459,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -571,7 +468,7 @@ namespace Nuclei.Communication.Protocol
 
             layer.SendMessageTo(remoteEndpoint, msg);
             channel.Verify(c => c.OpenChannel(), Times.Once());
-            channel.Verify(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
         }
 
         [Test]
@@ -593,12 +490,6 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
             var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
             var channel = new Mock<IProtocolChannel>();
             {
@@ -606,11 +497,11 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
-                channel.Setup(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage>(
                         (e, m) =>
                         {
-                            Assert.AreSame(remoteEndpoint, e);
+                            Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(msg, m);
                         })
                     .Verifiable();
@@ -625,7 +516,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -637,7 +527,7 @@ namespace Nuclei.Communication.Protocol
 
             layer.SendMessageTo(remoteEndpoint, msg);
             channel.Verify(c => c.OpenChannel(), Times.Once());
-            channel.Verify(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
         }
 
         [Test]
@@ -649,12 +539,6 @@ namespace Nuclei.Communication.Protocol
                     .Returns(false);
             }
 
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
             var channel = new Mock<IProtocolChannel>();
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
@@ -665,7 +549,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -696,12 +579,6 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
             var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
             var channel = new Mock<IProtocolChannel>();
             {
@@ -709,11 +586,11 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
-                channel.Setup(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage>(
                         (e, m) =>
                         {
-                            Assert.AreSame(remoteEndpoint, e);
+                            Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(msg, m);
                         })
                     .Verifiable();
@@ -745,7 +622,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -757,7 +633,7 @@ namespace Nuclei.Communication.Protocol
             Assert.AreSame(responseTask, response);
             
             channel.Verify(c => c.OpenChannel(), Times.Once());
-            channel.Verify(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
             pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>()), Times.Once());
         }
 
@@ -780,12 +656,6 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
             var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
             var channel = new Mock<IProtocolChannel>();
             {
@@ -793,11 +663,11 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
-                channel.Setup(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage>(
                         (e, m) =>
                         {
-                            Assert.AreSame(remoteEndpoint, e);
+                            Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(msg, m);
                         })
                     .Verifiable();
@@ -829,7 +699,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -843,7 +712,7 @@ namespace Nuclei.Communication.Protocol
             Assert.AreSame(responseTask, response);
 
             channel.Verify(c => c.OpenChannel(), Times.Once());
-            channel.Verify(c => c.Send(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
             pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>()), Times.Once());
         }
 
@@ -855,12 +724,6 @@ namespace Nuclei.Communication.Protocol
                 endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
                     .Returns(false);
             }
-
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
 
             var protocolInfo = new ProtocolInformation(
                 new Version(1, 0),
@@ -875,11 +738,15 @@ namespace Nuclei.Communication.Protocol
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(protocolInfo);
                 channel.Setup(
-                    c => c.TransferData(It.IsAny<EndpointId>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()))
-                    .Callback<EndpointId, string, CancellationToken, TaskScheduler>(
+                    c => c.TransferData(
+                        It.IsAny<ProtocolInformation>(), 
+                        It.IsAny<string>(), 
+                        It.IsAny<CancellationToken>(), 
+                        It.IsAny<TaskScheduler>()))
+                    .Callback<ProtocolInformation, string, CancellationToken, TaskScheduler>(
                         (e, p, c, s) =>
                         {
-                            Assert.AreSame(endpoint, e);
+                            Assert.AreSame(protocolInfo, e);
                             Assert.AreSame(file, p);
                         })
                     .Returns<EndpointId, string, CancellationToken, TaskScheduler>(
@@ -896,7 +763,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -910,7 +776,7 @@ namespace Nuclei.Communication.Protocol
                 () => layer.UploadData(endpoint, file, new CancellationToken(), new CurrentThreadTaskScheduler()));
             channel.Verify(c => c.OpenChannel(), Times.Once());
             channel.Verify(
-                c => c.TransferData(It.IsAny<EndpointId>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()),
+                c => c.TransferData(It.IsAny<ProtocolInformation>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()),
                 Times.Never());
         }
 
@@ -933,12 +799,6 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
             var file = "B";
             var channel = new Mock<IProtocolChannel>();
             {
@@ -947,14 +807,18 @@ namespace Nuclei.Communication.Protocol
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
                 channel.Setup(
-                    c => c.TransferData(It.IsAny<EndpointId>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()))
-                    .Callback<EndpointId, string, CancellationToken, TaskScheduler>(
+                    c => c.TransferData(
+                        It.IsAny<ProtocolInformation>(), 
+                        It.IsAny<string>(), 
+                        It.IsAny<CancellationToken>(), 
+                        It.IsAny<TaskScheduler>()))
+                    .Callback<ProtocolInformation, string, CancellationToken, TaskScheduler>(
                         (e, p, c, s) =>
                         {
-                            Assert.AreSame(remoteEndpoint, e);
+                            Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(file, p);
                         })
-                    .Returns<EndpointId, string, CancellationToken, TaskScheduler>(
+                    .Returns<ProtocolInformation, string, CancellationToken, TaskScheduler>(
                         (e, p, c, s) => Task.Factory.StartNew(() => { }, c, TaskCreationOptions.None, s))
                     .Verifiable();
             }
@@ -968,7 +832,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -981,7 +844,7 @@ namespace Nuclei.Communication.Protocol
             layer.UploadData(remoteEndpoint, file, new CancellationToken(), new CurrentThreadTaskScheduler());
             channel.Verify(c => c.OpenChannel(), Times.Once());
             channel.Verify(
-                c => c.TransferData(It.IsAny<EndpointId>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()),
+                c => c.TransferData(It.IsAny<ProtocolInformation>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()),
                 Times.Once());
         }
 
@@ -1004,12 +867,6 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var discovery = new Mock<IDiscoverOtherServices>();
-            var discoverySources = new[]
-                {
-                    discovery.Object,
-                };
-
             var file = "B";
             var channel = new Mock<IProtocolChannel>();
             {
@@ -1018,14 +875,18 @@ namespace Nuclei.Communication.Protocol
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
                 channel.Setup(
-                    c => c.TransferData(It.IsAny<EndpointId>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()))
-                    .Callback<EndpointId, string, CancellationToken, TaskScheduler>(
+                    c => c.TransferData(
+                        It.IsAny<ProtocolInformation>(), 
+                        It.IsAny<string>(), 
+                        It.IsAny<CancellationToken>(), 
+                        It.IsAny<TaskScheduler>()))
+                    .Callback<ProtocolInformation, string, CancellationToken, TaskScheduler>(
                         (e, p, c, s) =>
                         {
-                            Assert.AreSame(remoteEndpoint, e);
+                            Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(file, p);
                         })
-                    .Returns<EndpointId, string, CancellationToken, TaskScheduler>(
+                    .Returns<ProtocolInformation, string, CancellationToken, TaskScheduler>(
                         (e, p, c, s) => Task.Factory.StartNew(() => { }, c, TaskCreationOptions.None, s))
                     .Verifiable();
             }
@@ -1039,7 +900,6 @@ namespace Nuclei.Communication.Protocol
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
-                discoverySources,
                 channelBuilder,
                 new[]
                     {
@@ -1052,7 +912,7 @@ namespace Nuclei.Communication.Protocol
             layer.UploadData(remoteEndpoint, file, new CancellationToken(), new CurrentThreadTaskScheduler());
             channel.Verify(c => c.OpenChannel(), Times.Once());
             channel.Verify(
-                c => c.TransferData(It.IsAny<EndpointId>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()), 
+                c => c.TransferData(It.IsAny<ProtocolInformation>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()), 
                 Times.Once());
         }
     }

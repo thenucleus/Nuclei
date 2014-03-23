@@ -17,6 +17,6 @@ namespace Nuclei.Communication.Protocol
     /// <returns>The new <see cref="ISendingEndpoint"/> instance.</returns>
     internal delegate ISendingEndpoint BuildSendingEndpoint(
         EndpointId localEndpoint,
-        Func<EndpointId, IMessageSendingEndpoint> messageSendingEndpointBuilder,
-        Func<EndpointId, IDataTransferingEndpoint> dataSendingEndpointBuilder);
+        Func<ProtocolInformation, IMessageSendingEndpoint> messageSendingEndpointBuilder,
+        Func<ProtocolInformation, IDataTransferingEndpoint> dataSendingEndpointBuilder);
 }

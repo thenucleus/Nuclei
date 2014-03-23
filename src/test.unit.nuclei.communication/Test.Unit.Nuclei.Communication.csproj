@@ -103,6 +103,7 @@
     <Compile Include="Interaction\VersionedTypeFallbackTest.cs" />
     <Compile Include="MaximumNumberOfChannelRestartsExceededExceptionTest.cs" />
     <Compile Include="Protocol\ProtocolChannelTest.cs" />
+    <Compile Include="Protocol\ProtocolInformationTest.cs" />
     <Compile Include="Protocol\ProtocolLayerTest.cs" />
     <Compile Include="Protocol\MessageHandlerTest.cs" />
     <Compile Include="Protocol\MessageIdTest.cs" />

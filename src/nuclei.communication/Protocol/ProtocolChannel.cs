@@ -82,11 +82,6 @@ namespace Nuclei.Communication.Protocol
         private readonly EndpointId m_Id;
 
         /// <summary>
-        /// Maps the endpoint to the connection information.
-        /// </summary>
-        private readonly IStoreInformationAboutEndpoints m_ChannelConnectionMap;
-
-        /// <summary>
         /// Indicates the type of channel that we're dealing with and provides
         /// utility methods for the channel.
         /// </summary>
@@ -128,7 +123,6 @@ namespace Nuclei.Communication.Protocol
         /// Initializes a new instance of the <see cref="ProtocolChannel"/> class.
         /// </summary>
         /// <param name="id">The ID number of the current endpoint.</param>
-        /// <param name="connectionMap">The object that stores the connection information for the endpoints.</param>
         /// <param name="channelTemplate">The type of channel, e.g. TCP.</param>
         /// <param name="hostBuilder">
         /// The function that returns an object which handles the <see cref="ServiceHost"/> for the channel used to communicate with.
@@ -144,9 +138,6 @@ namespace Nuclei.Communication.Protocol
         /// </param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="id"/> is <see langword="null" />.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="connectionMap"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="channelTemplate"/> is <see langword="null" />.
@@ -171,7 +162,6 @@ namespace Nuclei.Communication.Protocol
         /// </exception>
         public ProtocolChannel(
             EndpointId id,
-            IStoreInformationAboutEndpoints connectionMap,
             IProtocolChannelTemplate channelTemplate,
             Func<IHoldServiceConnections> hostBuilder,
             Func<Version, Tuple<Type, IMessagePipe>> messageReceiverBuilder,
@@ -182,7 +172,6 @@ namespace Nuclei.Communication.Protocol
         {
             {
                 Lokad.Enforce.Argument(() => id);
-                Lokad.Enforce.Argument(() => connectionMap);
                 Lokad.Enforce.Argument(() => channelTemplate);
                 Lokad.Enforce.Argument(() => hostBuilder);
                 Lokad.Enforce.Argument(() => messageReceiverBuilder);
@@ -193,7 +182,6 @@ namespace Nuclei.Communication.Protocol
             }
 
             m_Id = id;
-            m_ChannelConnectionMap = connectionMap;
             m_Template = channelTemplate;
             m_HostBuilder = hostBuilder;
 
@@ -330,7 +318,7 @@ namespace Nuclei.Communication.Protocol
                     m_SendingEndpoints.Remove(version);
 
                     // First notify the recipients that we're closing the channel.
-                    var knownEndpoints = new List<EndpointId>(sender.KnownEndpoints());
+                    var knownEndpoints = new List<ProtocolInformation>(sender.KnownEndpoints());
                     foreach (var key in knownEndpoints)
                     {
                         var msg = new EndpointDisconnectMessage(m_Id);
@@ -389,24 +377,15 @@ namespace Nuclei.Communication.Protocol
         /// Indicates that the remote endpoint has disconnected.
         /// </summary>
         /// <param name="endpoint">The ID number of the endpoint that has disconnected.</param>
-        public void EndpointDisconnected(EndpointId endpoint)
+        public void EndpointDisconnected(ProtocolInformation endpoint)
         {
             lock (m_Lock)
             {
-                if (m_ChannelConnectionMap.CanCommunicateWithEndpoint(endpoint))
+                var version = endpoint.Version;
+                if (m_SendingEndpoints.ContainsKey(version))
                 {
-                    EndpointInformation channelInfo;
-                    if (!m_ChannelConnectionMap.TryGetConnectionFor(endpoint, out channelInfo))
-                    {
-                        return;
-                    }
-
-                    var version = channelInfo.ProtocolInformation.Version;
-                    if (m_SendingEndpoints.ContainsKey(version))
-                    {
-                        var sender = m_SendingEndpoints[version];
-                        sender.CloseChannelTo(endpoint);
-                    }
+                    var sender = m_SendingEndpoints[version];
+                    sender.CloseChannelTo(endpoint);
                 }
             }
         }
@@ -414,7 +393,7 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// Transfers the data to the receiving endpoint.
         /// </summary>
-        /// <param name="receivingEndpoint">The endpoint that will receive the data stream.</param>
+        /// <param name="receivingEndpoint">The connection information for the endpoint that will receive the data stream.</param>
         /// <param name="filePath">The file path to the file that should be transferred.</param>
         /// <param name="token">The cancellation token that is used to cancel the task if necessary.</param>
         /// <param name="scheduler">The scheduler that is used to run the return task with.</param>
@@ -422,31 +401,27 @@ namespace Nuclei.Communication.Protocol
         /// An task that indicates when the transfer is complete.
         /// </returns>
         /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="receivingEndpoint"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="filePath"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentException">
         ///     Thrown if <paramref name="filePath"/> is <see langword="null" />.
         /// </exception>
-        /// <exception cref="EndpointNotContactableException">
-        ///     Thrown if no contact information is available for <paramref name="receivingEndpoint"/>.
-        /// </exception>
         public Task TransferData(
-            EndpointId receivingEndpoint,
+            ProtocolInformation receivingEndpoint,
             string filePath,
             CancellationToken token,
             TaskScheduler scheduler)
         {
             {
+                Lokad.Enforce.Argument(() => receivingEndpoint);
                 Lokad.Enforce.Argument(() => filePath);
                 Lokad.Enforce.Argument(() => filePath, Lokad.Rules.StringIs.NotEmpty);
             }
 
             var sender = SenderForEndpoint(receivingEndpoint);
-            if (sender == null)
-            {
-                throw new EndpointNotContactableException();
-            }
-
             return Task.Factory.StartNew(
                 () =>
                 {
@@ -461,37 +436,25 @@ namespace Nuclei.Communication.Protocol
                 scheduler ?? TaskScheduler.Default);
         }
 
-        private ISendingEndpoint SenderForEndpoint(EndpointId receivingEndpoint)
+        private ISendingEndpoint SenderForEndpoint(ProtocolInformation info)
         {
-            ISendingEndpoint sender = null;
-            if (m_ChannelConnectionMap.CanCommunicateWithEndpoint(receivingEndpoint))
+            var protocolVersion = info.Version;
+            lock (m_Lock)
             {
-                EndpointInformation channelInfo;
-                if (!m_ChannelConnectionMap.TryGetConnectionFor(receivingEndpoint, out channelInfo))
+                if (!m_SendingEndpoints.ContainsKey(protocolVersion))
                 {
-                    throw new EndpointNotContactableException();
+                    var newSender = m_SenderBuilder(m_Id, BuildMessageSendingProxy, BuildDataTransferProxy);
+                    m_SendingEndpoints.Add(protocolVersion, newSender);
                 }
 
-                var protocolVersion = channelInfo.ProtocolInformation.Version;
-                lock (m_Lock)
-                {
-                    if (!m_SendingEndpoints.ContainsKey(protocolVersion))
-                    {
-                        var newSender = m_SenderBuilder(m_Id, BuildMessageSendingProxy, BuildDataTransferProxy);
-                        m_SendingEndpoints.Add(protocolVersion, newSender);
-                    }
-
-                    sender = m_SendingEndpoints[protocolVersion];
-                }
+                return m_SendingEndpoints[protocolVersion];
             }
-
-            return sender;
         }
 
         /// <summary>
         /// Sends the given message to the receiving endpoint.
         /// </summary>
-        /// <param name="endpoint">The endpoint to which the message should be send.</param>
+        /// <param name="endpoint">The connection information for the endpoint to which the message should be send.</param>
         /// <param name="message">The message that should be send.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
@@ -499,7 +462,7 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="message"/> is <see langword="null" />.
         /// </exception>
-        public void Send(EndpointId endpoint, ICommunicationMessage message)
+        public void Send(ProtocolInformation endpoint, ICommunicationMessage message)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
@@ -515,29 +478,14 @@ namespace Nuclei.Communication.Protocol
             sender.Send(endpoint, message);
         }
 
-        private IMessageSendingEndpoint BuildMessageSendingProxy(EndpointId id)
+        private IMessageSendingEndpoint BuildMessageSendingProxy(ProtocolInformation info)
         {
-            Debug.Assert(m_ChannelConnectionMap.CanCommunicateWithEndpoint(id), "Trying to send a message to an unknown endpoint.");
-            EndpointInformation connectionInfo;
-            if (!m_ChannelConnectionMap.TryGetConnectionFor(id, out connectionInfo))
-            {
-                throw new EndpointNotContactableException();
-            }
-
-            return m_VersionedMessageSenderBuilder(connectionInfo.ProtocolInformation.Version, connectionInfo.ProtocolInformation.MessageAddress);
+            return m_VersionedMessageSenderBuilder(info.Version, info.MessageAddress);
         }
 
-        private IDataTransferingEndpoint BuildDataTransferProxy(EndpointId id)
+        private IDataTransferingEndpoint BuildDataTransferProxy(ProtocolInformation info)
         {
-            Debug.Assert(m_ChannelConnectionMap.CanCommunicateWithEndpoint(id), "Trying to send data to an unknown endpoint.");
-            EndpointInformation connectionInfo;
-            var success = m_ChannelConnectionMap.TryGetConnectionFor(id, out connectionInfo);
-            if (!success)
-            {
-                throw new EndpointNotContactableException();
-            }
-
-            return m_VersionedDataSenderBuilder(connectionInfo.ProtocolInformation.Version, connectionInfo.ProtocolInformation.DataAddress);
+            return m_VersionedDataSenderBuilder(info.Version, info.DataAddress);
         }
 
         /// <summary>

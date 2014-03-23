@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.Threading;
 
 namespace Nuclei.Communication.Discovery
 {
@@ -125,6 +126,8 @@ namespace Nuclei.Communication.Discovery
                 m_HostsByVersion.Add(version, host);
                 discoveryChannelsByVersion.Add(version, uri);
             }
+
+            Thread.Sleep(5000);
 
             // Open the channel that provides the discovery of the discovery channels
             m_BootstrapHost = m_HostBuilder();

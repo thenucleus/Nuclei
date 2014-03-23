@@ -38,7 +38,6 @@ namespace Nuclei.Communication
                     var ctx = c.Resolve<IComponentContext>();
                     return new ProtocolLayer(
                         c.Resolve<IStoreInformationAboutEndpoints>(),
-                        c.Resolve<IEnumerable<IDiscoverOtherServices>>(),
                         (t, id) => Tuple.Create(
                             ctx.ResolveKeyed<IProtocolChannel>(t, new TypedParameter(typeof(EndpointId), id)),
                             ctx.Resolve<IDirectIncomingMessages>()),
@@ -233,7 +232,6 @@ namespace Nuclei.Communication
 
                     return new ProtocolChannel(
                         p.TypedAs<EndpointId>(),
-                        c.Resolve<IStoreInformationAboutEndpoints>(),
                         channelTemplate,
                         () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
                         BuildMessagePipeSelector(ctx),
@@ -243,10 +241,10 @@ namespace Nuclei.Communication
                                 typeof(EndpointId),
                                 id),
                             new TypedParameter(
-                                typeof(Func<EndpointId, IMessageSendingEndpoint>),
+                                typeof(Func<ProtocolInformation, IMessageSendingEndpoint>),
                                 msgProxy),
                             new TypedParameter(
-                                typeof(Func<EndpointId, IDataTransferingEndpoint>),
+                                typeof(Func<ProtocolInformation, IDataTransferingEndpoint>),
                                 dataProxy)),
                         BuildMessageSenderSelector(ctx),
                         BuildDataTransferSelector(ctx));
@@ -262,7 +260,6 @@ namespace Nuclei.Communication
                     var ctx = c.Resolve<IComponentContext>();
                     return new ProtocolChannel(
                         p.TypedAs<EndpointId>(),
-                        c.Resolve<IStoreInformationAboutEndpoints>(),
                         channelTemplate,
                         () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
                         BuildMessagePipeSelector(ctx),
@@ -272,10 +269,10 @@ namespace Nuclei.Communication
                                 typeof(EndpointId),
                                 id),
                             new TypedParameter(
-                                typeof(Func<EndpointId, IMessageSendingEndpoint>),
+                                typeof(Func<ProtocolInformation, IMessageSendingEndpoint>),
                                 msgProxy),
                             new TypedParameter(
-                                typeof(Func<EndpointId, IDataTransferingEndpoint>),
+                                typeof(Func<ProtocolInformation, IDataTransferingEndpoint>),
                                 dataProxy)),
                         BuildMessageSenderSelector(ctx),
                         BuildDataTransferSelector(ctx));
@@ -400,8 +397,8 @@ namespace Nuclei.Communication
         {
             builder.Register((c, p) => new SendingEndpoint(
                     p.TypedAs<EndpointId>(),
-                    p.TypedAs<Func<EndpointId, IMessageSendingEndpoint>>(),
-                    p.TypedAs<Func<EndpointId, IDataTransferingEndpoint>>()))
+                    p.TypedAs<Func<ProtocolInformation, IMessageSendingEndpoint>>(),
+                    p.TypedAs<Func<ProtocolInformation, IDataTransferingEndpoint>>()))
                 .As<ISendingEndpoint>();
         }
 

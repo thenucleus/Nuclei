@@ -26,7 +26,8 @@ namespace Nuclei.Communication
         /// <summary>
         /// Stores the URI of the bootstrap channel for the current endpoint.
         /// </summary>
-        private static Uri s_BootstrapChannelUri;
+        private static Dictionary<ChannelTemplate, Uri> s_BootstrapChannelUri
+            = new Dictionary<ChannelTemplate, Uri>();
 
         private static void RegisterEndpointDiscoverySources(ContainerBuilder builder, bool allowChannelDiscovery)
         {
@@ -146,7 +147,7 @@ namespace Nuclei.Communication
                         channelTemplate,
                         c.Resolve<Func<Version, ChannelTemplate, Tuple<Type, IVersionedDiscoveryEndpoint>>>(),
                         () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
-                        uri => s_BootstrapChannelUri = uri);
+                        uri => s_BootstrapChannelUri.Add(ChannelTemplate.NamedPipe, uri));
                 })
                 .Keyed<IBootstrapChannel>(ChannelTemplate.NamedPipe)
                 .As<IDisposable>()
@@ -162,7 +163,7 @@ namespace Nuclei.Communication
                         channelTemplate,
                         c.Resolve<Func<Version, ChannelTemplate, Tuple<Type, IVersionedDiscoveryEndpoint>>>(),
                         () => ctx.Resolve<IHoldServiceConnections>(new TypedParameter(typeof(IChannelTemplate), channelTemplate)),
-                        uri => s_BootstrapChannelUri = uri);
+                        uri => s_BootstrapChannelUri.Add(ChannelTemplate.TcpIP, uri));
                 })
                 .Keyed<IBootstrapChannel>(ChannelTemplate.TcpIP)
                 .As<IDisposable>()
@@ -173,7 +174,7 @@ namespace Nuclei.Communication
         {
             builder.Register(c => new LocalConnectionInformation(
                     EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                    () => s_BootstrapChannelUri))
+                    t => s_BootstrapChannelUri[t]))
                 .As<IProvideLocalConnectionInformation>();
         }
 
