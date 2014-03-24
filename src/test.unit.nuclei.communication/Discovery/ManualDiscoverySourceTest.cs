@@ -70,7 +70,9 @@ namespace Nuclei.Communication.Discovery
                 translators,
                 templateBuilder,
                 diagnostics);
-            discovery.RecentlyConnectedEndpoint(new EndpointId("a"), new Uri("http://localhost/discovery/invalid"));
+            discovery.RecentlyConnectedEndpoint(
+                EndpointIdExtensions.CreateEndpointIdForCurrentProcess(), 
+                new Uri("net.pipe://localhost/discovery/invalid"));
             template.Verify(t => t.GenerateBinding(), Times.Never());
         }
 
@@ -118,7 +120,9 @@ namespace Nuclei.Communication.Discovery
             host.Open();
             try
             {
-                discovery.RecentlyConnectedEndpoint(new EndpointId("a"), endpoint.ListenUri);
+                discovery.RecentlyConnectedEndpoint(
+                    EndpointIdExtensions.CreateEndpointIdForCurrentProcess(), 
+                    endpoint.ListenUri);
             }
             finally
             {
@@ -170,7 +174,9 @@ namespace Nuclei.Communication.Discovery
             host.Open();
             try
             {
-                discovery.RecentlyConnectedEndpoint(new EndpointId("a"), endpoint.ListenUri);
+                discovery.RecentlyConnectedEndpoint(
+                    EndpointIdExtensions.CreateEndpointIdForCurrentProcess(), 
+                    endpoint.ListenUri);
             }
             finally
             {
@@ -223,7 +229,9 @@ namespace Nuclei.Communication.Discovery
             host.Open();
             try
             {
-                discovery.RecentlyConnectedEndpoint(new EndpointId("a"), endpoint.ListenUri);
+                discovery.RecentlyConnectedEndpoint(
+                    EndpointIdExtensions.CreateEndpointIdForCurrentProcess(), 
+                    endpoint.ListenUri);
             }
             finally
             {
@@ -290,7 +298,9 @@ namespace Nuclei.Communication.Discovery
             host.Open();
             try
             {
-                discovery.RecentlyConnectedEndpoint(new EndpointId("a"), endpoint.ListenUri);
+                discovery.RecentlyConnectedEndpoint(
+                    EndpointIdExtensions.CreateEndpointIdForCurrentProcess(), 
+                    endpoint.ListenUri);
             }
             finally
             {
