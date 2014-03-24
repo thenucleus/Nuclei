@@ -93,6 +93,15 @@ namespace Nuclei.Communication.Protocol
             return endpointChannelTemplate == ChannelTemplate.TcpIP;
         }
 
+        private static bool IsComplete(EndpointInformation storedInformation)
+        {
+            return (storedInformation != null)
+                && (storedInformation.DiscoveryInformation.Address != null)
+                && (storedInformation.ProtocolInformation.Version != null)
+                && (storedInformation.ProtocolInformation.MessageAddress != null)
+                && (storedInformation.ProtocolInformation.DataAddress != null);
+        }
+
         /// <summary>
         /// The object used to lock on.
         /// </summary>
@@ -253,15 +262,6 @@ namespace Nuclei.Communication.Protocol
                 && !m_PotentialEndpoints.IsWaitingForApproval(info.Id)
                 && !m_PotentialEndpoints.HasBeenContacted(info.Id))
             {
-                m_Diagnostics.Log(
-                    LevelToLog.Trace,
-                    CommunicationConstants.DefaultLogTextPrefix,
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        "New endpoint ({0}) discovered at endpoint URL: {1}.",
-                        info.Id,
-                        info.ProtocolInformation.MessageAddress));
-
                 StorePotentialEndpoint(info);
                 InitiateHandshakeWith(info);
             }
@@ -381,9 +381,28 @@ namespace Nuclei.Communication.Protocol
                         CommunicationConstants.DefaultLogTextPrefix,
                         string.Format(
                             CultureInfo.InvariantCulture,
-                            "New endpoint {0} connected via {1}.",
+                            "New endpoint {0} connected at protocol level via {1}.",
                             information.Id,
                             information.ProtocolInformation.MessageAddress));
+                }
+                else
+                {
+                    EndpointInformation storedInformation;
+                    if (m_PotentialEndpoints.TryGetConnectionFor(information.Id, out storedInformation))
+                    {
+                        if (!IsComplete(storedInformation) && IsComplete(information))
+                        {
+                            m_PotentialEndpoints.TryUpdate(information);
+
+                            m_Diagnostics.Log(
+                                LevelToLog.Trace,
+                                CommunicationConstants.DefaultLogTextPrefix,
+                                string.Format(
+                                    CultureInfo.InvariantCulture,
+                                    "Endpoint information for {0} updated.",
+                                    information.Id));
+                        }
+                    }
                 }
             }
         }
@@ -453,7 +472,7 @@ namespace Nuclei.Communication.Protocol
                         CommunicationConstants.DefaultLogTextPrefix,
                         string.Format(
                             CultureInfo.InvariantCulture,
-                            "Failed to get connection information for endpoint: {0}",
+                            "Failed to get protocol information for endpoint: {0}",
                             connection));
 
                     return;
@@ -466,7 +485,7 @@ namespace Nuclei.Communication.Protocol
                         CommunicationConstants.DefaultLogTextPrefix,
                         string.Format(
                             CultureInfo.InvariantCulture,
-                            "New endpoint ({0}) approved for communication. Message URL: {1}. Data URL: {2}",
+                            "New endpoint ({0}) approved at protocol level. Message URL: {1}. Data URL: {2}",
                             info.Id,
                             info.ProtocolInformation.MessageAddress,
                             info.ProtocolInformation.DataAddress));

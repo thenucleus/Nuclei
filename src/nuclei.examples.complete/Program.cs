@@ -130,7 +130,13 @@ namespace Nuclei.Examples.Complete
                 return;
             }
 
-            context.ThreadExit += (s, e) => s_Container.Dispose();
+            context.ThreadExit += 
+                (s, e) =>
+                {
+                    s_Center = null;
+                    s_Container.Dispose();
+                };
+
             var allowChannelDiscovery = (hostIdText == null) || (channelUriText == null);
             s_Container = DependencyInjection.CreateContainer(context, communicationSubjects, allowChannelDiscovery);
             s_Center = s_Container.Resolve<IFormTheApplicationCenter>();

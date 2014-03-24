@@ -22,6 +22,17 @@ namespace Nuclei.Communication.Discovery
     /// </summary>
     internal abstract class DiscoverySource : IDiscoverOtherServices
     {
+        private static bool CanReachEndpointWithGivenConnection(EndpointId id, Uri info)
+        {
+            var endpointChannelTemplate = info.ToChannelTemplate();
+            if (id.IsOnLocalMachine())
+            {
+                return endpointChannelTemplate == ChannelTemplate.NamedPipe;
+            }
+
+            return endpointChannelTemplate == ChannelTemplate.TcpIP;
+        }
+
         /// <summary>
         /// The collection containing the translators mapped to the version of the discovery channel
         /// they work with.
@@ -139,6 +150,13 @@ namespace Nuclei.Communication.Discovery
 
         protected void LocatedRemoteEndpointOnChannel(EndpointId id, Uri address)
         {
+            // Filter out the endpoint connections that can't be used (i.e. named pipes on remote machines
+            // or TCP/IP connections on the local machine).
+            if (!CanReachEndpointWithGivenConnection(id, address))
+            {
+                return;
+            }
+
             var pair = GetMostSuitableDiscoveryChannel(address);
             if (pair == null)
             {

@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using Autofac;
 using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Interaction.Transport;
@@ -134,7 +135,8 @@ namespace Nuclei.Communication
                     c.Resolve<IStoreInteractionSubjects>(),
                     c.Resolve<IStoreRemoteCommandProxies>(),
                     c.Resolve<IStoreRemoteNotificationProxies>(),
-                    c.Resolve<IProtocolLayer>()))
+                    c.Resolve<IProtocolLayer>(),
+                    c.Resolve<SystemDiagnostics>()))
                 .As<IHandleInteractionHandshakes>()
                 .SingleInstance();
         }
@@ -251,18 +253,22 @@ namespace Nuclei.Communication
         private static void RegisterObjectSerializers(ContainerBuilder builder)
         {
             builder.Register(c => new NonTransformingObjectSerializer())
-                .OnActivated(
-                    a =>
-                    {
-                        var collection = a.Context.Resolve<IStoreObjectSerializers>();
-                        collection.Add(a.Instance);
-                    })
-                .As<ISerializeObjectData>();
+                .As<ISerializeObjectData>()
+                .SingleInstance();
         }
 
         private static void RegisterObjectSerializerStorage(ContainerBuilder builder)
         {
             builder.Register(c => new ObjectSerializerStorage())
+                .OnActivated(
+                    a =>
+                    {
+                        var serializers = a.Context.Resolve<IEnumerable<ISerializeObjectData>>();
+                        foreach (var serializer in serializers)
+                        {
+                            a.Instance.Add(serializer);
+                        }
+                    })
                 .As<IStoreObjectSerializers>()
                 .SingleInstance();
         }

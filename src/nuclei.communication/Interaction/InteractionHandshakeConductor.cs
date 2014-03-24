@@ -8,12 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
+using Nuclei.Diagnostics;
+using Nuclei.Diagnostics.Logging;
 
 namespace Nuclei.Communication.Interaction
 {
@@ -166,6 +169,11 @@ namespace Nuclei.Communication.Interaction
         private readonly IProtocolLayer m_Layer;
 
         /// <summary>
+        /// The object that provides the diagnostics methods for the application.
+        /// </summary>
+        private readonly SystemDiagnostics m_Diagnostics;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="InteractionHandshakeConductor"/> class.
         /// </summary>
         /// <param name="endpointInformationStorage">The object that stores information about the known endpoints.</param>
@@ -173,6 +181,7 @@ namespace Nuclei.Communication.Interaction
         /// <param name="commandProxyHub">The object that stores the command proxy objects.</param>
         /// <param name="notificationProxyHub">The object that stores the notification proxy objects.</param>
         /// <param name="layer">The object responsible for sending messages to remote endpoints.</param>
+        /// <param name="diagnostics">The object that provides the diagnostics methods for the application.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpointInformationStorage"/> is <see langword="null" />.
         /// </exception>
@@ -188,12 +197,16 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="layer"/> is <see langword="null" />.
         /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
+        /// </exception>
         public InteractionHandshakeConductor(
             IStoreInformationAboutEndpoints endpointInformationStorage,
             IStoreInteractionSubjects interactionSubjects,
             IStoreRemoteCommandProxies commandProxyHub,
             IStoreRemoteNotificationProxies notificationProxyHub,
-            IProtocolLayer layer)
+            IProtocolLayer layer,
+            SystemDiagnostics diagnostics)
         {
             {
                 Lokad.Enforce.Argument(() => endpointInformationStorage);
@@ -201,6 +214,7 @@ namespace Nuclei.Communication.Interaction
                 Lokad.Enforce.Argument(() => commandProxyHub);
                 Lokad.Enforce.Argument(() => notificationProxyHub);
                 Lokad.Enforce.Argument(() => layer);
+                Lokad.Enforce.Argument(() => diagnostics);
             }
 
             m_EndpointInformationStorage = endpointInformationStorage;
@@ -210,6 +224,7 @@ namespace Nuclei.Communication.Interaction
             m_CommandProxyHub = commandProxyHub;
             m_NotificationProxyHub = notificationProxyHub;
             m_Layer = layer;
+            m_Diagnostics = diagnostics;
         }
 
         private void HandleEndpointSignIn(object sender, EndpointEventArgs e)
@@ -394,6 +409,14 @@ namespace Nuclei.Communication.Interaction
                 if (!m_EndpointApprovalState.ContainsKey(id))
                 {
                     m_EndpointApprovalState.Add(id, new EndpointApprovalState());
+
+                    m_Diagnostics.Log(
+                    LevelToLog.Trace,
+                    CommunicationConstants.DefaultLogTextPrefix,
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        "New endpoint ({0}) provided for interaction handshake.",
+                        id));
                 }
             }
         }
@@ -412,6 +435,14 @@ namespace Nuclei.Communication.Interaction
                     || (tickList.SendResponse == InteractionConnectionState.Denied))
                 {
                     RemoveEndpoint(connection);
+
+                    m_Diagnostics.Log(
+                        LevelToLog.Trace,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Connection to endpoint ({0}) denied at interaction level.",
+                            connection));
                 }
 
                 if ((tickList.ReceivedResponse == InteractionConnectionState.Desired) 
@@ -421,25 +452,55 @@ namespace Nuclei.Communication.Interaction
                     {
                         m_CommandProxyHub.OnReceiptOfEndpointCommands(connection, tickList.SelectedCommands);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        // Can only ignore it at the moment...
+                        m_Diagnostics.Log(
+                            LevelToLog.Trace,
+                            CommunicationConstants.DefaultLogTextPrefix,
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                "Failed to store commands for endpoint ({0}). Error was {1}",
+                                connection,
+                                e));
                     }
 
                     try
                     {
                         m_NotificationProxyHub.OnReceiptOfEndpointNotifications(connection, tickList.SelectedNotifications);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        // Can only ignore it ...
+                        m_Diagnostics.Log(
+                            LevelToLog.Trace,
+                            CommunicationConstants.DefaultLogTextPrefix,
+                            string.Format(
+                                CultureInfo.InvariantCulture,
+                                "Failed to store notifications for endpoint ({0}). Error was {1}",
+                                connection,
+                                e));
                     }
 
                     m_EndpointApprovalState.Remove(connection);
+
+                    m_Diagnostics.Log(
+                        LevelToLog.Trace,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Connection to endpoint ({0}) approved at interaction level.",
+                            connection));
                 }
                 else
                 {
                     RemoveEndpoint(connection);
+
+                    m_Diagnostics.Log(
+                        LevelToLog.Trace,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Connection to endpoint ({0}) not desired by either end at interaction level.",
+                            connection));
                 }
             }
         }

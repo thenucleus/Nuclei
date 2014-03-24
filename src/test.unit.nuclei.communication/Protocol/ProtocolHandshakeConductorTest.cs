@@ -132,18 +132,24 @@ namespace Nuclei.Communication.Protocol
             Assert.IsFalse(storage.IsWaitingForApproval(remoteEndpoint));
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(remoteEndpoint));
 
-            layer.ContinueHandshakeWith(
-                new EndpointInformation(
-                    remoteEndpoint,
-                    new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")), 
-                    new ProtocolInformation(new Version(1, 0), new Uri(remoteMessageAddress), new Uri(remoteDataAddress))),
-                communicationDescriptions.Object.ToStorage(),
-                new MessageId());
+            var remoteInfo = new EndpointInformation(
+                remoteEndpoint,
+                new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")),
+                new ProtocolInformation(new Version(1, 0), new Uri(remoteMessageAddress), new Uri(remoteDataAddress)));
+            layer.ContinueHandshakeWith(remoteInfo, communicationDescriptions.Object.ToStorage(), new MessageId());
 
             Assert.IsFalse(storage.HasBeenContacted(remoteEndpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(remoteEndpoint));
             Assert.IsTrue(storage.CanCommunicateWithEndpoint(remoteEndpoint));
             Assert.IsTrue(endpointConnected);
+
+            EndpointInformation info;
+            var tryGet = storage.TryGetConnectionFor(remoteEndpoint, out info);
+            Assert.IsTrue(tryGet);
+            Assert.AreEqual(remoteInfo.DiscoveryInformation.Address, info.DiscoveryInformation.Address);
+            Assert.AreEqual(remoteInfo.ProtocolInformation.Version, info.ProtocolInformation.Version);
+            Assert.AreEqual(remoteInfo.ProtocolInformation.MessageAddress, info.ProtocolInformation.MessageAddress);
+            Assert.AreEqual(remoteInfo.ProtocolInformation.DataAddress, info.ProtocolInformation.DataAddress);
 
             protocolLayer.Verify(
                 l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 
@@ -250,19 +256,24 @@ namespace Nuclei.Communication.Protocol
                     },
                 new SystemDiagnostics((l, m) => { }, null));
 
-            layer.ContinueHandshakeWith(
-                new EndpointInformation(
-                    remoteEndpoint,
-                    new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")), 
-                    new ProtocolInformation(new Version(1, 0), new Uri(remoteMessageAddress), new Uri(remoteDataAddress))),
-                communicationDescriptions.Object.ToStorage(),
-                new MessageId());
+            var remoteInfo = new EndpointInformation(
+                remoteEndpoint,
+                new DiscoveryInformation(new Uri("net.tcp://localhost/discovery/invalid")),
+                new ProtocolInformation(new Version(1, 0), new Uri(remoteMessageAddress), new Uri(remoteDataAddress)));
+            layer.ContinueHandshakeWith(remoteInfo, communicationDescriptions.Object.ToStorage(), new MessageId());
 
             Assert.IsFalse(storage.HasBeenContacted(remoteEndpoint));
             Assert.IsFalse(storage.IsWaitingForApproval(remoteEndpoint));
             Assert.IsTrue(storage.CanCommunicateWithEndpoint(remoteEndpoint));
-
             Assert.IsTrue(endpointConnected);
+
+            EndpointInformation info;
+            var tryGet = storage.TryGetConnectionFor(remoteEndpoint, out info);
+            Assert.IsTrue(tryGet);
+            Assert.AreEqual(remoteInfo.DiscoveryInformation.Address, info.DiscoveryInformation.Address);
+            Assert.AreEqual(remoteInfo.ProtocolInformation.Version, info.ProtocolInformation.Version);
+            Assert.AreEqual(remoteInfo.ProtocolInformation.MessageAddress, info.ProtocolInformation.MessageAddress);
+            Assert.AreEqual(remoteInfo.ProtocolInformation.DataAddress, info.ProtocolInformation.DataAddress);
 
             protocolLayer.Verify(
                 l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 

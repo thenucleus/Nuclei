@@ -22,7 +22,14 @@ namespace Nuclei.Communication.Discovery
         public void OpenChannel()
         {
             var id = EndpointIdExtensions.CreateEndpointIdForCurrentProcess();
+            var baseUri = new Uri("http://localhost/invalid");
+            var versionedEndpointUri = new Uri("http://localhost/invalid/v1");
             var template = new Mock<IDiscoveryChannelTemplate>();
+            {
+                template.Setup(
+                    t => t.AttachDiscoveryEntryEndpoint(It.IsAny<ServiceHost>(), It.IsAny<Type>(), It.IsAny<EndpointId>(), It.IsAny<bool>()))
+                    .Returns(new ServiceEndpoint(new ContractDescription("a"), new NetNamedPipeBinding(), new EndpointAddress(baseUri)));
+            }
 
             var versionedEndpointCounter = 0;
             var versionedEndpoint = new Mock<IVersionedDiscoveryEndpoint>();
@@ -33,16 +40,14 @@ namespace Nuclei.Communication.Discovery
                     return new Tuple<Type, IVersionedDiscoveryEndpoint>(versionedEndpoint.Object.GetType(), versionedEndpoint.Object);
                 };
 
-            var baseUri = new Uri("http://localhost/invalid");
-            var versionedEndpointUri = new Uri("http://localhost/invalid/v1");
-
-            BootstrapEndpoint baseEndpoint = null;
+           BootstrapEndpoint baseEndpoint = null;
             var host = new Mock<IHoldServiceConnections>();
             {
                 host.Setup(h => h.OpenChannel(It.IsAny<IReceiveInformationFromRemoteEndpoints>(), It.IsAny<Func<ServiceHost, ServiceEndpoint>>()))
                     .Callback<IReceiveInformationFromRemoteEndpoints, Func<ServiceHost, ServiceEndpoint>>(
                         (h, e) =>
                         {
+                            e(null);
                             baseEndpoint = h as BootstrapEndpoint;
                         })
                     .Returns<IReceiveInformationFromRemoteEndpoints, Func<ServiceHost, ServiceEndpoint>>(

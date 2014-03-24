@@ -228,6 +228,32 @@ namespace Nuclei.Communication.Protocol.V1
                             "Disposed of data channel for {0}",
                             m_Factory.Endpoint.Address.Uri));
                 }
+                catch (CommunicationObjectFaultedException e)
+                {
+                    // The channel is faulted but there is nothing
+                    // we can do about that so just ignore it.
+                    m_Diagnostics.Log(
+                        LevelToLog.Debug,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Channel for {0} failed to close normally. Exception was: {1}",
+                            m_Factory.Endpoint.Address.Uri,
+                            e));
+                }
+                catch (ProtocolException e)
+                {
+                    // Apparently the channel was still in use, but we don't want to 
+                    // use it anymore so just ignore it
+                    m_Diagnostics.Log(
+                        LevelToLog.Debug,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Channel for {0} failed to close normally. Exception was: {1}",
+                            m_Factory.Endpoint.Address.Uri,
+                            e));
+                }
                 catch (CommunicationObjectAbortedException e)
                 {
                     // The channel is now faulted but there is nothing
@@ -238,6 +264,19 @@ namespace Nuclei.Communication.Protocol.V1
                         string.Format(
                             CultureInfo.InvariantCulture,
                             "Data channel for {0} failed to close normally. Exception was: {1}",
+                            m_Factory.Endpoint.Address.Uri,
+                            e));
+                }
+                catch (CommunicationException e)
+                {
+                    // Somehow the closing of the channel failed but there is nothing
+                    // we can do about that so just ignore it.
+                    m_Diagnostics.Log(
+                        LevelToLog.Debug,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Channel for {0} failed to close normally. Exception was: {1}",
                             m_Factory.Endpoint.Address.Uri,
                             e));
                 }

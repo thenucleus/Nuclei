@@ -127,16 +127,19 @@ namespace Nuclei.Communication.Discovery
                 discoveryChannelsByVersion.Add(version, uri);
             }
 
-            Thread.Sleep(5000);
-
             // Open the channel that provides the discovery of the discovery channels
             m_BootstrapHost = m_HostBuilder();
             var bootstrapEndpoint = new BootstrapEndpoint(discoveryChannelsByVersion.Select(p => new Tuple<Version, Uri>(p.Key, p.Value)));
 
             Func<ServiceHost, ServiceEndpoint> bootstrapEndpointBuilder = 
-                h => m_Template.AttachDiscoveryEntryEndpoint(h, typeof(IBootstrapEndpoint), m_Id, allowAutomaticChannelDiscovery);
-            var bootstrapUri = m_BootstrapHost.OpenChannel(bootstrapEndpoint, bootstrapEndpointBuilder);
-            m_EntryChannelStorage(bootstrapUri);
+                h =>
+                {
+                    var endpoint = m_Template.AttachDiscoveryEntryEndpoint(h, typeof(IBootstrapEndpoint), m_Id, allowAutomaticChannelDiscovery);
+                    m_EntryChannelStorage(endpoint.Address.Uri);
+
+                    return endpoint;
+                };
+            m_BootstrapHost.OpenChannel(bootstrapEndpoint, bootstrapEndpointBuilder);
         }
 
         /// <summary>

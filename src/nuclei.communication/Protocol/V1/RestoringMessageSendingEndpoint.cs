@@ -303,6 +303,19 @@ namespace Nuclei.Communication.Protocol.V1
                             m_Factory.Endpoint.Address.Uri,
                             e));
                 }
+                catch (CommunicationException e)
+                {
+                    // Somehow the closing of the channel failed but there is nothing
+                    // we can do about that so just ignore it.
+                    m_Diagnostics.Log(
+                        LevelToLog.Debug,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Channel for {0} failed to close normally. Exception was: {1}",
+                            m_Factory.Endpoint.Address.Uri,
+                            e));
+                }
                 catch (TimeoutException e)
                 {
                     // The default close timeout elapsed before we were 

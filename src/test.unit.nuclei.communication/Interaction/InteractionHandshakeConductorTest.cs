@@ -15,6 +15,7 @@ using Moq;
 using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
+using Nuclei.Diagnostics;
 using NUnit.Framework;
 
 namespace Nuclei.Communication.Interaction
@@ -115,12 +116,14 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
+            var diagnostics = new SystemDiagnostics((l, m) => { }, null);
             var conductor = new InteractionHandshakeConductor(
                 endpointStorage.Object,
                 interactionSubjects.Object,
                 commandProxies.Object,
                 notificationProxies.Object,
-                layer.Object);
+                layer.Object,
+                diagnostics);
 
             endpointStorage.Raise(e => e.OnEndpointConnected += null, new EndpointEventArgs(remoteEndpoint));
             layer.Verify(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
@@ -235,12 +238,14 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
+            var diagnostics = new SystemDiagnostics((l, m) => { }, null);
             var conductor = new InteractionHandshakeConductor(
                 endpointStorage.Object,
                 interactionSubjects.Object,
                 commandProxies.Object,
                 notificationProxies.Object,
-                layer.Object);
+                layer.Object,
+                diagnostics);
 
             conductor.ContinueHandshakeWith(
                 remoteEndpoint, 
@@ -351,12 +356,14 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
+            var diagnostics = new SystemDiagnostics((l, m) => { }, null);
             var conductor = new InteractionHandshakeConductor(
                 endpointStorage.Object,
                 interactionSubjects.Object,
                 commandProxies.Object,
                 notificationProxies.Object,
-                layer.Object);
+                layer.Object,
+                diagnostics);
 
             conductor.ContinueHandshakeWith(
                 remoteEndpoint,
@@ -474,12 +481,14 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
+            var diagnostics = new SystemDiagnostics((l, m) => { }, null);
             var conductor = new InteractionHandshakeConductor(
                 endpointStorage.Object,
                 interactionSubjects.Object,
                 commandProxies.Object,
                 notificationProxies.Object,
-                layer.Object);
+                layer.Object,
+                diagnostics);
 
             endpointStorage.Raise(e => e.OnEndpointConnected += null, new EndpointEventArgs(remoteEndpoint));
             layer.Verify(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
