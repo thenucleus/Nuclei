@@ -50,21 +50,23 @@
     <!-- Version number -->
     <VersionMajor>0</VersionMajor>
     <VersionMinor>0</VersionMinor>
+    <VersionPatch>0</VersionPatch>
     <VersionBuild>0</VersionBuild>
-    <VersionRevision>0</VersionRevision>
+    <VersionSemantic>0</VersionSemantic>
+    <VersionSemanticFull>0</VersionSemanticFull>
     <!-- Jenkins, the build system adds the BUILD_NUMBER environment variable so we can get that here -->
     <BuildNumber>$(BUILD_NUMBER)</BuildNumber>
     <BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber>
-    <!-- Todays dates -->
+    <!-- Today's dates -->
     <Now>$([System.DateTime]::Now.ToString("o"))</Now>
     <Year>$([System.DateTime]::Now.ToString("yyyy"))</Year>
   </PropertyGroup>
   <Import Project="$(MsBuildToolsDir)\TemplateFile.msbuild" Condition="Exists('$(MsBuildToolsDir)\TemplateFile.msbuild')" />
   <Import Project="$(MsBuildToolsDir)\FindToolFromPackages.msbuild" Condition="Exists('$(MsBuildToolsDir)\FindToolFromPackages.msbuild')" />
+  <Import Project="$(MsBuildToolsDir)\GetSemanticVersion.msbuild" Condition="Exists('$(MsBuildToolsDir)\GetSemanticVersion.msbuild')" />
   <Import Project="$(MsBuildToolsDir)\GitCommitHash.msbuild" Condition="Exists('$(MsBuildToolsDir)\GitCommitHash.msbuild')" />
   <Import Project="$(MsBuildToolsDir)\PublicKeySignatureFromAssembly.msbuild" Condition="Exists('$(MsBuildToolsDir)\PublicKeySignatureFromAssembly.msbuild')" />
   <Import Project="$(MsBuildToolsDir)\PublicKeySignatureFromKeyFile.msbuild" Condition="Exists('$(MsBuildToolsDir)\PublicKeySignatureFromKeyFile.msbuild')" />
-  <Import Project="$(DirWorkspace)\version.xml" Condition="Exists('$(DirWorkspace)\version.xml')" />
   <Target Name="_PrepareBuildEnvironment">
     <MakeDir Directories="$(DirBuild);" Condition="!Exists('$(DirBuild)')" />
     <MakeDir Directories="$(DirBuildTemp)" Condition="!Exists('$(DirBuildTemp)')" />
@@ -87,12 +89,30 @@
   <!-- Just before we start building we'll generate the AssemblyInfo.XX.cs files-->
   <PropertyGroup>
     <BuildDependsOn>
+            GetSemanticVersion;
             GenerateAssemblyInfoVersionNumber;
             GenerateAssemblyInfoBuildInfo;
             GenerateAssemblyInternalsVisbibleTo;
             $(BuildDependsOn);
         </BuildDependsOn>
   </PropertyGroup>
+  <PropertyGroup>
+    <FileGitVersionExe>GitHubFlowVersion.exe</FileGitVersionExe>
+  </PropertyGroup>
+  <Target Name="GetSemanticVersion">
+    <FindToolFromPackages PackagesDir="$(DirPackages)" FileToLocate="$(FileGitVersionExe)">
+      <Output TaskParameter="Path" PropertyName="PathGitVersionExe" />
+    </FindToolFromPackages>
+    
+    <GetSemanticVersion ExePath="$(PathGitVersionExe)" TempDirectory="$(DirBuildTemp)">
+        <Output TaskParameter="VersionMajor" PropertyName="VersionMajor" />
+        <Output TaskParameter="VersionMinor" PropertyName="VersionMinor" />
+        <Output TaskParameter="VersionPatch" PropertyName="VersionPatch" />
+        <Output TaskParameter="VersionBuild" PropertyName="VersionBuild" />
+        <Output TaskParameter="VersionSemantic" PropertyName="VersionSemantic" />
+        <Output TaskParameter="VersionSemanticFull" PropertyName="VersionSemanticFull" />
+    </GetSemanticVersion>
+  </Target>
   <Target Name="GenerateAssemblyInfoVersionNumber" Condition="!Exists('$(FileGeneratedAssemblyVersion)')">
     <!-- Generate the version number file -->
     <ItemGroup>
@@ -102,11 +122,14 @@
       <VersionTokens Include="Minor">
         <ReplacementValue>$(VersionMinor)</ReplacementValue>
       </VersionTokens>
+      <VersionTokens Include="Patch">
+        <ReplacementValue>$(VersionPatch)</ReplacementValue>
+      </VersionTokens>
       <VersionTokens Include="Build">
         <ReplacementValue>$(VersionBuild)</ReplacementValue>
       </VersionTokens>
-      <VersionTokens Include="Revision">
-        <ReplacementValue>$(VersionRevision)</ReplacementValue>
+      <VersionTokens Include="SemanticFull">
+        <ReplacementValue>$(VersionSemanticFull)</ReplacementValue>
       </VersionTokens>
     </ItemGroup>
     <TemplateFile Template="$(FileTemplateAssemblyVersion)" OutputFileName="$(FileGeneratedAssemblyVersion)" Tokens="@(VersionTokens)" />
