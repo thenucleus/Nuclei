@@ -18,12 +18,6 @@
         <DirBuildTemp>$(DirBuild)\temp</DirBuildTemp>
         <DirSrc>$(DirWorkspace)\src</DirSrc>
         
-        <!-- Version number -->
-        <VersionMajor>0</VersionMajor>
-        <VersionMinor>0</VersionMinor>
-        <VersionBuild>0</VersionBuild>
-        <VersionRevision>0</VersionRevision>
-        
         <!-- Tools -->
         <MsBuildExtensionsPath>$(DirTools)\msbuild.extensions</MsBuildExtensionsPath>
     </PropertyGroup>
@@ -31,9 +25,6 @@
     <Import Project="$(MsBuildExtensionsPath)\NugetRestore.msbuild"
             Condition="Exists('$(MsBuildExtensionsPath)\NugetRestore.msbuild')"/>    
             
-    <Import Project="$(DirWorkspace)\version.xml"
-            Condition="Exists('$(DirWorkspace)\version.xml')"/>
-
     <Target Name="Run" DependsOnTargets="_RestorePackages">
         <!-- Do nothing here -->
     </Target>
