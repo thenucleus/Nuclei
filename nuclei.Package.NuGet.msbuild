@@ -10,6 +10,7 @@
     
         <!-- Directories -->
         <DirWorkspace>$(MSBuildProjectDirectory)</DirWorkspace>
+        <DirPackages>$(DirWorkspace)\packages</DirPackages>
         <DirSrc>$(DirWorkspace)\src</DirSrc>
         <DirTemplates>$(DirWorkspace)\templates</DirTemplates>
         <DirTools>$(DirWorkspace)\tools</DirTools>
@@ -19,10 +20,7 @@
         <DirBuildTemp>$(DirBuild)\temp</DirBuildTemp>
         
         <!-- Version number -->
-        <VersionMajor>0</VersionMajor>
-        <VersionMinor>0</VersionMinor>
-        <VersionBuild>0</VersionBuild>
-        <VersionRevision>0</VersionRevision>
+        <VersionSemantic>0</VersionSemantic>
         
         <!-- Tools -->
         <MsBuildExtensionsPath>$(DirTools)\msbuild.extensions</MsBuildExtensionsPath>
@@ -30,6 +28,10 @@
     
     <Import Project="$(MsBuildExtensionsPath)\FindAndReplaceInFile.msbuild"
             Condition="Exists('$(MsBuildExtensionsPath)\FindAndReplaceInFile.msbuild')"/>
+    <Import Project="$(MsBuildExtensionsPath)\FindToolFromPackages.msbuild" 
+            Condition="Exists('$(MsBuildExtensionsPath)\FindToolFromPackages.msbuild')" />
+    <Import Project="$(MsBuildExtensionsPath)\GetSemanticVersion.msbuild" 
+            Condition="Exists('$(MsBuildExtensionsPath)\GetSemanticVersion.msbuild')" />
     <Import Project="$(MsBuildExtensionsPath)\NugetGatherDependencies.msbuild"
             Condition="Exists('$(MsBuildExtensionsPath)\NugetGatherDependencies.msbuild')"/>
     <Import Project="$(MsBuildExtensionsPath)\NugetPack.msbuild"
@@ -49,6 +51,19 @@
     </Target>
     
     <PropertyGroup>
+        <FileGitVersionExe>GitHubFlowVersion.exe</FileGitVersionExe>
+    </PropertyGroup>
+    <Target Name="_GetSemanticVersion">
+        <FindToolFromPackages PackagesDir="$(DirPackages)" FileToLocate="$(FileGitVersionExe)">
+            <Output TaskParameter="Path" PropertyName="PathGitVersionExe" />
+        </FindToolFromPackages>
+        
+        <GetSemanticVersion ExePath="$(PathGitVersionExe)" TempDirectory="$(DirBuildTemp)">
+            <Output TaskParameter="VersionSemantic" PropertyName="VersionSemantic" />
+        </GetSemanticVersion>
+    </Target>
+    
+    <PropertyGroup>
         <FileReleaseNotes>$(DirWorkspace)\releasenotes.txt</FileReleaseNotes>
     </PropertyGroup>
     <Target Name="_GatherReleaseNotes">
@@ -65,7 +80,7 @@
         <FileNuSpecNuclei>$(DirBuildTemp)\nuclei.nuspec</FileNuSpecNuclei>
         <FileReleaseNotes>$(DirBuildTemp)\releasenotes.txt</FileReleaseNotes>
     </PropertyGroup>
-    <Target Name="_BuildNugetPackageNuclei" DependsOnTargets="_DisplayInfo;_GatherReleaseNotes">
+    <Target Name="_BuildNugetPackageNuclei" DependsOnTargets="_DisplayInfo;_GetSemanticVersion;_GatherReleaseNotes">
         <MakeDir Directories="$(DirBuildTemp)" Condition="!Exists('$(DirBuildTemp)')" />
         <MakeDir Directories="$(DirBuildDeploy)" Condition="!Exists('$(DirBuildDeploy)')" />
 
@@ -78,7 +93,7 @@
 
         <ItemGroup>
             <NuSpecTokensNuclei Include="Version">
-                <ReplacementValue>$(VersionMajor).$(VersionMinor).$(VersionBuild).$(VersionRevision)</ReplacementValue>
+                <ReplacementValue>$(VersionSemantic)</ReplacementValue>
             </NuSpecTokensNuclei>
             <NuSpecTokensNuclei Include="DirBin">
                 <ReplacementValue>$(DirBuildBin)</ReplacementValue>
@@ -102,7 +117,7 @@
         <FileTemplateNuSpecNucleiBuild>$(DirTemplates)\nuclei.build.nuspec.in</FileTemplateNuSpecNucleiBuild>
         <FileNuSpecNucleiBuild>$(DirBuildTemp)\nuclei.build.nuspec</FileNuSpecNucleiBuild>
     </PropertyGroup>
-    <Target Name="_BuildNugetPackageNucleiBuild" DependsOnTargets="_DisplayInfo;_GatherReleaseNotes">
+    <Target Name="_BuildNugetPackageNucleiBuild" DependsOnTargets="_DisplayInfo;_GetSemanticVersion;_GatherReleaseNotes">
         <MakeDir Directories="$(DirBuildTemp)" Condition="!Exists('$(DirBuildTemp)')" />
         <MakeDir Directories="$(DirBuildDeploy)" Condition="!Exists('$(DirBuildDeploy)')" />
 
@@ -115,7 +130,7 @@
 
         <ItemGroup>
             <NuSpecTokensNucleiBuild Include="Version">
-                <ReplacementValue>$(VersionMajor).$(VersionMinor).$(VersionBuild).$(VersionRevision)</ReplacementValue>
+                <ReplacementValue>$(VersionSemantic)</ReplacementValue>
             </NuSpecTokensNucleiBuild>
             <NuSpecTokensNucleiBuild Include="DirBin">
                 <ReplacementValue>$(DirBuildBin)</ReplacementValue>
@@ -139,7 +154,7 @@
         <FileTemplateNuSpecNucleiCommunication>$(DirTemplates)\nuclei.communication.nuspec.in</FileTemplateNuSpecNucleiCommunication>
         <FileNuSpecNucleiCommunication>$(DirBuildTemp)\nuclei.communication.nuspec</FileNuSpecNucleiCommunication>
     </PropertyGroup>
-    <Target Name="_BuildNugetPackageNucleiCommunication" DependsOnTargets="_DisplayInfo;_GatherReleaseNotes">
+    <Target Name="_BuildNugetPackageNucleiCommunication" DependsOnTargets="_DisplayInfo;_GetSemanticVersion;_GatherReleaseNotes">
         <MakeDir Directories="$(DirBuildTemp)" Condition="!Exists('$(DirBuildTemp)')" />
         <MakeDir Directories="$(DirBuildDeploy)" Condition="!Exists('$(DirBuildDeploy)')" />
 
@@ -152,7 +167,7 @@
 
         <ItemGroup>
             <NuSpecTokensNucleiCommunication Include="Version">
-                <ReplacementValue>$(VersionMajor).$(VersionMinor).$(VersionBuild).$(VersionRevision)</ReplacementValue>
+                <ReplacementValue>$(VersionSemantic)</ReplacementValue>
             </NuSpecTokensNucleiCommunication>
             <NuSpecTokensNucleiCommunication Include="DirBin">
                 <ReplacementValue>$(DirBuildBin)</ReplacementValue>
@@ -176,7 +191,7 @@
         <FileTemplateNuSpecNucleiConfiguration>$(DirTemplates)\nuclei.configuration.nuspec.in</FileTemplateNuSpecNucleiConfiguration>
         <FileNuSpecNucleiConfiguration>$(DirBuildTemp)\nuclei.configuration.nuspec</FileNuSpecNucleiConfiguration>
     </PropertyGroup>
-    <Target Name="_BuildNugetPackageNucleiConfiguration" DependsOnTargets="_DisplayInfo;_GatherReleaseNotes">
+    <Target Name="_BuildNugetPackageNucleiConfiguration" DependsOnTargets="_DisplayInfo;_GetSemanticVersion;_GatherReleaseNotes">
         <MakeDir Directories="$(DirBuildTemp)" Condition="!Exists('$(DirBuildTemp)')" />
         <MakeDir Directories="$(DirBuildDeploy)" Condition="!Exists('$(DirBuildDeploy)')" />
 
@@ -189,7 +204,7 @@
 
         <ItemGroup>
             <NuSpecTokensNucleiConfiguration Include="Version">
-                <ReplacementValue>$(VersionMajor).$(VersionMinor).$(VersionBuild).$(VersionRevision)</ReplacementValue>
+                <ReplacementValue>$(VersionSemantic)</ReplacementValue>
             </NuSpecTokensNucleiConfiguration>
             <NuSpecTokensNucleiConfiguration Include="DirBin">
                 <ReplacementValue>$(DirBuildBin)</ReplacementValue>
@@ -213,7 +228,7 @@
         <FileTemplateNuSpecNucleiDiagnostics>$(DirTemplates)\nuclei.diagnostics.nuspec.in</FileTemplateNuSpecNucleiDiagnostics>
         <FileNuSpecNucleiDiagnostics>$(DirBuildTemp)\nuclei.diagnostics.nuspec</FileNuSpecNucleiDiagnostics>
     </PropertyGroup>
-    <Target Name="_BuildNugetPackageNucleiDiagnostics" DependsOnTargets="_DisplayInfo;_GatherReleaseNotes">
+    <Target Name="_BuildNugetPackageNucleiDiagnostics" DependsOnTargets="_DisplayInfo;_GetSemanticVersion;_GatherReleaseNotes">
         <MakeDir Directories="$(DirBuildTemp)" Condition="!Exists('$(DirBuildTemp)')" />
         <MakeDir Directories="$(DirBuildDeploy)" Condition="!Exists('$(DirBuildDeploy)')" />
 
@@ -226,7 +241,7 @@
 
         <ItemGroup>
             <NuSpecTokensNucleiDiagnostics Include="Version">
-                <ReplacementValue>$(VersionMajor).$(VersionMinor).$(VersionBuild).$(VersionRevision)</ReplacementValue>
+                <ReplacementValue>$(VersionSemantic)</ReplacementValue>
             </NuSpecTokensNucleiDiagnostics>
             <NuSpecTokensNucleiDiagnostics Include="DirBin">
                 <ReplacementValue>$(DirBuildBin)</ReplacementValue>
@@ -250,7 +265,7 @@
         <FileTemplateNuSpecNucleiNunitExtensions>$(DirTemplates)\nuclei.nunit.extensions.nuspec.in</FileTemplateNuSpecNucleiNunitExtensions>
         <FileNuSpecNucleiNunitExtensions>$(DirBuildTemp)\nuclei.nunit.extensions.nuspec</FileNuSpecNucleiNunitExtensions>
     </PropertyGroup>
-    <Target Name="_BuildNugetPackageNunitExtensions" DependsOnTargets="_DisplayInfo;_GatherReleaseNotes">
+    <Target Name="_BuildNugetPackageNunitExtensions" DependsOnTargets="_DisplayInfo;_GetSemanticVersion;_GatherReleaseNotes">
         <MakeDir Directories="$(DirBuildTemp)" Condition="!Exists('$(DirBuildTemp)')" />
         <MakeDir Directories="$(DirBuildDeploy)" Condition="!Exists('$(DirBuildDeploy)')" />
 
@@ -263,7 +278,7 @@
 
         <ItemGroup>
             <NuSpecTokensNucleiNunitExtensions Include="Version">
-                <ReplacementValue>$(VersionMajor).$(VersionMinor).$(VersionBuild).$(VersionRevision)</ReplacementValue>
+                <ReplacementValue>$(VersionSemantic)</ReplacementValue>
             </NuSpecTokensNucleiNunitExtensions>
             <NuSpecTokensNucleiNunitExtensions Include="DirBin">
                 <ReplacementValue>$(DirBuildBin)</ReplacementValue>
@@ -321,7 +336,7 @@
         <FileTemplateNuSpecNucleiAppDomains>$(DirTemplates)\nuclei.appdomains.nuspec.in</FileTemplateNuSpecNucleiAppDomains>
         <FileNuSpecNucleiAppDomains>$(DirBuildTemp)\nuclei.appdomains.nuspec</FileNuSpecNucleiAppDomains>
     </PropertyGroup>
-    <Target Name="_BuildNugetPackageNucleiAppDomains" DependsOnTargets="_DisplayInfo;_GatherReleaseNotes;_PatchSourceNucleiAppDomains">
+    <Target Name="_BuildNugetPackageNucleiAppDomains" DependsOnTargets="_DisplayInfo;_GetSemanticVersion;_GatherReleaseNotes;_PatchSourceNucleiAppDomains">
         <MakeDir Directories="$(DirBuildTemp)" Condition="!Exists('$(DirBuildTemp)')" />
         <MakeDir Directories="$(DirBuildDeploy)" Condition="!Exists('$(DirBuildDeploy)')" />
 
@@ -334,7 +349,7 @@
 
         <ItemGroup>
             <NuSpecTokensNucleiAppDomains Include="Version">
-                <ReplacementValue>$(VersionMajor).$(VersionMinor).$(VersionBuild).$(VersionRevision)</ReplacementValue>
+                <ReplacementValue>$(VersionSemantic)</ReplacementValue>
             </NuSpecTokensNucleiAppDomains>
             <NuSpecTokensNucleiAppDomains Include="DirBin">
                 <ReplacementValue>$(DirTempSourceNucleiAppDomains)</ReplacementValue>
@@ -380,7 +395,7 @@
         <FileTemplateNuSpecNucleiExceptionHandling>$(DirTemplates)\nuclei.exceptionhandling.nuspec.in</FileTemplateNuSpecNucleiExceptionHandling>
         <FileNuSpecNucleiExceptionHandling>$(DirBuildTemp)\nuclei.exceptionhandling.nuspec</FileNuSpecNucleiExceptionHandling>
     </PropertyGroup>
-    <Target Name="_BuildNugetPackageExceptionHandling" DependsOnTargets="_DisplayInfo;_GatherReleaseNotes;_PatchSourceNucleiExceptionHandling">
+    <Target Name="_BuildNugetPackageExceptionHandling" DependsOnTargets="_DisplayInfo;_GetSemanticVersion;_GatherReleaseNotes;_PatchSourceNucleiExceptionHandling">
         <MakeDir Directories="$(DirBuildTemp)" Condition="!Exists('$(DirBuildTemp)')" />
         <MakeDir Directories="$(DirBuildDeploy)" Condition="!Exists('$(DirBuildDeploy)')" />
 
@@ -393,7 +408,7 @@
 
         <ItemGroup>
             <NuSpecTokensNucleiExceptionHandling Include="Version">
-                <ReplacementValue>$(VersionMajor).$(VersionMinor).$(VersionBuild).$(VersionRevision)</ReplacementValue>
+                <ReplacementValue>$(VersionSemantic)</ReplacementValue>
             </NuSpecTokensNucleiExceptionHandling>
             <NuSpecTokensNucleiExceptionHandling Include="DirBin">
                 <ReplacementValue>$(DirTempSourceNucleiExceptionHandling)</ReplacementValue>
@@ -439,7 +454,7 @@
         <FileTemplateNuSpecNucleiFusion>$(DirTemplates)\nuclei.fusion.nuspec.in</FileTemplateNuSpecNucleiFusion>
         <FileNuSpecNucleiFusion>$(DirBuildTemp)\nuclei.fusion.nuspec</FileNuSpecNucleiFusion>
     </PropertyGroup>
-    <Target Name="_BuildNugetPackageFusion" DependsOnTargets="_DisplayInfo;_GatherReleaseNotes;_PatchSourceNucleiFusion">
+    <Target Name="_BuildNugetPackageFusion" DependsOnTargets="_DisplayInfo;_GetSemanticVersion;_GatherReleaseNotes;_PatchSourceNucleiFusion">
         <MakeDir Directories="$(DirBuildTemp)" Condition="!Exists('$(DirBuildTemp)')" />
         <MakeDir Directories="$(DirBuildDeploy)" Condition="!Exists('$(DirBuildDeploy)')" />
 
@@ -452,7 +467,7 @@
 
         <ItemGroup>
             <NuSpecTokensNucleiFusion Include="Version">
-                <ReplacementValue>$(VersionMajor).$(VersionMinor).$(VersionBuild).$(VersionRevision)</ReplacementValue>
+                <ReplacementValue>$(VersionSemantic)</ReplacementValue>
             </NuSpecTokensNucleiFusion>
             <NuSpecTokensNucleiFusion Include="DirBin">
                 <ReplacementValue>$(DirTempSourceNucleiFusion)</ReplacementValue>
