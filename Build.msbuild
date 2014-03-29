@@ -26,7 +26,7 @@
     
     <!-- Clean -->
     <PropertyGroup>
-        <MsBuildPrepareWorkspace>$(DirWorkspace)\nuclei.PrepareWorkspace.msbuild</MsBuildPrepareWorkspace>
+        <MsBuildPrepareWorkspace>$(DirWorkspace)\Build.PrepareWorkspace.msbuild</MsBuildPrepareWorkspace>
     </PropertyGroup>
     <Target Name="_PrepareWorkspace" DependsOnTargets="_DisplayInfo">
         <MSBuild Projects="$(MsBuildPrepareWorkspace)" Properties="ShouldClean=$(ShouldClean);ShouldCleanPackages=$(ShouldCleanPackages)" />
@@ -34,7 +34,7 @@
     
     <!-- Build binaries -->
     <PropertyGroup>
-        <MsBuildBuildBinaries>$(DirWorkspace)\nuclei.Build.Binaries.msbuild</MsBuildBuildBinaries>
+        <MsBuildBuildBinaries>$(DirWorkspace)\Build.Binaries.msbuild</MsBuildBuildBinaries>
     </PropertyGroup>
     <Target Name="_BuildBinaries" DependsOnTargets="_PrepareWorkspace">
         <MSBuild Projects="$(MsBuildBuildBinaries)" Properties="Configuration=Release;Platform=$(Platform)" />
@@ -43,7 +43,7 @@
    
     <!-- Run unit tests -->
     <PropertyGroup>
-        <MsBuildExecuteUnitTest>$(DirWorkspace)\nuclei.Test.Unit.msbuild</MsBuildExecuteUnitTest>
+        <MsBuildExecuteUnitTest>$(DirWorkspace)\Build.Test.Unit.msbuild</MsBuildExecuteUnitTest>
     </PropertyGroup>
     <Target Name="_ExecuteUnitTests" DependsOnTargets="_BuildBinaries">
         <MSBuild Projects="$(MsBuildExecuteUnitTest)" Properties="ShouldHaveCoverage=$(ShouldHaveCoverage)" />
@@ -51,7 +51,7 @@
     
     <!-- Build NuGet files -->
     <PropertyGroup>
-        <MsBuildPackageNuGet>$(DirWorkspace)\nuclei.Package.NuGet.msbuild</MsBuildPackageNuGet>
+        <MsBuildPackageNuGet>$(DirWorkspace)\Build.Package.NuGet.msbuild</MsBuildPackageNuGet>
     </PropertyGroup>
     <Target Name="_PackageNuget" DependsOnTargets="_BuildBinaries">
         <MSBuild Projects="$(MsBuildPackageNuGet)" Properties="Configuration=Deploy;Platform=$(Platform)" />
