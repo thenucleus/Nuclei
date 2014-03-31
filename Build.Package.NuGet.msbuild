@@ -19,6 +19,10 @@
         <DirBuildDeploy>$(DirBuild)\deploy</DirBuildDeploy>
         <DirBuildTemp>$(DirBuild)\temp</DirBuildTemp>
         
+        <!-- Issue tracker -->
+        <GitHubUserName></GitHubUserName>
+        <GitHubToken></GitHubToken>
+        
         <!-- Version number -->
         <VersionSemantic>0</VersionSemantic>
         
@@ -64,9 +68,17 @@
     </Target>
     
     <PropertyGroup>
-        <FileReleaseNotes>$(DirWorkspace)\releasenotes.txt</FileReleaseNotes>
+        <FileGitReleaseNotes>GitReleaseNotes.exe</FileGitReleaseNotes>
+        <FileReleaseNotes>$(DirBuildTemp)\releasenotes.md</FileReleaseNotes>
     </PropertyGroup>
-    <Target Name="_GatherReleaseNotes">
+    <Target Name="_GatherReleaseNotes" Condition=" '$(GitHubUserName)' != '' AND '$(GitHubToken)' != '' ">
+        <FindToolFromPackages PackagesDir="$(DirPackages)" FileToLocate="$(FileGitReleaseNotes)">
+            <Output TaskParameter="Path" PropertyName="PathGitReleaseNotesExe" />
+        </FindToolFromPackages>
+        
+        <Exec Command="&quot;$(PathGitReleaseNotesExe)&quot; /I GitHub /R $(GitHubUserName)/nuclei /U $(GitHubUserName) /T $(GitHubToken) /F all /O &quot;$(FileReleaseNotes)&quot;"
+              WorkingDirectory="$(DirWorkspace)" />
+    
         <CreateProperty Condition="Exists('$(FileReleaseNotes)')" Value="$([System.IO.File]::ReadAllText('$(FileReleaseNotes)'))">
             <Output TaskParameter="Value" PropertyName="ReleaseNotes" />
         </CreateProperty>
@@ -78,7 +90,6 @@
     <PropertyGroup>
         <FileTemplateNuSpecNuclei>$(DirTemplates)\nuclei.nuspec.in</FileTemplateNuSpecNuclei>
         <FileNuSpecNuclei>$(DirBuildTemp)\nuclei.nuspec</FileNuSpecNuclei>
-        <FileReleaseNotes>$(DirBuildTemp)\releasenotes.txt</FileReleaseNotes>
     </PropertyGroup>
     <Target Name="_BuildNugetPackageNuclei" DependsOnTargets="_DisplayInfo;_GetSemanticVersion;_GatherReleaseNotes">
         <MakeDir Directories="$(DirBuildTemp)" Condition="!Exists('$(DirBuildTemp)')" />
