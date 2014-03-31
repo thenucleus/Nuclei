@@ -76,19 +76,8 @@
             <Output TaskParameter="Path" PropertyName="PathGitReleaseNotesExe" />
         </FindToolFromPackages>
         
-        <Exec Command="&quot;$(PathGitReleaseNotesExe)&quot; /I GitHub /R $(GitHubUserName)/nuclei /U $(GitHubUserName) /T $(GitHubToken) /O &quot;$(FileReleaseNotes)&quot;"
+        <Exec Command="&quot;$(PathGitReleaseNotesExe)&quot; /I GitHub /R $(GitHubUserName)/nuclei /U $(GitHubUserName) /T $(GitHubToken) /F all /O &quot;$(FileReleaseNotes)&quot;"
               WorkingDirectory="$(DirWorkspace)" />
-              
-              
-              
-              
-              HTML-ify the release notes
-              
-              
-              
-              
-              
-              
     
         <CreateProperty Condition="Exists('$(FileReleaseNotes)')" Value="$([System.IO.File]::ReadAllText('$(FileReleaseNotes)'))">
             <Output TaskParameter="Value" PropertyName="ReleaseNotes" />
