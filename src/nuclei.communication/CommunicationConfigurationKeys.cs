@@ -127,6 +127,24 @@ namespace Nuclei.Communication
             = new ConfigurationKey("ConnectionTimeout", typeof(int));
 
         /// <summary>
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the value for the interval (in milliseconds)
+        /// between two subsequent (keep-alive) messages.
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
+            Justification = "ConfigurationKey is immutable")]
+        public static readonly ConfigurationKey KeepAliveIntervalInMilliseconds
+            = new ConfigurationKey("KeepAliveIntervalInMilliseconds", typeof(int));
+
+        /// <summary>
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the value for the maximum number of 
+        /// keep-alive messages before a connection to a remote endpoint is considered disconnected.
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
+            Justification = "ConfigurationKey is immutable")]
+        public static readonly ConfigurationKey MaximumNumberOfMissedKeepAliveSignals
+            = new ConfigurationKey("MaximumNumberOfMissedKeepAliveSignals", typeof(int));
+
+        /// <summary>
         /// Returns a collection containing all the configuration keys for the communication section.
         /// </summary>
         /// <returns>A collection containing all the configuration keys for the communication section.</returns>
@@ -147,6 +165,8 @@ namespace Nuclei.Communication
                     BindingMaxBufferSizeForDataInBytes,
                     BindingMaxReceivedSizeForDataInBytes,
                     WaitForConnectionTimeoutInMilliseconds,
+                    KeepAliveIntervalInMilliseconds,
+                    MaximumNumberOfMissedKeepAliveSignals,
                 };
         }
     }
