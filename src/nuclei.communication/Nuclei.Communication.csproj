@@ -120,6 +120,7 @@
     <Compile Include="CommunicationModule.Interaction.V1.cs" />
     <Compile Include="CommunicationModule.Protocol.cs" />
     <Compile Include="CommunicationModule.Protocol.V1.cs" />
+    <Compile Include="ConnectionMonitor.cs" />
     <Compile Include="DiscoveryInformation.cs" />
     <Compile Include="Discovery\BootstrapChannel.cs" />
     <Compile Include="Discovery\BootstrapEndpoint.cs" />
@@ -145,6 +146,8 @@
     <Compile Include="Discovery\V1\VersionedChannelInformation.cs" />
     <Compile Include="ICommunicationFacade.cs" />
     <Compile Include="IDiscoveryVersionMetaData.cs" />
+    <Compile Include="IHandleConnections.cs" />
+    <Compile Include="IMonitorConnections.cs" />
     <Compile Include="Interaction\CommandData.cs" />
     <Compile Include="Interaction\CommunicationSubjectGroup.cs" />
     <Compile Include="Interaction\DuplicateObjectSerializerException.cs" />
@@ -197,8 +200,11 @@
     <Compile Include="Interaction\VersionedTypeFallback.cs" />
     <Compile Include="IProtocolVersionMetaData.cs" />
     <Compile Include="IProvideLocalConnectionInformation.cs" />
+    <Compile Include="IRegisterConnectionsForMonitoring.cs" />
     <Compile Include="IStoreInformationForActiveChannels.cs" />
     <Compile Include="ITypeMetaData.cs" />
+    <Compile Include="KeepAliveCustomDataBuilder.cs" />
+    <Compile Include="KeepAliveResponseCustomDataBuilder.cs" />
     <Compile Include="NamedPipeChannelTemplate.cs" />
     <Compile Include="ProtocolInformation.cs" />
     <Compile Include="Protocol\BuildSendingEndpoint.cs" />
