@@ -7,6 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Reactive.Threading.Tasks;
+using System.Threading;
 using System.Threading.Tasks;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol.Messages;
@@ -57,8 +61,8 @@ namespace Nuclei.Communication.Protocol
         /// We track the endpoint from which we're expecting a response in case we get an <c>EndpointDisconnectMessage</c>.
         /// In that case we need to know if we just lost the source of our potential answer or not.
         /// </remarks>
-        private readonly Dictionary<MessageId, Tuple<EndpointId, TaskCompletionSource<ICommunicationMessage>>> m_TasksWaitingForResponse
-            = new Dictionary<MessageId, Tuple<EndpointId, TaskCompletionSource<ICommunicationMessage>>>();
+        private readonly Dictionary<MessageId, Tuple<EndpointId, Subject<ICommunicationMessage>, CancellationTokenSource>> m_TasksWaitingForResponse
+            = new Dictionary<MessageId, Tuple<EndpointId, Subject<ICommunicationMessage>, CancellationTokenSource>>();
 
         /// <summary>
         /// The object that stores the endpoint information for all the endpoints that we are permitted to 
@@ -132,11 +136,13 @@ namespace Nuclei.Communication.Protocol
             {
                 if (!m_TasksWaitingForResponse.ContainsKey(inResponseTo))
                 {
-                    var source = new TaskCompletionSource<ICommunicationMessage>(TaskCreationOptions.None);
-                    m_TasksWaitingForResponse.Add(inResponseTo, Tuple.Create(messageReceiver, source));
+                    var subject = new Subject<ICommunicationMessage>();
+                    var token = new CancellationTokenSource();
+                    m_TasksWaitingForResponse.Add(inResponseTo, Tuple.Create(messageReceiver, subject, token));
                 }
 
-                return m_TasksWaitingForResponse[inResponseTo].Item2.Task;
+                var pair = m_TasksWaitingForResponse[inResponseTo];
+                return pair.Item2.ToTask(pair.Item3.Token);
             }
         }
 
@@ -199,7 +205,10 @@ namespace Nuclei.Communication.Protocol
                     if (pair.Value.Item1.Equals(endpointId))
                     {
                         messagesThatWillNotBeAnswered.Add(pair.Key);
-                        pair.Value.Item2.SetCanceled();
+                        pair.Value.Item3.Cancel();
+                        
+                        pair.Value.Item2.Dispose();
+                        pair.Value.Item3.Dispose();
                     }
                 }
 
@@ -237,12 +246,12 @@ namespace Nuclei.Communication.Protocol
 
                     using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Processing response message"))
                     {
-                        TaskCompletionSource<ICommunicationMessage> source = null;
+                        Tuple<EndpointId, Subject<ICommunicationMessage>, CancellationTokenSource> source = null;
                         lock (m_Lock)
                         {
                             if (m_TasksWaitingForResponse.ContainsKey(message.InResponseTo))
                             {
-                                source = m_TasksWaitingForResponse[message.InResponseTo].Item2;
+                                source = m_TasksWaitingForResponse[message.InResponseTo];
                                 m_TasksWaitingForResponse.Remove(message.InResponseTo);
                             }
                         }
@@ -252,7 +261,11 @@ namespace Nuclei.Communication.Protocol
                         // being required to be handled. All of that may need access to the lock.
                         if (source != null)
                         {
-                            source.SetResult(message);
+                            source.Item2.OnNext(message);
+                            source.Item2.OnCompleted();
+                            
+                            source.Item2.Dispose();
+                            source.Item3.Dispose();
                         }
 
                         return;
@@ -331,7 +344,10 @@ namespace Nuclei.Communication.Protocol
                 // Nuke them all
                 foreach (var pair in m_TasksWaitingForResponse)
                 {
-                    pair.Value.Item2.SetCanceled();
+                    pair.Value.Item3.Cancel();
+                    
+                    pair.Value.Item2.Dispose();
+                    pair.Value.Item3.Dispose();
                 }
 
                 m_TasksWaitingForResponse.Clear();
