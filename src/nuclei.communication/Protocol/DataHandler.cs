@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Reactive.Subjects;
+using System.Reactive.Threading.Tasks;
+using System.Threading;
 using System.Threading.Tasks;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
@@ -26,8 +29,8 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// The collection that maps the ID numbers of the endpoint that are waiting for a data stream from the endpoint.
         /// </summary>
-        private readonly Dictionary<EndpointId, Tuple<string, TaskCompletionSource<FileInfo>>> m_TasksWaitingForData
-            = new Dictionary<EndpointId, Tuple<string, TaskCompletionSource<FileInfo>>>();
+        private readonly Dictionary<EndpointId, Tuple<string, Subject<FileInfo>, CancellationTokenSource>> m_TasksWaitingForData
+            = new Dictionary<EndpointId, Tuple<string, Subject<FileInfo>, CancellationTokenSource>>();
 
         /// <summary>
         /// The object that provides the diagnostics methods for the system.
@@ -69,11 +72,13 @@ namespace Nuclei.Communication.Protocol
             {
                 if (!m_TasksWaitingForData.ContainsKey(messageReceiver))
                 {
-                    var source = new TaskCompletionSource<FileInfo>(TaskCreationOptions.None);
-                    m_TasksWaitingForData.Add(messageReceiver, Tuple.Create(filePath, source));
+                    var source = new Subject<FileInfo>();
+                    var token = new CancellationTokenSource();
+                    m_TasksWaitingForData.Add(messageReceiver, Tuple.Create(filePath, source, token));
                 }
 
-                return m_TasksWaitingForData[messageReceiver].Item2.Task;
+                var pair = m_TasksWaitingForData[messageReceiver];
+                return pair.Item2.ToTask(pair.Item3.Token);
             }
         }
 
@@ -99,7 +104,7 @@ namespace Nuclei.Communication.Protocol
 
             using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Processing incoming data stream"))
             {
-                Tuple<string, TaskCompletionSource<FileInfo>> pair = null;
+                Tuple<string, Subject<FileInfo>, CancellationTokenSource> pair = null;
                 lock (m_Lock)
                 {
                     if (m_TasksWaitingForData.ContainsKey(message.SendingEndpoint))
@@ -127,11 +132,17 @@ namespace Nuclei.Communication.Protocol
                             message.Data.CopyTo(fileStream);
                         }
 
-                        pair.Item2.SetResult(new FileInfo(pair.Item1));
+                        pair.Item2.OnNext(new FileInfo(pair.Item1));
+                        pair.Item2.OnCompleted();
                     }
                     catch (Exception e)
                     {
-                        pair.Item2.SetException(e);
+                        pair.Item2.OnError(e);
+                    }
+                    finally
+                    {
+                        pair.Item2.Dispose();
+                        pair.Item3.Dispose();
                     }
                 }
             }
@@ -147,10 +158,12 @@ namespace Nuclei.Communication.Protocol
             {
                 if (m_TasksWaitingForData.ContainsKey(endpoint))
                 {
-                    var task = m_TasksWaitingForData[endpoint].Item2;
-                    task.SetCanceled();
-
+                    var pair = m_TasksWaitingForData[endpoint];
                     m_TasksWaitingForData.Remove(endpoint);
+                    pair.Item3.Cancel();
+
+                    pair.Item2.Dispose();
+                    pair.Item3.Dispose();
                 }
             }
         }
@@ -167,7 +180,10 @@ namespace Nuclei.Communication.Protocol
                 // Nuke them all
                 foreach (var pair in m_TasksWaitingForData)
                 {
-                    pair.Value.Item2.SetCanceled();
+                    pair.Value.Item3.Cancel();
+
+                    pair.Value.Item2.Dispose();
+                    pair.Value.Item3.Dispose();
                 }
 
                 m_TasksWaitingForData.Clear();
