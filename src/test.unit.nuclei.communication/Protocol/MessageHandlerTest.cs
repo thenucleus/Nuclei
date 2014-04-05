@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Reactive.Testing;
 using Moq;
 using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Communication.Protocol.Messages.Processors;
@@ -34,7 +35,8 @@ namespace Nuclei.Communication.Protocol
 
             var endpoint = new EndpointId("sendingEndpoint");
             var messageId = new MessageId();
-            var task = handler.ForwardResponse(endpoint, messageId);
+            var timeout = TimeSpan.FromSeconds(30);
+            var task = handler.ForwardResponse(endpoint, messageId, timeout);
             Assert.IsFalse(task.IsCompleted);
 
             var msg = new SuccessMessage(endpoint, messageId);
@@ -43,6 +45,34 @@ namespace Nuclei.Communication.Protocol
             task.Wait();
             Assert.IsTrue(task.IsCompleted);
             Assert.AreSame(msg, task.Result);
+        }
+
+        [Test]
+        public void ForwardResponseWithMessageReceiveTimeout()
+        {
+            var store = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                store.Setup(s => s.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
+
+            var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
+            var scheduler = new TestScheduler();
+            var handler = new MessageHandler(store.Object, systemDiagnostics, scheduler);
+
+            var endpoint = new EndpointId("sendingEndpoint");
+            var messageId = new MessageId();
+            var timeout = TimeSpan.FromSeconds(30);
+            var task = handler.ForwardResponse(endpoint, messageId, timeout);
+            Assert.IsFalse(task.IsCompleted);
+            Assert.IsFalse(task.IsCanceled);
+
+            scheduler.Start();
+
+            Assert.Throws<AggregateException>(task.Wait);
+            Assert.IsTrue(task.IsCompleted);
+            Assert.IsFalse(task.IsCanceled);
+            Assert.IsTrue(task.IsFaulted);
         }
 
         [Test]
@@ -59,11 +89,12 @@ namespace Nuclei.Communication.Protocol
 
             var endpoint = new EndpointId("sendingEndpoint");
             var messageId = new MessageId();
-            var task = handler.ForwardResponse(endpoint, messageId);
+            var timeout = TimeSpan.FromSeconds(30);
+            var task = handler.ForwardResponse(endpoint, messageId, timeout);
             Assert.IsFalse(task.IsCompleted);
             Assert.IsFalse(task.IsCanceled);
 
-            handler.OnEndpointDisconnected(endpoint);
+            handler.OnEndpointSignedOff(endpoint);
 
             Assert.Throws<AggregateException>(task.Wait);
             Assert.IsTrue(task.IsCompleted);
@@ -212,7 +243,8 @@ namespace Nuclei.Communication.Protocol
 
             var endpoint = new EndpointId("sendingEndpoint");
             var messageId = new MessageId();
-            var task = handler.ForwardResponse(endpoint, messageId);
+            var timeout = TimeSpan.FromSeconds(30);
+            var task = handler.ForwardResponse(endpoint, messageId, timeout);
             Assert.IsFalse(task.IsCompleted);
             Assert.IsFalse(task.IsCanceled);
 

@@ -13,6 +13,7 @@ using System.Threading.Tasks.Schedulers;
 using Moq;
 using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Protocol.Messages;
+using Nuclei.Configuration;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
@@ -91,13 +92,20 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                         It.IsAny<EndpointInformation>(), 
-                        It.IsAny<ICommunicationMessage>()))
+                        It.IsAny<ICommunicationMessage>(),
+                        It.IsAny<TimeSpan>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new SuccessMessage(remoteEndpoint, new MessageId()),
                         new CancellationTokenSource().Token,
                         TaskCreationOptions.None, 
                         new CurrentThreadTaskScheduler()))
                     .Verifiable();
+            }
+
+            var configuration = new Mock<IConfiguration>();
+            {
+                configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                    .Returns(false);
             }
 
             var layer = new ProtocolHandshakeConductor(
@@ -118,6 +126,7 @@ namespace Nuclei.Communication.Protocol
                         ChannelTemplate.NamedPipe,
                         ChannelTemplate.TcpIP, 
                     },
+                configuration.Object,
                 new SystemDiagnostics((l, m) => { }, null));
 
             discovery.Raise(
@@ -155,7 +164,10 @@ namespace Nuclei.Communication.Protocol
                 l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 
                 Times.Once());
             protocolLayer.Verify(
-                l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 
+                l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
+                    It.IsAny<EndpointInformation>(), 
+                    It.IsAny<ICommunicationMessage>(),
+                    It.IsAny<TimeSpan>()), 
                 Times.Once());
         }
 
@@ -227,13 +239,20 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                         It.IsAny<EndpointInformation>(),
-                        It.IsAny<ICommunicationMessage>()))
+                        It.IsAny<ICommunicationMessage>(),
+                        It.IsAny<TimeSpan>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new SuccessMessage(remoteEndpoint, new MessageId()),
                         new CancellationTokenSource().Token,
                         TaskCreationOptions.None,
                         new CurrentThreadTaskScheduler()))
                     .Verifiable();
+            }
+
+            var configuration = new Mock<IConfiguration>();
+            {
+                configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                    .Returns(false);
             }
 
             var layer = new ProtocolHandshakeConductor(
@@ -254,6 +273,7 @@ namespace Nuclei.Communication.Protocol
                         ChannelTemplate.NamedPipe,
                         ChannelTemplate.TcpIP, 
                     },
+                configuration.Object,
                 new SystemDiagnostics((l, m) => { }, null));
 
             var remoteInfo = new EndpointInformation(
@@ -279,7 +299,10 @@ namespace Nuclei.Communication.Protocol
                 l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 
                 Times.Once());
             protocolLayer.Verify(
-                l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()),
+                l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
+                    It.IsAny<EndpointInformation>(), 
+                    It.IsAny<ICommunicationMessage>(),
+                    It.IsAny<TimeSpan>()),
                 Times.Once());
         }
 
@@ -350,13 +373,20 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                         It.IsAny<EndpointInformation>(),
-                        It.IsAny<ICommunicationMessage>()))
+                        It.IsAny<ICommunicationMessage>(),
+                        It.IsAny<TimeSpan>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new FailureMessage(remoteEndpoint, new MessageId()),
                         new CancellationTokenSource().Token,
                         TaskCreationOptions.None,
                         new CurrentThreadTaskScheduler()))
                     .Verifiable();
+            }
+
+            var configuration = new Mock<IConfiguration>();
+            {
+                configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                    .Returns(false);
             }
 
             var layer = new ProtocolHandshakeConductor(
@@ -377,6 +407,7 @@ namespace Nuclei.Communication.Protocol
                         ChannelTemplate.NamedPipe,
                         ChannelTemplate.TcpIP, 
                     },
+                configuration.Object,
                 new SystemDiagnostics((l, m) => { }, null));
 
             Assert.IsNotNull(layer);
@@ -400,7 +431,10 @@ namespace Nuclei.Communication.Protocol
                 l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 
                 Times.Never());
             protocolLayer.Verify(
-                l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()),
+                l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
+                    It.IsAny<EndpointInformation>(), 
+                    It.IsAny<ICommunicationMessage>(),
+                    It.IsAny<TimeSpan>()),
                 Times.Once());
         }
 
@@ -472,13 +506,20 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                         It.IsAny<EndpointInformation>(),
-                        It.IsAny<ICommunicationMessage>()))
+                        It.IsAny<ICommunicationMessage>(),
+                        It.IsAny<TimeSpan>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new SuccessMessage(remoteEndpoint, new MessageId()),
                         new CancellationTokenSource().Token,
                         TaskCreationOptions.None,
                         new CurrentThreadTaskScheduler()))
                     .Verifiable();
+            }
+
+            var configuration = new Mock<IConfiguration>();
+            {
+                configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                    .Returns(false);
             }
 
             var layer = new ProtocolHandshakeConductor(
@@ -499,6 +540,7 @@ namespace Nuclei.Communication.Protocol
                         ChannelTemplate.NamedPipe,
                         ChannelTemplate.TcpIP, 
                     },
+                configuration.Object,
                 new SystemDiagnostics((l, m) => { }, null));
 
             layer.ContinueHandshakeWith(
@@ -522,7 +564,10 @@ namespace Nuclei.Communication.Protocol
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(remoteEndpoint));
 
             protocolLayer.Verify(
-                l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()),
+                l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
+                    It.IsAny<EndpointInformation>(), 
+                    It.IsAny<ICommunicationMessage>(),
+                    It.IsAny<TimeSpan>()),
                 Times.Never());
         }
     }

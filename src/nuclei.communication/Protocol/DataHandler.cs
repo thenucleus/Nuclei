@@ -101,9 +101,16 @@ namespace Nuclei.Communication.Protocol
                                 throw new AggregateException(t.Exception.InnerExceptions);
                             }
 
+                            if (t.IsCanceled)
+                            {
+                                return null;
+                            }
+
                             return t.Result;
                         },
-                        TaskContinuationOptions.ExecuteSynchronously);
+                        pair.Item3.Token,
+                        TaskContinuationOptions.ExecuteSynchronously,
+                        TaskScheduler.Current);
             }
         }
 
