@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+using Microsoft.Reactive.Testing;
 using Moq;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
@@ -33,7 +34,8 @@ namespace Nuclei.Communication.Protocol
 
             var sendingEndpoint = new EndpointId("sendingEndpoint");
             var filePath = GenerateNewTestFileName();
-            var task = handler.ForwardData(sendingEndpoint, filePath);
+            var timeout = TimeSpan.FromSeconds(30);
+            var task = handler.ForwardData(sendingEndpoint, filePath, timeout);
             Assert.IsFalse(task.IsCompleted);
 
             var text = "Hello world.";
@@ -56,6 +58,33 @@ namespace Nuclei.Communication.Protocol
         }
 
         [Test]
+        public void ForwardDataWithDataReceiveTimeout()
+        {
+            var store = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                store.Setup(s => s.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(false);
+            }
+
+            var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
+            var scheduler = new TestScheduler();
+            var handler = new DataHandler(systemDiagnostics, scheduler);
+
+            var sendingEndpoint = new EndpointId("sendingEndpoint");
+            var timeout = TimeSpan.FromSeconds(30);
+            var task = handler.ForwardData(sendingEndpoint, GenerateNewTestFileName(), timeout);
+            Assert.IsFalse(task.IsCompleted);
+            Assert.IsFalse(task.IsCanceled);
+
+            scheduler.Start();
+
+            Assert.Throws<AggregateException>(task.Wait);
+            Assert.IsTrue(task.IsCompleted);
+            Assert.IsFalse(task.IsCanceled);
+            Assert.IsTrue(task.IsFaulted);
+        }
+
+        [Test]
         public void ForwardDataWithDisconnectingEndpoint()
         {
             var store = new Mock<IStoreInformationAboutEndpoints>();
@@ -68,7 +97,8 @@ namespace Nuclei.Communication.Protocol
             var handler = new DataHandler(systemDiagnostics);
 
             var sendingEndpoint = new EndpointId("sendingEndpoint");
-            var task = handler.ForwardData(sendingEndpoint, GenerateNewTestFileName());
+            var timeout = TimeSpan.FromSeconds(30);
+            var task = handler.ForwardData(sendingEndpoint, GenerateNewTestFileName(), timeout);
             Assert.IsFalse(task.IsCompleted);
             Assert.IsFalse(task.IsCanceled);
 
@@ -92,7 +122,8 @@ namespace Nuclei.Communication.Protocol
             var handler = new DataHandler(systemDiagnostics);
 
             var sendingEndpoint = new EndpointId("sendingEndpoint");
-            var task = handler.ForwardData(sendingEndpoint, GenerateNewTestFileName());
+            var timeout = TimeSpan.FromSeconds(30);
+            var task = handler.ForwardData(sendingEndpoint, GenerateNewTestFileName(), timeout);
             Assert.IsFalse(task.IsCompleted);
             Assert.IsFalse(task.IsCanceled);
 

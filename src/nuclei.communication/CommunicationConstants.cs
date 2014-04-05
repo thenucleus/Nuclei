@@ -36,6 +36,11 @@ namespace Nuclei.Communication
         public const int DefaultBindingReceiveTimeoutInMilliSeconds = 30 * 60 * 1000;
 
         /// <summary>
+        /// The default time-out that will be used while waiting for a response message from a remote endpoint.
+        /// </summary>
+        public const int DefaultWaitForResponseTimeoutInMilliSeconds = 10 * 1000;
+
+        /// <summary>
         /// The default maximum size, in bytes, of the buffer used to store messages.
         /// </summary>
         public const int DefaultBindingMaxBufferSizeForMessagesInBytes = 65536;

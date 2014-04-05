@@ -7,6 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+using System.Reactive.Threading.Tasks;
+using System.Threading;
 using System.Threading.Tasks;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol.Messages;
@@ -57,8 +63,8 @@ namespace Nuclei.Communication.Protocol
         /// We track the endpoint from which we're expecting a response in case we get an <c>EndpointDisconnectMessage</c>.
         /// In that case we need to know if we just lost the source of our potential answer or not.
         /// </remarks>
-        private readonly Dictionary<MessageId, Tuple<EndpointId, TaskCompletionSource<ICommunicationMessage>>> m_TasksWaitingForResponse
-            = new Dictionary<MessageId, Tuple<EndpointId, TaskCompletionSource<ICommunicationMessage>>>();
+        private readonly Dictionary<MessageId, Tuple<EndpointId, Subject<ICommunicationMessage>, CancellationTokenSource>> m_TasksWaitingForResponse
+            = new Dictionary<MessageId, Tuple<EndpointId, Subject<ICommunicationMessage>, CancellationTokenSource>>();
 
         /// <summary>
         /// The object that stores the endpoint information for all the endpoints that we are permitted to 
@@ -70,6 +76,11 @@ namespace Nuclei.Communication.Protocol
         /// The object that provides the diagnostics methods for the system.
         /// </summary>
         private readonly SystemDiagnostics m_Diagnostics;
+
+        /// <summary>
+        /// The object used for scheduling reactive extension tasks.
+        /// </summary>
+        private readonly IScheduler m_Scheduler;
 
         /// <summary>
         /// The processor that should be used if there are no other message processors for a message type.
@@ -84,13 +95,14 @@ namespace Nuclei.Communication.Protocol
         /// communicate with.
         /// </param>
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
+        /// <param name="scheduler">The object used for scheduling reactive extension tasks.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoints"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
-        public MessageHandler(IStoreInformationAboutEndpoints endpoints, SystemDiagnostics systemDiagnostics)
+        public MessageHandler(IStoreInformationAboutEndpoints endpoints, SystemDiagnostics systemDiagnostics, IScheduler scheduler = null)
         {
             {
                 Lokad.Enforce.Argument(() => endpoints);
@@ -99,6 +111,7 @@ namespace Nuclei.Communication.Protocol
 
             m_Endpoints = endpoints;
             m_Diagnostics = systemDiagnostics;
+            m_Scheduler = scheduler ?? Scheduler.Default;
         }
 
         /// <summary>
@@ -108,6 +121,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="messageReceiver">The ID of the endpoint to which the original message was send.</param>
         /// <param name="inResponseTo">The ID number of the message for which a response is expected.</param>
+        /// <param name="timeout">The maximum amount of time the response operation is allowed to take.</param>
         /// <returns>
         /// A <see cref="Task{T}"/> implementation which returns the response message.
         /// </returns>
@@ -120,7 +134,7 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentException">
         ///     Thrown if <paramref name="messageReceiver"/> is equal to <see cref="MessageId.None"/>.
         /// </exception>
-        public Task<ICommunicationMessage> ForwardResponse(EndpointId messageReceiver, MessageId inResponseTo)
+        public Task<ICommunicationMessage> ForwardResponse(EndpointId messageReceiver, MessageId inResponseTo, TimeSpan timeout)
         {
             {
                 Lokad.Enforce.Argument(() => messageReceiver);
@@ -132,12 +146,51 @@ namespace Nuclei.Communication.Protocol
             {
                 if (!m_TasksWaitingForResponse.ContainsKey(inResponseTo))
                 {
-                    var source = new TaskCompletionSource<ICommunicationMessage>(TaskCreationOptions.None);
-                    m_TasksWaitingForResponse.Add(inResponseTo, Tuple.Create(messageReceiver, source));
+                    var subject = new Subject<ICommunicationMessage>();
+                    var token = new CancellationTokenSource();
+                    m_TasksWaitingForResponse.Add(inResponseTo, Tuple.Create(messageReceiver, subject, token));
                 }
 
-                return m_TasksWaitingForResponse[inResponseTo].Item2.Task;
+                var pair = m_TasksWaitingForResponse[inResponseTo];
+                return pair.Item2
+                    .Timeout(timeout, m_Scheduler)
+                    .ToTask(pair.Item3.Token)
+                    .ContinueWith(
+                        t =>
+                        {
+                            CleanUpResponseHandlerFor(inResponseTo);
+                            if (t.Exception != null)
+                            {
+                                throw new AggregateException(t.Exception.InnerExceptions);
+                            }
+
+                            if (t.IsCanceled)
+                            {
+                                return null;
+                            }
+
+                            return t.Result;
+                        },
+                        pair.Item3.Token,
+                        TaskContinuationOptions.ExecuteSynchronously,
+                        TaskScheduler.Current);
             }
+        }
+
+        private void CleanUpResponseHandlerFor(MessageId message)
+        {
+            Tuple<EndpointId, Subject<ICommunicationMessage>, CancellationTokenSource> pair = null;
+            lock (m_Lock)
+            {
+                if (m_TasksWaitingForResponse.ContainsKey(message))
+                {
+                    pair = m_TasksWaitingForResponse[message];
+                    m_TasksWaitingForResponse.Remove(message);
+                }
+            }
+
+            pair.Item2.Dispose();
+            pair.Item3.Dispose();
         }
 
         /// <summary>
@@ -172,40 +225,35 @@ namespace Nuclei.Communication.Protocol
         /// Handles the case that a remote endpoint has disconnected.
         /// </summary>
         /// <param name="id">The ID of the remote endpoint.</param>
-        public void OnEndpointDisconnected(EndpointId id)
+        public void OnEndpointSignedOff(EndpointId id)
         {
             {
                 Lokad.Enforce.Argument(() => id);
             }
 
-            TerminateWaitingResponsesForEndpoint(id);
-        }
-
-        private void TerminateWaitingResponsesForEndpoint(EndpointId endpointId)
-        {
             m_Diagnostics.Log(
                 LevelToLog.Trace,
                 CommunicationConstants.DefaultLogTextPrefix,
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "Endpoint {0} has signed off.",
-                    endpointId));
+                    id));
 
             lock (m_Lock)
             {
                 var messagesThatWillNotBeAnswered = new List<MessageId>();
                 foreach (var pair in m_TasksWaitingForResponse)
                 {
-                    if (pair.Value.Item1.Equals(endpointId))
+                    if (pair.Value.Item1.Equals(id))
                     {
                         messagesThatWillNotBeAnswered.Add(pair.Key);
-                        pair.Value.Item2.SetCanceled();
                     }
                 }
 
-                foreach (var id in messagesThatWillNotBeAnswered)
+                foreach (var messageId in messagesThatWillNotBeAnswered)
                 {
-                    m_TasksWaitingForResponse.Remove(id);
+                    var pair = m_TasksWaitingForResponse[messageId];
+                    pair.Item3.Cancel();
                 }
             }
         }
@@ -223,7 +271,8 @@ namespace Nuclei.Communication.Protocol
 
             using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "MessageHandler: processing message"))
             {
-                // First check that the message isn't a response
+                // First check that the message isn't a response. If it is then we see if we have a
+                // waiting task for that. If not then the message will just disappear in the void
                 if (!message.InResponseTo.Equals(MessageId.None))
                 {
                     m_Diagnostics.Log(
@@ -237,22 +286,22 @@ namespace Nuclei.Communication.Protocol
 
                     using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Processing response message"))
                     {
-                        TaskCompletionSource<ICommunicationMessage> source = null;
+                        Tuple<EndpointId, Subject<ICommunicationMessage>, CancellationTokenSource> source = null;
                         lock (m_Lock)
                         {
                             if (m_TasksWaitingForResponse.ContainsKey(message.InResponseTo))
                             {
-                                source = m_TasksWaitingForResponse[message.InResponseTo].Item2;
-                                m_TasksWaitingForResponse.Remove(message.InResponseTo);
+                                source = m_TasksWaitingForResponse[message.InResponseTo];
                             }
                         }
 
-                        // Invoke the SetResult outside the lock because the setting of the 
+                        // Invoke the OnNext and OnCompleted outside the lock because the setting of the 
                         // result may lead to other messages being send and more responses 
                         // being required to be handled. All of that may need access to the lock.
                         if (source != null)
                         {
-                            source.SetResult(message);
+                            source.Item2.OnNext(message);
+                            source.Item2.OnCompleted();
                         }
 
                         return;
@@ -329,12 +378,11 @@ namespace Nuclei.Communication.Protocol
             {
                 // No single message will get a response anymore. 
                 // Nuke them all
-                foreach (var pair in m_TasksWaitingForResponse)
+                var tuples = m_TasksWaitingForResponse.Values.ToList();
+                foreach (var pair in tuples)
                 {
-                    pair.Value.Item2.SetCanceled();
+                    pair.Item3.Cancel();
                 }
-
-                m_TasksWaitingForResponse.Clear();
             }
         }
     }

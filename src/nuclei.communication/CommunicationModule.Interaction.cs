@@ -136,6 +136,7 @@ namespace Nuclei.Communication
                     c.Resolve<IStoreRemoteCommandProxies>(),
                     c.Resolve<IStoreRemoteNotificationProxies>(),
                     c.Resolve<IProtocolLayer>(),
+                    c.Resolve<IConfiguration>(),
                     c.Resolve<SystemDiagnostics>()))
                 .As<IHandleInteractionHandshakes>()
                 .SingleInstance();

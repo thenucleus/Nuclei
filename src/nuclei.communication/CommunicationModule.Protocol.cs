@@ -60,6 +60,7 @@ namespace Nuclei.Communication
                     c.Resolve<IStoreProtocolSubjects>(),
                     c.Resolve<IEnumerable<IApproveEndpointConnections>>(),
                     allowedChannelTemplates,
+                    c.Resolve<IConfiguration>(),
                     c.Resolve<SystemDiagnostics>()))
                 .As<IHandleProtocolHandshakes>()
                 .SingleInstance();
@@ -186,7 +187,7 @@ namespace Nuclei.Communication
         {
             if (!layer.IsEndpointContactable(endpoint))
             {
-                var timeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForConnectionTimeoutInMilliseconds)
+                var connectionTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForConnectionTimeoutInMilliseconds)
                        ? TimeSpan.FromMilliseconds(configuration.Value<int>(CommunicationConfigurationKeys.WaitForConnectionTimeoutInMilliseconds))
                        : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForConnectionTimeoutInMilliSeconds);
 
@@ -202,12 +203,15 @@ namespace Nuclei.Communication
                 {
                     if (!layer.IsEndpointContactable(endpoint))
                     {
-                        resetEvent.WaitOne(timeout);
+                        resetEvent.WaitOne(connectionTimeout);
                     }
                 }
             }
 
-            return layer.SendMessageAndWaitForResponse(endpoint, message);
+            var sendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
+                ? TimeSpan.FromMilliseconds(configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
+                : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
+            return layer.SendMessageAndWaitForResponse(endpoint, message, sendTimeout);
         }
 
         private static void RegisterConnectionHolders(ContainerBuilder builder)
@@ -440,14 +444,14 @@ namespace Nuclei.Communication
                    {
                        var ctx = c.Resolve<IComponentContext>();
                        DownloadDataFromRemoteEndpoints func =
-                           (endpoint, token, filePath) =>
+                           (endpoint, token, filePath, timeout) =>
                            {
                                var handler = ctx.Resolve<IDirectIncomingData>();
-                               var result = handler.ForwardData(endpoint, filePath);
+                               var result = handler.ForwardData(endpoint, filePath, timeout);
 
                                var layer = ctx.Resolve<IProtocolLayer>();
                                var msg = new DataDownloadRequestMessage(layer.Id, token);
-                               var response = layer.SendMessageAndWaitForResponse(endpoint, msg);
+                               var response = layer.SendMessageAndWaitForResponse(endpoint, msg, timeout);
                                return Task<FileInfo>.Factory.StartNew(
                                    () =>
                                    {

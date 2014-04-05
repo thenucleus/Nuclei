@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -20,9 +21,10 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="messageReceiver">The ID of the endpoint to which the original message was send.</param>
         /// <param name="filePath">The full path to the file to which the data stream should be written.</param>
+        /// <param name="timeout">The maximum amount of time the response operation is allowed to take.</param>
         /// <returns>
         /// A <see cref="Task{T}"/> implementation which returns the full path of the file which contains the data stream.
         /// </returns>
-        Task<FileInfo> ForwardData(EndpointId messageReceiver, string filePath);
+        Task<FileInfo> ForwardData(EndpointId messageReceiver, string filePath, TimeSpan timeout);
     }
 }

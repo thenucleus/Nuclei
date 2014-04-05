@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -15,8 +16,13 @@ namespace Nuclei.Communication.Protocol
     /// <param name="endpointToDownloadFrom">The endpoint ID of the endpoint from which the data should be transferred.</param>
     /// <param name="uploadToken">The token that indicates which file should be uploaded.</param>
     /// <param name="filePath">The full path to the file to which the downloaded data should be written.</param>
+    /// <param name="timeout">The maximum amount of time the upload operation is allowed to take.</param>
     /// <returns>
     /// The task which will return the pointer to the file once the download is complete.
     /// </returns>
-    public delegate Task<FileInfo> DownloadDataFromRemoteEndpoints(EndpointId endpointToDownloadFrom, UploadToken uploadToken, string filePath);
+    public delegate Task<FileInfo> DownloadDataFromRemoteEndpoints(
+        EndpointId endpointToDownloadFrom, 
+        UploadToken uploadToken, 
+        string filePath,
+        TimeSpan timeout);
 }
