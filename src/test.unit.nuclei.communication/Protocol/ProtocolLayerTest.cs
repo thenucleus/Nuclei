@@ -27,10 +27,7 @@ namespace Nuclei.Communication.Protocol
             var endpoint = new EndpointId("a");
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder = 
-                (template, id) =>
-                {
-                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(null, null);
-                };
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(null, null);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -59,10 +56,7 @@ namespace Nuclei.Communication.Protocol
             var endpoint = new EndpointId("a");
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) =>
-                {
-                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(null, null);
-                };
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(null, null);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -117,10 +111,7 @@ namespace Nuclei.Communication.Protocol
 
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) =>
-                {
-                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
-                };
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -171,16 +162,13 @@ namespace Nuclei.Communication.Protocol
 
             var pipe = new Mock<IDirectIncomingMessages>();
             {
-                pipe.Setup(p => p.OnEndpointDisconnected(It.IsAny<EndpointId>()))
+                pipe.Setup(p => p.OnEndpointSignedOff(It.IsAny<EndpointId>()))
                     .Callback<EndpointId>(e => Assert.AreEqual(endpoint, e))
                     .Verifiable();
             }
 
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) =>
-                {
-                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
-                };
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -195,7 +183,7 @@ namespace Nuclei.Communication.Protocol
             endpoints.Raise(d => d.OnEndpointDisconnected += null, new EndpointEventArgs(endpoint));
 
             channel.Verify(c => c.EndpointDisconnected(It.IsAny<ProtocolInformation>()), Times.Once());
-            pipe.Verify(p => p.OnEndpointDisconnected(It.IsAny<EndpointId>()), Times.Once());
+            pipe.Verify(p => p.OnEndpointSignedOff(It.IsAny<EndpointId>()), Times.Once());
         }
 
         [Test]
@@ -217,10 +205,7 @@ namespace Nuclei.Communication.Protocol
 
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) =>
-                {
-                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
-                };
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -261,10 +246,7 @@ namespace Nuclei.Communication.Protocol
 
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) =>
-                {
-                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
-                };
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -305,10 +287,7 @@ namespace Nuclei.Communication.Protocol
 
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) =>
-                {
-                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
-                };
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -336,10 +315,7 @@ namespace Nuclei.Communication.Protocol
             var channel = new Mock<IProtocolChannel>();
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) =>
-                {
-                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
-                };
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -366,10 +342,7 @@ namespace Nuclei.Communication.Protocol
             var channel = new Mock<IProtocolChannel>();
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) =>
-                {
-                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
-                };
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -396,10 +369,7 @@ namespace Nuclei.Communication.Protocol
             var channel = new Mock<IProtocolChannel>();
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) =>
-                {
-                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
-                };
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -452,10 +422,7 @@ namespace Nuclei.Communication.Protocol
 
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) =>
-                {
-                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
-                };
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -509,10 +476,7 @@ namespace Nuclei.Communication.Protocol
 
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) =>
-                {
-                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
-                };
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -557,7 +521,10 @@ namespace Nuclei.Communication.Protocol
                 diagnostics);
 
             Assert.Throws<EndpointNotContactableException>(
-                () => layer.SendMessageAndWaitForResponse(new EndpointId("A"), new SuccessMessage(new EndpointId("B"), new MessageId())));
+                () => layer.SendMessageAndWaitForResponse(
+                    new EndpointId("A"), 
+                    new SuccessMessage(new EndpointId("B"), new MessageId()), 
+                    TimeSpan.FromSeconds(1)));
         }
 
         [Test]
@@ -596,6 +563,7 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
 
+            var timeout = TimeSpan.FromSeconds(1);
             var responseTask = Task<ICommunicationMessage>.Factory.StartNew(
                 () => new SuccessMessage(remoteEndpoint, msg.Id),
                 new CancellationToken(),
@@ -603,12 +571,13 @@ namespace Nuclei.Communication.Protocol
                 new CurrentThreadTaskScheduler());
             var pipe = new Mock<IDirectIncomingMessages>();
             {
-                pipe.Setup(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>()))
-                    .Callback<EndpointId, MessageId>(
-                        (e, m) =>
+                pipe.Setup(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()))
+                    .Callback<EndpointId, MessageId, TimeSpan>(
+                        (e, m, t) =>
                         {
                             Assert.AreSame(remoteEndpoint, e);
                             Assert.AreSame(msg.Id, m);
+                            Assert.AreEqual(timeout, t);
                         })
                     .Returns(responseTask)
                     .Verifiable();
@@ -629,12 +598,12 @@ namespace Nuclei.Communication.Protocol
                     },
                 diagnostics);
 
-            var response = layer.SendMessageAndWaitForResponse(remoteEndpoint, msg);
+            var response = layer.SendMessageAndWaitForResponse(remoteEndpoint, msg, timeout);
             Assert.AreSame(responseTask, response);
             
             channel.Verify(c => c.OpenChannel(), Times.Once());
             channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
-            pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>()), Times.Once());
+            pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()), Times.Once());
         }
 
         [Test]
@@ -673,6 +642,7 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
             }
 
+            var timeout = TimeSpan.FromSeconds(1);
             var responseTask = Task<ICommunicationMessage>.Factory.StartNew(
                 () => new SuccessMessage(remoteEndpoint, msg.Id),
                 new CancellationToken(),
@@ -680,12 +650,13 @@ namespace Nuclei.Communication.Protocol
                 new CurrentThreadTaskScheduler());
             var pipe = new Mock<IDirectIncomingMessages>();
             {
-                pipe.Setup(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>()))
-                    .Callback<EndpointId, MessageId>(
-                        (e, m) =>
+                pipe.Setup(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()))
+                    .Callback<EndpointId, MessageId, TimeSpan>(
+                        (e, m, t) =>
                         {
                             Assert.AreSame(remoteEndpoint, e);
                             Assert.AreSame(msg.Id, m);
+                            Assert.AreEqual(timeout, t);
                         })
                     .Returns(responseTask)
                     .Verifiable();
@@ -708,12 +679,12 @@ namespace Nuclei.Communication.Protocol
 
             layer.SignIn();
 
-            var response = layer.SendMessageAndWaitForResponse(remoteEndpoint, msg);
+            var response = layer.SendMessageAndWaitForResponse(remoteEndpoint, msg, timeout);
             Assert.AreSame(responseTask, response);
 
             channel.Verify(c => c.OpenChannel(), Times.Once());
             channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
-            pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>()), Times.Once());
+            pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()), Times.Once());
         }
 
         [Test]

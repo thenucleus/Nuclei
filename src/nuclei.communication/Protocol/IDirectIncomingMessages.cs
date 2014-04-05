@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 
 namespace Nuclei.Communication.Protocol
@@ -20,10 +21,11 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="messageReceiver">The ID of the endpoint to which the original message was send.</param>
         /// <param name="inResponseTo">The ID number of the message for which a response is expected.</param>
+        /// <param name="timeout">The maximum amount of time the response operation is allowed to take.</param>
         /// <returns>
         /// A <see cref="Task{T}"/> implementation which returns the response message.
         /// </returns>
-        Task<ICommunicationMessage> ForwardResponse(EndpointId messageReceiver, MessageId inResponseTo);
+        Task<ICommunicationMessage> ForwardResponse(EndpointId messageReceiver, MessageId inResponseTo, TimeSpan timeout);
 
         /// <summary>
         /// On arrival of a message which passes the given filter the caller
@@ -37,6 +39,6 @@ namespace Nuclei.Communication.Protocol
         /// Handles the case that a remote endpoint has disconnected.
         /// </summary>
         /// <param name="id">The ID of the remote endpoint.</param>
-        void OnEndpointDisconnected(EndpointId id);
+        void OnEndpointSignedOff(EndpointId id);
     }
 }

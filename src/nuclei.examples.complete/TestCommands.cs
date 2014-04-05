@@ -73,7 +73,7 @@ namespace Nuclei.Examples.Complete
                 () =>
                 {
                     var path = Path.Combine(Assembly.GetExecutingAssembly().LocalDirectoryPath(), Path.GetRandomFileName());
-                    var task = m_Download(downloadOwningEndpoint, token, path);
+                    var task = m_Download(downloadOwningEndpoint, token, path, TimeSpan.FromSeconds(15));
 
                     string text;
                     try

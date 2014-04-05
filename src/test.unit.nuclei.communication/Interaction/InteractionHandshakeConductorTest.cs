@@ -15,6 +15,7 @@ using Moq;
 using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
+using Nuclei.Configuration;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
@@ -107,13 +108,19 @@ namespace Nuclei.Communication.Interaction
                             Assert.AreEqual(InteractionConnectionState.Desired, msg.State);
                         })
                     .Verifiable();
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new EndpointInteractionInformationResponseMessage(remoteEndpoint, new MessageId(), InteractionConnectionState.Neutral),
                         new CancellationTokenSource().Token,
                         TaskCreationOptions.None,
                         new CurrentThreadTaskScheduler()))
                     .Verifiable();
+            }
+
+            var configuration = new Mock<IConfiguration>();
+            {
+                configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                    .Returns(false);
             }
 
             var diagnostics = new SystemDiagnostics((l, m) => { }, null);
@@ -123,10 +130,13 @@ namespace Nuclei.Communication.Interaction
                 commandProxies.Object,
                 notificationProxies.Object,
                 layer.Object,
+                configuration.Object,
                 diagnostics);
 
             endpointStorage.Raise(e => e.OnEndpointConnected += null, new EndpointEventArgs(remoteEndpoint));
-            layer.Verify(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            layer.Verify(
+                l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()), 
+                Times.Once());
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
                 Times.Never());
@@ -229,13 +239,19 @@ namespace Nuclei.Communication.Interaction
                             Assert.AreEqual(InteractionConnectionState.Desired, msg.State);
                         })
                     .Verifiable();
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new EndpointInteractionInformationResponseMessage(remoteEndpoint, new MessageId(), InteractionConnectionState.Neutral),
                         new CancellationTokenSource().Token,
                         TaskCreationOptions.None,
                         new CurrentThreadTaskScheduler()))
                     .Verifiable();
+            }
+
+            var configuration = new Mock<IConfiguration>();
+            {
+                configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                    .Returns(false);
             }
 
             var diagnostics = new SystemDiagnostics((l, m) => { }, null);
@@ -245,6 +261,7 @@ namespace Nuclei.Communication.Interaction
                 commandProxies.Object,
                 notificationProxies.Object,
                 layer.Object,
+                configuration.Object,
                 diagnostics);
 
             conductor.ContinueHandshakeWith(
@@ -347,13 +364,19 @@ namespace Nuclei.Communication.Interaction
                             Assert.AreEqual(InteractionConnectionState.Neutral, msg.State);
                         })
                     .Verifiable();
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new EndpointInteractionInformationResponseMessage(remoteEndpoint, new MessageId(), InteractionConnectionState.Neutral),
                         new CancellationTokenSource().Token,
                         TaskCreationOptions.None,
                         new CurrentThreadTaskScheduler()))
                     .Verifiable();
+            }
+
+            var configuration = new Mock<IConfiguration>();
+            {
+                configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                    .Returns(false);
             }
 
             var diagnostics = new SystemDiagnostics((l, m) => { }, null);
@@ -363,6 +386,7 @@ namespace Nuclei.Communication.Interaction
                 commandProxies.Object,
                 notificationProxies.Object,
                 layer.Object,
+                configuration.Object,
                 diagnostics);
 
             conductor.ContinueHandshakeWith(
@@ -472,13 +496,19 @@ namespace Nuclei.Communication.Interaction
                             Assert.AreEqual(InteractionConnectionState.Neutral, msg.State);
                         })
                     .Verifiable();
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new EndpointInteractionInformationResponseMessage(remoteEndpoint, new MessageId(), InteractionConnectionState.Neutral),
                         new CancellationTokenSource().Token,
                         TaskCreationOptions.None,
                         new CurrentThreadTaskScheduler()))
                     .Verifiable();
+            }
+
+            var configuration = new Mock<IConfiguration>();
+            {
+                configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                    .Returns(false);
             }
 
             var diagnostics = new SystemDiagnostics((l, m) => { }, null);
@@ -488,10 +518,13 @@ namespace Nuclei.Communication.Interaction
                 commandProxies.Object,
                 notificationProxies.Object,
                 layer.Object,
+                configuration.Object,
                 diagnostics);
 
             endpointStorage.Raise(e => e.OnEndpointConnected += null, new EndpointEventArgs(remoteEndpoint));
-            layer.Verify(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            layer.Verify(
+                l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()), 
+                Times.Once());
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
                 Times.Never());
