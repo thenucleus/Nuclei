@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Reactive.Concurrency;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
@@ -38,19 +41,26 @@ namespace Nuclei.Communication.Protocol
         private readonly SystemDiagnostics m_Diagnostics;
 
         /// <summary>
+        /// The object used for scheduling reactive extension tasks.
+        /// </summary>
+        private readonly IScheduler m_Scheduler;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DataHandler"/> class.
         /// </summary>
         /// <param name="diagnostics">The object that provides the diagnostics methods for the system.</param>
+        /// <param name="scheduler">The object used for scheduling reactive extension tasks.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
         /// </exception>
-        public DataHandler(SystemDiagnostics diagnostics)
+        public DataHandler(SystemDiagnostics diagnostics, IScheduler scheduler = null)
         {
             {
                 Lokad.Enforce.Argument(() => diagnostics);
             }
 
             m_Diagnostics = diagnostics;
+            m_Scheduler = scheduler ?? Scheduler.Default;
         }
 
         /// <summary>
@@ -59,10 +69,11 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="messageReceiver">The ID of the endpoint to which the original message was send.</param>
         /// <param name="filePath">The full path to the file to which the data stream should be written.</param>
+        /// <param name="timeout">The maximum amount of time the response operation is allowed to take.</param>
         /// <returns>
         /// A <see cref="Task{T}"/> implementation which returns the full path of the file which contains the data stream.
         /// </returns>
-        public Task<FileInfo> ForwardData(EndpointId messageReceiver, string filePath)
+        public Task<FileInfo> ForwardData(EndpointId messageReceiver, string filePath, TimeSpan timeout)
         {
             {
                 Lokad.Enforce.Argument(() => messageReceiver);
@@ -78,8 +89,38 @@ namespace Nuclei.Communication.Protocol
                 }
 
                 var pair = m_TasksWaitingForData[messageReceiver];
-                return pair.Item2.ToTask(pair.Item3.Token);
+                return pair.Item2
+                    .Timeout(timeout, m_Scheduler)
+                    .ToTask(pair.Item3.Token)
+                    .ContinueWith(
+                        t =>
+                        {
+                            CleanUpResponseHandlerFor(messageReceiver);
+                            if (t.Exception != null)
+                            {
+                                throw new AggregateException(t.Exception.InnerExceptions);
+                            }
+
+                            return t.Result;
+                        },
+                        TaskContinuationOptions.ExecuteSynchronously);
             }
+        }
+
+        private void CleanUpResponseHandlerFor(EndpointId endpoint)
+        {
+            Tuple<string, Subject<FileInfo>, CancellationTokenSource> pair = null;
+            lock (m_Lock)
+            {
+                if (m_TasksWaitingForData.ContainsKey(endpoint))
+                {
+                    pair = m_TasksWaitingForData[endpoint];
+                    m_TasksWaitingForData.Remove(endpoint);
+                }
+            }
+
+            pair.Item2.Dispose();
+            pair.Item3.Dispose();
         }
 
         /// <summary>
@@ -110,7 +151,6 @@ namespace Nuclei.Communication.Protocol
                     if (m_TasksWaitingForData.ContainsKey(message.SendingEndpoint))
                     {
                         pair = m_TasksWaitingForData[message.SendingEndpoint];
-                        m_TasksWaitingForData.Remove(message.SendingEndpoint);
                     }
                 }
 
@@ -139,11 +179,6 @@ namespace Nuclei.Communication.Protocol
                     {
                         pair.Item2.OnError(e);
                     }
-                    finally
-                    {
-                        pair.Item2.Dispose();
-                        pair.Item3.Dispose();
-                    }
                 }
             }
         }
@@ -159,11 +194,7 @@ namespace Nuclei.Communication.Protocol
                 if (m_TasksWaitingForData.ContainsKey(endpoint))
                 {
                     var pair = m_TasksWaitingForData[endpoint];
-                    m_TasksWaitingForData.Remove(endpoint);
                     pair.Item3.Cancel();
-
-                    pair.Item2.Dispose();
-                    pair.Item3.Dispose();
                 }
             }
         }
@@ -178,15 +209,11 @@ namespace Nuclei.Communication.Protocol
             {
                 // No single message will get a response anymore. 
                 // Nuke them all
-                foreach (var pair in m_TasksWaitingForData)
+                var tuples = m_TasksWaitingForData.Values.ToList();
+                foreach (var pair in tuples)
                 {
-                    pair.Value.Item3.Cancel();
-
-                    pair.Value.Item2.Dispose();
-                    pair.Value.Item3.Dispose();
+                    pair.Item3.Cancel();
                 }
-
-                m_TasksWaitingForData.Clear();
             }
         }
     }

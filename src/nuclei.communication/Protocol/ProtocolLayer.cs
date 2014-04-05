@@ -142,7 +142,7 @@ namespace Nuclei.Communication.Protocol
             foreach (var pair in m_OpenConnections)
             {
                 pair.Value.Item1.EndpointDisconnected(connection.ProtocolInformation);
-                pair.Value.Item2.OnEndpointDisconnected(args.Endpoint);
+                pair.Value.Item2.OnEndpointSignedOff(args.Endpoint);
             }
         }
 
@@ -471,10 +471,12 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="connection">The connection information for the endpoint to which the message has to be send.</param>
         /// <param name="message">The message that has to be send.</param>
+        /// <param name="timeout">The maximum amount of time the response operation is allowed to take.</param>
         /// <returns>A task object that will eventually contain the response message.</returns>
         public Task<ICommunicationMessage> SendMessageToUnregisteredEndpointAndWaitForResponse(
             EndpointInformation connection, 
-            ICommunicationMessage message)
+            ICommunicationMessage message,
+            TimeSpan timeout)
         {
             {
                 Lokad.Enforce.Argument(() => connection);
@@ -484,7 +486,7 @@ namespace Nuclei.Communication.Protocol
             using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "ProtocolLayer: sending message and waiting for response"))
             {
                 var pair = ChannelPairFor(connection);
-                var result = pair.Item2.ForwardResponse(connection.Id, message.Id);
+                var result = pair.Item2.ForwardResponse(connection.Id, message.Id, timeout);
 
                 m_Diagnostics.Log(
                     LevelToLog.Trace,
@@ -506,6 +508,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="endpoint">The endpoint to which the message has to be send.</param>
         /// <param name="message">The message that has to be send.</param>
+        /// <param name="timeout">The maximum amount of time the response operation is allowed to take.</param>
         /// <returns>A task object that will eventually contain the response message.</returns>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
@@ -516,7 +519,7 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="message"/> is <see langword="null" />.
         /// </exception>
-        public Task<ICommunicationMessage> SendMessageAndWaitForResponse(EndpointId endpoint, ICommunicationMessage message)
+        public Task<ICommunicationMessage> SendMessageAndWaitForResponse(EndpointId endpoint, ICommunicationMessage message, TimeSpan timeout)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
@@ -534,7 +537,7 @@ namespace Nuclei.Communication.Protocol
                 throw new EndpointNotContactableException(endpoint);
             }
 
-            return SendMessageToUnregisteredEndpointAndWaitForResponse(connection, message);
+            return SendMessageToUnregisteredEndpointAndWaitForResponse(connection, message, timeout);
         }
 
         /// <summary>

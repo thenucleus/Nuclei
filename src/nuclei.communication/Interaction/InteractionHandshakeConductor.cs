@@ -15,6 +15,7 @@ using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
+using Nuclei.Configuration;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
@@ -169,6 +170,12 @@ namespace Nuclei.Communication.Interaction
         private readonly IProtocolLayer m_Layer;
 
         /// <summary>
+        /// The maximum amount of time that may pass between the sending of a message and the reception of
+        /// the response.
+        /// </summary>
+        private readonly TimeSpan m_SendTimeout;
+
+        /// <summary>
         /// The object that provides the diagnostics methods for the application.
         /// </summary>
         private readonly SystemDiagnostics m_Diagnostics;
@@ -181,6 +188,7 @@ namespace Nuclei.Communication.Interaction
         /// <param name="commandProxyHub">The object that stores the command proxy objects.</param>
         /// <param name="notificationProxyHub">The object that stores the notification proxy objects.</param>
         /// <param name="layer">The object responsible for sending messages to remote endpoints.</param>
+        /// <param name="configuration">The object that stores the configuration values for the application.</param>
         /// <param name="diagnostics">The object that provides the diagnostics methods for the application.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpointInformationStorage"/> is <see langword="null" />.
@@ -198,6 +206,9 @@ namespace Nuclei.Communication.Interaction
         ///     Thrown if <paramref name="layer"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="configuration"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
         /// </exception>
         public InteractionHandshakeConductor(
@@ -206,6 +217,7 @@ namespace Nuclei.Communication.Interaction
             IStoreRemoteCommandProxies commandProxyHub,
             IStoreRemoteNotificationProxies notificationProxyHub,
             IProtocolLayer layer,
+            IConfiguration configuration,
             SystemDiagnostics diagnostics)
         {
             {
@@ -214,6 +226,7 @@ namespace Nuclei.Communication.Interaction
                 Lokad.Enforce.Argument(() => commandProxyHub);
                 Lokad.Enforce.Argument(() => notificationProxyHub);
                 Lokad.Enforce.Argument(() => layer);
+                Lokad.Enforce.Argument(() => configuration);
                 Lokad.Enforce.Argument(() => diagnostics);
             }
 
@@ -225,6 +238,10 @@ namespace Nuclei.Communication.Interaction
             m_NotificationProxyHub = notificationProxyHub;
             m_Layer = layer;
             m_Diagnostics = diagnostics;
+
+            m_SendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
+                ? TimeSpan.FromMilliseconds(configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
+                : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
         }
 
         private void HandleEndpointSignIn(object sender, EndpointEventArgs e)
@@ -263,7 +280,7 @@ namespace Nuclei.Communication.Interaction
                 var message = new EndpointInteractionInformationMessage(
                     m_Layer.Id,
                     interactionInformation.ToArray());
-                var sendTask = m_Layer.SendMessageAndWaitForResponse(endpoint, message);
+                var sendTask = m_Layer.SendMessageAndWaitForResponse(endpoint, message, m_SendTimeout);
                 sendTask.ContinueWith(HandleResponseToInteractionMessage, TaskContinuationOptions.ExecuteSynchronously);
             }
         }

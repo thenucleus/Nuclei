@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Nuclei.Communication.Discovery;
 using Nuclei.Communication.Protocol.Messages;
+using Nuclei.Configuration;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
@@ -150,6 +151,12 @@ namespace Nuclei.Communication.Protocol
         private readonly IEnumerable<ChannelTemplate> m_AllowedChannelTypes;
 
         /// <summary>
+        /// The maximum amount of time that may pass between the sending of a message and the reception of
+        /// the response.
+        /// </summary>
+        private readonly TimeSpan m_SendTimeout;
+
+        /// <summary>
         /// The object that provides the diagnostics methods for the system.
         /// </summary>
         private readonly SystemDiagnostics m_Diagnostics;
@@ -166,6 +173,7 @@ namespace Nuclei.Communication.Protocol
         /// The collection that contains all the objects that are able to approve connections between the current endpoint and a remote endpoint.
         /// </param>
         /// <param name="allowedChannelTypes">The collection that contains all the channel types for which a channel should be opened.</param>
+        /// <param name="configuration">The object that stores the configuration values for the application.</param>
         /// <param name="systemDiagnostics">The object that provides the diagnostics methods for the system.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="potentialEndpoints"/> is <see langword="null" />.
@@ -189,6 +197,9 @@ namespace Nuclei.Communication.Protocol
         ///     Thrown if <paramref name="allowedChannelTypes"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="configuration"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public ProtocolHandshakeConductor(
@@ -199,6 +210,7 @@ namespace Nuclei.Communication.Protocol
             IStoreProtocolSubjects descriptions,
             IEnumerable<IApproveEndpointConnections> connectionApprovers,
             IEnumerable<ChannelTemplate> allowedChannelTypes,
+            IConfiguration configuration,
             SystemDiagnostics systemDiagnostics)
         {
             {
@@ -209,6 +221,7 @@ namespace Nuclei.Communication.Protocol
                 Lokad.Enforce.Argument(() => descriptions);
                 Lokad.Enforce.Argument(() => connectionApprovers);
                 Lokad.Enforce.Argument(() => allowedChannelTypes);
+                Lokad.Enforce.Argument(() => configuration);
                 Lokad.Enforce.Argument(() => systemDiagnostics);
             }
 
@@ -224,6 +237,10 @@ namespace Nuclei.Communication.Protocol
             m_Descriptions = descriptions;
             m_AllowedChannelTypes = allowedChannelTypes;
             m_Diagnostics = systemDiagnostics;
+
+            m_SendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
+                ? TimeSpan.FromMilliseconds(configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
+                : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
 
             foreach (var approver in connectionApprovers)
             {
@@ -329,7 +346,7 @@ namespace Nuclei.Communication.Protocol
                                 connectionInfo.Item2,
                                 connectionInfo.Item3), 
                             m_Descriptions.ToStorage());
-                        var task = m_Layer.SendMessageToUnregisteredEndpointAndWaitForResponse(information, message);
+                        var task = m_Layer.SendMessageToUnregisteredEndpointAndWaitForResponse(information, message, m_SendTimeout);
                         task.ContinueWith(HandleResponseToConnectMessage, TaskContinuationOptions.ExecuteSynchronously);
                     }
                 }

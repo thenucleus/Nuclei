@@ -119,12 +119,21 @@ namespace Nuclei.Communication
 
         /// <summary>
         /// The <see cref="ConfigurationKey"/> that is used to retrieve the value for the receive timeout (in milliseconds)
-        /// for an endpoint to sign in before discarding messages to that endpoint.
+        /// for an endpoint to sign in before discarding messages to that endpoint (int).
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
             Justification = "ConfigurationKey is immutable")]
         public static readonly ConfigurationKey WaitForConnectionTimeoutInMilliseconds
             = new ConfigurationKey("ConnectionTimeout", typeof(int));
+
+        /// <summary>
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the value for the timeout (in milliseconds)
+        /// for an endpoint to send a response to a message (int).
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
+            Justification = "ConfigurationKey is immutable")]
+        public static readonly ConfigurationKey WaitForResponseTimeoutInMilliSeconds
+            = new ConfigurationKey("ResponseTimeout", typeof(int));
 
         /// <summary>
         /// Returns a collection containing all the configuration keys for the communication section.
@@ -147,6 +156,7 @@ namespace Nuclei.Communication
                     BindingMaxBufferSizeForDataInBytes,
                     BindingMaxReceivedSizeForDataInBytes,
                     WaitForConnectionTimeoutInMilliseconds,
+                    WaitForResponseTimeoutInMilliSeconds,
                 };
         }
     }
