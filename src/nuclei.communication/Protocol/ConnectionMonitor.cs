@@ -83,8 +83,8 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// The collection of all connection handlers.
         /// </summary>
-        private readonly ConcurrentBag<IHandleConnections> m_ConnectionHandlers
-            = new ConcurrentBag<IHandleConnections>();
+        private readonly ConcurrentBag<IConfirmConnections> m_ConnectionHandlers
+            = new ConcurrentBag<IConfirmConnections>();
 
         /// <summary>
         /// The collection that contains all the known endpoints.
@@ -294,7 +294,7 @@ namespace Nuclei.Communication.Protocol
         /// Registers a new connection for monitoring.
         /// </summary>
         /// <param name="connectionHandler">The object that handles the connections.</param>
-        public void Register(IHandleConnections connectionHandler)
+        public void Register(IConfirmConnections connectionHandler)
         {
             {
                 Lokad.Enforce.Argument(() => connectionHandler);
@@ -302,30 +302,19 @@ namespace Nuclei.Communication.Protocol
 
             lock (m_ConnectionHandlers)
             {
-                IHandleConnections handler;
+                IConfirmConnections handler;
                 if (m_ConnectionHandlers.TryPeek(out handler))
                 {
                     return;
                 }
 
-                connectionHandler.OnConfirmIncomingChannelIntegrity += HandleOnConfirmIncomingChannelIntegrity;
-                connectionHandler.OnConfirmOutgoingChannelIntegrity += HandleOnOnConfirmOutgoingChannelIntegrity;
+                connectionHandler.OnConfirmChannelIntegrity += HandleOnConfirmChannelIntegrity;
 
                 m_ConnectionHandlers.Add(connectionHandler);
             }
         }
 
-        private void HandleOnConfirmIncomingChannelIntegrity(object sender, EndpointEventArgs e)
-        {
-            ConnectionMap map;
-            if (m_RegisteredConnections.TryGetValue(e.Endpoint, out map))
-            {
-                map.NextConnectionTime = m_Now() + m_MaximumTimeBetweenConnectionConfirmations;
-                map.NumberOfConnectionFailures = 0;
-            }
-        }
-
-        private void HandleOnOnConfirmOutgoingChannelIntegrity(object sender, EndpointEventArgs e)
+        private void HandleOnConfirmChannelIntegrity(object sender, EndpointEventArgs e)
         {
             ConnectionMap map;
             if (m_RegisteredConnections.TryGetValue(e.Endpoint, out map))
@@ -339,7 +328,7 @@ namespace Nuclei.Communication.Protocol
         /// Unregisters a connection from monitoring.
         /// </summary>
         /// <param name="connectionHandler">The object that handles the connections.</param>
-        public void Unregister(IHandleConnections connectionHandler)
+        public void Unregister(IConfirmConnections connectionHandler)
         {
             {
                 Lokad.Enforce.Argument(() => connectionHandler);
@@ -347,14 +336,13 @@ namespace Nuclei.Communication.Protocol
 
             lock (m_ConnectionHandlers)
             {
-                IHandleConnections handler;
+                IConfirmConnections handler;
                 if (m_ConnectionHandlers.TryTake(out handler))
                 {
                     return;
                 }
 
-                handler.OnConfirmIncomingChannelIntegrity -= HandleOnConfirmIncomingChannelIntegrity;
-                handler.OnConfirmOutgoingChannelIntegrity -= HandleOnOnConfirmOutgoingChannelIntegrity;
+                handler.OnConfirmChannelIntegrity -= HandleOnConfirmChannelIntegrity;
             }
         }
     }

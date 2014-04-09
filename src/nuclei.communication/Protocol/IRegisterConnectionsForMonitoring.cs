@@ -15,12 +15,12 @@ namespace Nuclei.Communication.Protocol
         /// Registers a new connection for monitoring.
         /// </summary>
         /// <param name="connectionHandler">The object that handles the connections.</param>
-        void Register(IHandleConnections connectionHandler);
+        void Register(IConfirmConnections connectionHandler);
 
         /// <summary>
         /// Unregisters a connection from monitoring.
         /// </summary>
         /// <param name="connectionHandler">The object that handles the connections.</param>
-        void Unregister(IHandleConnections connectionHandler);
+        void Unregister(IConfirmConnections connectionHandler);
     }
 }

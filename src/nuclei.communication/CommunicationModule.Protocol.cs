@@ -44,6 +44,13 @@ namespace Nuclei.Communication
                         allowedChannelTemplates,
                         c.Resolve<SystemDiagnostics>());
                 })
+                .OnActivated(
+                    a =>
+                    {
+                        var layer = a.Instance;
+                        var monitor = a.Context.Resolve<IRegisterConnectionsForMonitoring>();
+                        monitor.Register(layer);
+                    })
                 .As<IProtocolLayer>()
                 .As<IStoreInformationForActiveChannels>()
                 .SingleInstance();
@@ -80,6 +87,9 @@ namespace Nuclei.Communication
         private static void AttachMessageProcessingActions(IActivatedEventArgs<MessageHandler> args)
         {
             var handler = args.Instance;
+            var monitor = args.Context.Resolve<IRegisterConnectionsForMonitoring>();
+            monitor.Register(handler);
+
             var filterActions = args.Context.Resolve<IEnumerable<IMessageProcessAction>>();
             foreach (var action in filterActions)
             {

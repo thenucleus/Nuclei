@@ -150,7 +150,7 @@
     <Compile Include="Discovery\V1\VersionedChannelInformation.cs" />
     <Compile Include="ICommunicationFacade.cs" />
     <Compile Include="IDiscoveryVersionMetaData.cs" />
-    <Compile Include="Protocol\IHandleConnections.cs" />
+    <Compile Include="Protocol\IConfirmConnections.cs" />
     <Compile Include="Interaction\CommandData.cs" />
     <Compile Include="Interaction\CommunicationSubjectGroup.cs" />
     <Compile Include="Interaction\DuplicateObjectSerializerException.cs" />

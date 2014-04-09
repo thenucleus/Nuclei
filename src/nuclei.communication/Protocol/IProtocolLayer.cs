@@ -15,7 +15,7 @@ namespace Nuclei.Communication.Protocol
     /// <summary>
     /// Defines the methods for communicating with a remote endpoint.
     /// </summary>
-    internal interface IProtocolLayer : IStoreInformationForActiveChannels, INotifyOfEndpointStateChange, IDisposable
+    internal interface IProtocolLayer : IStoreInformationForActiveChannels, INotifyOfEndpointStateChange, IConfirmConnections, IDisposable
     {
         /// <summary>
         /// Gets the endpoint ID of the local endpoint.

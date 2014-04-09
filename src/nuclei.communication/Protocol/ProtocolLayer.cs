@@ -405,6 +405,7 @@ namespace Nuclei.Communication.Protocol
                         connection.Id));
 
                 channel.Send(connection.ProtocolInformation, message);
+                RaiseOnConfirmChannelIntegrity(connection.Id);
             }
         }
 
@@ -498,6 +499,8 @@ namespace Nuclei.Communication.Protocol
                         connection));
 
                 pair.Item1.Send(connection.ProtocolInformation, message);
+
+                RaiseOnConfirmChannelIntegrity(connection.Id);
                 return result;
             }
         }
@@ -607,6 +610,20 @@ namespace Nuclei.Communication.Protocol
         private void RaiseOnEndpointDisconnected(EndpointId endpoint)
         {
             var local = OnEndpointDisconnected;
+            if (local != null)
+            {
+                local(this, new EndpointEventArgs(endpoint));
+            }
+        }
+
+        /// <summary>
+        /// An event raised when data is received from a remote endpoint.
+        /// </summary>
+        public event EventHandler<EndpointEventArgs> OnConfirmChannelIntegrity;
+
+        private void RaiseOnConfirmChannelIntegrity(EndpointId endpoint)
+        {
+            var local = OnConfirmChannelIntegrity;
             if (local != null)
             {
                 local(this, new EndpointEventArgs(endpoint));
