@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the interface for objects that handle incoming connections.

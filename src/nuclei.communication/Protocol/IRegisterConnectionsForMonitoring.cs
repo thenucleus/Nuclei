@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// The interface for objects that register connections for monitoring.

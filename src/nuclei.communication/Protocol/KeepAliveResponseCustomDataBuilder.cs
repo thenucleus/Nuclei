@@ -4,7 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace Nuclei.Communication
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// A delegate used to provide custom data for a keep-alive response message.
