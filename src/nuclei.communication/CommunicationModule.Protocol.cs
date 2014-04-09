@@ -133,6 +133,25 @@ namespace Nuclei.Communication
             builder.Register(
                 c =>
                 {
+                    KeepAliveResponseCustomDataBuilder keepAliveFunction;
+                    var success = c.TryResolve(out keepAliveFunction);
+                    var ctx = c.Resolve<IComponentContext>();
+                    return new ConnectionVerificationProcessAction(
+                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                        (endpoint, msg) =>
+                        {
+                            var config = ctx.Resolve<IConfiguration>();
+                            var layer = ctx.Resolve<IProtocolLayer>();
+                            SendMessageWithoutResponse(config, layer, endpoint, msg);
+                        },
+                        c.Resolve<SystemDiagnostics>(),
+                        success ? keepAliveFunction : null);
+                })
+                .As<IMessageProcessAction>();
+
+            builder.Register(
+                c =>
+                {
                     var ctx = c.Resolve<IComponentContext>();
                     return new UnknownMessageTypeProcessAction(
                         EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
@@ -468,6 +487,29 @@ namespace Nuclei.Communication
         private static void RegisterDataContractResolver(ContainerBuilder builder)
         {
             builder.Register(c => new ProtocolDataContractResolver());
+        }
+
+        private static void RegisterConnectionMonitor(ContainerBuilder builder)
+        {
+            builder.Register(
+                    c =>
+                    {
+                        KeepAliveCustomDataBuilder keepAliveFunction;
+                        var builderSuccess = c.TryResolve(out keepAliveFunction);
+
+                        KeepAliveResponseDataHandler keepAliveHandler;
+                        var handlerSuccess = c.TryResolve(out keepAliveHandler);
+
+                        return new ConnectionMonitor(
+                            c.Resolve<IStoreInformationAboutEndpoints>(),
+                            c.Resolve<IProtocolLayer>(),
+                            () => DateTimeOffset.Now,
+                            c.Resolve<IConfiguration>(),
+                            builderSuccess ? keepAliveFunction : null,
+                            handlerSuccess ? keepAliveHandler : null);
+                    })
+                .As<IRegisterConnectionsForMonitoring>()
+                .SingleInstance();
         }
     }
 }

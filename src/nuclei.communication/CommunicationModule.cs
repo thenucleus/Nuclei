@@ -132,6 +132,7 @@ namespace Nuclei.Communication
             RegisterUploads(builder);
             RegisterDownloads(builder);
             RegisterDataContractResolver(builder);
+            RegisterConnectionMonitor(builder);
         }
 
         private void RegisterProtocolLayerV1(ContainerBuilder builder)

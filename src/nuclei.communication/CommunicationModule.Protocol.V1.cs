@@ -37,6 +37,12 @@ namespace Nuclei.Communication
 
         private static void RegisterProtocolV1MessageConverters(ContainerBuilder builder)
         {
+            builder.Register(c => new ConnectionVerificationConverter())
+                .As<IConvertCommunicationMessages>();
+
+            builder.Register(c => new ConnectionVerificationResponseConverter())
+                .As<IConvertCommunicationMessages>();
+
             builder.Register(c => new DownloadRequestConverter())
                 .As<IConvertCommunicationMessages>();
 
