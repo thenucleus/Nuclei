@@ -146,12 +146,21 @@ namespace Nuclei.Communication
 
         /// <summary>
         /// The <see cref="ConfigurationKey"/> that is used to retrieve the value for the maximum number of 
-        /// keep-alive messages before a connection to a remote endpoint is considered disconnected.
+        /// connection confirmations that a connection can miss before it is considered disconnected.
         /// </summary>
         [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
             Justification = "ConfigurationKey is immutable")]
-        public static readonly ConfigurationKey MaximumNumberOfMissedKeepAliveSignals
-            = new ConfigurationKey("MaximumNumberOfMissedKeepAliveSignals", typeof(int));
+        public static readonly ConfigurationKey MaximumNumberOfMissedConnectionConfirmations
+            = new ConfigurationKey("MaximumNumberOfMissedConnectionConfirmations", typeof(int));
+
+        /// <summary>
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the value for the maximum amount of
+        /// time that is allowed to expire between two connection confirmations.
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
+            Justification = "ConfigurationKey is immutable")]
+        public static readonly ConfigurationKey MaximumTimeInMillisecondsBetweenConnectionConfirmations
+            = new ConfigurationKey("MaximumTimeBetweenConnectionConfirmations", typeof(int));
 
         /// <summary>
         /// Returns a collection containing all the configuration keys for the communication section.
@@ -176,7 +185,8 @@ namespace Nuclei.Communication
                     WaitForConnectionTimeoutInMilliseconds,
                     WaitForResponseTimeoutInMilliSeconds,
                     KeepAliveIntervalInMilliseconds,
-                    MaximumNumberOfMissedKeepAliveSignals,
+                    MaximumNumberOfMissedConnectionConfirmations,
+                    MaximumTimeInMillisecondsBetweenConnectionConfirmations,
                 };
         }
     }

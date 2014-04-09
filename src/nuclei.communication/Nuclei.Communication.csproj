@@ -124,7 +124,7 @@
     <Compile Include="CommunicationModule.Interaction.V1.cs" />
     <Compile Include="CommunicationModule.Protocol.cs" />
     <Compile Include="CommunicationModule.Protocol.V1.cs" />
-    <Compile Include="ConnectionMonitor.cs" />
+    <Compile Include="Protocol\ConnectionMonitor.cs" />
     <Compile Include="DiscoveryInformation.cs" />
     <Compile Include="Discovery\BootstrapChannel.cs" />
     <Compile Include="Discovery\BootstrapEndpoint.cs" />
@@ -150,8 +150,7 @@
     <Compile Include="Discovery\V1\VersionedChannelInformation.cs" />
     <Compile Include="ICommunicationFacade.cs" />
     <Compile Include="IDiscoveryVersionMetaData.cs" />
-    <Compile Include="IHandleConnections.cs" />
-    <Compile Include="IMonitorConnections.cs" />
+    <Compile Include="Protocol\IHandleConnections.cs" />
     <Compile Include="Interaction\CommandData.cs" />
     <Compile Include="Interaction\CommunicationSubjectGroup.cs" />
     <Compile Include="Interaction\DuplicateObjectSerializerException.cs" />
@@ -204,11 +203,12 @@
     <Compile Include="Interaction\VersionedTypeFallback.cs" />
     <Compile Include="IProtocolVersionMetaData.cs" />
     <Compile Include="IProvideLocalConnectionInformation.cs" />
-    <Compile Include="IRegisterConnectionsForMonitoring.cs" />
+    <Compile Include="Protocol\IRegisterConnectionsForMonitoring.cs" />
     <Compile Include="IStoreInformationForActiveChannels.cs" />
     <Compile Include="ITypeMetaData.cs" />
-    <Compile Include="KeepAliveCustomDataBuilder.cs" />
-    <Compile Include="KeepAliveResponseCustomDataBuilder.cs" />
+    <Compile Include="Protocol\KeepAliveCustomDataBuilder.cs" />
+    <Compile Include="Protocol\KeepAliveResponseDataHandler.cs" />
+    <Compile Include="Protocol\KeepAliveResponseCustomDataBuilder.cs" />
     <Compile Include="NamedPipeChannelTemplate.cs" />
     <Compile Include="ProtocolInformation.cs" />
     <Compile Include="Protocol\BuildSendingEndpoint.cs" />
@@ -224,6 +224,9 @@
     <Compile Include="Interaction\Transport\CommandSetProxy.cs" />
     <Compile Include="CommunicationConfigurationKeys.cs" />
     <Compile Include="CommunicationConstants.cs" />
+    <Compile Include="Protocol\Messages\ConnectionVerificationMessage.cs" />
+    <Compile Include="Protocol\Messages\ConnectionVerificationResponseMessage.cs" />
+    <Compile Include="Protocol\Messages\Processors\ConnectionVerificationProcessAction.cs" />
     <Compile Include="Protocol\ProtocolChannel.cs" />
     <Compile Include="Protocol\ProtocolDataContractResolver.cs" />
     <Compile Include="Protocol\ProtocolLayer.cs" />
@@ -309,6 +312,10 @@
     <Compile Include="Interaction\V1\SerializedType.cs" />
     <Compile Include="Protocol\ProtocolDescription.cs" />
     <Compile Include="CommunicationSubject.cs" />
+    <Compile Include="Protocol\V1\DataObjects\ConnectionVerificationData.cs" />
+    <Compile Include="Protocol\V1\DataObjects\ConnectionVerificationResponseData.cs" />
+    <Compile Include="Protocol\V1\DataObjects\Converters\ConnectionVerificationConverter.cs" />
+    <Compile Include="Protocol\V1\DataObjects\Converters\ConnectionVerificationResponseConverter.cs" />
     <Compile Include="UnknownCommunicationSubjectException.cs" />
     <Compile Include="UriExtensions.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\DownloadRequestConverter.cs" />

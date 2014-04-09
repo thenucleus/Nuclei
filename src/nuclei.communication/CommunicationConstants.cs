@@ -86,15 +86,21 @@ namespace Nuclei.Communication
         public const int DefaultMaximumNumberOfConnectionsForTcpIp = 25;
 
         /// <summary>
-        /// The default interval for the maximum time between two (keep-alive) messages.
+        /// The default interval for the maximum time between two (connection confirmation) messages.
         /// </summary>
         public const int DefaultKeepAliveIntervalInMilliseconds = 15000;
 
         /// <summary>
-        /// The default value for the maximum number of missed keep-alive signals before
+        /// The default value for the maximum number of missed connection confirmations before
         /// a connection to a remote endpoint is considered disconnected.
         /// </summary>
         public const int DefaultMaximumNumberOfMissedKeepAliveSignals = 10;
+
+        /// <summary>
+        /// The default value for the maximum time that is allowed to expire between
+        /// to connection confirmations.
+        /// </summary>
+        public const int DefaultMaximumTimeInMillisecondsBetweenConnectionConfirmations = 60 * 1000;
 
         /// <summary>
         /// The version of the communication system.
