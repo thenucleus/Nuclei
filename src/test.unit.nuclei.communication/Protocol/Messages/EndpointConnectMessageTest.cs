@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Nuclei.Nunit.Extensions;
 using NUnit.Framework;
 
 namespace Nuclei.Communication.Protocol.Messages
@@ -20,7 +19,7 @@ namespace Nuclei.Communication.Protocol.Messages
         [Test]
         public void Create()
         {
-            var id = new EndpointId("sendingEndpoint");
+            var sender = new EndpointId("sendingEndpoint");
             var discovery = new DiscoveryInformation(new Uri("http://localhost/discovery/invalid"));
             var protocol = new ProtocolInformation(
                 new Version(1, 0),
@@ -28,14 +27,40 @@ namespace Nuclei.Communication.Protocol.Messages
                 new Uri("http://localhost/protocol/data/invalid"));
             var description = new ProtocolDescription(new List<CommunicationSubject>());
             var msg = new EndpointConnectMessage(
-                id, 
+                sender, 
                 discovery, 
                 protocol, 
                 description);
 
-            Assert.AreSame(id, msg.Sender);
+            Assert.IsNotNull(msg.Id);
+            Assert.AreSame(sender, msg.Sender);
             Assert.AreSame(discovery, msg.DiscoveryInformation);
-            Assert.AreEqual(protocol, msg.ProtocolInformation);
+            Assert.AreSame(protocol, msg.ProtocolInformation);
+            Assert.AreSame(description, msg.Information);
+        }
+
+        [Test]
+        public void CreateWithId()
+        {
+            var sender = new EndpointId("sendingEndpoint");
+            var id = new MessageId();
+            var discovery = new DiscoveryInformation(new Uri("http://localhost/discovery/invalid"));
+            var protocol = new ProtocolInformation(
+                new Version(1, 0),
+                new Uri("http://localhost/protocol/message/invalid"),
+                new Uri("http://localhost/protocol/data/invalid"));
+            var description = new ProtocolDescription(new List<CommunicationSubject>());
+            var msg = new EndpointConnectMessage(
+                sender,
+                id,
+                discovery,
+                protocol,
+                description);
+
+            Assert.AreSame(id, msg.Id);
+            Assert.AreSame(sender, msg.Sender);
+            Assert.AreSame(discovery, msg.DiscoveryInformation);
+            Assert.AreSame(protocol, msg.ProtocolInformation);
             Assert.AreSame(description, msg.Information);
         }
     }

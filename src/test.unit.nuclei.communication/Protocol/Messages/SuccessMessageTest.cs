@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
-using Nuclei.Nunit.Extensions;
 using NUnit.Framework;
 
 namespace Nuclei.Communication.Protocol.Messages
@@ -18,12 +17,26 @@ namespace Nuclei.Communication.Protocol.Messages
         [Test]
         public void Create()
         {
-            var id = new EndpointId("sendingEndpoint");
+            var sender = new EndpointId("sendingEndpoint");
             var response = new MessageId();
-            var msg = new SuccessMessage(id, response);
+            var msg = new SuccessMessage(sender, response);
 
-            Assert.AreEqual(id, msg.Sender);
-            Assert.AreEqual(response, msg.InResponseTo);
+            Assert.IsNotNull(msg.Id);
+            Assert.AreSame(sender, msg.Sender);
+            Assert.AreSame(response, msg.InResponseTo);
+        }
+
+        [Test]
+        public void CreateWithId()
+        {
+            var sender = new EndpointId("sendingEndpoint");
+            var id = new MessageId();
+            var response = new MessageId();
+            var msg = new SuccessMessage(sender, id, response);
+
+            Assert.AreSame(id, msg.Id);
+            Assert.AreSame(sender, msg.Sender);
+            Assert.AreSame(response, msg.InResponseTo);
         }
     }
 }
