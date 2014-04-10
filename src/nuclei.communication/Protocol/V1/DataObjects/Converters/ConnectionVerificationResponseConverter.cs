@@ -88,6 +88,7 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             return new ConnectionVerificationResponseMessage(
                 endpointConnectData.Sender,
                 data.Id,
+                data.InResponseTo,
                 value);
         }
 
