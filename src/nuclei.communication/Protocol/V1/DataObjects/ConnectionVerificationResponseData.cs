@@ -15,6 +15,16 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects
     internal sealed class ConnectionVerificationResponseData : DataObjectBase
     {
         /// <summary>
+        /// Gets or sets the type of the custom response data.
+        /// </summary>
+        [DataMember]
+        public SerializedType DataType
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Gets or sets the connection verification response data.
         /// </summary>
         [DataMember]

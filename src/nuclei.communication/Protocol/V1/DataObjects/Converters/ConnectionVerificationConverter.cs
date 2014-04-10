@@ -16,6 +16,24 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
     internal sealed class ConnectionVerificationConverter : IConvertCommunicationMessages
     {
         /// <summary>
+        /// The ordered list of serializers for object data.
+        /// </summary>
+        private readonly IStoreObjectSerializers m_TypeSerializers;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConnectionVerificationConverter"/> class.
+        /// </summary>
+        /// <param name="typeSerializers">The ordered list of serializers for object data.</param>
+        public ConnectionVerificationConverter(IStoreObjectSerializers typeSerializers)
+        {
+            {
+                Lokad.Enforce.Argument(() => typeSerializers);
+            }
+
+            m_TypeSerializers = typeSerializers;
+        }
+
+        /// <summary>
         /// Gets the type of <see cref="ICommunicationMessage"/> objects that the current convertor can
         /// convert.
         /// </summary>
@@ -54,10 +72,22 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
                 return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
+            var dataType = TypeLoader.FromPartialInformation(
+                endpointConnectData.DataType.FullName,
+                endpointConnectData.DataType.AssemblyName);
+
+            if (!m_TypeSerializers.HasSerializerFor(dataType))
+            {
+                throw new MissingObjectDataSerializerException();
+            }
+
+            var serializer = m_TypeSerializers.SerializerFor(dataType);
+            var value = serializer.Deserialize(endpointConnectData.CustomData);
+
             return new ConnectionVerificationMessage(
                 endpointConnectData.Sender,
                 data.Id,
-                endpointConnectData.CustomData);
+                value);
         }
 
         /// <summary>
@@ -78,13 +108,27 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
                 };
             }
 
-            return new ConnectionVerificationData
+            var type = endpointConnectMessage.CustomData.GetType();
+            if (!m_TypeSerializers.HasSerializerFor(type))
             {
-                Id = endpointConnectMessage.Id,
-                InResponseTo = endpointConnectMessage.InResponseTo,
-                Sender = endpointConnectMessage.Sender,
-                CustomData = endpointConnectMessage.CustomData,
-            };
+                throw new MissingObjectDataSerializerException();
+            }
+
+            var serializer = m_TypeSerializers.SerializerFor(type);
+            var value = serializer.Serialize(endpointConnectMessage.CustomData);
+
+            return new ConnectionVerificationData
+                {
+                    Id = endpointConnectMessage.Id,
+                    InResponseTo = endpointConnectMessage.InResponseTo,
+                    Sender = endpointConnectMessage.Sender,
+                    DataType = new SerializedType
+                        {
+                            FullName = type.FullName,
+                            AssemblyName = type.Assembly.GetName().Name
+                        },
+                    CustomData = value,
+                };
         }
     }
 }

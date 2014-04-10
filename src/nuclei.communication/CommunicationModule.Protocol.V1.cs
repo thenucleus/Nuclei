@@ -37,10 +37,12 @@ namespace Nuclei.Communication
 
         private static void RegisterProtocolV1MessageConverters(ContainerBuilder builder)
         {
-            builder.Register(c => new ConnectionVerificationConverter())
+            builder.Register(c => new ConnectionVerificationConverter(
+                    c.Resolve<IStoreObjectSerializers>()))
                 .As<IConvertCommunicationMessages>();
 
-            builder.Register(c => new ConnectionVerificationResponseConverter())
+            builder.Register(c => new ConnectionVerificationResponseConverter(
+                    c.Resolve<IStoreObjectSerializers>()))
                 .As<IConvertCommunicationMessages>();
 
             builder.Register(c => new DownloadRequestConverter())

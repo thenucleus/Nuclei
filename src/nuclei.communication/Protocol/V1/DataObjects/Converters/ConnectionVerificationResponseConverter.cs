@@ -17,6 +17,24 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
     internal sealed class ConnectionVerificationResponseConverter : IConvertCommunicationMessages
     {
         /// <summary>
+        /// The ordered list of serializers for object data.
+        /// </summary>
+        private readonly IStoreObjectSerializers m_TypeSerializers;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConnectionVerificationResponseConverter"/> class.
+        /// </summary>
+        /// <param name="typeSerializers">The ordered list of serializers for object data.</param>
+        public ConnectionVerificationResponseConverter(IStoreObjectSerializers typeSerializers)
+        {
+            {
+                Lokad.Enforce.Argument(() => typeSerializers);
+            }
+
+            m_TypeSerializers = typeSerializers;
+        }
+
+        /// <summary>
         /// Gets the type of <see cref="ICommunicationMessage"/> objects that the current convertor can
         /// convert.
         /// </summary>
@@ -55,10 +73,22 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
                 return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
+            var dataType = TypeLoader.FromPartialInformation(
+                endpointConnectData.DataType.FullName,
+                endpointConnectData.DataType.AssemblyName);
+
+            if (!m_TypeSerializers.HasSerializerFor(dataType))
+            {
+                throw new MissingObjectDataSerializerException();
+            }
+
+            var serializer = m_TypeSerializers.SerializerFor(dataType);
+            var value = serializer.Deserialize(endpointConnectData.ResponseData);
+
             return new ConnectionVerificationResponseMessage(
                 endpointConnectData.Sender,
                 data.Id,
-                endpointConnectData.ResponseData);
+                value);
         }
 
         /// <summary>
@@ -79,12 +109,26 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
                 };
             }
 
+            var type = endpointConnectMessage.ResponseData.GetType();
+            if (!m_TypeSerializers.HasSerializerFor(type))
+            {
+                throw new MissingObjectDataSerializerException();
+            }
+
+            var serializer = m_TypeSerializers.SerializerFor(type);
+            var value = serializer.Serialize(endpointConnectMessage.ResponseData);
+
             return new ConnectionVerificationResponseData
             {
                 Id = endpointConnectMessage.Id,
                 InResponseTo = endpointConnectMessage.InResponseTo,
                 Sender = endpointConnectMessage.Sender,
-                ResponseData = endpointConnectMessage.ResponseData,
+                DataType = new SerializedType
+                    {
+                        FullName = type.FullName,
+                        AssemblyName = type.Assembly.GetName().Name
+                    },
+                ResponseData = value,
             };
         }
     }
