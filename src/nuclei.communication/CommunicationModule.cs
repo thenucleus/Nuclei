@@ -19,6 +19,12 @@ namespace Nuclei.Communication
     /// </summary>
     public sealed partial class CommunicationModule : Module
     {
+        private static void RegisterTimer(ContainerBuilder builder)
+        {
+            builder.Register((c, p) => new SystemTimer(p.TypedAs<TimeSpan>()))
+                .As<ITimer>();
+        }
+
         private static void RegisterEntryPoint(ContainerBuilder builder)
         {
             builder.Register(c => new CommunicationEntryPoint(
@@ -96,6 +102,7 @@ namespace Nuclei.Communication
             RegisterInteractionLayer(builder);
             RegisterInteractionLayerV1(builder);
 
+            RegisterTimer(builder);
             RegisterEntryPoint(builder);
             RegisterStartables(builder, m_AllowedChannelTemplates, m_AllowAutomaticChannelDiscovery);
         }

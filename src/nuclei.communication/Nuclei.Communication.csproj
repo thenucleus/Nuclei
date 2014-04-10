@@ -124,6 +124,7 @@
     <Compile Include="CommunicationModule.Interaction.V1.cs" />
     <Compile Include="CommunicationModule.Protocol.cs" />
     <Compile Include="CommunicationModule.Protocol.V1.cs" />
+    <Compile Include="ITimer.cs" />
     <Compile Include="Protocol\ConnectionMonitor.cs" />
     <Compile Include="DiscoveryInformation.cs" />
     <Compile Include="Discovery\BootstrapChannel.cs" />
@@ -316,6 +317,7 @@
     <Compile Include="Protocol\V1\DataObjects\ConnectionVerificationResponseData.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\ConnectionVerificationConverter.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\ConnectionVerificationResponseConverter.cs" />
+    <Compile Include="SystemTimer.cs" />
     <Compile Include="UnknownCommunicationSubjectException.cs" />
     <Compile Include="UriExtensions.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\DownloadRequestConverter.cs" />
