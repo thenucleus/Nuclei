@@ -12,6 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
 using QuickGraph;
 
 namespace Nuclei.Communication.Interaction

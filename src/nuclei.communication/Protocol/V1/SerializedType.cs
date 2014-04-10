@@ -4,12 +4,13 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Runtime.Serialization;
 
-namespace Nuclei.Communication.Interaction.V1
+namespace Nuclei.Communication.Protocol.V1
 {
     /// <summary>
-    /// Stores type information about a <see cref="ICommandSet"/> or <see cref="INotificationSet"/> in serializable form.
+    /// Stores type information about a <see cref="Type"/>  in serializable form.
     /// </summary>
     [DataContract]
     internal sealed class SerializedType

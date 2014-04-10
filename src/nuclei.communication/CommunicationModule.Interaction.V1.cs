@@ -5,8 +5,8 @@
 //-----------------------------------------------------------------------
 
 using Autofac;
-using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters;
+using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.V1;
 
 namespace Nuclei.Communication

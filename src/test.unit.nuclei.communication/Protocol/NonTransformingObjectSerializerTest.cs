@@ -7,7 +7,7 @@
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Protocol
 {
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",

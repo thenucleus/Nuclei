@@ -157,10 +157,10 @@
     <Compile Include="Interaction\IHandleInteractionHandshakes.cs" />
     <Compile Include="Interaction\InteractionSubjectGroupStorage.cs" />
     <Compile Include="Interaction\IRegisterSubjectGroups.cs" />
-    <Compile Include="Interaction\ISerializeObjectData.cs" />
+    <Compile Include="Protocol\ISerializeObjectData.cs" />
     <Compile Include="Interaction\IStoreInteractionSubjects.cs" />
-    <Compile Include="Interaction\IStoreObjectSerializers.cs" />
-    <Compile Include="Interaction\NonTransformingObjectSerializer.cs" />
+    <Compile Include="Protocol\IStoreObjectSerializers.cs" />
+    <Compile Include="Protocol\NonTransformingObjectSerializer.cs" />
     <Compile Include="Interaction\NoSerializerForTypeFoundException.cs" />
     <Compile Include="Interaction\ObjectSerializerStorage.cs" />
     <Compile Include="Interaction\OfflineTypeInformation.cs" />
@@ -182,7 +182,7 @@
     <Compile Include="Interaction\Transport\Messages\EndpointInteractionInformationMessage.cs" />
     <Compile Include="Interaction\Transport\Messages\EndpointInteractionInformationResponseMessage.cs" />
     <Compile Include="Interaction\Transport\Messages\Processors\EndpointInteractionInformationProcessAction.cs" />
-    <Compile Include="Interaction\Transport\MissingObjectDataSerializerException.cs" />
+    <Compile Include="Protocol\V1\MissingObjectDataSerializerException.cs" />
     <Compile Include="Interaction\V1\Protocol\V1\DataObjects\CommandInvocationData.cs" />
     <Compile Include="Interaction\V1\Protocol\V1\DataObjects\CommandInvocationResponseData.cs" />
     <Compile Include="Interaction\V1\Protocol\V1\DataObjects\Converters\CommandInvocationConverter.cs" />
@@ -309,7 +309,7 @@
     <Compile Include="Interaction\Transport\RemoteNotificationHub.cs" />
     <Compile Include="Protocol\ProtocolVersions.cs" />
     <Compile Include="Protocol\SendingEndpoint.cs" />
-    <Compile Include="Interaction\V1\SerializedType.cs" />
+    <Compile Include="Protocol\V1\SerializedType.cs" />
     <Compile Include="Protocol\ProtocolDescription.cs" />
     <Compile Include="CommunicationSubject.cs" />
     <Compile Include="Protocol\V1\DataObjects\ConnectionVerificationData.cs" />

@@ -6,6 +6,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using Nuclei.Communication.Protocol.V1;
 
 namespace Nuclei.Communication.Interaction.V1
 {

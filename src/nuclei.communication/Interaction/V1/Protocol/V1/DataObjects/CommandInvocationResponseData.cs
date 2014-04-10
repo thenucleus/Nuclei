@@ -6,6 +6,7 @@
 
 using System;
 using System.Runtime.Serialization;
+using Nuclei.Communication.Protocol.V1;
 using Nuclei.Communication.Protocol.V1.DataObjects;
 
 namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects

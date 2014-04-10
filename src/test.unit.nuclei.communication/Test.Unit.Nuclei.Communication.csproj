@@ -93,7 +93,7 @@
     <Compile Include="Interaction\InteractionExtensionsTest.cs" />
     <Compile Include="Interaction\InteractionHandshakeConductorTest.cs" />
     <Compile Include="Interaction\InteractionSubjectGroupStorageTest.cs" />
-    <Compile Include="Interaction\NonTransformingObjectSerializerTest.cs" />
+    <Compile Include="Protocol\NonTransformingObjectSerializerTest.cs" />
     <Compile Include="Interaction\NoSerializerForTypeFoundExceptionTest.cs" />
     <Compile Include="Interaction\NotificationDataTest.cs" />
     <Compile Include="Interaction\NotificationRaisedDataTest.cs" />
@@ -128,7 +128,7 @@
     <Compile Include="Protocol\MessageHandlerTest.cs" />
     <Compile Include="Protocol\MessageIdTest.cs" />
     <Compile Include="Discovery\MissingBindingTypeExceptionTest.cs" />
-    <Compile Include="Interaction\Transport\MissingObjectDataSerializerExceptionTest.cs" />
+    <Compile Include="Protocol\V1\MissingObjectDataSerializerExceptionTest.cs" />
     <Compile Include="Discovery\MissingEndpointIdExceptionTest.cs" />
     <Compile Include="Protocol\MessageKindFilterTest.cs" />
     <Compile Include="Protocol\Messages\Processors\EndpointDisconnectProcessActionTest.cs" />
