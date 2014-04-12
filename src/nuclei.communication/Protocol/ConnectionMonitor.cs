@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Nuclei.Communication.Protocol.Messages;
@@ -217,6 +218,8 @@ namespace Nuclei.Communication.Protocol
             m_RegisteredConnections.TryRemove(e.Endpoint, out map);
         }
 
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
+            Justification = "We don't really want the channel to die just because the other side didn't behave properly.")]
         private void HandleKeepAliveIntervalOnElapsed(object sender, EventArgs e)
         {
             var now = m_Now();
@@ -278,13 +281,14 @@ namespace Nuclei.Communication.Protocol
                         },
                         TaskContinuationOptions.ExecuteSynchronously);
                 }
-                catch (EndpointNotContactableException)
+                catch (Exception)
                 {
                     map.NumberOfConnectionFailures += 1;
                 }
-                catch (FailedToSendMessageException)
+
+                if (map.NumberOfConnectionFailures > m_MaximumNumberOfMissedKeepAliveSignals)
                 {
-                    map.NumberOfConnectionFailures += 1;
+                    m_Endpoints.TryRemoveEndpoint(endpoint);
                 }
             }
         }
