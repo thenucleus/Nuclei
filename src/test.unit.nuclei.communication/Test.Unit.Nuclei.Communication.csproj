@@ -93,7 +93,7 @@
     <Compile Include="Interaction\InteractionExtensionsTest.cs" />
     <Compile Include="Interaction\InteractionHandshakeConductorTest.cs" />
     <Compile Include="Interaction\InteractionSubjectGroupStorageTest.cs" />
-    <Compile Include="Interaction\NonTransformingObjectSerializerTest.cs" />
+    <Compile Include="Protocol\NonTransformingObjectSerializerTest.cs" />
     <Compile Include="Interaction\NoSerializerForTypeFoundExceptionTest.cs" />
     <Compile Include="Interaction\NotificationDataTest.cs" />
     <Compile Include="Interaction\NotificationRaisedDataTest.cs" />
@@ -122,13 +122,17 @@
     <Compile Include="Interaction\V1\Protocol\V1\DataObjects\Converters\NotificationUnregistrationConverterTest.cs" />
     <Compile Include="Interaction\VersionedTypeFallbackTest.cs" />
     <Compile Include="MaximumNumberOfChannelRestartsExceededExceptionTest.cs" />
+    <Compile Include="Protocol\ConnectionMonitorTest.cs" />
+    <Compile Include="Protocol\Messages\ConnectionVerificationMessageTest.cs" />
+    <Compile Include="Protocol\Messages\ConnectionVerificationResponseMessageTest.cs" />
+    <Compile Include="Protocol\Messages\Processors\ConnectionVerificationProcessActionTest.cs" />
     <Compile Include="Protocol\ProtocolChannelTest.cs" />
     <Compile Include="Protocol\ProtocolInformationTest.cs" />
     <Compile Include="Protocol\ProtocolLayerTest.cs" />
     <Compile Include="Protocol\MessageHandlerTest.cs" />
     <Compile Include="Protocol\MessageIdTest.cs" />
     <Compile Include="Discovery\MissingBindingTypeExceptionTest.cs" />
-    <Compile Include="Interaction\Transport\MissingObjectDataSerializerExceptionTest.cs" />
+    <Compile Include="Protocol\V1\MissingObjectDataSerializerExceptionTest.cs" />
     <Compile Include="Discovery\MissingEndpointIdExceptionTest.cs" />
     <Compile Include="Protocol\MessageKindFilterTest.cs" />
     <Compile Include="Protocol\Messages\Processors\EndpointDisconnectProcessActionTest.cs" />
@@ -164,6 +168,8 @@
     <Compile Include="Protocol\Messages\SuccessMessageTest.cs" />
     <Compile Include="Protocol\Messages\UnknownMessageTypeMessageTest.cs" />
     <Compile Include="Interaction\Transport\Messages\UnregisterFromNotificationMessageTest.cs" />
+    <Compile Include="Protocol\V1\DataObjects\Converters\ConnectionVerificationConverterTest.cs" />
+    <Compile Include="Protocol\V1\DataObjects\Converters\ConnectionVerificationResponseConverterTest.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\DownloadRequestConverterTest.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\EndpointConnectConverterTest.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\EndpointDisconnectConverterTest.cs" />

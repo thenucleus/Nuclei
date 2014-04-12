@@ -271,6 +271,9 @@ namespace Nuclei.Communication.Protocol
 
             using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "MessageHandler: processing message"))
             {
+                // Confirm that the endpoint is still alive.
+                RaiseOnConfirmChannelIntegrity(message.Sender);
+
                 // First check that the message isn't a response. If it is then we see if we have a
                 // waiting task for that. If not then the message will just disappear in the void
                 if (!message.InResponseTo.Equals(MessageId.None))
@@ -383,6 +386,20 @@ namespace Nuclei.Communication.Protocol
                 {
                     pair.Item3.Cancel();
                 }
+            }
+        }
+
+        /// <summary>
+        /// An event raised when data is received from a remote endpoint.
+        /// </summary>
+        public event EventHandler<EndpointEventArgs> OnConfirmChannelIntegrity;
+
+        private void RaiseOnConfirmChannelIntegrity(EndpointId endpoint)
+        {
+            var local = OnConfirmChannelIntegrity;
+            if (local != null)
+            {
+                local(this, new EndpointEventArgs(endpoint));
             }
         }
     }

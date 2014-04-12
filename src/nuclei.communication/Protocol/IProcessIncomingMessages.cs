@@ -10,7 +10,7 @@ namespace Nuclei.Communication.Protocol
     /// Processes incoming messages and invokes the required functions based on the 
     /// contents of the message.
     /// </summary>
-    internal interface IProcessIncomingMessages
+    internal interface IProcessIncomingMessages : IConfirmConnections
     {
         /// <summary>
         /// Processes the message and invokes the desired functions based on the 

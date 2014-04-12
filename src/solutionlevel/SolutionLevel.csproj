@@ -54,7 +54,7 @@
     <VersionBuild>0</VersionBuild>
     <VersionSemantic>0</VersionSemantic>
     <VersionSemanticFull>0</VersionSemanticFull>
-    <!-- Jenkins, the build system adds the BUILD_NUMBER environment variable so we can get that here -->
+    <!-- Teamcity, the build system adds the BUILD_NUMBER environment variable so we can get that here -->
     <BuildNumber>$(BUILD_NUMBER)</BuildNumber>
     <BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber>
     <!-- Today's dates -->

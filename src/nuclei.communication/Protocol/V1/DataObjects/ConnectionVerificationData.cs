@@ -6,29 +6,29 @@
 
 using System.Runtime.Serialization;
 
-namespace Nuclei.Communication.Interaction.V1
+namespace Nuclei.Communication.Protocol.V1.DataObjects
 {
     /// <summary>
-    /// Stores type information about a <see cref="ICommandSet"/> or <see cref="INotificationSet"/> in serializable form.
+    /// Defines a message that is used to verify that a connection is still alive.
     /// </summary>
     [DataContract]
-    internal sealed class SerializedType
+    internal sealed class ConnectionVerificationData : DataObjectBase
     {
         /// <summary>
-        /// Gets or sets the assembly name of the command set type.
+        /// Gets or sets the type of the custom data.
         /// </summary>
         [DataMember]
-        public string AssemblyName
+        public SerializedType DataType
         {
             get;
             set;
         }
 
         /// <summary>
-        /// Gets or sets the full name of the type.
+        /// Gets or sets the custom data for the verification message.
         /// </summary>
         [DataMember]
-        public string FullName
+        public object CustomData
         {
             get;
             set;

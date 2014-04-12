@@ -4,33 +4,32 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Runtime.Serialization;
-using Nuclei.Communication.Protocol.V1;
-using Nuclei.Communication.Protocol.V1.DataObjects;
 
-namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects
+namespace Nuclei.Communication.Protocol.V1
 {
     /// <summary>
-    /// Defines a message that indicates that the sending endpoint wants to register for event notifications.
+    /// Stores type information about a <see cref="Type"/>  in serializable form.
     /// </summary>
     [DataContract]
-    internal sealed class NotificationRegistrationData : DataObjectBase
+    internal sealed class SerializedType
     {
         /// <summary>
-        /// Gets or sets the type of interface on which the command was invoked.
+        /// Gets or sets the assembly name of the command set type.
         /// </summary>
         [DataMember]
-        public SerializedType InterfaceType
+        public string AssemblyName
         {
             get;
             set;
         }
 
         /// <summary>
-        /// Gets or sets the name of the method that was invoked.
+        /// Gets or sets the full name of the type.
         /// </summary>
         [DataMember]
-        public string EventName
+        public string FullName
         {
             get;
             set;

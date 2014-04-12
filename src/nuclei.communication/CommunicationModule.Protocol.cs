@@ -44,6 +44,13 @@ namespace Nuclei.Communication
                         allowedChannelTemplates,
                         c.Resolve<SystemDiagnostics>());
                 })
+                .OnActivated(
+                    a =>
+                    {
+                        var layer = a.Instance;
+                        var monitor = a.Context.Resolve<IRegisterConnectionsForMonitoring>();
+                        monitor.Register(layer);
+                    })
                 .As<IProtocolLayer>()
                 .As<IStoreInformationForActiveChannels>()
                 .SingleInstance();
@@ -80,6 +87,9 @@ namespace Nuclei.Communication
         private static void AttachMessageProcessingActions(IActivatedEventArgs<MessageHandler> args)
         {
             var handler = args.Instance;
+            var monitor = args.Context.Resolve<IRegisterConnectionsForMonitoring>();
+            monitor.Register(handler);
+
             var filterActions = args.Context.Resolve<IEnumerable<IMessageProcessAction>>();
             foreach (var action in filterActions)
             {
@@ -128,6 +138,25 @@ namespace Nuclei.Communication
             builder.Register(c => new EndpointDisconnectProcessAction(
                     c.Resolve<IStoreEndpointApprovalState>(),
                     c.Resolve<SystemDiagnostics>()))
+                .As<IMessageProcessAction>();
+
+            builder.Register(
+                c =>
+                {
+                    KeepAliveResponseCustomDataBuilder keepAliveFunction;
+                    var success = c.TryResolve(out keepAliveFunction);
+                    var ctx = c.Resolve<IComponentContext>();
+                    return new ConnectionVerificationProcessAction(
+                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                        (endpoint, msg) =>
+                        {
+                            var config = ctx.Resolve<IConfiguration>();
+                            var layer = ctx.Resolve<IProtocolLayer>();
+                            SendMessageWithoutResponse(config, layer, endpoint, msg);
+                        },
+                        c.Resolve<SystemDiagnostics>(),
+                        success ? keepAliveFunction : null);
+                })
                 .As<IMessageProcessAction>();
 
             builder.Register(
@@ -468,6 +497,37 @@ namespace Nuclei.Communication
         private static void RegisterDataContractResolver(ContainerBuilder builder)
         {
             builder.Register(c => new ProtocolDataContractResolver());
+        }
+
+        private static void RegisterConnectionMonitor(ContainerBuilder builder)
+        {
+            builder.Register(
+                    c =>
+                    {
+                        KeepAliveCustomDataBuilder keepAliveFunction;
+                        var builderSuccess = c.TryResolve(out keepAliveFunction);
+
+                        KeepAliveResponseDataHandler keepAliveHandler;
+                        var handlerSuccess = c.TryResolve(out keepAliveHandler);
+
+                        var configuration = c.Resolve<IConfiguration>();
+                        var keepAliveIntervalInMilliseconds = configuration.HasValueFor(
+                                CommunicationConfigurationKeys.KeepAliveIntervalInMilliseconds)
+                            ? configuration.Value<int>(CommunicationConfigurationKeys.KeepAliveIntervalInMilliseconds)
+                            : CommunicationConstants.DefaultKeepAliveIntervalInMilliseconds;
+
+                        return new ConnectionMonitor(
+                            c.Resolve<IStoreInformationAboutEndpoints>(),
+                            c.Resolve<IProtocolLayer>(),
+                            c.Resolve<ITimer>(new TypedParameter(typeof(TimeSpan), TimeSpan.FromMilliseconds(keepAliveIntervalInMilliseconds))),
+                            () => DateTimeOffset.Now,
+                            c.Resolve<IConfiguration>(),
+                            builderSuccess ? keepAliveFunction : null,
+                            handlerSuccess ? keepAliveHandler : null);
+                    })
+                .As<IRegisterConnectionsForMonitoring>()
+                .As<IDisposable>()
+                .SingleInstance();
         }
     }
 }

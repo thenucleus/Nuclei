@@ -8,7 +8,7 @@ using System;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
 
-namespace Nuclei.Communication.Interaction.Transport
+namespace Nuclei.Communication.Protocol.V1
 {
     /// <summary>
     /// An exception thrown when the endpoint tries to process or create a serialized data object without the

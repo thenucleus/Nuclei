@@ -7,6 +7,7 @@
 using System;
 using System.Runtime.Serialization;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication.Interaction
 {

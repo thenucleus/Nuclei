@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// The default <see cref="ISerializeObjectData"/> implementation that simply passes the input object through as

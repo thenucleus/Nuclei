@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the interface for objects that store <see cref="ISerializeObjectData"/> instances.

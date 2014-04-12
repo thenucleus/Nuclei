@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
-using Nuclei.Nunit.Extensions;
 using NUnit.Framework;
 
 namespace Nuclei.Communication.Protocol.Messages
@@ -18,11 +17,39 @@ namespace Nuclei.Communication.Protocol.Messages
         [Test]
         public void Create()
         {
-            var id = new EndpointId("sendingEndpoint");
+            var sender = new EndpointId("sendingEndpoint");
+            var msg = new EndpointDisconnectMessage(sender);
+
+            Assert.IsNotNull(msg.Id);
+            Assert.AreSame(sender, msg.Sender);
+            Assert.AreEqual(string.Empty, msg.ClosingReason);
+            Assert.AreEqual(MessageId.None, msg.InResponseTo);
+        }
+
+        [Test]
+        public void CreateWithReason()
+        {
+            var sender = new EndpointId("sendingEndpoint");
             var reason = "reason";
-            var msg = new EndpointDisconnectMessage(id, reason);
-            Assert.AreEqual(id, msg.Sender);
-            Assert.AreEqual(reason, msg.ClosingReason);
+            var msg = new EndpointDisconnectMessage(sender, reason);
+            
+            Assert.IsNotNull(msg.Id);
+            Assert.AreSame(sender, msg.Sender);
+            Assert.AreSame(reason, msg.ClosingReason);
+            Assert.AreEqual(MessageId.None, msg.InResponseTo);
+        }
+
+        [Test]
+        public void CreateWithIdAndReason()
+        {
+            var sender = new EndpointId("sendingEndpoint");
+            var id = new MessageId();
+            var reason = "reason";
+            var msg = new EndpointDisconnectMessage(sender, id, reason);
+
+            Assert.AreSame(id, msg.Id);
+            Assert.AreSame(sender, msg.Sender);
+            Assert.AreSame(reason, msg.ClosingReason);
             Assert.AreEqual(MessageId.None, msg.InResponseTo);
         }
     }

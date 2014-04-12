@@ -5,32 +5,30 @@
 //-----------------------------------------------------------------------
 
 using System.Runtime.Serialization;
-using Nuclei.Communication.Protocol.V1;
-using Nuclei.Communication.Protocol.V1.DataObjects;
 
-namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects
+namespace Nuclei.Communication.Protocol.V1.DataObjects
 {
     /// <summary>
-    /// Defines a message that indicates that the sending endpoint wants to register for event notifications.
+    /// Defines a message that is used to respond to a connection verification message.
     /// </summary>
     [DataContract]
-    internal sealed class NotificationRegistrationData : DataObjectBase
+    internal sealed class ConnectionVerificationResponseData : DataObjectBase
     {
         /// <summary>
-        /// Gets or sets the type of interface on which the command was invoked.
+        /// Gets or sets the type of the custom response data.
         /// </summary>
         [DataMember]
-        public SerializedType InterfaceType
+        public SerializedType DataType
         {
             get;
             set;
         }
 
         /// <summary>
-        /// Gets or sets the name of the method that was invoked.
+        /// Gets or sets the connection verification response data.
         /// </summary>
         [DataMember]
-        public string EventName
+        public object ResponseData
         {
             get;
             set;

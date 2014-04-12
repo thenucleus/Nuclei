@@ -12,18 +12,19 @@ namespace Nuclei.Communication.Protocol.Messages
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
         Justification = "Unit tests do not need documentation.")]
-    public sealed class SuccessMessageTest
+    public sealed class ConnectionVerificationMessageTest
     {
         [Test]
         public void Create()
         {
             var sender = new EndpointId("sendingEndpoint");
-            var response = new MessageId();
-            var msg = new SuccessMessage(sender, response);
+            var customData = new object();
+            var msg = new ConnectionVerificationMessage(sender, customData);
 
             Assert.IsNotNull(msg.Id);
             Assert.AreSame(sender, msg.Sender);
-            Assert.AreSame(response, msg.InResponseTo);
+            Assert.AreEqual(MessageId.None, msg.InResponseTo);
+            Assert.AreSame(customData, msg.CustomData);
         }
 
         [Test]
@@ -31,12 +32,13 @@ namespace Nuclei.Communication.Protocol.Messages
         {
             var sender = new EndpointId("sendingEndpoint");
             var id = new MessageId();
-            var response = new MessageId();
-            var msg = new SuccessMessage(sender, id, response);
+            var customData = new object();
+            var msg = new ConnectionVerificationMessage(sender, id, customData);
 
             Assert.AreSame(id, msg.Id);
             Assert.AreSame(sender, msg.Sender);
-            Assert.AreSame(response, msg.InResponseTo);
+            Assert.AreEqual(MessageId.None, msg.InResponseTo);
+            Assert.AreSame(customData, msg.CustomData);
         }
     }
 }

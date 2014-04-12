@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Nuclei.Communication.Interaction
+namespace Nuclei.Communication.Protocol
 {
     /// <summary>
     /// Defines the interface for objects that prepare object data for transmission to a remote endpoint.

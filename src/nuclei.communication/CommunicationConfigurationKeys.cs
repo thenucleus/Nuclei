@@ -136,6 +136,33 @@ namespace Nuclei.Communication
             = new ConfigurationKey("ResponseTimeout", typeof(int));
 
         /// <summary>
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the value for the interval (in milliseconds)
+        /// between two subsequent (keep-alive) messages.
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
+            Justification = "ConfigurationKey is immutable")]
+        public static readonly ConfigurationKey KeepAliveIntervalInMilliseconds
+            = new ConfigurationKey("KeepAliveIntervalInMilliseconds", typeof(int));
+
+        /// <summary>
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the value for the maximum number of 
+        /// connection confirmations that a connection can miss before it is considered disconnected.
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
+            Justification = "ConfigurationKey is immutable")]
+        public static readonly ConfigurationKey MaximumNumberOfMissedConnectionConfirmations
+            = new ConfigurationKey("MaximumNumberOfMissedConnectionConfirmations", typeof(int));
+
+        /// <summary>
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the value for the maximum amount of
+        /// time that is allowed to expire between two connection confirmations.
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
+            Justification = "ConfigurationKey is immutable")]
+        public static readonly ConfigurationKey MaximumTimeInMillisecondsBetweenConnectionConfirmations
+            = new ConfigurationKey("MaximumTimeBetweenConnectionConfirmations", typeof(int));
+
+        /// <summary>
         /// Returns a collection containing all the configuration keys for the communication section.
         /// </summary>
         /// <returns>A collection containing all the configuration keys for the communication section.</returns>
@@ -157,6 +184,9 @@ namespace Nuclei.Communication
                     BindingMaxReceivedSizeForDataInBytes,
                     WaitForConnectionTimeoutInMilliseconds,
                     WaitForResponseTimeoutInMilliSeconds,
+                    KeepAliveIntervalInMilliseconds,
+                    MaximumNumberOfMissedConnectionConfirmations,
+                    MaximumTimeInMillisecondsBetweenConnectionConfirmations,
                 };
         }
     }
