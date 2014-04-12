@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Nuclei.Communication
 {
@@ -15,6 +16,6 @@ namespace Nuclei.Communication
         /// <summary>
         /// An event raised when the timer has elapsed.
         /// </summary>
-        event EventHandler Elapsed;
+        event EventHandler OnElapsed;
     }
 }

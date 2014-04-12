@@ -34,17 +34,17 @@ namespace Nuclei.Communication
 
         private void TimerOnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
-            RaiseElapsed();
+            RaiseOnElapsed();
         }
 
         /// <summary>
         /// An event raised when the timer has elapsed.
         /// </summary>
-        public event EventHandler Elapsed;
+        public event EventHandler OnElapsed;
 
-        private void RaiseElapsed()
+        private void RaiseOnElapsed()
         {
-            var local = Elapsed;
+            var local = OnElapsed;
             if (local != null)
             {
                 local(this, EventArgs.Empty);
