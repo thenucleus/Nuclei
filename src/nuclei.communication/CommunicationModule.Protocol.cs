@@ -526,7 +526,6 @@ namespace Nuclei.Communication
                             handlerSuccess ? keepAliveHandler : null);
                     })
                 .As<IRegisterConnectionsForMonitoring>()
-                .As<IDisposable>()
                 .SingleInstance();
         }
     }
