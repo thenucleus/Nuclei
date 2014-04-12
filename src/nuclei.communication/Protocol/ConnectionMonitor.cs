@@ -9,10 +9,8 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
 using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Configuration;
-using Timer = System.Timers.Timer;
 
 namespace Nuclei.Communication.Protocol
 {
@@ -114,7 +112,7 @@ namespace Nuclei.Communication.Protocol
         /// <summary>
         /// The timer which is used to signal the next keep-alive moment.
         /// </summary>
-        private readonly Timer m_Timer;
+        private readonly ITimer m_Timer;
 
         /// <summary>
         /// The maximum amount of time that is allowed to expire between two confirmations
@@ -138,6 +136,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="endpoints">The collection that contains all the known endpoints.</param>
         /// <param name="layer">The object that is used to send messages to a remote endpoint.</param>
+        /// <param name="timer">The timer which is used to signal the next keep-alive moment.</param>
         /// <param name="now">The function that is used to get the current time and date.</param>
         /// <param name="configuration">The object that stores the configuration for the application.</param>
         /// <param name="keepAliveCustomDataBuilder">The function that is used to provide custom data for the connect message.</param>
@@ -149,6 +148,9 @@ namespace Nuclei.Communication.Protocol
         ///     Thrown if <paramref name="layer"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="timer"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="now"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
@@ -157,6 +159,7 @@ namespace Nuclei.Communication.Protocol
         public ConnectionMonitor(
             IStoreInformationAboutEndpoints endpoints,
             IProtocolLayer layer,
+            ITimer timer,
             Func<DateTimeOffset> now,
             IConfiguration configuration,
             KeepAliveCustomDataBuilder keepAliveCustomDataBuilder = null,
@@ -165,6 +168,7 @@ namespace Nuclei.Communication.Protocol
             {
                 Lokad.Enforce.Argument(() => endpoints);
                 Lokad.Enforce.Argument(() => layer);
+                Lokad.Enforce.Argument(() => timer);
                 Lokad.Enforce.Argument(() => now);
                 Lokad.Enforce.Argument(() => configuration);
             }
@@ -189,24 +193,19 @@ namespace Nuclei.Communication.Protocol
                 ? TimeSpan.FromMilliseconds(configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
                 : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
 
-            var keepAliveIntervalInMilliseconds = configuration.HasValueFor(CommunicationConfigurationKeys.KeepAliveIntervalInMilliseconds)
-                ? configuration.Value<int>(CommunicationConfigurationKeys.KeepAliveIntervalInMilliseconds)
-                : CommunicationConstants.DefaultKeepAliveIntervalInMilliseconds;
-
             m_Endpoints = endpoints;
             m_Endpoints.OnEndpointConnected += HandleOnEndpointConnected;
             m_Endpoints.OnEndpointDisconnected += HandleOnEndpointDisconnected;
 
-            m_Timer = new Timer(keepAliveIntervalInMilliseconds);
-            m_Timer.Elapsed += HandleKeepAliveIntervalElapsed;
-            m_Timer.AutoReset = true;
+            m_Timer = timer;
+            m_Timer.OnElapsed += HandleKeepAliveIntervalOnElapsed;
         }
 
         private void HandleOnEndpointConnected(object sender, EndpointEventArgs e)
         {
             var map = new ConnectionMap(e.Endpoint)
                 {
-                    NextConnectionTime = m_Now(),
+                    NextConnectionTime = m_Now() + m_MaximumTimeBetweenConnectionConfirmations,
                     NumberOfConnectionFailures = 0,
                 };
             m_RegisteredConnections.TryAdd(e.Endpoint, map);
@@ -218,7 +217,7 @@ namespace Nuclei.Communication.Protocol
             m_RegisteredConnections.TryRemove(e.Endpoint, out map);
         }
 
-        private void HandleKeepAliveIntervalElapsed(object sender, ElapsedEventArgs e)
+        private void HandleKeepAliveIntervalOnElapsed(object sender, EventArgs e)
         {
             var now = m_Now();
 
@@ -309,7 +308,6 @@ namespace Nuclei.Communication.Protocol
                 }
 
                 connectionHandler.OnConfirmChannelIntegrity += HandleOnConfirmChannelIntegrity;
-
                 m_ConnectionHandlers.Add(connectionHandler);
             }
         }

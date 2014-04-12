@@ -510,15 +510,23 @@ namespace Nuclei.Communication
                         KeepAliveResponseDataHandler keepAliveHandler;
                         var handlerSuccess = c.TryResolve(out keepAliveHandler);
 
+                        var configuration = c.Resolve<IConfiguration>();
+                        var keepAliveIntervalInMilliseconds = configuration.HasValueFor(
+                                CommunicationConfigurationKeys.KeepAliveIntervalInMilliseconds)
+                            ? configuration.Value<int>(CommunicationConfigurationKeys.KeepAliveIntervalInMilliseconds)
+                            : CommunicationConstants.DefaultKeepAliveIntervalInMilliseconds;
+
                         return new ConnectionMonitor(
                             c.Resolve<IStoreInformationAboutEndpoints>(),
                             c.Resolve<IProtocolLayer>(),
+                            c.Resolve<ITimer>(new TypedParameter(typeof(TimeSpan), TimeSpan.FromMilliseconds(keepAliveIntervalInMilliseconds))),
                             () => DateTimeOffset.Now,
                             c.Resolve<IConfiguration>(),
                             builderSuccess ? keepAliveFunction : null,
                             handlerSuccess ? keepAliveHandler : null);
                     })
                 .As<IRegisterConnectionsForMonitoring>()
+                .As<IDisposable>()
                 .SingleInstance();
         }
     }
