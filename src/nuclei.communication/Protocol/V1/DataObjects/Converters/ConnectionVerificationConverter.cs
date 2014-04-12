@@ -72,17 +72,21 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
                 return new UnknownMessageTypeMessage(data.Sender, data.Id, data.InResponseTo);
             }
 
-            var dataType = TypeLoader.FromPartialInformation(
+            object value = null;
+            if (endpointConnectData.CustomData != null)
+            {
+                var dataType = TypeLoader.FromPartialInformation(
                 endpointConnectData.DataType.FullName,
                 endpointConnectData.DataType.AssemblyName);
 
-            if (!m_TypeSerializers.HasSerializerFor(dataType))
-            {
-                throw new MissingObjectDataSerializerException();
-            }
+                if (!m_TypeSerializers.HasSerializerFor(dataType))
+                {
+                    throw new MissingObjectDataSerializerException();
+                }
 
-            var serializer = m_TypeSerializers.SerializerFor(dataType);
-            var value = serializer.Deserialize(endpointConnectData.CustomData);
+                var serializer = m_TypeSerializers.SerializerFor(dataType);
+                value = serializer.Deserialize(endpointConnectData.CustomData);
+            }
 
             return new ConnectionVerificationMessage(
                 endpointConnectData.Sender,
@@ -108,14 +112,19 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
                 };
             }
 
-            var type = endpointConnectMessage.CustomData.GetType();
-            if (!m_TypeSerializers.HasSerializerFor(type))
+            object value = null;
+            var type = typeof(object);
+            if (endpointConnectMessage.CustomData != null)
             {
-                throw new MissingObjectDataSerializerException();
-            }
+                type = endpointConnectMessage.CustomData.GetType();
+                if (!m_TypeSerializers.HasSerializerFor(type))
+                {
+                    throw new MissingObjectDataSerializerException();
+                }
 
-            var serializer = m_TypeSerializers.SerializerFor(type);
-            var value = serializer.Serialize(endpointConnectMessage.CustomData);
+                var serializer = m_TypeSerializers.SerializerFor(type);
+                value = serializer.Serialize(endpointConnectMessage.CustomData);
+            }
 
             return new ConnectionVerificationData
                 {

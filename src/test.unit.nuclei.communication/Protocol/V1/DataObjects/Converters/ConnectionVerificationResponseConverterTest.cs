@@ -88,6 +88,39 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
         }
 
         [Test]
+        public void ToMessageWithNullResponseData()
+        {
+            var serializers = new Mock<IStoreObjectSerializers>();
+            {
+                serializers.Setup(s => s.HasSerializerFor(It.IsAny<Type>()))
+                    .Callback<Type>(t => Assert.IsTrue(typeof(double).Equals(t)))
+                    .Returns(true);
+                serializers.Setup(s => s.SerializerFor(It.IsAny<Type>()))
+                    .Returns(new NonTransformingObjectSerializer());
+            }
+
+            var translator = new ConnectionVerificationResponseConverter(serializers.Object);
+
+            var data = new ConnectionVerificationResponseData
+            {
+                Id = new MessageId(),
+                InResponseTo = new MessageId(),
+                Sender = new EndpointId("a"),
+                DataType = new SerializedType
+                {
+                    FullName = typeof(object).FullName,
+                    AssemblyName = typeof(object).Assembly.GetName().Name
+                },
+                ResponseData = null
+            };
+            var msg = translator.ToMessage(data);
+            Assert.IsInstanceOf(typeof(ConnectionVerificationResponseMessage), msg);
+            Assert.AreSame(data.Id, msg.Id);
+            Assert.AreSame(data.Sender, msg.Sender);
+            Assert.IsNull(((ConnectionVerificationResponseMessage)msg).ResponseData);
+        }
+
+        [Test]
         public void FromMessageWithNonMatchingMessageType()
         {
             var serializers = new Mock<IStoreObjectSerializers>();
@@ -123,6 +156,30 @@ namespace Nuclei.Communication.Protocol.V1.DataObjects.Converters
             Assert.AreEqual(typeof(double).FullName, ((ConnectionVerificationResponseData)data).DataType.FullName);
             Assert.AreEqual(typeof(double).Assembly.GetName().Name, ((ConnectionVerificationResponseData)data).DataType.AssemblyName);
             Assert.AreEqual(1.0, ((ConnectionVerificationResponseData)data).ResponseData);
+        }
+
+        [Test]
+        public void FromMessageWithNullResponseData()
+        {
+            var serializers = new Mock<IStoreObjectSerializers>();
+            {
+                serializers.Setup(s => s.HasSerializerFor(It.IsAny<Type>()))
+                    .Returns(true);
+                serializers.Setup(s => s.SerializerFor(It.IsAny<Type>()))
+                    .Returns(new NonTransformingObjectSerializer());
+            }
+
+            var translator = new ConnectionVerificationResponseConverter(serializers.Object);
+
+            var msg = new ConnectionVerificationResponseMessage(new EndpointId("a"), new MessageId());
+            var data = translator.FromMessage(msg);
+            Assert.IsInstanceOf(typeof(ConnectionVerificationResponseData), data);
+            Assert.AreSame(msg.Id, data.Id);
+            Assert.AreSame(msg.Sender, data.Sender);
+            Assert.AreSame(msg.InResponseTo, data.InResponseTo);
+            Assert.AreEqual(typeof(object).FullName, ((ConnectionVerificationResponseData)data).DataType.FullName);
+            Assert.AreEqual(typeof(object).Assembly.GetName().Name, ((ConnectionVerificationResponseData)data).DataType.AssemblyName);
+            Assert.IsNull(((ConnectionVerificationResponseData)data).ResponseData);
         }
     }
 }
