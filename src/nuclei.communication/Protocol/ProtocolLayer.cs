@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 using Nuclei.Diagnostics.Profiling;
@@ -347,19 +348,48 @@ namespace Nuclei.Communication.Protocol
         }
 
         /// <summary>
-        /// Returns a value indicating if the given endpoint has provided the information required to
-        /// contact it if it isn't offline.
+        /// Verifies that the connection to the given endpoint can be used.
         /// </summary>
-        /// <param name="endpoint">The ID number of the endpoint.</param>
+        /// <param name="id">The endpoint ID of the endpoint to which the connection should be verified.</param>
+        /// <param name="timeout">The maximum amount of time the response operation is allowed to take.</param>
+        /// <param name="verificationData">The data that should be send to the endpoint for verification of the connection.</param>
         /// <returns>
-        ///     <see langword="true" /> if the endpoint has provided the information necessary to contact 
-        ///     it over the network. Otherwise; <see langword="false" />.
+        /// A task that contains the response to the verification data value, or <see langword="null" /> if no
+        /// verification data was provided.
         /// </returns>
-        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
-            Justification = "Documentation can start with a language keyword")]
-        public bool IsEndpointContactable(EndpointId endpoint)
+        public Task<object> VerifyConnectionIsActive(EndpointId id, TimeSpan timeout, object verificationData = null)
         {
-            return (endpoint != null) && m_Endpoints.CanCommunicateWithEndpoint(endpoint);
+            var source = new CancellationTokenSource();
+            var msg = new ConnectionVerificationMessage(Id, verificationData);
+            var response = SendMessageAndWaitForResponse(id, msg, timeout);
+            return response.ContinueWith(
+                t =>
+                {
+                    if (t.IsCanceled)
+                    {
+                        source.Cancel();
+                        source.Token.ThrowIfCancellationRequested();
+                        return null;
+                    }
+
+                    if ((t.Exception != null) || t.IsFaulted)
+                    {
+                        var exception = t.Exception;
+                        throw new AggregateException(exception.InnerExceptions);
+                    }
+
+                    var responseMessage = t.Result as ConnectionVerificationResponseMessage;
+                    if (responseMessage == null)
+                    {
+                        Debug.Assert(false, "The response message should be of type ConnectionVerificationResponseMessage.");
+                        return null;
+                    }
+
+                    return responseMessage.ResponseData;
+                },
+                source.Token,
+                TaskContinuationOptions.ExecuteSynchronously,
+                TaskScheduler.Current);
         }
 
         private EndpointInformation RetrieveEndpointConnection(EndpointId endpoint)
