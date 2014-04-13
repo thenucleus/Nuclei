@@ -6,7 +6,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Protocol;
+using Nuclei.Configuration;
 
 namespace Nuclei.Communication
 {
@@ -95,30 +98,55 @@ namespace Nuclei.Communication
         private readonly INotifyOfRemoteEndpointEvents m_Notifications;
 
         /// <summary>
+        /// The function that is used to verify connections to a remote endpoint.
+        /// </summary>
+        private readonly VerifyEndpointConnectionStatus m_VerifyConnectionTo;
+
+        /// <summary>
+        /// The maximum amount of time it may take for a response message to be received.
+        /// </summary>
+        private readonly TimeSpan m_MessageSendTimeout;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CommunicationEntryPoint"/> class.
         /// </summary>
         /// <param name="endpointStorage">The collection that stores information about all known endpoints.</param>
         /// <param name="commands">The collection that stores information about all the known remote commands.</param>
         /// <param name="notifications">The collection that stores information about all the known remote notifications.</param>
+        /// <param name="verifyConnectionTo">The function that is used to verify connections to remote endpoints.</param>
+        /// <param name="configuration">The object that stores the configuration for the application.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpointStorage"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="commands"/> is <see langword="null" />.
-        /// </exception>
+        /// </exception> 
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="notifications"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="verifyConnectionTo"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="configuration"/> is <see langword="null" />.
         /// </exception>
         public CommunicationEntryPoint(
             IStoreInformationAboutEndpoints endpointStorage,
             ISendCommandsToRemoteEndpoints commands,
-            INotifyOfRemoteEndpointEvents notifications)
+            INotifyOfRemoteEndpointEvents notifications,
+            VerifyEndpointConnectionStatus verifyConnectionTo,
+            IConfiguration configuration)
         {
             {
                 Lokad.Enforce.Argument(() => endpointStorage);
                 Lokad.Enforce.Argument(() => commands);
                 Lokad.Enforce.Argument(() => notifications);
+                Lokad.Enforce.Argument(() => verifyConnectionTo);
             }
+
+            m_MessageSendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
+                ? TimeSpan.FromMilliseconds(configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
+                : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
 
             m_EndpointStorage = endpointStorage;
             m_EndpointStorage.OnEndpointConnected += HandleOnEndpointConnected;
@@ -131,6 +159,8 @@ namespace Nuclei.Communication
             m_Notifications = notifications;
             m_Notifications.OnEndpointConnected += HandleOnEndpointConnected;
             m_Notifications.OnEndpointDisconnected += HandleOnEndpointDisconnected;
+
+            m_VerifyConnectionTo = verifyConnectionTo;
         }
 
         private void HandleOnEndpointConnected(object sender, EndpointEventArgs e)
@@ -262,6 +292,22 @@ namespace Nuclei.Communication
         }
 
         /// <summary>
+        /// Disconnects from the given endpoint.
+        /// </summary>
+        /// <param name="id">The endpoint ID of the endpoint from which the current endpoint should disconnect.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        public void DisconnectFrom(EndpointId id)
+        {
+            {
+                Lokad.Enforce.Argument(() => id);
+            }
+
+            m_EndpointStorage.TryRemoveEndpoint(id);
+        }
+
+        /// <summary>
         /// Gets the endpoint ID for the endpoint with its discovery channel at the given URI.
         /// </summary>
         /// <param name="address">The URI of the discovery channel.</param>
@@ -274,6 +320,53 @@ namespace Nuclei.Communication
             }
 
             return m_UriMap[address];
+        }
+
+        /// <summary>
+        /// Verifies that the connection to the given endpoint can be used.
+        /// </summary>
+        /// <param name="id">The endpoint ID of the endpoint to which the connection should be verified.</param>
+        /// <returns>
+        /// <see langword="true" /> if the connection is active; otherwise, <see langword="false" />.
+        /// </returns>
+        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
+            Justification = "Documentation can start with a language keyword")]
+        public bool IsConnectionActive(EndpointId id)
+        {
+            if (!m_EndpointMap.ContainsKey(id))
+            {
+                return false;
+            }
+
+            var result = m_VerifyConnectionTo(id, m_MessageSendTimeout);
+            try
+            {
+                result.Wait();
+                return !result.IsFaulted && !result.IsCanceled;
+            }
+            catch (AggregateException)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Verifies that the connection to the endpoint at the given URL can be used.
+        /// </summary>
+        /// <param name="address">The discovery URL of the endpoint to which the connection should be verified.</param>
+        /// <returns>
+        /// <see langword="true" /> if the connection is active; otherwise, <see langword="false" />.
+        /// </returns>
+        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
+            Justification = "Documentation can start with a language keyword")]
+        public bool IsConnectionActive(Uri address)
+        {
+            {
+                Lokad.Enforce.Argument(() => address);
+            }
+
+            var id = FromUri(address);
+            return id != null && IsConnectionActive(id);
         }
     }
 }
