@@ -37,6 +37,17 @@ namespace Nuclei.Communication.Protocol
             }
 
             var localId = new EndpointId("b");
+            VerifyEndpointConnectionStatusWithCustomData func = 
+                (id, timeout, data) =>
+                {
+                    Assert.AreEqual(info.Id, id);
+                    return Task<object>.Factory.StartNew(
+                        () => null,
+                        new CancellationToken(),
+                        TaskCreationOptions.None,
+                        new CurrentThreadTaskScheduler());
+                };
+
             var layer = new Mock<IProtocolLayer>();
             {
                 layer.Setup(l => l.Id)
@@ -62,7 +73,7 @@ namespace Nuclei.Communication.Protocol
 
             var monitor = new ConnectionMonitor(
                 endpoints.Object,
-                layer.Object,
+                func,
                 timer.Object,
                 now,
                 configuration.Object);
@@ -95,14 +106,18 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var localId = new EndpointId("b");
-            var layer = new Mock<IProtocolLayer>();
-            {
-                layer.Setup(l => l.Id)
-                    .Returns(localId);
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
-                    .Verifiable();
-            }
+            var wasInvoked = false;
+            VerifyEndpointConnectionStatusWithCustomData func =
+                (id, timeout, data) =>
+                {
+                    wasInvoked = true;
+                    Assert.AreEqual(info.Id, id);
+                    return Task<object>.Factory.StartNew(
+                        () => null,
+                        new CancellationToken(),
+                        TaskCreationOptions.None,
+                        new CurrentThreadTaskScheduler());
+                };
 
             var timer = new Mock<ITimer>();
 
@@ -121,7 +136,7 @@ namespace Nuclei.Communication.Protocol
 
             var monitor = new ConnectionMonitor(
                 endpoints.Object,
-                layer.Object,
+                func,
                 timer.Object,
                 now,
                 configuration.Object);
@@ -137,9 +152,7 @@ namespace Nuclei.Communication.Protocol
             connection.Raise(c => c.OnConfirmChannelIntegrity += null, new EndpointEventArgs(info.Id));
             timer.Raise(t => t.OnElapsed += null, EventArgs.Empty);
 
-            layer.Verify(
-                l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()),
-                Times.Never());
+            Assert.IsFalse(wasInvoked);
         }
 
         [Test]
@@ -157,24 +170,18 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var localId = new EndpointId("b");
-            var layer = new Mock<IProtocolLayer>();
-            {
-                layer.Setup(l => l.Id)
-                    .Returns(localId);
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
-                    .Returns<EndpointId, ICommunicationMessage, TimeSpan>(
-                        (id, msg, t) =>
-                        {
-                            var token = new CancellationTokenSource().Token;
-                            return Task<ICommunicationMessage>.Factory.StartNew(
-                                () => new ConnectionVerificationResponseMessage(id, msg.Id),
-                                token,
-                                TaskCreationOptions.None,
-                                new CurrentThreadTaskScheduler());
-                        })
-                    .Verifiable();
-            }
+            var wasInvoked = false;
+            VerifyEndpointConnectionStatusWithCustomData func =
+                (id, timeout, data) =>
+                {
+                    wasInvoked = true;
+                    Assert.AreEqual(info.Id, id);
+                    return Task<object>.Factory.StartNew(
+                        () => null,
+                        new CancellationToken(),
+                        TaskCreationOptions.None,
+                        new CurrentThreadTaskScheduler());
+                };
 
             var timer = new Mock<ITimer>();
 
@@ -193,7 +200,7 @@ namespace Nuclei.Communication.Protocol
 
             var monitor = new ConnectionMonitor(
                 endpoints.Object,
-                layer.Object,
+                func,
                 timer.Object,
                 now,
                 configuration.Object);
@@ -208,15 +215,12 @@ namespace Nuclei.Communication.Protocol
 
             timer.Raise(t => t.OnElapsed += null, EventArgs.Empty);
 
-            layer.Verify(
-                l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()),
-                Times.Once());
+            Assert.IsTrue(wasInvoked);
+            wasInvoked = false;
 
             timer.Raise(t => t.OnElapsed += null, EventArgs.Empty);
 
-            layer.Verify(
-                l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()),
-                Times.Once());
+            Assert.IsFalse(wasInvoked);
         }
 
         [Test]
@@ -234,27 +238,21 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var localId = new EndpointId("b");
-            var layer = new Mock<IProtocolLayer>();
-            {
-                layer.Setup(l => l.Id)
-                    .Returns(localId);
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
-                    .Returns<EndpointId, ICommunicationMessage, TimeSpan>(
-                        (id, msg, t) =>
+            var wasInvoked = false;
+            VerifyEndpointConnectionStatusWithCustomData func =
+                (id, timeout, data) =>
+                {
+                    wasInvoked = true;
+                    Assert.AreEqual(info.Id, id);
+                    return Task<object>.Factory.StartNew(
+                        () =>
                         {
-                            var token = new CancellationTokenSource().Token;
-                            return Task<ICommunicationMessage>.Factory.StartNew(
-                                () =>
-                                {
-                                    throw new FailedToSendMessageException();
-                                },
-                                token,
-                                TaskCreationOptions.None,
-                                new CurrentThreadTaskScheduler());
-                        })
-                    .Verifiable();
-            }
+                            throw new TimeoutException();
+                        },
+                        new CancellationToken(),
+                        TaskCreationOptions.None,
+                        new CurrentThreadTaskScheduler());
+                };
 
             var timer = new Mock<ITimer>();
 
@@ -273,7 +271,7 @@ namespace Nuclei.Communication.Protocol
 
             var monitor = new ConnectionMonitor(
                 endpoints.Object,
-                layer.Object,
+                func,
                 timer.Object,
                 now,
                 configuration.Object);
@@ -288,15 +286,11 @@ namespace Nuclei.Communication.Protocol
 
             timer.Raise(t => t.OnElapsed += null, EventArgs.Empty);
 
-            layer.Verify(
-                l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()),
-                Times.Once());
+            Assert.IsTrue(wasInvoked);
+            wasInvoked = false;
 
             timer.Raise(t => t.OnElapsed += null, EventArgs.Empty);
-
-            layer.Verify(
-                l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()),
-                Times.Exactly(2));
+            Assert.IsTrue(wasInvoked);
         }
 
         [Test]
@@ -314,28 +308,20 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
-            var localId = new EndpointId("b");
-            var layer = new Mock<IProtocolLayer>();
-            {
-                layer.Setup(l => l.Id)
-                    .Returns(localId);
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
-                    .Returns<EndpointId, ICommunicationMessage, TimeSpan>(
-                        (id, msg, t) =>
-                        {
-                            var source = new CancellationTokenSource();
-                            source.Cancel();
-                            return Task<ICommunicationMessage>.Factory.StartNew(
-                                () =>
-                                {
-                                    return null;
-                                },
-                                source.Token,
-                                TaskCreationOptions.None,
-                                new CurrentThreadTaskScheduler());
-                        })
-                    .Verifiable();
-            }
+            var wasInvoked = false;
+            VerifyEndpointConnectionStatusWithCustomData func =
+                (id, timeout, data) =>
+                {
+                    wasInvoked = true;
+                    Assert.AreEqual(info.Id, id);
+                    var source = new CancellationTokenSource();
+                    source.Cancel();
+                    return Task<object>.Factory.StartNew(
+                        () => null,
+                        source.Token,
+                        TaskCreationOptions.None,
+                        new CurrentThreadTaskScheduler());
+                };
 
             var timer = new Mock<ITimer>();
 
@@ -354,7 +340,7 @@ namespace Nuclei.Communication.Protocol
 
             var monitor = new ConnectionMonitor(
                 endpoints.Object,
-                layer.Object,
+                func,
                 timer.Object,
                 now,
                 configuration.Object);
@@ -369,15 +355,12 @@ namespace Nuclei.Communication.Protocol
 
             timer.Raise(t => t.OnElapsed += null, EventArgs.Empty);
 
-            layer.Verify(
-                l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()),
-                Times.Once());
+            Assert.IsTrue(wasInvoked);
+            wasInvoked = false;
 
             timer.Raise(t => t.OnElapsed += null, EventArgs.Empty);
 
-            layer.Verify(
-                l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()),
-                Times.Exactly(2));
+            Assert.IsTrue(wasInvoked);
         }
     }
 }
