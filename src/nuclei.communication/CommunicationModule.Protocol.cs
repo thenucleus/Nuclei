@@ -8,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reactive.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 using Autofac.Core;
@@ -112,7 +110,7 @@ namespace Nuclei.Communication
         private static void AttachLayer(IActivatedEventArgs<DataHandler> args)
         {
             var handler = args.Instance;
-            var layer = args.Context.Resolve<IProtocolLayer>();
+            var layer = args.Context.Resolve<IStoreInformationAboutEndpoints>();
             layer.OnEndpointDisconnected += (s, e) => handler.OnEndpointSignedOff(e.Endpoint);
         }
 
@@ -150,9 +148,8 @@ namespace Nuclei.Communication
                         EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
                         (endpoint, msg) =>
                         {
-                            var config = ctx.Resolve<IConfiguration>();
                             var layer = ctx.Resolve<IProtocolLayer>();
-                            SendMessageWithoutResponse(config, layer, endpoint, msg);
+                            layer.SendMessageTo(endpoint, msg);
                         },
                         c.Resolve<SystemDiagnostics>(),
                         success ? keepAliveFunction : null);
@@ -167,45 +164,12 @@ namespace Nuclei.Communication
                         EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
                         (endpoint, msg) =>
                         {
-                            var config = ctx.Resolve<IConfiguration>();
                             var layer = ctx.Resolve<IProtocolLayer>();
-                            SendMessageWithoutResponse(config, layer, endpoint, msg);
+                            layer.SendMessageTo(endpoint, msg);
                         },
                         c.Resolve<SystemDiagnostics>());
                 })
                 .As<IMessageProcessAction>();
-        }
-
-        private static void SendMessageWithoutResponse(
-            IConfiguration configuration,
-            IProtocolLayer layer,
-            EndpointId endpoint,
-            ICommunicationMessage message)
-        {
-            if (!layer.IsEndpointContactable(endpoint))
-            {
-                var timeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForConnectionTimeoutInMilliseconds)
-                    ? TimeSpan.FromMilliseconds(configuration.Value<int>(CommunicationConfigurationKeys.WaitForConnectionTimeoutInMilliseconds))
-                    : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForConnectionTimeoutInMilliSeconds);
-
-                var resetEvent = new AutoResetEvent(false);
-                var notifier = Observable.FromEventPattern<EndpointEventArgs>(
-                        h => layer.OnEndpointConnected += h,
-                        h => layer.OnEndpointConnected -= h)
-                    .Where(args => args.EventArgs.Endpoint.Equals(endpoint))
-                    .Take(1)
-                    .Subscribe(args => resetEvent.Set());
-
-                using (notifier)
-                {
-                    if (!layer.IsEndpointContactable(endpoint))
-                    {
-                        resetEvent.WaitOne(timeout);
-                    }
-                }
-            }
-
-            layer.SendMessageTo(endpoint, message);
         }
 
         private static Task<ICommunicationMessage> SendMessageWithResponse(
@@ -214,29 +178,6 @@ namespace Nuclei.Communication
             EndpointId endpoint,
             ICommunicationMessage message)
         {
-            if (!layer.IsEndpointContactable(endpoint))
-            {
-                var connectionTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForConnectionTimeoutInMilliseconds)
-                       ? TimeSpan.FromMilliseconds(configuration.Value<int>(CommunicationConfigurationKeys.WaitForConnectionTimeoutInMilliseconds))
-                       : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForConnectionTimeoutInMilliSeconds);
-
-                var resetEvent = new AutoResetEvent(false);
-                var notifier = Observable.FromEventPattern<EndpointEventArgs>(
-                        h => layer.OnEndpointConnected += h,
-                        h => layer.OnEndpointConnected -= h)
-                    .Where(args => args.EventArgs.Endpoint.Equals(endpoint))
-                    .Take(1)
-                    .Subscribe(args => resetEvent.Set());
-
-                using (notifier)
-                {
-                    if (!layer.IsEndpointContactable(endpoint))
-                    {
-                        resetEvent.WaitOne(connectionTimeout);
-                    }
-                }
-            }
-
             var sendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
                 ? TimeSpan.FromMilliseconds(configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
                 : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);

@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -47,5 +48,11 @@ namespace Nuclei.Communication
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
         bool TryRemoveEndpoint(EndpointId endpoint);
+
+        /// <summary>
+        /// An event raised when an endpoint is about to sign out. Note that the endpoint may already be
+        /// gone from the connection, however the information about the endpoint is still available.
+        /// </summary>
+        event EventHandler<EndpointEventArgs> OnEndpointDisconnecting;
     }
 }

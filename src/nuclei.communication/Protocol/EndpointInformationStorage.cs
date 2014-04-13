@@ -54,7 +54,7 @@ namespace Nuclei.Communication.Protocol
             {
                 lock (m_Lock)
                 {
-                    if (!m_ContactedEndpoints.ContainsKey(endpoint) 
+                    if (!m_ContactedEndpoints.ContainsKey(endpoint)
                         && !m_EndpointsWaitingForApproval.ContainsKey(endpoint)
                         && !m_ApprovedEndpoints.ContainsKey(endpoint))
                     {
@@ -83,17 +83,17 @@ namespace Nuclei.Communication.Protocol
             {
                 lock (m_Lock)
                 {
-                    if (m_ContactedEndpoints.ContainsKey(endpoint) 
+                    if (m_ContactedEndpoints.ContainsKey(endpoint)
                         && !m_EndpointsWaitingForApproval.ContainsKey(endpoint)
                         && !m_ApprovedEndpoints.ContainsKey(endpoint))
                     {
                         var info = m_ContactedEndpoints[endpoint];
                         m_ContactedEndpoints.Remove(endpoint);
-                        
+
                         m_EndpointsWaitingForApproval.Add(
                             endpoint,
                             new Tuple<EndpointInformation, ProtocolDescription>(
-                                info, 
+                                info,
                                 description));
                         return true;
                     }
@@ -300,42 +300,74 @@ namespace Nuclei.Communication.Protocol
         /// </returns>
         public bool TryRemoveEndpoint(EndpointId endpoint)
         {
-            if (endpoint != null)
+            if (endpoint == null)
             {
-                EndpointInformation info = null;
-                lock (m_Lock)
+                return false;
+            }
+
+            bool hasEndpoint;
+            lock (m_Lock)
+            {
+                hasEndpoint = m_ApprovedEndpoints.ContainsKey(endpoint)
+                    || m_EndpointsWaitingForApproval.ContainsKey(endpoint)
+                    || m_ContactedEndpoints.ContainsKey(endpoint);
+            }
+
+            if (!hasEndpoint)
+            {
+                return false;
+            }
+
+            RaiseOnEndpointDisconnecting(endpoint);
+
+            EndpointInformation info = null;
+            lock (m_Lock)
+            {
+                if (m_ApprovedEndpoints.ContainsKey(endpoint))
                 {
-                    if (m_ApprovedEndpoints.ContainsKey(endpoint))
-                    {
-                        info = m_ApprovedEndpoints[endpoint];
-                        m_ApprovedEndpoints.Remove(endpoint);
-                    }
-
-                    if (m_EndpointsWaitingForApproval.ContainsKey(endpoint))
-                    {
-                        // Always notify because we can send messages to an endpoint
-                        // while we're establishing if an endpoint is worth connecting to
-                        info = m_EndpointsWaitingForApproval[endpoint].Item1;
-                        m_EndpointsWaitingForApproval.Remove(endpoint);
-                    }
-
-                    if (m_ContactedEndpoints.ContainsKey(endpoint))
-                    {
-                        // Always notify because we can send messages to an endpoint
-                        // while we're establishing if an endpoint is worth connecting to
-                        info = m_ContactedEndpoints[endpoint];
-                        m_ContactedEndpoints.Remove(endpoint);
-                    }
+                    info = m_ApprovedEndpoints[endpoint];
+                    m_ApprovedEndpoints.Remove(endpoint);
                 }
 
-                if (info != null)
+                if (m_EndpointsWaitingForApproval.ContainsKey(endpoint))
                 {
-                    RaiseOnEndpointDisconnected(info);
-                    return true;
+                    // Always notify because we can send messages to an endpoint
+                    // while we're establishing if an endpoint is worth connecting to
+                    info = m_EndpointsWaitingForApproval[endpoint].Item1;
+                    m_EndpointsWaitingForApproval.Remove(endpoint);
+                }
+
+                if (m_ContactedEndpoints.ContainsKey(endpoint))
+                {
+                    // Always notify because we can send messages to an endpoint
+                    // while we're establishing if an endpoint is worth connecting to
+                    info = m_ContactedEndpoints[endpoint];
+                    m_ContactedEndpoints.Remove(endpoint);
                 }
             }
 
+            if (info != null)
+            {
+                RaiseOnEndpointDisconnected(info);
+                return true;
+            }
+
             return false;
+        }
+
+        /// <summary>
+        /// An event raised when an endpoint is about to sign out. Note that the endpoint may already be
+        /// gone from the connection, however the information about the endpoint is still available.
+        /// </summary>
+        public event EventHandler<EndpointEventArgs> OnEndpointDisconnecting;
+
+        private void RaiseOnEndpointDisconnecting(EndpointId id)
+        {
+            var local = OnEndpointDisconnecting;
+            if (local != null)
+            {
+                local(this, new EndpointEventArgs(id));
+            }
         }
 
         /// <summary>

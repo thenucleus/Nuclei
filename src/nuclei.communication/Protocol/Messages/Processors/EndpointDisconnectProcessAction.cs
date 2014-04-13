@@ -19,7 +19,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// <summary>
         /// The object that stores the endpoint information for the application.
         /// </summary>
-        private readonly IStoreEndpointApprovalState m_EndpointStorage;
+        private readonly IStoreInformationAboutEndpoints m_EndpointStorage;
 
         /// <summary>
         /// The object that provides the diagnostics methods.
@@ -38,7 +38,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public EndpointDisconnectProcessAction(
-            IStoreEndpointApprovalState endpointStorage,
+            IStoreInformationAboutEndpoints endpointStorage,
             SystemDiagnostics systemDiagnostics)
         {
             {

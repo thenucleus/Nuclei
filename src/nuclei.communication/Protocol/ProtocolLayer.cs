@@ -107,13 +107,7 @@ namespace Nuclei.Communication.Protocol
             m_ChannelTypesToUse = channelTypesToUse;
             m_Diagnostics = systemDiagnostics;
 
-            m_Endpoints.OnEndpointConnected += HandleOnEndpointApproved;
-            m_Endpoints.OnEndpointDisconnected += HandleEndpointDisconnected;
-        }
-
-        private void HandleOnEndpointApproved(object sender, EndpointEventArgs e)
-        {
-            RaiseOnEndpointConnected(e.Endpoint);
+            m_Endpoints.OnEndpointDisconnecting += HandleEndpointDisconnecting;
         }
 
         // How do we handle endpoints disappearing and then reappearing. If the remote process
@@ -124,14 +118,12 @@ namespace Nuclei.Communication.Protocol
         // Also note that it is quite easily possible to fake being another endpoint. All you have
         // to do is send a message saying that you're a different endpoint and then the evil is
         // done. Not quite sure how to make that not happen though ...
-        private void HandleEndpointDisconnected(object sender, EndpointEventArgs args)
+        private void HandleEndpointDisconnecting(object sender, EndpointEventArgs args)
         {
             if (m_Id.Equals(args.Endpoint))
             {
                 return;
             }
-
-            RaiseOnEndpointDisconnected(args.Endpoint);
 
             var connection = RetrieveEndpointConnection(args.Endpoint);
             if (connection == null)
@@ -586,34 +578,6 @@ namespace Nuclei.Communication.Protocol
             }
 
             return list;
-        }
-
-        /// <summary>
-        /// An event raised when an endpoint has signed in.
-        /// </summary>
-        public event EventHandler<EndpointEventArgs> OnEndpointConnected;
-
-        private void RaiseOnEndpointConnected(EndpointId id)
-        {
-            var local = OnEndpointConnected;
-            if (local != null)
-            {
-                local(this, new EndpointEventArgs(id));
-            }
-        }
-
-        /// <summary>
-        /// An event raised when an endpoint has signed out.
-        /// </summary>
-        public event EventHandler<EndpointEventArgs> OnEndpointDisconnected;
-
-        private void RaiseOnEndpointDisconnected(EndpointId endpoint)
-        {
-            var local = OnEndpointDisconnected;
-            if (local != null)
-            {
-                local(this, new EndpointEventArgs(endpoint));
-            }
         }
 
         /// <summary>

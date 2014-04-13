@@ -22,78 +22,6 @@ namespace Nuclei.Communication.Protocol
     public sealed class ProtocolLayerTest
     {
         [Test]
-        public void OnEndpointApproved()
-        {
-            var endpoint = new EndpointId("a");
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder = 
-                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(null, null);
-            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new ProtocolLayer(
-                endpoints.Object,
-                channelBuilder,
-                new[]
-                    {
-                        ChannelTemplate.NamedPipe, 
-                    },
-                diagnostics);
-
-            var eventWasRaised = false;
-            layer.OnEndpointConnected +=
-                (s, e) =>
-                {
-                    eventWasRaised = true;
-                    Assert.AreEqual(endpoint, e.Endpoint);
-                };
-
-            endpoints.Raise(d => d.OnEndpointConnected += null, new EndpointEventArgs(endpoint));
-            Assert.IsTrue(eventWasRaised);
-        }
-
-        [Test]
-        public void OnEndpointDisconnected()
-        {
-            var endpoint = new EndpointId("a");
-            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
-            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(null, null);
-            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
-            var layer = new ProtocolLayer(
-                endpoints.Object,
-                channelBuilder,
-                new[]
-                    {
-                        ChannelTemplate.NamedPipe, 
-                    },
-                diagnostics);
-
-            var connectedEventWasRaised = false;
-            layer.OnEndpointConnected +=
-                (s, e) =>
-                {
-                    connectedEventWasRaised = true;
-                    Assert.AreEqual(endpoint, e.Endpoint);
-                };
-
-            var disconnectedEventWasRaised = false;
-            layer.OnEndpointDisconnected +=
-                (s, e) =>
-                {
-                    disconnectedEventWasRaised = true;
-                    Assert.AreEqual(endpoint, e.Endpoint);
-                };
-
-            endpoints.Raise(d => d.OnEndpointConnected += null, new EndpointEventArgs(endpoint));
-            Assert.IsTrue(connectedEventWasRaised);
-            Assert.IsFalse(disconnectedEventWasRaised);
-
-            connectedEventWasRaised = false;
-            endpoints.Raise(d => d.OnEndpointDisconnected += null, new EndpointEventArgs(endpoint));
-            Assert.IsFalse(connectedEventWasRaised);
-            Assert.IsTrue(disconnectedEventWasRaised);
-        }
-
-        [Test]
         public void SignIn()
         {
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
@@ -180,7 +108,7 @@ namespace Nuclei.Communication.Protocol
                 diagnostics);
 
             layer.SignIn();
-            endpoints.Raise(d => d.OnEndpointDisconnected += null, new EndpointEventArgs(endpoint));
+            endpoints.Raise(d => d.OnEndpointDisconnecting += null, new EndpointEventArgs(endpoint));
 
             channel.Verify(c => c.EndpointDisconnected(It.IsAny<ProtocolInformation>()), Times.Once());
             pipe.Verify(p => p.OnEndpointSignedOff(It.IsAny<EndpointId>()), Times.Once());

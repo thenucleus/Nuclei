@@ -100,9 +100,8 @@ namespace Nuclei.Communication
                             EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
                             (endpoint, msg) =>
                             {
-                                var config = ctx.Resolve<IConfiguration>();
                                 var layer = ctx.Resolve<IProtocolLayer>();
-                                SendMessageWithoutResponse(config, layer, endpoint, msg);
+                                layer.SendMessageTo(endpoint, msg);
                             },
                             c.Resolve<ICommandCollection>(),
                             c.Resolve<SystemDiagnostics>());
