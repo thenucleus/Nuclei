@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -74,17 +73,16 @@ namespace Nuclei.Communication.Protocol
         event EventHandler<EventArgs> OnSignedOut;
 
         /// <summary>
-        /// Returns a value indicating if the given endpoint has provided the information required to
-        /// contact it if it isn't offline.
+        /// Verifies that the connection to the given endpoint can be used.
         /// </summary>
-        /// <param name="endpoint">The ID number of the endpoint.</param>
+        /// <param name="id">The endpoint ID of the endpoint to which the connection should be verified.</param>
+        /// <param name="timeout">The maximum amount of time the response operation is allowed to take.</param>
+        /// <param name="verificationData">The data that should be send to the endpoint for verification of the connection.</param>
         /// <returns>
-        ///     <see langword="true" /> if the endpoint has provided the information necessary to contact 
-        ///     it over the network. Otherwise; <see langword="false" />.
+        /// A task that contains the response to the verification data value, or <see langword="null" /> if no
+        /// verification data was provided.
         /// </returns>
-        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
-            Justification = "Documentation can start with a language keyword")]
-        bool IsEndpointContactable(EndpointId endpoint);
+        Task<object> VerifyConnectionIsActive(EndpointId id, TimeSpan timeout, object verificationData = null);
 
         /// <summary>
         /// Sends the given message to the specified endpoint.

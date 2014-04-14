@@ -54,6 +54,29 @@ namespace Nuclei.Communication
                 .SingleInstance();
         }
 
+        private static void RegisterConnectionVerificationFunctions(ContainerBuilder builder)
+        {
+            builder.Register(
+                    c =>
+                    {
+                        var layer = c.Resolve<IProtocolLayer>();
+                        VerifyEndpointConnectionStatus func = (id, timeout) => layer.VerifyConnectionIsActive(id, timeout);
+                        return func;
+                    })
+                .As<VerifyEndpointConnectionStatus>()
+                .SingleInstance();
+
+            builder.Register(
+                    c =>
+                    {
+                        var layer = c.Resolve<IProtocolLayer>();
+                        VerifyEndpointConnectionStatusWithCustomData func = layer.VerifyConnectionIsActive;
+                        return func;
+                    })
+                .As<VerifyEndpointConnectionStatusWithCustomData>()
+                .SingleInstance();
+        }
+
         private static void RegisterProtocolHandshakeConductor(ContainerBuilder builder, IEnumerable<ChannelTemplate> allowedChannelTemplates)
         {
             builder.Register(
@@ -459,7 +482,7 @@ namespace Nuclei.Communication
 
                         return new ConnectionMonitor(
                             c.Resolve<IStoreInformationAboutEndpoints>(),
-                            c.Resolve<IProtocolLayer>(),
+                            c.Resolve<VerifyEndpointConnectionStatusWithCustomData>(),
                             c.Resolve<ITimer>(new TypedParameter(typeof(TimeSpan), TimeSpan.FromMilliseconds(keepAliveIntervalInMilliseconds))),
                             () => DateTimeOffset.Now,
                             c.Resolve<IConfiguration>(),

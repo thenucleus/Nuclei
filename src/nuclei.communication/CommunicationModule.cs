@@ -10,6 +10,8 @@ using System.Linq;
 using Autofac;
 using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Properties;
+using Nuclei.Communication.Protocol;
+using Nuclei.Configuration;
 using Nuclei.Diagnostics;
 
 namespace Nuclei.Communication
@@ -30,7 +32,9 @@ namespace Nuclei.Communication
             builder.Register(c => new CommunicationEntryPoint(
                     c.Resolve<IStoreInformationAboutEndpoints>(),
                     c.Resolve<ISendCommandsToRemoteEndpoints>(),
-                    c.Resolve<INotifyOfRemoteEndpointEvents>()))
+                    c.Resolve<INotifyOfRemoteEndpointEvents>(),
+                    c.Resolve<VerifyEndpointConnectionStatus>(),
+                    c.Resolve<IConfiguration>()))
                 .As<ICommunicationFacade>()
                 .SingleInstance();
         }
@@ -127,6 +131,7 @@ namespace Nuclei.Communication
         private void RegisterProtocolLayer(ContainerBuilder builder)
         {
             RegisterProtocolLayer(builder, m_AllowedChannelTemplates);
+            RegisterConnectionVerificationFunctions(builder);
             RegisterProtocolHandshakeConductor(builder, m_AllowedChannelTemplates);
             RegisterMessageHandler(builder);
             RegisterDataHandler(builder);

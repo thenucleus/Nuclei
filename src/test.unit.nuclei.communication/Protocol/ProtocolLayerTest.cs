@@ -232,7 +232,7 @@ namespace Nuclei.Communication.Protocol
         }
 
         [Test]
-        public void IsEndpointContactableWithNonContactableEndpoint()
+        public void VerifyConnectionIsActiveWithUnknownEndpoint()
         {
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
             {
@@ -243,7 +243,10 @@ namespace Nuclei.Communication.Protocol
             var channel = new Mock<IProtocolChannel>();
             var pipe = new Mock<IDirectIncomingMessages>();
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
-                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                (template, id) =>
+                {
+                    return new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+                };
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
             var layer = new ProtocolLayer(
                 endpoints.Object,
@@ -254,21 +257,69 @@ namespace Nuclei.Communication.Protocol
                     },
                 diagnostics);
 
-            var endpoint = new EndpointId("a");
-            Assert.IsFalse(layer.IsEndpointContactable(endpoint));
+            Assert.Throws<EndpointNotContactableException>(
+                () => layer.VerifyConnectionIsActive(
+                    new EndpointId("A"),
+                    TimeSpan.FromSeconds(1)));
         }
 
         [Test]
-        public void IsEndpointContactableWithContactableEndpoint()
+        public void VerifyConnectionIsActiveWithInactiveEndpoint()
         {
+            var remoteEndpoint = new EndpointId("b");
+            var endpointInfo = new EndpointInformation(
+                remoteEndpoint,
+                new DiscoveryInformation(new Uri("net.pipe://localhost/discovery")),
+                new ProtocolInformation(
+                    ProtocolVersions.V1,
+                    new Uri("net.pipe://localhost/messages"),
+                    new Uri("net.pipe://localhost/data")));
             var endpoints = new Mock<IStoreInformationAboutEndpoints>();
             {
                 endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
                     .Returns(true);
+                endpoints.Setup(e => e.TryGetConnectionFor(It.IsAny<EndpointId>(), out endpointInfo))
+                    .Returns(true);
             }
 
             var channel = new Mock<IProtocolChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(endpointInfo.ProtocolInformation);
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage>(
+                        (e, m) =>
+                        {
+                            Assert.AreSame(endpointInfo.ProtocolInformation, e);
+                            Assert.IsInstanceOf(typeof(ConnectionVerificationMessage), m);
+                        })
+                    .Verifiable();
+            }
+
+            var timeout = TimeSpan.FromSeconds(1);
+            var responseTask = Task<ICommunicationMessage>.Factory.StartNew(
+                () =>
+                {
+                    throw new TimeoutException();
+                },
+                new CancellationToken(),
+                TaskCreationOptions.None,
+                new CurrentThreadTaskScheduler());
             var pipe = new Mock<IDirectIncomingMessages>();
+            {
+                pipe.Setup(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()))
+                    .Callback<EndpointId, MessageId, TimeSpan>(
+                        (e, m, t) =>
+                        {
+                            Assert.AreSame(remoteEndpoint, e);
+                            Assert.AreEqual(timeout, t);
+                        })
+                    .Returns(responseTask)
+                    .Verifiable();
+            }
+
             Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
                 (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
             var diagnostics = new SystemDiagnostics((log, s) => { }, null);
@@ -281,8 +332,164 @@ namespace Nuclei.Communication.Protocol
                     },
                 diagnostics);
 
-            var endpoint = new EndpointId("a");
-            Assert.IsTrue(layer.IsEndpointContactable(endpoint));
+            var response = layer.VerifyConnectionIsActive(remoteEndpoint, timeout);
+            Assert.IsTrue(response.IsFaulted);
+            Assert.IsNotNull(response.Exception);
+
+            channel.Verify(c => c.OpenChannel(), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()), Times.Once());
+        }
+
+        [Test]
+        public void VerifyConnectionIsActiveWithUnresponsiveEndpoint()
+        {
+            var remoteEndpoint = new EndpointId("b");
+            var endpointInfo = new EndpointInformation(
+                remoteEndpoint,
+                new DiscoveryInformation(new Uri("net.pipe://localhost/discovery")),
+                new ProtocolInformation(
+                    ProtocolVersions.V1,
+                    new Uri("net.pipe://localhost/messages"),
+                    new Uri("net.pipe://localhost/data")));
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(true);
+                endpoints.Setup(e => e.TryGetConnectionFor(It.IsAny<EndpointId>(), out endpointInfo))
+                    .Returns(true);
+            }
+
+            var channel = new Mock<IProtocolChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(endpointInfo.ProtocolInformation);
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage>(
+                        (e, m) =>
+                        {
+                            Assert.AreSame(endpointInfo.ProtocolInformation, e);
+                            Assert.IsInstanceOf(typeof(ConnectionVerificationMessage), m);
+                        })
+                    .Verifiable();
+            }
+
+            var timeout = TimeSpan.FromSeconds(1);
+            var token = new CancellationTokenSource();
+            token.Cancel();
+            var responseTask = Task<ICommunicationMessage>.Factory.StartNew(
+                () => null,
+                token.Token,
+                TaskCreationOptions.None,
+                new CurrentThreadTaskScheduler());
+            var pipe = new Mock<IDirectIncomingMessages>();
+            {
+                pipe.Setup(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()))
+                    .Callback<EndpointId, MessageId, TimeSpan>(
+                        (e, m, t) =>
+                        {
+                            Assert.AreSame(remoteEndpoint, e);
+                            Assert.AreEqual(timeout, t);
+                        })
+                    .Returns(responseTask)
+                    .Verifiable();
+            }
+
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new ProtocolLayer(
+                endpoints.Object,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            var response = layer.VerifyConnectionIsActive(remoteEndpoint, timeout);
+            Assert.IsTrue(response.IsCanceled);
+
+            channel.Verify(c => c.OpenChannel(), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()), Times.Once());
+        }
+
+        [Test]
+        public void VerifyConnectionIsActiveWithActiveEndpoint()
+        {
+            var remoteEndpoint = new EndpointId("b");
+            var endpointInfo = new EndpointInformation(
+                remoteEndpoint,
+                new DiscoveryInformation(new Uri("net.pipe://localhost/discovery")),
+                new ProtocolInformation(
+                    ProtocolVersions.V1,
+                    new Uri("net.pipe://localhost/messages"),
+                    new Uri("net.pipe://localhost/data")));
+            var endpoints = new Mock<IStoreInformationAboutEndpoints>();
+            {
+                endpoints.Setup(e => e.CanCommunicateWithEndpoint(It.IsAny<EndpointId>()))
+                    .Returns(true);
+                endpoints.Setup(e => e.TryGetConnectionFor(It.IsAny<EndpointId>(), out endpointInfo))
+                    .Returns(true);
+            }
+
+            var channel = new Mock<IProtocolChannel>();
+            {
+                channel.Setup(c => c.OpenChannel())
+                    .Verifiable();
+                channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
+                    .Returns(endpointInfo.ProtocolInformation);
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage>(
+                        (e, m) =>
+                        {
+                            Assert.AreSame(endpointInfo.ProtocolInformation, e);
+                            Assert.IsInstanceOf(typeof(ConnectionVerificationMessage), m);
+                        })
+                    .Verifiable();
+            }
+
+            var responseData = new object();
+            var timeout = TimeSpan.FromSeconds(1);
+            var responseTask = Task<ICommunicationMessage>.Factory.StartNew(
+                () => new ConnectionVerificationResponseMessage(remoteEndpoint, new MessageId(), responseData),
+                new CancellationToken(),
+                TaskCreationOptions.None,
+                new CurrentThreadTaskScheduler());
+            var pipe = new Mock<IDirectIncomingMessages>();
+            {
+                pipe.Setup(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()))
+                    .Callback<EndpointId, MessageId, TimeSpan>(
+                        (e, m, t) =>
+                        {
+                            Assert.AreSame(remoteEndpoint, e);
+                            Assert.AreEqual(timeout, t);
+                        })
+                    .Returns(responseTask)
+                    .Verifiable();
+            }
+
+            Func<ChannelTemplate, EndpointId, Tuple<IProtocolChannel, IDirectIncomingMessages>> channelBuilder =
+                (template, id) => new Tuple<IProtocolChannel, IDirectIncomingMessages>(channel.Object, pipe.Object);
+            var diagnostics = new SystemDiagnostics((log, s) => { }, null);
+            var layer = new ProtocolLayer(
+                endpoints.Object,
+                channelBuilder,
+                new[]
+                    {
+                        ChannelTemplate.NamedPipe, 
+                    },
+                diagnostics);
+
+            var response = layer.VerifyConnectionIsActive(remoteEndpoint, timeout);
+            Assert.AreSame(responseData, response.Result);
+
+            channel.Verify(c => c.OpenChannel(), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()), Times.Once());
         }
 
         [Test]

@@ -317,6 +317,7 @@
     <Compile Include="Protocol\V1\DataObjects\ConnectionVerificationResponseData.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\ConnectionVerificationConverter.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\ConnectionVerificationResponseConverter.cs" />
+    <Compile Include="Protocol\VerifyEndpointConnectionStatusWithCustomData.cs" />
     <Compile Include="SystemTimer.cs" />
     <Compile Include="UnknownCommunicationSubjectException.cs" />
     <Compile Include="UriExtensions.cs" />
@@ -386,6 +387,7 @@
     <Compile Include="Protocol\UploadNotDeregisteredException.cs" />
     <Compile Include="Protocol\UploadToken.cs" />
     <Compile Include="Protocol\WaitingUploads.cs" />
+    <Compile Include="Protocol\VerifyEndpointConnectionStatus.cs" />
   </ItemGroup>
   <!-- Indicate that we depend on the SolutionLevel build projects -->
   <ItemGroup>

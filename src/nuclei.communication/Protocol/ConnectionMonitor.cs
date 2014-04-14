@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Configuration;
 
 namespace Nuclei.Communication.Protocol
@@ -91,9 +90,9 @@ namespace Nuclei.Communication.Protocol
         private readonly IStoreInformationAboutEndpoints m_Endpoints;
 
         /// <summary>
-        /// The function that is used to send messages.
+        /// The function that is used to verify connections to remote endpoints.
         /// </summary>
-        private readonly IProtocolLayer m_Layer;
+        private readonly VerifyEndpointConnectionStatusWithCustomData m_VerifyConnectionTo;
 
         /// <summary>
         /// The function that is used to get the current time and date.
@@ -136,7 +135,7 @@ namespace Nuclei.Communication.Protocol
         /// Initializes a new instance of the <see cref="ConnectionMonitor"/> class.
         /// </summary>
         /// <param name="endpoints">The collection that contains all the known endpoints.</param>
-        /// <param name="layer">The object that is used to send messages to a remote endpoint.</param>
+        /// <param name="verifyConnectionTo">The function that is used to verify connections with remote endpoints.</param>
         /// <param name="timer">The timer which is used to signal the next keep-alive moment.</param>
         /// <param name="now">The function that is used to get the current time and date.</param>
         /// <param name="configuration">The object that stores the configuration for the application.</param>
@@ -146,7 +145,7 @@ namespace Nuclei.Communication.Protocol
         ///     Thrown if <paramref name="endpoints"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="layer"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="verifyConnectionTo"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="timer"/> is <see langword="null" />.
@@ -159,7 +158,7 @@ namespace Nuclei.Communication.Protocol
         /// </exception>
         public ConnectionMonitor(
             IStoreInformationAboutEndpoints endpoints,
-            IProtocolLayer layer,
+            VerifyEndpointConnectionStatusWithCustomData verifyConnectionTo,
             ITimer timer,
             Func<DateTimeOffset> now,
             IConfiguration configuration,
@@ -168,13 +167,13 @@ namespace Nuclei.Communication.Protocol
         {
             {
                 Lokad.Enforce.Argument(() => endpoints);
-                Lokad.Enforce.Argument(() => layer);
+                Lokad.Enforce.Argument(() => verifyConnectionTo);
                 Lokad.Enforce.Argument(() => timer);
                 Lokad.Enforce.Argument(() => now);
                 Lokad.Enforce.Argument(() => configuration);
             }
 
-            m_Layer = layer;
+            m_VerifyConnectionTo = verifyConnectionTo;
             m_Now = now;
             m_KeepAliveCustomDataBuilder = keepAliveCustomDataBuilder;
             m_KeepAliveResponseDataHandler = keepAliveResponseDataHandler;
@@ -238,10 +237,9 @@ namespace Nuclei.Communication.Protocol
             foreach (var map in maps)
             {
                 var endpoint = map.Endpoint;
-                var msg = new ConnectionVerificationMessage(m_Layer.Id, customData);
                 try
                 {
-                    var response = m_Layer.SendMessageAndWaitForResponse(endpoint, msg, m_MessageSendTimeout);
+                    var response = m_VerifyConnectionTo(endpoint, m_MessageSendTimeout, customData);
                     response.ContinueWith(
                         t =>
                         {
@@ -269,14 +267,7 @@ namespace Nuclei.Communication.Protocol
 
                             if (m_KeepAliveResponseDataHandler != null)
                             {
-                                var responseMessage = t.Result as ConnectionVerificationResponseMessage;
-                                if (responseMessage == null)
-                                {
-                                    Debug.Assert(false, "The response message should be of type ConnectionVerificationResponseMessage.");
-                                    return;
-                                }
-
-                                m_KeepAliveResponseDataHandler(responseMessage.ResponseData);
+                                m_KeepAliveResponseDataHandler(t.Result);
                             }
                         },
                         TaskContinuationOptions.ExecuteSynchronously);
