@@ -382,7 +382,7 @@
     <Compile Include="Interaction\TypeIsNotAValidCommandSetException.cs" />
     <Compile Include="Interaction\TypeIsNotAValidNotificationSetException.cs" />
     <Compile Include="Interaction\Transport\UnableToGenerateProxyException.cs" />
-    <Compile Include="Interaction\UnknownCommandSetException.cs" />
+    <Compile Include="Interaction\UnknownCommandException.cs" />
     <Compile Include="TcpChannelTemplate.cs" />
     <Compile Include="UnknownEndpointIdFormatException.cs" />
     <Compile Include="Interaction\UnknownNotificationSetException.cs" />

@@ -551,11 +551,11 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The requested command set has not been registered..
+        ///   Looks up a localized string similar to The requested command has not been registered..
         /// </summary>
-        internal static string Exceptions_Messages_UnknownCommandSet {
+        internal static string Exceptions_Messages_UnknownCommand {
             get {
-                return ResourceManager.GetString("Exceptions_Messages_UnknownCommandSet", resourceCulture);
+                return ResourceManager.GetString("Exceptions_Messages_UnknownCommand", resourceCulture);
             }
         }
         

@@ -13,7 +13,7 @@ namespace Nuclei.Communication.Interaction
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
         Justification = "Unit tests do not need documentation.")]
-    public sealed class UnknownCommandSetExceptionTest : ExceptionContractVerifier<UnknownCommandSetException>
+    public sealed class UnknownCommandExceptionTest : ExceptionContractVerifier<UnknownCommandException>
     {
     }
 }

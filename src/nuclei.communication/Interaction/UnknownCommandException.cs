@@ -14,37 +14,37 @@ namespace Nuclei.Communication.Interaction
     /// An exception thrown when a user tries to access an <see cref="ICommandSet"/> that has not been registered.
     /// </summary>
     [Serializable]
-    public sealed class UnknownCommandSetException : Exception
+    public sealed class UnknownCommandException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnknownCommandSetException"/> class.
+        /// Initializes a new instance of the <see cref="UnknownCommandException"/> class.
         /// </summary>
-        public UnknownCommandSetException()
-            : this(Resources.Exceptions_Messages_UnknownCommandSet)
+        public UnknownCommandException()
+            : this(Resources.Exceptions_Messages_UnknownCommand)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnknownCommandSetException"/> class.
+        /// Initializes a new instance of the <see cref="UnknownCommandException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
-        public UnknownCommandSetException(string message) 
+        public UnknownCommandException(string message) 
             : base(message)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnknownCommandSetException"/> class.
+        /// Initializes a new instance of the <see cref="UnknownCommandException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
-        public UnknownCommandSetException(string message, Exception innerException)
+        public UnknownCommandException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnknownCommandSetException"/> class.
+        /// Initializes a new instance of the <see cref="UnknownCommandException"/> class.
         /// </summary>
         /// <param name="info">
         ///     The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized
@@ -60,7 +60,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="T:System.Runtime.Serialization.SerializationException">
         /// The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0).
         /// </exception>
-        private UnknownCommandSetException(SerializationInfo info, StreamingContext context)
+        private UnknownCommandException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

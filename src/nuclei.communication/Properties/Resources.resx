@@ -279,8 +279,8 @@
   <data name="Exceptions_Messages_UnableToGenerateProxy" xml:space="preserve">
     <value>Unable to generate a proxy for the given type.</value>
   </data>
-  <data name="Exceptions_Messages_UnknownCommandSet" xml:space="preserve">
-    <value>The requested command set has not been registered.</value>
+  <data name="Exceptions_Messages_UnknownCommand" xml:space="preserve">
+    <value>The requested command has not been registered.</value>
   </data>
   <data name="Exceptions_Messages_UnknownCommunicationSubject" xml:space="preserve">
     <value>There is no information for the given communication subject.</value>

@@ -178,7 +178,7 @@ namespace Nuclei.Communication
                 .Except(commands, new TypeEqualityComparer());
             if (unregisteredCommands.Any())
             {
-                throw new UnknownCommandSetException();
+                throw new UnknownCommandException();
             }
         }
 

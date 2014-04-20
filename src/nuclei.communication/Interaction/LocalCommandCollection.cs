@@ -86,9 +86,9 @@ namespace Nuclei.Communication.Interaction
         {
             {
                 Lokad.Enforce.Argument(() => id);
-                Lokad.Enforce.With<UnknownCommandSetException>(
+                Lokad.Enforce.With<UnknownCommandException>(
                     m_Commands.ContainsKey(id),
-                    Resources.Exceptions_Messages_UnknownCommandSet);
+                    Resources.Exceptions_Messages_UnknownCommand);
             }
 
             return m_Commands[id];
