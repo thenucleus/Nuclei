@@ -4,9 +4,10 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Moq;
 using NUnit.Framework;
 
 namespace Nuclei.Communication.Interaction
@@ -21,31 +22,44 @@ namespace Nuclei.Communication.Interaction
         {
             var collection = new LocalCommandCollection();
 
-            var commands = new Mock<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>();
-            collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object);
+            var mapping = new List<Tuple<CommandId, Delegate>>
+                {
+                    new Tuple<CommandId, Delegate>(
+                        CommandId.Create(typeof(int).GetMethod("CompareTo")),
+                        (Action)delegate { }),
+                };
+            var map = new CommandMap(mapping);
+            collection.Register(map);
 
-            Assert.IsTrue(collection.Any(pair => pair.Item1 == typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
+            Assert.IsTrue(collection.Any(pair => pair.Item1 == mapping[0].Item1));
         }
 
         [Test]
         public void RegisterWithExistingType()
         {
             var collection = new LocalCommandCollection();
-            
-            var commands = new Mock<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>();
-            collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object);
-            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
+
+            var mapping = new List<Tuple<CommandId, Delegate>>
+                {
+                    new Tuple<CommandId, Delegate>(
+                        CommandId.Create(typeof(int).GetMethod("CompareTo")),
+                        (Action)delegate { }),
+                };
+            var map = new CommandMap(mapping);
+            collection.Register(map);
+            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == mapping[0].Item1));
 
             Assert.Throws<CommandAlreadyRegisteredException>(
-                () => collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object));
-            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
+                () => collection.Register(map));
+            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == mapping[0].Item1));
         }
 
         [Test]
         public void CommandsForWithUnknownType()
         {
             var collection = new LocalCommandCollection();
-            Assert.IsNull(collection.CommandsFor(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
+            var id = CommandId.Create(typeof(int).GetMethod("CompareTo"));
+            Assert.Throws<UnknownCommandException>(() => collection.CommandToInvoke(id));
         }
 
         [Test]
@@ -53,11 +67,17 @@ namespace Nuclei.Communication.Interaction
         {
             var collection = new LocalCommandCollection();
 
-            var commands = new Mock<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>();
-            collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object);
+            var mapping = new List<Tuple<CommandId, Delegate>>
+                {
+                    new Tuple<CommandId, Delegate>(
+                        CommandId.Create(typeof(int).GetMethod("CompareTo")),
+                        (Action)delegate { }),
+                };
+            var map = new CommandMap(mapping);
+            collection.Register(map);
 
-            var commandSet = collection.CommandsFor(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn));
-            Assert.AreSame(commands.Object, commandSet);
+            var commandSet = collection.CommandToInvoke(mapping[0].Item1);
+            Assert.AreSame(mapping[0].Item2, commandSet);
         }
     }
 }
