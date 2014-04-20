@@ -86,7 +86,7 @@
     <Compile Include="EndpointIdExtensionsTest.cs" />
     <Compile Include="EndpointIdTest.cs" />
     <Compile Include="Interaction\CommandAlreadyRegisteredExceptionTest.cs" />
-    <Compile Include="Interaction\CommandDataTest.cs" />
+    <Compile Include="Interaction\CommandIdTest.cs" />
     <Compile Include="Interaction\CommandInvokedDataTest.cs" />
     <Compile Include="Interaction\CommunicationSubjectGroupTest.cs" />
     <Compile Include="Interaction\DuplicateObjectSerializerExceptionTest.cs" />

@@ -15,9 +15,9 @@ namespace Nuclei.Communication.Interaction
     internal sealed class CommandInvokedData
     {
         /// <summary>
-        /// The command that was invoked.
+        /// The ID of the command that was invoked.
         /// </summary>
-        private readonly CommandData m_Command;
+        private readonly CommandId m_Command;
 
         /// <summary>
         /// The parameters for the command invocation.
@@ -27,7 +27,7 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandInvokedData"/> class.
         /// </summary>
-        /// <param name="command">The command that was invoked.</param>
+        /// <param name="command">The ID of the command that was invoked.</param>
         /// <param name="parameterValues">The parameters for the command invocation.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="command"/> is <see langword="null" />.
@@ -35,7 +35,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="parameterValues"/> is <see langword="null" />.
         /// </exception>
-        public CommandInvokedData(CommandData command, Tuple<Type, object>[] parameterValues)
+        public CommandInvokedData(CommandId command, Tuple<Type, object>[] parameterValues)
         {
             {
                 Lokad.Enforce.Argument(() => command);
@@ -47,9 +47,9 @@ namespace Nuclei.Communication.Interaction
         }
 
         /// <summary>
-        /// Gets the command that was invoked.
+        /// Gets the ID of the command that was invoked.
         /// </summary>
-        public CommandData Command
+        public CommandId Command
         {
             [DebuggerStepThrough]
             get

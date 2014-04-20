@@ -18,14 +18,14 @@ namespace Nuclei.Communication.Interaction
         [Test]
         public void Create()
         {
-            var data = new CommandData(typeof(string), "CompareTo");
+            var id = CommandId.Create(typeof(string).GetMethod("CompareTo"));
             var parameters = new[]
                 {
                     new Tuple<Type, object>(typeof(string), "a"), 
                 };
 
-            var invocationData = new CommandInvokedData(data, parameters);
-            Assert.AreSame(data, invocationData.Command);
+            var invocationData = new CommandInvokedData(id, parameters);
+            Assert.AreSame(id, invocationData.Command);
             Assert.AreSame(parameters, invocationData.ParameterValues);
         }
     }
