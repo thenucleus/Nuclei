@@ -124,6 +124,8 @@
     <Compile Include="CommunicationModule.Interaction.V1.cs" />
     <Compile Include="CommunicationModule.Protocol.cs" />
     <Compile Include="CommunicationModule.Protocol.V1.cs" />
+    <Compile Include="Interaction\CommandId.cs" />
+    <Compile Include="Interaction\CommandMap.cs" />
     <Compile Include="ITimer.cs" />
     <Compile Include="Protocol\ConnectionMonitor.cs" />
     <Compile Include="DiscoveryInformation.cs" />
