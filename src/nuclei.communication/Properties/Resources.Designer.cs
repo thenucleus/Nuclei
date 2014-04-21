@@ -133,6 +133,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A command ID cannot be deserialized from an empty string..
+        /// </summary>
+        internal static string Exceptions_Messages_CommandIdCannotBeDeserializedFromAnEmptyString {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_CommandIdCannotBeDeserializedFromAnEmptyString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The invocation of a command failed..
         /// </summary>
         internal static string Exceptions_Messages_CommandInvocationFailed {

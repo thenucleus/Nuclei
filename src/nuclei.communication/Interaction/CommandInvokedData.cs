@@ -22,28 +22,28 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// The parameters for the command invocation.
         /// </summary>
-        private readonly Tuple<Type, object>[] m_ParameterValues;
+        private readonly CommandParameterValueMap[] m_Parameters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandInvokedData"/> class.
         /// </summary>
         /// <param name="command">The ID of the command that was invoked.</param>
-        /// <param name="parameterValues">The parameters for the command invocation.</param>
+        /// <param name="parameters">The parameters for the command invocation.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="command"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="parameterValues"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="parameters"/> is <see langword="null" />.
         /// </exception>
-        public CommandInvokedData(CommandId command, Tuple<Type, object>[] parameterValues)
+        public CommandInvokedData(CommandId command, CommandParameterValueMap[] parameters)
         {
             {
                 Lokad.Enforce.Argument(() => command);
-                Lokad.Enforce.Argument(() => parameterValues);
+                Lokad.Enforce.Argument(() => parameters);
             }
 
             m_Command = command;
-            m_ParameterValues = parameterValues;
+            m_Parameters = parameters;
         }
 
         /// <summary>
@@ -61,12 +61,12 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// Gets the collection of parameters for the command invocation.
         /// </summary>
-        public Tuple<Type, object>[] ParameterValues
+        public CommandParameterValueMap[] Parameters
         {
             [DebuggerStepThrough]
             get
             {
-                return m_ParameterValues;
+                return m_Parameters;
             }
         }
     }

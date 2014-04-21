@@ -141,6 +141,9 @@
   <data name="Exceptions_Messages_CommandAlreadyRegistered" xml:space="preserve">
     <value>The given command interface has already been registered.</value>
   </data>
+  <data name="Exceptions_Messages_CommandIdCannotBeDeserializedFromAnEmptyString" xml:space="preserve">
+    <value>A command ID cannot be deserialized from an empty string.</value>
+  </data>
   <data name="Exceptions_Messages_CommandInvocationFailed" xml:space="preserve">
     <value>The invocation of a command failed.</value>
   </data>

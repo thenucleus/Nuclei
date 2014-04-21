@@ -12,7 +12,7 @@ namespace Nuclei.Communication.Interaction
     /// <summary>
     /// Stores information about a single parameter on a command method.
     /// </summary>
-    internal sealed class CommandParameterMap
+    internal sealed class CommandParameterDefinition
     {
         /// <summary>
         /// The type of the parameter.
@@ -30,7 +30,7 @@ namespace Nuclei.Communication.Interaction
         private readonly CommandParameterOrigin m_Orgin;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CommandParameterMap"/> class.
+        /// Initializes a new instance of the <see cref="CommandParameterDefinition"/> class.
         /// </summary>
         /// <param name="type">The type of the parameter.</param>
         /// <param name="name">The name of the parameter.</param>
@@ -44,7 +44,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="ArgumentException">
         ///     Thrown if <paramref name="name"/> is an empty string.
         /// </exception>
-        public CommandParameterMap(Type type, string name, CommandParameterOrigin orgin)
+        public CommandParameterDefinition(Type type, string name, CommandParameterOrigin orgin)
         {
             {
                 Lokad.Enforce.Argument(() => type);

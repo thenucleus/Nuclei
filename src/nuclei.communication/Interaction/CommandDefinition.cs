@@ -29,7 +29,7 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// The collection of parameters for the command.
         /// </summary>
-        private readonly List<CommandParameterMap> m_Parameters;
+        private readonly List<CommandParameterDefinition> m_Parameters;
 
         /// <summary>
         /// The delegate that should be invoked when the command is invoked.
@@ -52,7 +52,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="commandToExecute"/> is <see langword="null" />.
         /// </exception>
-        internal CommandDefinition(CommandId id, CommandParameterMap[] parameters, bool hasReturnValue, Delegate commandToExecute)
+        internal CommandDefinition(CommandId id, CommandParameterDefinition[] parameters, bool hasReturnValue, Delegate commandToExecute)
         {
             {
                 Lokad.Enforce.Argument(() => id);
@@ -62,14 +62,14 @@ namespace Nuclei.Communication.Interaction
 
             m_Id = id;
             m_HasReturnValue = hasReturnValue;
-            m_Parameters = new List<CommandParameterMap>(parameters);
+            m_Parameters = new List<CommandParameterDefinition>(parameters);
             m_CommandToExecute = commandToExecute;
         }
 
         /// <summary>
         /// Gets the ID of the command.
         /// </summary>
-        public CommandId Id
+        internal CommandId Id
         {
             [DebuggerStepThrough]
             get
@@ -81,7 +81,7 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// Gets a value indicating whether the command returns a value.
         /// </summary>
-        public bool HasReturnValue
+        internal bool HasReturnValue
         {
             [DebuggerStepThrough]
             get
@@ -95,7 +95,7 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="parameters">The parameters for the command.</param>
         /// <returns>The return value for the command.</returns>
-        public object Invoke(Tuple<Type, string, object>[] parameters)
+        internal object Invoke(CommandParameterValueMap[] parameters)
         {
             {
                 Lokad.Enforce.Argument(() => parameters);
@@ -107,13 +107,13 @@ namespace Nuclei.Communication.Interaction
                 var expectedParameter = m_Parameters[i];
                 if (expectedParameter.Orgin == CommandParameterOrigin.FromCommand)
                 {
-                    var providedParameter = parameters.FirstOrDefault(m => string.Equals(m.Item2, expectedParameter.Name, StringComparison.Ordinal));
+                    var providedParameter = parameters.FirstOrDefault(m => string.Equals(m.Parameter.Name, expectedParameter.Name, StringComparison.Ordinal));
                     if (providedParameter == null)
                     {
                         throw new MissingCommandParameterException();
                     }
 
-                    mappedParameterValues[i] = providedParameter.Item3;
+                    mappedParameterValues[i] = providedParameter.Value;
                     continue;
                 }
 

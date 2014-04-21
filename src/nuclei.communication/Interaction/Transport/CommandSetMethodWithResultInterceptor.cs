@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
+using Lokad.Quality;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol;
@@ -38,15 +39,22 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <returns>
         ///     An object that stores the method invocation information in a serializable format.
         /// </returns>
-        private static Tuple<Type, object>[] ToParameterArray(MethodBase method, object[] parameters)
+        private static CommandParameterValueMap[] ToParameterArray(MethodBase method, object[] parameters)
         {
             var methodParameters = method.GetParameters();
             Debug.Assert(methodParameters.Length == parameters.Length, "There are a different number of parameters than there are parameter values.");
 
-            var namedParameters = new List<Tuple<Type, object>>();
+            var namedParameters = new List<CommandParameterValueMap>();
             for (int i = 0; i < parameters.Length; i++)
             {
-                namedParameters.Add(Tuple.Create(methodParameters[i].ParameterType, parameters[i]));
+                var methodParameter = methodParameters[i];
+                namedParameters.Add(
+                    new CommandParameterValueMap(
+                        new CommandParameterDefinition(
+                            methodParameter.ParameterType,
+                            methodParameter.Name,
+                            CommandParameterOrigin.FromCommand), 
+                        parameters[i]));
             }
 
             return namedParameters.ToArray();
@@ -68,6 +76,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </returns>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode",
             Justification = "This method is called via reflection in order to generate the correct return value for a command method.")]
+        [UsedImplicitly]
         private static Task<T> CreateTask<T>(Task<ICommunicationMessage> inputTask, TaskScheduler scheduler)
         {
             Func<T> action = () =>
@@ -164,9 +173,7 @@ namespace Nuclei.Communication.Interaction.Transport
             {
                 result = m_TransmitCommandInvocation(
                     new CommandInvokedData(
-                        new CommandData(
-                            invocation.Method.DeclaringType,
-                            invocation.Method.Name),
+                        CommandId.Create(invocation.Method),
                         ToParameterArray(invocation.Method, invocation.Arguments)));
             }
             catch (EndpointNotContactableException e)

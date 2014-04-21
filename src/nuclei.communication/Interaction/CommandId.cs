@@ -44,7 +44,7 @@ namespace Nuclei.Communication.Interaction
         /// Initializes a new instance of the <see cref="CommandId"/> class.
         /// </summary>
         /// <param name="id">The value.</param>
-        private CommandId(string id)
+        internal CommandId(string id)
             : base(id)
         {
         }
