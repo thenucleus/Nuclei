@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,7 +13,7 @@ namespace Nuclei.Communication.Interaction
     /// Defines the interface for collections that store one or more <see cref="ICommandSet"/>
     /// objects.
     /// </summary>
-    internal interface ICommandCollection : IEnumerable<Tuple<CommandId, Delegate>>
+    internal interface ICommandCollection : IEnumerable<CommandId>
     {
         /// <summary>
         /// Registers a <see cref="ICommandSet"/> object.
@@ -47,16 +46,16 @@ namespace Nuclei.Communication.Interaction
         /// </list>
         /// </para>
         /// </remarks>
-        /// <param name="map">The map that maps the command interface methods to the object methods.</param>
-        void Register(CommandMap map);
+        /// <param name="definition">The map that maps the command interface methods to the object methods.</param>
+        void Register(CommandDefinition definition);
 
         /// <summary>
         /// Returns the delegate that was registered for the given command method.
         /// </summary>
         /// <param name="id">The ID of the command method.</param>
         /// <returns>
-        /// The delegate to the registered command method.
+        /// The map that contains the registered command method.
         /// </returns>
-        Delegate CommandToInvoke(CommandId id);
+        CommandDefinition CommandToInvoke(CommandId id);
     }
 }

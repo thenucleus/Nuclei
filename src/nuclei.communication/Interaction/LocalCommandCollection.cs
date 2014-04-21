@@ -20,8 +20,8 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// The collection of registered commands.
         /// </summary>
-        private readonly Dictionary<CommandId, Delegate> m_Commands
-            = new Dictionary<CommandId, Delegate>();
+        private readonly Dictionary<CommandId, CommandDefinition> m_Commands
+            = new Dictionary<CommandId, CommandDefinition>();
 
         /// <summary>
         /// Registers a <see cref="ICommandSet"/> object.
@@ -54,25 +54,25 @@ namespace Nuclei.Communication.Interaction
         /// </list>
         /// </para>
         /// </remarks>
-        /// <param name="map">The map that maps the command interface methods to the object methods.</param>
+        /// <param name="definition">The map that maps the command interface methods to the object methods.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="map"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="definition"/> is <see langword="null" />.
         /// </exception>
-        public void Register(CommandMap map)
+        /// <exception cref="CommandAlreadyRegisteredException">
+        ///     Thrown if a <paramref name="definition"/> with the specific ID has already been registered.
+        /// </exception>
+        public void Register(CommandDefinition definition)
         {
             {
-                Lokad.Enforce.Argument(() => map);
+                Lokad.Enforce.Argument(() => definition);
             }
 
-            foreach (var id in map.Commands())
+            if (m_Commands.ContainsKey(definition.Id))
             {
-                if (m_Commands.ContainsKey(id))
-                {
-                    throw new CommandAlreadyRegisteredException();
-                }
-
-                m_Commands.Add(id, map.ToExecute(id));
+                throw new CommandAlreadyRegisteredException();
             }
+
+            m_Commands.Add(definition.Id, definition);
         }
 
         /// <summary>
@@ -80,9 +80,9 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="id">The ID of the command method.</param>
         /// <returns>
-        /// The delegate to the registered command method.
+        /// The map that contains the registered command method.
         /// </returns>
-        public Delegate CommandToInvoke(CommandId id)
+        public CommandDefinition CommandToInvoke(CommandId id)
         {
             {
                 Lokad.Enforce.Argument(() => id);
@@ -100,11 +100,11 @@ namespace Nuclei.Communication.Interaction
         /// <returns>
         /// The element in the collection at the current position of the enumerator.
         /// </returns>
-        public IEnumerator<Tuple<CommandId, Delegate>> GetEnumerator()
+        public IEnumerator<CommandId> GetEnumerator()
         {
             foreach (var pair in m_Commands)
             {
-                yield return new Tuple<CommandId, Delegate>(pair.Key, pair.Value);
+                yield return pair.Key;
             }
         }
 

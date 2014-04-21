@@ -28,7 +28,7 @@ namespace Nuclei.Communication.Interaction
                         CommandId.Create(typeof(int).GetMethod("CompareTo")),
                         (Action)delegate { }),
                 };
-            var map = new CommandMap(mapping);
+            var map = new CommandDefinition(mapping);
             collection.Register(map);
 
             Assert.IsTrue(collection.Any(pair => pair.Item1 == mapping[0].Item1));
@@ -45,7 +45,7 @@ namespace Nuclei.Communication.Interaction
                         CommandId.Create(typeof(int).GetMethod("CompareTo")),
                         (Action)delegate { }),
                 };
-            var map = new CommandMap(mapping);
+            var map = new CommandDefinition(mapping);
             collection.Register(map);
             Assert.AreEqual(1, collection.Count(pair => pair.Item1 == mapping[0].Item1));
 
@@ -73,7 +73,7 @@ namespace Nuclei.Communication.Interaction
                         CommandId.Create(typeof(int).GetMethod("CompareTo")),
                         (Action)delegate { }),
                 };
-            var map = new CommandMap(mapping);
+            var map = new CommandDefinition(mapping);
             collection.Register(map);
 
             var commandSet = collection.CommandToInvoke(mapping[0].Item1);
