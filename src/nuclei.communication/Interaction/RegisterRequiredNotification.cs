@@ -35,5 +35,5 @@ namespace Nuclei.Communication.Interaction
     /// </remarks>
     /// <param name="commandInterface">The interface that defines the command methods.</param>
     /// <param name="subject">The communication subjects to which the current commands belongs.</param>
-    internal delegate void RegisterRequiredNotification(Type commandInterface, params SubjectGroupIdentifier[] subject);
+    public delegate void RegisterRequiredNotification(Type commandInterface, params SubjectGroupIdentifier[] subject);
 }

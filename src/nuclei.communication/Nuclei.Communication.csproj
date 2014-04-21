@@ -124,6 +124,7 @@
     <Compile Include="CommunicationModule.Interaction.V1.cs" />
     <Compile Include="CommunicationModule.Protocol.cs" />
     <Compile Include="CommunicationModule.Protocol.V1.cs" />
+    <Compile Include="IInitializeCommunicationInstances.cs" />
     <Compile Include="Interaction\CommandId.cs" />
     <Compile Include="Interaction\CommandDefinition.cs" />
     <Compile Include="Interaction\CommandIdExtensions.cs" />
@@ -182,8 +183,6 @@
     <Compile Include="Interaction\RegisterNotification.cs" />
     <Compile Include="Interaction\RegisterRequiredCommand.cs" />
     <Compile Include="Interaction\RegisterRequiredNotification.cs" />
-    <Compile Include="Interaction\RequiredCommandsMappedBySubject.cs" />
-    <Compile Include="Interaction\RequiredNotificationsMappedBySubject.cs" />
     <Compile Include="Interaction\SubjectGroupIdentifier.cs" />
     <Compile Include="Interaction\Transport\InteractionConnectionState.cs" />
     <Compile Include="Interaction\Transport\IStoreRemoteCommandProxies.cs" />

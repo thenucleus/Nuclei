@@ -64,6 +64,7 @@
       <Link>Properties\AssemblyInfo.VersionNumber.cs</Link>
     </Compile>
     <Compile Include="ApplicationCentral.cs" />
+    <Compile Include="CommunicationInitializer.cs" />
     <Compile Include="IFormTheApplicationCenter.cs" />
     <Compile Include="ITestCommandSet.cs" />
     <Compile Include="Models\CommunicationSubjectViewModel.cs" />
