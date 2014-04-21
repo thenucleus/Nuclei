@@ -14,7 +14,7 @@ namespace Nuclei.Communication.Interaction
     /// <summary>
     /// Stores information about a single method of a <see cref="ICommandSet"/>.
     /// </summary>
-    public sealed class CommandDefinition
+    internal sealed class CommandDefinition
     {
         /// <summary>
         /// The ID of the command.
@@ -52,7 +52,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="commandToExecute"/> is <see langword="null" />.
         /// </exception>
-        internal CommandDefinition(CommandId id, CommandParameterDefinition[] parameters, bool hasReturnValue, Delegate commandToExecute)
+        public CommandDefinition(CommandId id, CommandParameterDefinition[] parameters, bool hasReturnValue, Delegate commandToExecute)
         {
             {
                 Lokad.Enforce.Argument(() => id);
@@ -69,7 +69,7 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// Gets the ID of the command.
         /// </summary>
-        internal CommandId Id
+        public CommandId Id
         {
             [DebuggerStepThrough]
             get
@@ -81,7 +81,7 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// Gets a value indicating whether the command returns a value.
         /// </summary>
-        internal bool HasReturnValue
+        public bool HasReturnValue
         {
             [DebuggerStepThrough]
             get
@@ -95,7 +95,7 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="parameters">The parameters for the command.</param>
         /// <returns>The return value for the command.</returns>
-        internal object Invoke(CommandParameterValueMap[] parameters)
+        public object Invoke(CommandParameterValueMap[] parameters)
         {
             {
                 Lokad.Enforce.Argument(() => parameters);
