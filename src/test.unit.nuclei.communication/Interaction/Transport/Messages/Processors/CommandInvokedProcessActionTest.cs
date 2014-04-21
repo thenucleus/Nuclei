@@ -7,9 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Threading.Tasks.Schedulers;
 using Moq;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
@@ -26,9 +23,9 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
         // A fake command set interface to invoke methods on
         public interface IMockCommandSet : ICommandSet
         {
-            Task MethodWithoutReturnValue(int someNumber);
+            void MethodWithoutReturnValue(int someNumber);
 
-            Task<int> MethodWithReturnValue(int someNumber);
+            int MethodWithReturnValue(int someNumber);
         }
 
         [Test]
@@ -49,17 +46,26 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
             var actionObject = new Mock<IMockCommandSet>();
             {
                 actionObject.Setup(a => a.MethodWithoutReturnValue(It.IsAny<int>()))
-                    .Returns(Task.Factory.StartNew(
-                        () => { },
-                        new CancellationToken(),
-                        TaskCreationOptions.None,
-                        new CurrentThreadTaskScheduler()))
                     .Verifiable();
             }
 
-            var commandSets = new List<Tuple<Type, ICommandSet>> 
+            var commandIds = new List<CommandId>
+                {
+                    CommandId.Create(typeof(IMockCommandSet).GetMethod("MethodWithoutReturnValue")),
+                };
+            var commandSets = new List<CommandDefinition> 
                 { 
-                    new Tuple<Type, ICommandSet>(typeof(IMockCommandSet), actionObject.Object)
+                    new CommandDefinition(
+                        commandIds[0],
+                        new[]
+                            {
+                                new CommandParameterDefinition(
+                                    typeof(int),
+                                    "someNumber",
+                                    CommandParameterOrigin.FromCommand), 
+                            }, 
+                        false,
+                        (Action<int>)actionObject.Object.MethodWithoutReturnValue)
                 };
 
             var endpoint = new EndpointId("id");
@@ -71,10 +77,10 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 };
             var commands = new Mock<ICommandCollection>();
             {
-                commands.Setup(c => c.CommandsFor(It.IsAny<Type>()))
-                    .Returns(commandSets[0].Item2);
+                commands.Setup(c => c.CommandToInvoke(It.IsAny<CommandId>()))
+                    .Returns(commandSets[0]);
                 commands.Setup(c => c.GetEnumerator())
-                    .Returns(commandSets.GetEnumerator());
+                    .Returns(commandIds.GetEnumerator());
             }
 
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
@@ -84,10 +90,12 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 new CommandInvokedMessage(
                     new EndpointId("otherId"),
                     new CommandInvokedData(
-                        new CommandData(typeof(IMockCommandSet), "MethodWithoutReturnValue"),
+                        commandIds[0],
                         new[]
                             {
-                                new Tuple<Type, object>(typeof(int), 2), 
+                                new CommandParameterValueMap(
+                                    new CommandParameterDefinition(typeof(int), "someNumber", CommandParameterOrigin.FromCommand), 
+                                    2), 
                             })));
 
             actionObject.Verify(a => a.MethodWithoutReturnValue(It.IsAny<int>()), Times.Once());
@@ -100,31 +108,43 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
             var actionObject = new Mock<IMockCommandSet>();
             {
                 actionObject.Setup(a => a.MethodWithReturnValue(It.IsAny<int>()))
-                    .Returns(() => Task<int>.Factory.StartNew(
-                        () => 1,
-                        new CancellationToken(),
-                        TaskCreationOptions.None,
-                        new CurrentThreadTaskScheduler()))
+                    .Returns(1)
                     .Verifiable();
             }
 
-            var commandSets = new List<Tuple<Type, ICommandSet>> 
+            var commandIds = new List<CommandId>
+                {
+                    CommandId.Create(typeof(IMockCommandSet).GetMethod("MethodWithoutReturnValue")),
+                };
+            var commandSets = new List<CommandDefinition> 
                 { 
-                    new Tuple<Type, ICommandSet>(typeof(IMockCommandSet), actionObject.Object)
+                    new CommandDefinition(
+                        commandIds[0],
+                        new[]
+                            {
+                                new CommandParameterDefinition(
+                                    typeof(int),
+                                    "someNumber",
+                                    CommandParameterOrigin.FromCommand), 
+                            }, 
+                        false,
+                        (Func<int, int>)actionObject.Object.MethodWithReturnValue)
                 };
 
             var endpoint = new EndpointId("id");
+
             ICommunicationMessage storedMsg = null;
-            Action<EndpointId, ICommunicationMessage> sendAction = (e, m) =>
+            Action<EndpointId, ICommunicationMessage> sendAction = 
+                (e, m) =>
                 {
                     storedMsg = m;
                 };
             var commands = new Mock<ICommandCollection>();
             {
-                commands.Setup(c => c.CommandsFor(It.IsAny<Type>()))
-                    .Returns(commandSets[0].Item2);
+                commands.Setup(c => c.CommandToInvoke(It.IsAny<CommandId>()))
+                    .Returns(commandSets[0]);
                 commands.Setup(c => c.GetEnumerator())
-                    .Returns(commandSets.GetEnumerator());
+                    .Returns(commandIds.GetEnumerator());
             }
 
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
@@ -134,10 +154,12 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 new CommandInvokedMessage(
                     new EndpointId("otherId"),
                     new CommandInvokedData(
-                        new CommandData(typeof(IMockCommandSet), "MethodWithReturnValue"),
+                        commandIds[0],
                         new[]
                             {
-                                new Tuple<Type, object>(typeof(int), 2), 
+                                new CommandParameterValueMap(
+                                    new CommandParameterDefinition(typeof(int), "someNumber", CommandParameterOrigin.FromCommand), 
+                                    2), 
                             })));
 
             actionObject.Verify(a => a.MethodWithReturnValue(It.IsAny<int>()), Times.Once());
@@ -154,17 +176,26 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
             var actionObject = new Mock<IMockCommandSet>();
             {
                 actionObject.Setup(a => a.MethodWithoutReturnValue(It.IsAny<int>()))
-                    .Returns(Task.Factory.StartNew(
-                        () => { },
-                        new CancellationToken(),
-                        TaskCreationOptions.None,
-                        new CurrentThreadTaskScheduler()))
                     .Verifiable();
             }
 
-            var commandSets = new List<Tuple<Type, ICommandSet>> 
+            var commandIds = new List<CommandId>
+                {
+                    CommandId.Create(typeof(IMockCommandSet).GetMethod("MethodWithoutReturnValue")),
+                };
+            var commandSets = new List<CommandDefinition> 
                 { 
-                    new Tuple<Type, ICommandSet>(typeof(IMockCommandSet), actionObject.Object)
+                    new CommandDefinition(
+                        commandIds[0],
+                        new[]
+                            {
+                                new CommandParameterDefinition(
+                                    typeof(int),
+                                    "someNumber",
+                                    CommandParameterOrigin.FromCommand), 
+                            }, 
+                        false,
+                        (Action<int>)actionObject.Object.MethodWithoutReturnValue)
                 };
 
             var endpoint = new EndpointId("id");
@@ -178,17 +209,15 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                     {
                         throw new Exception();
                     }
-                    else
-                    {
-                        storedMsg = m;
-                    }
+                    
+                    storedMsg = m;
                 };
             var commands = new Mock<ICommandCollection>();
             {
-                commands.Setup(c => c.CommandsFor(It.IsAny<Type>()))
-                    .Returns(commandSets[0].Item2);
+                commands.Setup(c => c.CommandToInvoke(It.IsAny<CommandId>()))
+                    .Returns(commandSets[0]);
                 commands.Setup(c => c.GetEnumerator())
-                    .Returns(commandSets.GetEnumerator());
+                    .Returns(commandIds.GetEnumerator());
             }
 
             int loggerCount = 0;
@@ -199,10 +228,12 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 new CommandInvokedMessage(
                     new EndpointId("otherId"),
                     new CommandInvokedData(
-                        new CommandData(typeof(IMockCommandSet), "MethodWithoutReturnValue"),
+                        commandIds[0],
                         new[]
                             {
-                                new Tuple<Type, object>(typeof(int), 2), 
+                                new CommandParameterValueMap(
+                                    new CommandParameterDefinition(typeof(int), "someNumber", CommandParameterOrigin.FromCommand), 
+                                    2), 
                             })));
 
             actionObject.Verify(a => a.MethodWithoutReturnValue(It.IsAny<int>()), Times.Once());
@@ -217,17 +248,26 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
             var actionObject = new Mock<IMockCommandSet>();
             {
                 actionObject.Setup(a => a.MethodWithoutReturnValue(It.IsAny<int>()))
-                    .Returns(Task.Factory.StartNew(
-                        () => { },
-                        new CancellationToken(),
-                        TaskCreationOptions.None,
-                        new CurrentThreadTaskScheduler()))
                     .Verifiable();
             }
 
-            var commandSets = new List<Tuple<Type, ICommandSet>> 
+            var commandIds = new List<CommandId>
+                {
+                    CommandId.Create(typeof(IMockCommandSet).GetMethod("MethodWithoutReturnValue")),
+                };
+            var commandSets = new List<CommandDefinition> 
                 { 
-                    new Tuple<Type, ICommandSet>(typeof(IMockCommandSet), actionObject.Object)
+                    new CommandDefinition(
+                        commandIds[0],
+                        new[]
+                            {
+                                new CommandParameterDefinition(
+                                    typeof(int),
+                                    "someNumber",
+                                    CommandParameterOrigin.FromCommand), 
+                            }, 
+                        false,
+                        (Action<int>)actionObject.Object.MethodWithoutReturnValue)
                 };
 
             var endpoint = new EndpointId("id");
@@ -238,10 +278,10 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 };
             var commands = new Mock<ICommandCollection>();
             {
-                commands.Setup(c => c.CommandsFor(It.IsAny<Type>()))
-                    .Returns(commandSets[0].Item2);
+                commands.Setup(c => c.CommandToInvoke(It.IsAny<CommandId>()))
+                    .Returns(commandSets[0]);
                 commands.Setup(c => c.GetEnumerator())
-                    .Returns(commandSets.GetEnumerator());
+                    .Returns(commandIds.GetEnumerator());
             }
 
             int count = 0;
@@ -252,16 +292,14 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 new CommandInvokedMessage(
                     new EndpointId("otherId"),
                     new CommandInvokedData(
-                        new CommandData(typeof(IMockCommandSet), "MethodWithoutReturnValue"),
+                        commandIds[0],
                         new[]
                             {
-                                new Tuple<Type, object>(typeof(int), 2), 
+                                new CommandParameterValueMap(
+                                    new CommandParameterDefinition(typeof(int), "someNumber", CommandParameterOrigin.FromCommand), 
+                                    2), 
                             })));
 
-            // This is obviously pure evil but we need to wait for the tasks that get created by the Invoke method
-            // Unfortunately we can't get to those tasks so we'll have to sleep the thread.
-            // And because we are throwing exceptions we can't really define a good place to put a reset event either :(
-            // SpinWait.SpinUntil(() => { }, 100);
             Assert.AreEqual(4, count);
             actionObject.Verify(a => a.MethodWithoutReturnValue(It.IsAny<int>()), Times.Once());
         }

@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using NUnit.Framework;
@@ -22,16 +21,20 @@ namespace Nuclei.Communication.Interaction
         {
             var collection = new LocalCommandCollection();
 
-            var mapping = new List<Tuple<CommandId, Delegate>>
+            var map = new[]
                 {
-                    new Tuple<CommandId, Delegate>(
+                    new CommandDefinition(
                         CommandId.Create(typeof(int).GetMethod("CompareTo")),
-                        (Action)delegate { }),
+                        new[]
+                            {
+                                new CommandParameterDefinition(typeof(int), "other", CommandParameterOrigin.FromCommand), 
+                            }, 
+                        false,
+                        (Action)delegate { }), 
                 };
-            var map = new CommandDefinition(mapping);
             collection.Register(map);
 
-            Assert.IsTrue(collection.Any(pair => pair.Item1 == mapping[0].Item1));
+            Assert.IsTrue(collection.Any(id => id == map[0].Id));
         }
 
         [Test]
@@ -39,19 +42,23 @@ namespace Nuclei.Communication.Interaction
         {
             var collection = new LocalCommandCollection();
 
-            var mapping = new List<Tuple<CommandId, Delegate>>
+            var map = new[]
                 {
-                    new Tuple<CommandId, Delegate>(
+                    new CommandDefinition(
                         CommandId.Create(typeof(int).GetMethod("CompareTo")),
-                        (Action)delegate { }),
+                        new[]
+                            {
+                                new CommandParameterDefinition(typeof(int), "other", CommandParameterOrigin.FromCommand), 
+                            }, 
+                        false,
+                        (Action)delegate { }), 
                 };
-            var map = new CommandDefinition(mapping);
             collection.Register(map);
-            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == mapping[0].Item1));
+            Assert.AreEqual(1, collection.Count(id => id == map[0].Id));
 
             Assert.Throws<CommandAlreadyRegisteredException>(
                 () => collection.Register(map));
-            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == mapping[0].Item1));
+            Assert.AreEqual(1, collection.Count(id => id == map[0].Id));
         }
 
         [Test]
@@ -67,17 +74,21 @@ namespace Nuclei.Communication.Interaction
         {
             var collection = new LocalCommandCollection();
 
-            var mapping = new List<Tuple<CommandId, Delegate>>
+            var map = new[]
                 {
-                    new Tuple<CommandId, Delegate>(
+                    new CommandDefinition(
                         CommandId.Create(typeof(int).GetMethod("CompareTo")),
-                        (Action)delegate { }),
+                        new[]
+                            {
+                                new CommandParameterDefinition(typeof(int), "other", CommandParameterOrigin.FromCommand), 
+                            }, 
+                        false,
+                        (Action)delegate { }), 
                 };
-            var map = new CommandDefinition(mapping);
             collection.Register(map);
 
-            var commandSet = collection.CommandToInvoke(mapping[0].Item1);
-            Assert.AreSame(mapping[0].Item2, commandSet);
+            var commandSet = collection.CommandToInvoke(map[0].Id);
+            Assert.AreSame(map[0], commandSet);
         }
     }
 }

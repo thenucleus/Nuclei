@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 
@@ -21,12 +20,14 @@ namespace Nuclei.Communication.Interaction
             var id = CommandId.Create(typeof(string).GetMethod("CompareTo"));
             var parameters = new[]
                 {
-                    new Tuple<Type, object>(typeof(string), "a"), 
+                    new CommandParameterValueMap(
+                        new CommandParameterDefinition(typeof(string), "a", CommandParameterOrigin.FromCommand), 
+                        "b"), 
                 };
 
             var invocationData = new CommandInvokedData(id, parameters);
             Assert.AreSame(id, invocationData.Command);
-            Assert.AreSame(parameters, invocationData.ParameterValues);
+            Assert.AreSame(parameters, invocationData.Parameters);
         }
     }
 }

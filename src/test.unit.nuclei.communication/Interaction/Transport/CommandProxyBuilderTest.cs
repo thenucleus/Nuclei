@@ -53,10 +53,13 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsFalse(result.IsCanceled);
             Assert.IsFalse(result.IsFaulted);
 
-            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), intermediateMsg.Invocation.Command.InterfaceType);
-            Assert.AreEqual(1, intermediateMsg.Invocation.ParameterValues.Length);
-            Assert.AreEqual(typeof(int), intermediateMsg.Invocation.ParameterValues[0].Item1);
-            Assert.AreEqual(10, intermediateMsg.Invocation.ParameterValues[0].Item2);
+            Assert.AreEqual(
+                CommandId.Create(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn).GetMethod("MyMethod")), 
+                intermediateMsg.Invocation.Command);
+            Assert.AreEqual(1, intermediateMsg.Invocation.Parameters.Length);
+            Assert.AreEqual(typeof(int), intermediateMsg.Invocation.Parameters[0].Parameter.Type);
+            Assert.AreEqual("input", intermediateMsg.Invocation.Parameters[0].Parameter.Name);
+            Assert.AreEqual(10, intermediateMsg.Invocation.Parameters[0].Value);
         }
 
         [Test]
@@ -89,10 +92,13 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsTrue(result.IsFaulted);
             Assert.IsAssignableFrom(typeof(CommandInvocationFailedException), result.Exception.InnerExceptions[0]);
 
-            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), intermediateMsg.Invocation.Command.InterfaceType);
-            Assert.AreEqual(1, intermediateMsg.Invocation.ParameterValues.Length);
-            Assert.AreEqual(typeof(int), intermediateMsg.Invocation.ParameterValues[0].Item1);
-            Assert.AreEqual(10, intermediateMsg.Invocation.ParameterValues[0].Item2);
+            Assert.AreEqual(
+                CommandId.Create(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn).GetMethod("MyMethod")),
+                intermediateMsg.Invocation.Command);
+            Assert.AreEqual(1, intermediateMsg.Invocation.Parameters.Length);
+            Assert.AreEqual(typeof(int), intermediateMsg.Invocation.Parameters[0].Parameter.Type);
+            Assert.AreEqual("input", intermediateMsg.Invocation.Parameters[0].Parameter.Name);
+            Assert.AreEqual(10, intermediateMsg.Invocation.Parameters[0].Value);
         }
 
         [Test]
@@ -125,10 +131,13 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsFalse(result.IsFaulted);
             Assert.AreEqual(20, result.Result);
 
-            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn), intermediateMsg.Invocation.Command.InterfaceType);
-            Assert.AreEqual(1, intermediateMsg.Invocation.ParameterValues.Length);
-            Assert.AreEqual(typeof(int), intermediateMsg.Invocation.ParameterValues[0].Item1);
-            Assert.AreEqual(10, intermediateMsg.Invocation.ParameterValues[0].Item2);
+            Assert.AreEqual(
+                CommandId.Create(typeof(InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn).GetMethod("MyMethod")),
+                intermediateMsg.Invocation.Command);
+            Assert.AreEqual(1, intermediateMsg.Invocation.Parameters.Length);
+            Assert.AreEqual(typeof(int), intermediateMsg.Invocation.Parameters[0].Parameter.Type);
+            Assert.AreEqual("input", intermediateMsg.Invocation.Parameters[0].Parameter.Name);
+            Assert.AreEqual(10, intermediateMsg.Invocation.Parameters[0].Value);
         }
 
         [Test]
@@ -161,10 +170,13 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsTrue(result.IsFaulted);
             Assert.IsAssignableFrom(typeof(CommandInvocationFailedException), result.Exception.InnerExceptions[0]);
 
-            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn), intermediateMsg.Invocation.Command.InterfaceType);
-            Assert.AreEqual(1, intermediateMsg.Invocation.ParameterValues.Length);
-            Assert.AreEqual(typeof(int), intermediateMsg.Invocation.ParameterValues[0].Item1);
-            Assert.AreEqual(10, intermediateMsg.Invocation.ParameterValues[0].Item2);
+            Assert.AreEqual(
+                CommandId.Create(typeof(InteractionExtensionsTest.IMockCommandSetWithTypedTaskReturn).GetMethod("MyMethod")),
+                intermediateMsg.Invocation.Command);
+            Assert.AreEqual(1, intermediateMsg.Invocation.Parameters.Length);
+            Assert.AreEqual(typeof(int), intermediateMsg.Invocation.Parameters[0].Parameter.Type);
+            Assert.AreEqual("input", intermediateMsg.Invocation.Parameters[0].Parameter.Name);
+            Assert.AreEqual(10, intermediateMsg.Invocation.Parameters[0].Value);
         }
     }
 }
