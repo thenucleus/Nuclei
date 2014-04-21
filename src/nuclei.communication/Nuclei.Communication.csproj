@@ -126,6 +126,8 @@
     <Compile Include="CommunicationModule.Protocol.V1.cs" />
     <Compile Include="Interaction\CommandId.cs" />
     <Compile Include="Interaction\CommandMap.cs" />
+    <Compile Include="Interaction\InvalidCommandParameterOriginException.cs" />
+    <Compile Include="Interaction\MissingCommandParameterException.cs" />
     <Compile Include="ITimer.cs" />
     <Compile Include="Protocol\ConnectionMonitor.cs" />
     <Compile Include="DiscoveryInformation.cs" />

@@ -189,6 +189,9 @@
   <data name="Exceptions_Messages_InvalidChannelType" xml:space="preserve">
     <value>The given channel type is not valid.</value>
   </data>
+  <data name="Exceptions_Messages_InvalidCommandParameterOrigin" xml:space="preserve">
+    <value>The command parameter has an invalid origin.</value>
+  </data>
   <data name="Exceptions_Messages_MaximumNumberOfChannelRestartsExceeded" xml:space="preserve">
     <value>The maximum number of channel restarts was exceeded. Not restarting the channel anymore.</value>
   </data>
@@ -197,6 +200,9 @@
   </data>
   <data name="Exceptions_Messages_MissingBindingType" xml:space="preserve">
     <value>The endpoint discovery message did not provide a binding type. Contact information for the endpoint is incomplete without the binding information.</value>
+  </data>
+  <data name="Exceptions_Messages_MissingCommandParameter" xml:space="preserve">
+    <value>No value was provided for a required command parameter.</value>
   </data>
   <data name="Exceptions_Messages_MissingCommandSet" xml:space="preserve">
     <value>The requested command set could not be found.</value>

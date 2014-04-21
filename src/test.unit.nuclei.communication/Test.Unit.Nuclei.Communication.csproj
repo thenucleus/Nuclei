@@ -93,6 +93,8 @@
     <Compile Include="Interaction\InteractionExtensionsTest.cs" />
     <Compile Include="Interaction\InteractionHandshakeConductorTest.cs" />
     <Compile Include="Interaction\InteractionSubjectGroupStorageTest.cs" />
+    <Compile Include="Interaction\InvalidCommandParameterOriginExceptionTest.cs" />
+    <Compile Include="Interaction\MissingCommandParameterExceptionTest.cs" />
     <Compile Include="Protocol\NonTransformingObjectSerializerTest.cs" />
     <Compile Include="Interaction\NoSerializerForTypeFoundExceptionTest.cs" />
     <Compile Include="Interaction\NotificationDataTest.cs" />

@@ -277,6 +277,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The command parameter has an invalid origin..
+        /// </summary>
+        internal static string Exceptions_Messages_InvalidCommandParameterOrigin {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_InvalidCommandParameterOrigin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The maximum number of channel restarts was exceeded. Not restarting the channel anymore..
         /// </summary>
         internal static string Exceptions_Messages_MaximumNumberOfChannelRestartsExceeded {
@@ -300,6 +309,15 @@ namespace Nuclei.Communication.Properties {
         internal static string Exceptions_Messages_MissingBindingType {
             get {
                 return ResourceManager.GetString("Exceptions_Messages_MissingBindingType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No value was provided for a required command parameter..
+        /// </summary>
+        internal static string Exceptions_Messages_MissingCommandParameter {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_MissingCommandParameter", resourceCulture);
             }
         }
         
