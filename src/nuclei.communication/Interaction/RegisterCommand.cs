@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 
 namespace Nuclei.Communication.Interaction
@@ -40,8 +39,7 @@ namespace Nuclei.Communication.Interaction
     /// </list>
     /// </para>
     /// </remarks>
-    /// <param name="commandInterface">The interface that defines the command methods.</param>
-    /// <param name="commands">The command object.</param>
+    /// <param name="map">The object that defines the mapping of the command methods.</param>
     /// <param name="subject">The communication subjects to which the current commands belongs.</param>
-    public delegate void RegisterCommand(Type commandInterface, ICommandSet commands, params SubjectGroupIdentifier[] subject);
+    public delegate void RegisterCommand(CommandMap map, params SubjectGroupIdentifier[] subject);
 }

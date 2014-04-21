@@ -127,6 +127,7 @@
     <Compile Include="Interaction\CommandId.cs" />
     <Compile Include="Interaction\CommandDefinition.cs" />
     <Compile Include="Interaction\CommandIdExtensions.cs" />
+    <Compile Include="Interaction\CommandMap.cs" />
     <Compile Include="Interaction\CommandParameterDefinition.cs" />
     <Compile Include="Interaction\CommandParameterOrigin.cs" />
     <Compile Include="Interaction\CommandParameterValueMap.cs" />
