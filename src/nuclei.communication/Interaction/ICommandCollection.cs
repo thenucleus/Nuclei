@@ -46,15 +46,15 @@ namespace Nuclei.Communication.Interaction
         /// </list>
         /// </para>
         /// </remarks>
-        /// <param name="definition">The map that maps the command interface methods to the object methods.</param>
-        void Register(CommandDefinition definition);
+        /// <param name="definitions">The definitions that map the command interface methods to the object methods.</param>
+        void Register(CommandDefinition[] definitions);
 
         /// <summary>
-        /// Returns the delegate that was registered for the given command method.
+        /// Returns the command definition that was registered for the given command method.
         /// </summary>
         /// <param name="id">The ID of the command method.</param>
         /// <returns>
-        /// The map that contains the registered command method.
+        /// The definition that contains the registered command method.
         /// </returns>
         CommandDefinition CommandToInvoke(CommandId id);
     }

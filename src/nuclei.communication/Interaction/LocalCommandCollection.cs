@@ -54,33 +54,36 @@ namespace Nuclei.Communication.Interaction
         /// </list>
         /// </para>
         /// </remarks>
-        /// <param name="definition">The map that maps the command interface methods to the object methods.</param>
+        /// <param name="definitions">The definitions that map the command interface methods to the object methods.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="definition"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="definitions"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="CommandAlreadyRegisteredException">
-        ///     Thrown if a <paramref name="definition"/> with the specific ID has already been registered.
+        ///     Thrown if a <paramref name="definitions"/> with the specific ID has already been registered.
         /// </exception>
-        public void Register(CommandDefinition definition)
+        public void Register(CommandDefinition[] definitions)
         {
             {
-                Lokad.Enforce.Argument(() => definition);
+                Lokad.Enforce.Argument(() => definitions);
             }
 
-            if (m_Commands.ContainsKey(definition.Id))
+            foreach (var definition in definitions)
             {
-                throw new CommandAlreadyRegisteredException();
-            }
+                if (m_Commands.ContainsKey(definition.Id))
+                {
+                    throw new CommandAlreadyRegisteredException();
+                }
 
-            m_Commands.Add(definition.Id, definition);
+                m_Commands.Add(definition.Id, definition);
+            }
         }
 
         /// <summary>
-        /// Returns the delegate that was registered for the given command method.
+        /// Returns the command definition that was registered for the given command method.
         /// </summary>
         /// <param name="id">The ID of the command method.</param>
         /// <returns>
-        /// The map that contains the registered command method.
+        /// The definition that contains the registered command method.
         /// </returns>
         public CommandDefinition CommandToInvoke(CommandId id)
         {
