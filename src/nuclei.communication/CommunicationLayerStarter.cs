@@ -169,13 +169,13 @@ namespace Nuclei.Communication
             // Get all the commands so that they all exist and at the same time
             // make sure all commands have actually been registered.
             var commands = m_Context.Resolve<IEnumerable<ICommandSet>>()
-                .Select(c => c.GetType())
+                .SelectMany(c => c.GetType().GetMethods())
+                .Select(CommandId.Create)
                 .ToList();
 
             var commandCollection = m_Context.Resolve<ICommandCollection>();
             var unregisteredCommands = commandCollection
-                .Select(p => p.Item2.GetType())
-                .Except(commands, new TypeEqualityComparer());
+                .Except(commands);
             if (unregisteredCommands.Any())
             {
                 throw new UnknownCommandException();
