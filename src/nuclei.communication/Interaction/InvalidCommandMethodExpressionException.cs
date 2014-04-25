@@ -11,8 +11,8 @@ using Nuclei.Communication.Properties;
 namespace Nuclei.Communication.Interaction
 {
     /// <summary>
-    /// An exception thrown when the mapping expression in one of the <c>From</c> methods on the <see cref="CommandMapper{TCommand}"/>
-    /// is not a valid method expression.
+    /// An exception thrown when the mapping expression in either one of the <c>From</c> methods on the <see cref="CommandMapper{TCommand}"/>
+    /// or one of the <c>To</c> methods on the <see cref="MethodMapper"/> is not a valid method expression.
     /// </summary>
     [Serializable]
     public sealed class InvalidCommandMethodExpressionException : Exception

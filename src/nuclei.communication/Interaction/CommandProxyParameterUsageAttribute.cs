@@ -9,7 +9,7 @@ using System;
 namespace Nuclei.Communication.Interaction
 {
     /// <summary>
-    /// Defines the base attribute that is used to indicate that a command method parameter has 
+    /// Defines the base attribute that is used to indicate that a command interface method parameter has 
     /// special meaning.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]

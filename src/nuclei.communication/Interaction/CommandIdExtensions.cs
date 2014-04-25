@@ -15,7 +15,7 @@ namespace Nuclei.Communication.Interaction
     public static class CommandIdExtensions
     {
         /// <summary>
-        /// Serializes an <see cref="CommandId"/> to a string in a reversable manner.
+        /// Serializes an <see cref="CommandId"/> to a string in a reversible manner.
         /// </summary>
         /// <param name="id">The ID that should be serialized.</param>
         /// <returns>The serialized ID.</returns>

@@ -54,7 +54,6 @@ namespace Nuclei.Examples.Complete
         /// Echo's the name.
         /// </summary>
         /// <param name="name">The name.</param>
-        /// <returns>A task that returns when the echo message has been send.</returns>
         public void Echo(string name)
         {
             m_OnEcho(name);
@@ -76,7 +75,6 @@ namespace Nuclei.Examples.Complete
         /// </summary>
         /// <param name="downloadOwningEndpoint">The endpoint ID of the endpoint that owns the data stream.</param>
         /// <param name="token">The upload token that allows the receiver to indicate which data stream should be downloaded.</param>
-        /// <returns>A task that returns when the download has been started.</returns>
         public void StartDownload(EndpointId downloadOwningEndpoint, UploadToken token)
         {
             var path = Path.Combine(Assembly.GetExecutingAssembly().LocalDirectoryPath(), Path.GetRandomFileName());
