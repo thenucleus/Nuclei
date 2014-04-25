@@ -110,20 +110,25 @@ namespace Nuclei.Communication.Interaction
                 throw new InvalidCommandMethodExpressionException();
             }
 
-            var fieldExpression = methodCall.Object as MemberExpression;
-            if (fieldExpression == null)
-            {
-                throw new InvalidCommandMethodExpressionException();
-            }
-
-            var constantExpression = fieldExpression.Expression as ConstantExpression;
-            if (constantExpression == null)
-            {
-                throw new InvalidCommandMethodExpressionException();
-            }
-
-            var instance = constantExpression.Value;
             var methodInfo = methodCall.Method;
+
+            object instance = null;
+            if (methodCall.Object != null)
+            {
+                var fieldExpression = methodCall.Object as MemberExpression;
+                if (fieldExpression == null)
+                {
+                    throw new InvalidCommandMethodExpressionException();
+                }
+
+                var constantExpression = fieldExpression.Expression as ConstantExpression;
+                if (constantExpression == null)
+                {
+                    throw new InvalidCommandMethodExpressionException();
+                }
+
+                instance = constantExpression.Value;
+            }
 
             return new Tuple<object, MethodInfo>(instance, methodInfo);
         }
