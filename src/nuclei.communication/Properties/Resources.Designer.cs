@@ -295,6 +295,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The command interface method return value cannot be mapped to the command instance method return value..
+        /// </summary>
+        internal static string Exceptions_Messages_InvalidCommandMapping {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_InvalidCommandMapping", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The provided expression is not a valid method invocation expression..
         /// </summary>
         internal static string Exceptions_Messages_InvalidCommandMethodExpression {
@@ -381,6 +390,15 @@ namespace Nuclei.Communication.Properties {
         internal static string Exceptions_Messages_NoCommunicationSubjectsRegistered {
             get {
                 return ResourceManager.GetString("Exceptions_Messages_NoCommunicationSubjectsRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One of the command interface method parameters cannot be mapped to the parameters on the command instance method..
+        /// </summary>
+        internal static string Exceptions_Messages_NonMappedCommandParameter {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_NonMappedCommandParameter", resourceCulture);
             }
         }
         

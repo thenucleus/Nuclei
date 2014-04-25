@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -20,6 +21,46 @@ namespace Nuclei.Communication.Interaction
     /// </summary>
     internal static class InteractionExtensions
     {
+        /// <summary>
+        /// The collection containing the types of all the attributes that can 
+        /// be applied to a command interface method parameter.
+        /// </summary>
+        private static readonly HashSet<Type> s_KnownCommandSetParameterAttributes
+            = new HashSet<Type>();
+
+        /// <summary>
+        /// The collection containing the types of all the attributes that can be
+        /// applied to a command instance method parameter.
+        /// </summary>
+        private static readonly HashSet<Type> s_KnownCommandInstanceParameterAttributes
+            = new HashSet<Type>();
+
+        /// <summary>
+        /// Gets the collection containing the types of all the attributes that can 
+        /// be applied to a command interface method parameter.
+        /// </summary>
+        public static ISet<Type> KnownCommandSetParameterAttributes
+        {
+            [DebuggerStepThrough]
+            get
+            {
+                return s_KnownCommandSetParameterAttributes;
+            }
+        }
+
+        /// <summary>
+        /// Gets the collection containing the types of all the attributes that can be
+        /// applied to a command instance method parameter.
+        /// </summary>
+        public static ISet<Type> KnownCommandInstanceParameterAttributes
+        {
+            [DebuggerStepThrough]
+            get
+            {
+                return s_KnownCommandInstanceParameterAttributes;
+            }
+        }
+
         /// <summary>
         /// Verifies that an interface type will be a correct command set.
         /// </summary>
@@ -52,11 +93,10 @@ namespace Nuclei.Communication.Interaction
         /// </para>
         /// </remarks>
         /// <param name="commandSet">The type that has implemented the command set interface.</param>
-        /// <param name="knownCommandProxyParameterAttributes">The collection that maps the type of an attribute to the type of a parameter.</param>
         /// <exception cref="TypeIsNotAValidCommandSetException">
         ///     If the given type is not a valid <see cref="ICommandSet"/> interface.
         /// </exception>
-        public static void VerifyThatTypeIsACorrectCommandSet(this Type commandSet, ISet<Type> knownCommandProxyParameterAttributes)
+        public static void VerifyThatTypeIsACorrectCommandSet(this Type commandSet)
         {
             if (!typeof(ICommandSet).IsAssignableFrom(commandSet))
             {
@@ -142,7 +182,7 @@ namespace Nuclei.Communication.Interaction
                 var parameters = method.GetParameters();
                 foreach (var parameter in parameters)
                 {
-                    if (!IsParameterValid(parameter, knownCommandProxyParameterAttributes))
+                    if (!IsParameterValid(parameter))
                     {
                         throw new TypeIsNotAValidCommandSetException(
                             string.Format(
@@ -188,7 +228,7 @@ namespace Nuclei.Communication.Interaction
             return Attribute.IsDefined(type, typeof(DataContractAttribute)) || typeof(ISerializable).IsAssignableFrom(type) || type.IsSerializable;
         }
 
-        private static bool IsParameterValid(ParameterInfo parameter, ISet<Type> knownAttributeToParameterTypeMap)
+        private static bool IsParameterValid(ParameterInfo parameter)
         {
             if (parameter.ParameterType.ContainsGenericParameters)
             {
@@ -203,7 +243,7 @@ namespace Nuclei.Communication.Interaction
             // If the parameter has an attribute then it should be one of the recognized ones
             var attributes = parameter.GetCustomAttributes(true);
             var parameterUsageAttribute = attributes.FirstOrDefault(
-                    o => knownAttributeToParameterTypeMap.Contains(o.GetType())) as CommandProxyParameterUsageAttribute;
+                    o => s_KnownCommandSetParameterAttributes.Contains(o.GetType())) as CommandProxyParameterUsageAttribute;
             if (parameterUsageAttribute != null)
             {
                 return parameterUsageAttribute.AllowedParameterType == parameter.ParameterType;

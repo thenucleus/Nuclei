@@ -1,4 +1,10 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------
+// <copyright company="Nuclei">
+//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// </copyright>
+//-----------------------------------------------------------------------
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Autofac;
@@ -59,13 +65,13 @@ namespace Nuclei.Examples.Complete
 
             var map = CommandMapper<ITestCommandSet>.Create();
             map.From<string>((command, name) => command.Echo(name))
-                .To(instance, (string n) => instance.Echo(n));
+                .To((string n) => instance.Echo(n));
 
             map.From<int, int>((command, first, second) => command.Calculate(first, second))
-                .To(instance, (int first, int second) => instance.Calculate(first, second));
+                .To((int first, int second) => instance.Calculate(first, second));
 
             map.From<EndpointId, UploadToken>((command, endpoint, token) => command.StartDownload(endpoint, token))
-                .To(instance, (EndpointId e, UploadToken t) => instance.StartDownload(e, t));
+                .To((EndpointId e, UploadToken t) => instance.StartDownload(e, t));
 
             var collection = m_Context.Resolve<RegisterCommand>();
             collection(

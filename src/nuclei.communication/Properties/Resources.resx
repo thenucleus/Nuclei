@@ -195,6 +195,9 @@
   <data name="Exceptions_Messages_InvalidChannelType" xml:space="preserve">
     <value>The given channel type is not valid.</value>
   </data>
+  <data name="Exceptions_Messages_InvalidCommandMapping" xml:space="preserve">
+    <value>The command interface method return value cannot be mapped to the command instance method return value.</value>
+  </data>
   <data name="Exceptions_Messages_InvalidCommandMethodExpression" xml:space="preserve">
     <value>The provided expression is not a valid method invocation expression.</value>
   </data>
@@ -224,6 +227,9 @@
   </data>
   <data name="Exceptions_Messages_NoCommunicationSubjectsRegistered" xml:space="preserve">
     <value>No communication subjects have been registered. This may result in the rejection of all incoming endpoint connections.</value>
+  </data>
+  <data name="Exceptions_Messages_NonMappedCommandParameter" xml:space="preserve">
+    <value>One of the command interface method parameters cannot be mapped to the parameters on the command instance method.</value>
   </data>
   <data name="Exceptions_Messages_NoSerializerForTypeFound" xml:space="preserve">
     <value>No object data serializer was found for the given type.</value>

@@ -129,6 +129,7 @@
     <Compile Include="Interaction\CommandId.cs" />
     <Compile Include="Interaction\CommandDefinition.cs" />
     <Compile Include="Interaction\CommandIdExtensions.cs" />
+    <Compile Include="Interaction\CommandInstanceParameterUsageAttribute.cs" />
     <Compile Include="Interaction\CommandMap.cs" />
     <Compile Include="Interaction\CommandMapper.cs" />
     <Compile Include="Interaction\CommandMethodNotMappedException.cs" />
@@ -136,10 +137,12 @@
     <Compile Include="Interaction\CommandParameterOrigin.cs" />
     <Compile Include="Interaction\CommandProxyParameterUsageAttribute.cs" />
     <Compile Include="Interaction\CommandParameterValueMap.cs" />
+    <Compile Include="Interaction\InvalidCommandMappingException.cs" />
     <Compile Include="Interaction\InvalidCommandMethodExpressionException.cs" />
     <Compile Include="Interaction\InvalidCommandParameterOriginException.cs" />
     <Compile Include="Interaction\MethodMapper.cs" />
     <Compile Include="Interaction\MissingCommandParameterException.cs" />
+    <Compile Include="Interaction\NonMappedCommandParameterException.cs" />
     <Compile Include="ITimer.cs" />
     <Compile Include="Protocol\ConnectionMonitor.cs" />
     <Compile Include="DiscoveryInformation.cs" />
