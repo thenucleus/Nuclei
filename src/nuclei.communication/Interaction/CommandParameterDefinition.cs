@@ -27,14 +27,14 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// The origin of the parameter.
         /// </summary>
-        private readonly CommandParameterOrigin m_Orgin;
+        private readonly CommandParameterOrigin m_Origin;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandParameterDefinition"/> class.
         /// </summary>
         /// <param name="type">The type of the parameter.</param>
         /// <param name="name">The name of the parameter.</param>
-        /// <param name="orgin">The origin of the parameter.</param>
+        /// <param name="origin">The origin of the parameter.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="type"/> is <see langword="null" />.
         /// </exception>
@@ -44,7 +44,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="ArgumentException">
         ///     Thrown if <paramref name="name"/> is an empty string.
         /// </exception>
-        public CommandParameterDefinition(Type type, string name, CommandParameterOrigin orgin)
+        public CommandParameterDefinition(Type type, string name, CommandParameterOrigin origin)
         {
             {
                 Lokad.Enforce.Argument(() => type);
@@ -54,7 +54,7 @@ namespace Nuclei.Communication.Interaction
 
             m_Type = type;
             m_Name = name;
-            m_Orgin = orgin;
+            m_Origin = origin;
         }
 
         /// <summary>
@@ -82,14 +82,14 @@ namespace Nuclei.Communication.Interaction
         }
 
         /// <summary>
-        /// Gets the orgin of the parameter.
+        /// Gets the origin of the parameter.
         /// </summary>
-        public CommandParameterOrigin Orgin
+        public CommandParameterOrigin Origin
         {
             [DebuggerStepThrough]
             get
             {
-                return m_Orgin;
+                return m_Origin;
             }
         }
     }

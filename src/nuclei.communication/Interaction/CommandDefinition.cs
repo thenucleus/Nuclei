@@ -105,9 +105,10 @@ namespace Nuclei.Communication.Interaction
             for (int i = 0; i < m_Parameters.Count; i++)
             {
                 var expectedParameter = m_Parameters[i];
-                if (expectedParameter.Orgin == CommandParameterOrigin.FromCommand)
+                if (expectedParameter.Origin == CommandParameterOrigin.FromCommand)
                 {
-                    var providedParameter = parameters.FirstOrDefault(m => string.Equals(m.Parameter.Name, expectedParameter.Name, StringComparison.Ordinal));
+                    var providedParameter = parameters.FirstOrDefault(
+                        m => string.Equals(m.Parameter.Name, expectedParameter.Name, StringComparison.Ordinal));
                     if (providedParameter == null)
                     {
                         throw new MissingCommandParameterException();
