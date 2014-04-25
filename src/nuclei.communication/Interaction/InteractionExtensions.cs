@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -51,10 +52,11 @@ namespace Nuclei.Communication.Interaction
         /// </para>
         /// </remarks>
         /// <param name="commandSet">The type that has implemented the command set interface.</param>
+        /// <param name="knownCommandProxyParameterAttributes">The collection that maps the type of an attribute to the type of a parameter.</param>
         /// <exception cref="TypeIsNotAValidCommandSetException">
         ///     If the given type is not a valid <see cref="ICommandSet"/> interface.
         /// </exception>
-        public static void VerifyThatTypeIsACorrectCommandSet(this Type commandSet)
+        public static void VerifyThatTypeIsACorrectCommandSet(this Type commandSet, ISet<Type> knownCommandProxyParameterAttributes)
         {
             if (!typeof(ICommandSet).IsAssignableFrom(commandSet))
             {
@@ -83,7 +85,7 @@ namespace Nuclei.Communication.Interaction
                         commandSet));
             }
 
-            if (commandSet.GetProperties().Length > 0)
+            if (commandSet.GetProperties().Length > typeof(ICommandSet).GetProperties().Length)
             {
                 var propertiesText = ReflectionExtensions.PropertyInfoToString(commandSet.GetProperties());
                 throw new TypeIsNotAValidCommandSetException(
@@ -140,7 +142,7 @@ namespace Nuclei.Communication.Interaction
                 var parameters = method.GetParameters();
                 foreach (var parameter in parameters)
                 {
-                    if (!IsParameterValid(parameter))
+                    if (!IsParameterValid(parameter, knownCommandProxyParameterAttributes))
                     {
                         throw new TypeIsNotAValidCommandSetException(
                             string.Format(
@@ -155,7 +157,7 @@ namespace Nuclei.Communication.Interaction
 
         private static bool HasCorrectReturnType(Type type)
         {
-            if (type.Equals(typeof(Task)))
+            if (type == typeof(Task))
             {
                 return true;
             }
@@ -163,7 +165,7 @@ namespace Nuclei.Communication.Interaction
             if (type.IsGenericType)
             {
                 var baseType = type.GetGenericTypeDefinition();
-                if (baseType.Equals(typeof(Task<>)))
+                if (baseType == typeof(Task<>))
                 {
                     var genericParameters = type.GetGenericArguments();
                     if (genericParameters[0].ContainsGenericParameters)
@@ -186,7 +188,7 @@ namespace Nuclei.Communication.Interaction
             return Attribute.IsDefined(type, typeof(DataContractAttribute)) || typeof(ISerializable).IsAssignableFrom(type) || type.IsSerializable;
         }
 
-        private static bool IsParameterValid(ParameterInfo parameter)
+        private static bool IsParameterValid(ParameterInfo parameter, ISet<Type> knownAttributeToParameterTypeMap)
         {
             if (parameter.ParameterType.ContainsGenericParameters)
             {
@@ -198,12 +200,16 @@ namespace Nuclei.Communication.Interaction
                 return false;
             }
 
-            if (!IsTypeSerializable(parameter.ParameterType))
+            // If the parameter has an attribute then it should be one of the recognized ones
+            var attributes = parameter.GetCustomAttributes(true);
+            var parameterUsageAttribute = attributes.FirstOrDefault(
+                    o => knownAttributeToParameterTypeMap.Contains(o.GetType())) as CommandProxyParameterUsageAttribute;
+            if (parameterUsageAttribute != null)
             {
-                return false;
+                return parameterUsageAttribute.AllowedParameterType == parameter.ParameterType;
             }
 
-            return true;
+            return IsTypeSerializable(parameter.ParameterType);
         }
 
         /// <summary>
@@ -317,7 +323,7 @@ namespace Nuclei.Communication.Interaction
 
         private static bool HasCorrectDelegateType(Type type)
         {
-            if (type.Equals(typeof(EventHandler)))
+            if (type == typeof(EventHandler))
             {
                 return true;
             }
@@ -325,7 +331,7 @@ namespace Nuclei.Communication.Interaction
             if (type.IsGenericType)
             {
                 var baseType = type.GetGenericTypeDefinition();
-                if (baseType.Equals(typeof(EventHandler<>)))
+                if (baseType == typeof(EventHandler<>))
                 {
                     var genericParameters = type.GetGenericArguments();
                     if (genericParameters[0].ContainsGenericParameters)

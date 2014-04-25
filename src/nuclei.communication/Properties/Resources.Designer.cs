@@ -151,6 +151,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One or more methods on the given command set are not mapped to an instance method..
+        /// </summary>
+        internal static string Exceptions_Messages_CommandMethodNotMapped {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_CommandMethodNotMapped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The requested command is not supported by the endpoint..
         /// </summary>
         internal static string Exceptions_Messages_CommandNotSupported {
@@ -282,6 +291,15 @@ namespace Nuclei.Communication.Properties {
         internal static string Exceptions_Messages_InvalidChannelType {
             get {
                 return ResourceManager.GetString("Exceptions_Messages_InvalidChannelType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided expression is not a valid method invocation expression..
+        /// </summary>
+        internal static string Exceptions_Messages_InvalidCommandMethodExpression {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_InvalidCommandMethodExpression", resourceCulture);
             }
         }
         

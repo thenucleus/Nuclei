@@ -147,6 +147,9 @@
   <data name="Exceptions_Messages_CommandInvocationFailed" xml:space="preserve">
     <value>The invocation of a command failed.</value>
   </data>
+  <data name="Exceptions_Messages_CommandMethodNotMapped" xml:space="preserve">
+    <value>One or more methods on the given command set are not mapped to an instance method.</value>
+  </data>
   <data name="Exceptions_Messages_CommandNotSupported" xml:space="preserve">
     <value>The requested command is not supported by the endpoint.</value>
   </data>
@@ -191,6 +194,9 @@
   </data>
   <data name="Exceptions_Messages_InvalidChannelType" xml:space="preserve">
     <value>The given channel type is not valid.</value>
+  </data>
+  <data name="Exceptions_Messages_InvalidCommandMethodExpression" xml:space="preserve">
+    <value>The provided expression is not a valid method invocation expression.</value>
   </data>
   <data name="Exceptions_Messages_InvalidCommandParameterOrigin" xml:space="preserve">
     <value>The command parameter has an invalid origin.</value>

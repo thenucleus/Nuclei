@@ -4,6 +4,7 @@ using System.Linq;
 using Autofac;
 using Nuclei.Communication;
 using Nuclei.Communication.Interaction;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Examples.Complete
 {
@@ -54,6 +55,22 @@ namespace Nuclei.Examples.Complete
 
         private void RegisterTestCommands()
         {
+            var instance = m_Context.Resolve<TestCommands>();
+
+            var map = CommandMapper<ITestCommandSet>.Create();
+            map.From<string>((command, name) => command.Echo(name))
+                .To(instance, (string n) => instance.Echo(n));
+
+            map.From<int, int>((command, first, second) => command.Calculate(first, second))
+                .To(instance, (int first, int second) => instance.Calculate(first, second));
+
+            map.From<EndpointId, UploadToken>((command, endpoint, token) => command.StartDownload(endpoint, token))
+                .To(instance, (EndpointId e, UploadToken t) => instance.StartDownload(e, t));
+
+            var collection = m_Context.Resolve<RegisterCommand>();
+            collection(
+                map.ToMap(),
+                m_Subjects.Select(s => new SubjectGroupIdentifier(s, new Version(1, 0), "a")).ToArray());
         }
 
         /// <summary>

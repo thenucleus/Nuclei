@@ -8,7 +8,6 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using Nuclei.Communication;
 using Nuclei.Communication.Protocol;
 
@@ -17,7 +16,7 @@ namespace Nuclei.Examples.Complete
     /// <summary>
     /// Defines a set of test commands.
     /// </summary>
-    internal sealed class TestCommands : ITestCommandSet
+    internal sealed class TestCommands
     {
         /// <summary>
         /// The delegate that handles downloads.
@@ -56,9 +55,20 @@ namespace Nuclei.Examples.Complete
         /// </summary>
         /// <param name="name">The name.</param>
         /// <returns>A task that returns when the echo message has been send.</returns>
-        public Task Echo(string name)
+        public void Echo(string name)
         {
-            return Task.Factory.StartNew(() => m_OnEcho(name));
+            m_OnEcho(name);
+        }
+
+        /// <summary>
+        /// Calculates a value from two inputs.
+        /// </summary>
+        /// <param name="first">The first input.</param>
+        /// <param name="second">The second input.</param>
+        /// <returns>The calculated value.</returns>
+        public int Calculate(int first, int second)
+        {
+            return first + second;
         }
 
         /// <summary>
@@ -67,32 +77,28 @@ namespace Nuclei.Examples.Complete
         /// <param name="downloadOwningEndpoint">The endpoint ID of the endpoint that owns the data stream.</param>
         /// <param name="token">The upload token that allows the receiver to indicate which data stream should be downloaded.</param>
         /// <returns>A task that returns when the download has been started.</returns>
-        public Task StartDownload(EndpointId downloadOwningEndpoint, UploadToken token)
+        public void StartDownload(EndpointId downloadOwningEndpoint, UploadToken token)
         {
-            return Task.Factory.StartNew(
-                () =>
-                {
-                    var path = Path.Combine(Assembly.GetExecutingAssembly().LocalDirectoryPath(), Path.GetRandomFileName());
-                    var task = m_Download(downloadOwningEndpoint, token, path, TimeSpan.FromSeconds(15));
+            var path = Path.Combine(Assembly.GetExecutingAssembly().LocalDirectoryPath(), Path.GetRandomFileName());
+            var task = m_Download(downloadOwningEndpoint, token, path, TimeSpan.FromSeconds(15));
 
-                    string text;
-                    try
-                    {
-                        task.Wait();
-                        text = new StreamReader(task.Result.FullName).ReadToEnd();
-                    }
-                    catch (AggregateException)
-                    {
-                        text = "Failed to download data.";
-                    }
+            string text;
+            try
+            {
+                task.Wait();
+                text = new StreamReader(task.Result.FullName).ReadToEnd();
+            }
+            catch (AggregateException)
+            {
+                text = "Failed to download data.";
+            }
 
-                    m_OnEcho(
-                        string.Format(
-                            CultureInfo.InvariantCulture,
-                            "Downloaded data from: {0}. Data: {1}",
-                            downloadOwningEndpoint,
-                            text));
-                });
+            m_OnEcho(
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    "Downloaded data from: {0}. Data: {1}",
+                    downloadOwningEndpoint,
+                    text));
         }
     }
 }
