@@ -70,7 +70,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 
             var translator = new CommandInvocationConverter(serializers.Object);
 
-            var id = CommandId.Create(typeof(int).GetMethod("CompareTo"));
+            var id = CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) }));
             var data = new CommandInvocationData
             {
                 Id = new MessageId(),
@@ -132,7 +132,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 
             var translator = new CommandInvocationConverter(serializers.Object);
 
-            var id = CommandId.Create(typeof(int).GetMethod("CompareTo"));
+            var id = CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) }));
             var msg = new CommandInvokedMessage(
                 new EndpointId("a"),
                 new CommandInvokedData(

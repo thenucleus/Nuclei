@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 
@@ -18,7 +19,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         public void Create()
         {
             var id = new EndpointId("sendingEndpoint");
-            var commandId = CommandId.Create(typeof(int).GetMethod("CompareTo"));
+            var commandId = CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) }));
             var invocationData = new CommandInvokedData(
                 commandId,
                 new[]

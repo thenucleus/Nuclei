@@ -127,7 +127,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                                     "someNumber",
                                     CommandParameterOrigin.FromCommand), 
                             }, 
-                        false,
+                        true,
                         (Func<int, int>)actionObject.Object.MethodWithReturnValue)
                 };
 
@@ -238,7 +238,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
 
             actionObject.Verify(a => a.MethodWithoutReturnValue(It.IsAny<int>()), Times.Once());
             Assert.AreEqual(2, count);
-            Assert.AreEqual(3, loggerCount);
+            Assert.AreEqual(2, loggerCount);
             Assert.IsInstanceOf<FailureMessage>(storedMsg);
         }
 
@@ -300,7 +300,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                                     2), 
                             })));
 
-            Assert.AreEqual(4, count);
+            Assert.AreEqual(3, count);
             actionObject.Verify(a => a.MethodWithoutReturnValue(It.IsAny<int>()), Times.Once());
         }
     }

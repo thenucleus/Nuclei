@@ -146,6 +146,8 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                             AssemblyName = parameter.Parameter.Type.Assembly.GetName().Name
                         };
 
+                    parameterNames[i] = parameter.Parameter.Name;
+
                     if (!m_TypeSerializers.HasSerializerFor(parameter.Parameter.Type))
                     {
                         throw new MissingObjectDataSerializerException();

@@ -24,7 +24,7 @@ namespace Nuclei.Communication.Interaction
             var map = new[]
                 {
                     new CommandDefinition(
-                        CommandId.Create(typeof(int).GetMethod("CompareTo")),
+                        CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) })),
                         new[]
                             {
                                 new CommandParameterDefinition(typeof(int), "other", CommandParameterOrigin.FromCommand), 
@@ -45,7 +45,7 @@ namespace Nuclei.Communication.Interaction
             var map = new[]
                 {
                     new CommandDefinition(
-                        CommandId.Create(typeof(int).GetMethod("CompareTo")),
+                        CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) })),
                         new[]
                             {
                                 new CommandParameterDefinition(typeof(int), "other", CommandParameterOrigin.FromCommand), 
@@ -65,7 +65,7 @@ namespace Nuclei.Communication.Interaction
         public void CommandsForWithUnknownType()
         {
             var collection = new LocalCommandCollection();
-            var id = CommandId.Create(typeof(int).GetMethod("CompareTo"));
+            var id = CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) }));
             Assert.Throws<UnknownCommandException>(() => collection.CommandToInvoke(id));
         }
 
@@ -77,7 +77,7 @@ namespace Nuclei.Communication.Interaction
             var map = new[]
                 {
                     new CommandDefinition(
-                        CommandId.Create(typeof(int).GetMethod("CompareTo")),
+                        CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) })),
                         new[]
                             {
                                 new CommandParameterDefinition(typeof(int), "other", CommandParameterOrigin.FromCommand), 

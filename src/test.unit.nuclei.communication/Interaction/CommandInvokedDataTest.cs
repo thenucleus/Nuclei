@@ -17,7 +17,7 @@ namespace Nuclei.Communication.Interaction
         [Test]
         public void Create()
         {
-            var id = CommandId.Create(typeof(string).GetMethod("CompareTo"));
+            var id = CommandId.Create(typeof(string).GetMethod("CompareTo", new[] { typeof(object) }));
             var parameters = new[]
                 {
                     new CommandParameterValueMap(

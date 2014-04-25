@@ -112,22 +112,44 @@ namespace Nuclei.Communication.Interaction
 
             var methodInfo = methodCall.Method;
 
+            // if the object on which the method is called is null then it's a static method
             object instance = null;
             if (methodCall.Object != null)
             {
-                var fieldExpression = methodCall.Object as MemberExpression;
-                if (fieldExpression == null)
+                // The method is not a static method, now it gets slightly tricky
+                // We assume (for now) the user will do something like:
+                //
+                // MethodMapper mapper;
+                //
+                // MyObject myInstance = new MyObject();
+                // mapper.To<int, double, string>((a, b, c) => myInstance.MyMethod(a, b, c));
+                //
+                // In that case we can follow the following approach: http://stackoverflow.com/a/3607659/539846
+                //
+                // In that case the lambda expression contains a reference to a compiler generated class that
+                // contains the instance reference we want. So ...
+                //
+                // The method is called on a member of some instance
+                var member = methodCall.Object as MemberExpression;
+                if (member == null)
                 {
                     throw new InvalidCommandMethodExpressionException();
                 }
 
-                var constantExpression = fieldExpression.Expression as ConstantExpression;
-                if (constantExpression == null)
+                // The member expression contains an instance of an anonymous class that defines the member
+                var constant = member.Expression as ConstantExpression;
+                if (constant == null)
                 {
                     throw new InvalidCommandMethodExpressionException();
                 }
 
-                instance = constantExpression.Value;
+                var anonymousClassInstance = constant.Value;
+                
+                // The member of the class
+                var calledClassField = member.Member as FieldInfo;
+
+                // Get the field value
+                instance = calledClassField.GetValue(anonymousClassInstance);
             }
 
             return new Tuple<object, MethodInfo>(instance, methodInfo);
@@ -156,12 +178,9 @@ namespace Nuclei.Communication.Interaction
                 var parameterUsageAttribute = attributes.FirstOrDefault(
                     o => InteractionExtensions.KnownCommandInstanceParameterAttributes.Contains(o.GetType())) 
                     as CommandInstanceParameterUsageAttribute;
-                if (parameterUsageAttribute != null)
+                if ((parameterUsageAttribute == null) || (parameterUsageAttribute.AllowedParameterType != instanceParameter.ParameterType))
                 {
-                    if (parameterUsageAttribute.AllowedParameterType != instanceParameter.ParameterType)
-                    {
-                        throw new NonMappedCommandParameterException();
-                    }
+                    throw new NonMappedCommandParameterException();
                 }
             }
 

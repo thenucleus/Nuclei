@@ -17,7 +17,7 @@ namespace Nuclei.Communication.Interaction
                 Justification = "Unit tests do not need documentation.")]
     public sealed class MethodMapperTest
     {
-        private sealed class CommandInstance
+        public sealed class CommandInstance
         {
             public static int StaticMethod()
             {

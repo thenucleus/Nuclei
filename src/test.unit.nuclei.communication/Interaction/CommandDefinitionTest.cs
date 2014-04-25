@@ -19,7 +19,7 @@ namespace Nuclei.Communication.Interaction
         [Test]
         public void Create()
         {
-            var id = CommandId.Create(typeof(int).GetMethod("CompareTo"));
+            var id = CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) }));
 
             Func<int, double, string> func = (i, d) => (i + d).ToString(CultureInfo.InvariantCulture);
             var parameters = new[]
@@ -39,7 +39,7 @@ namespace Nuclei.Communication.Interaction
         [Test]
         public void InvokeWithMissingParameter()
         {
-            var id = CommandId.Create(typeof(int).GetMethod("CompareTo"));
+            var id = CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) }));
 
             Func<int, double, string> func = (i, d) => (i + d).ToString(CultureInfo.InvariantCulture);
             var parameters = new[]
@@ -64,7 +64,7 @@ namespace Nuclei.Communication.Interaction
         [Test]
         public void InvokeWithInvalidOrigin()
         {
-            var id = CommandId.Create(typeof(int).GetMethod("CompareTo"));
+            var id = CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) }));
 
             Func<int, double, string> func = (i, d) => (i + d).ToString(CultureInfo.InvariantCulture);
             var parameters = new[]
@@ -86,13 +86,13 @@ namespace Nuclei.Communication.Interaction
                         parameters[1],
                         10.0), 
                 };
-            Assert.Throws<MissingCommandParameterException>(() => definition.Invoke(parameterValues));
+            Assert.Throws<InvalidCommandParameterOriginException>(() => definition.Invoke(parameterValues));
         }
 
         [Test]
         public void Invoke()
         {
-            var id = CommandId.Create(typeof(int).GetMethod("CompareTo"));
+            var id = CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) }));
 
             Func<int, double, string> func = (i, d) => (i + d).ToString(CultureInfo.InvariantCulture);
             var parameters = new[]
