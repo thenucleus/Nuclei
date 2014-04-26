@@ -102,6 +102,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -124,6 +125,24 @@
     <Compile Include="CommunicationModule.Interaction.V1.cs" />
     <Compile Include="CommunicationModule.Protocol.cs" />
     <Compile Include="CommunicationModule.Protocol.V1.cs" />
+    <Compile Include="IInitializeCommunicationInstances.cs" />
+    <Compile Include="Interaction\CommandId.cs" />
+    <Compile Include="Interaction\CommandDefinition.cs" />
+    <Compile Include="Interaction\CommandIdExtensions.cs" />
+    <Compile Include="Interaction\CommandInstanceParameterUsageAttribute.cs" />
+    <Compile Include="Interaction\CommandMap.cs" />
+    <Compile Include="Interaction\CommandMapper.cs" />
+    <Compile Include="Interaction\CommandMethodNotMappedException.cs" />
+    <Compile Include="Interaction\CommandParameterDefinition.cs" />
+    <Compile Include="Interaction\CommandParameterOrigin.cs" />
+    <Compile Include="Interaction\CommandProxyParameterUsageAttribute.cs" />
+    <Compile Include="Interaction\CommandParameterValueMap.cs" />
+    <Compile Include="Interaction\InvalidCommandMappingException.cs" />
+    <Compile Include="Interaction\InvalidCommandMethodExpressionException.cs" />
+    <Compile Include="Interaction\InvalidCommandParameterOriginException.cs" />
+    <Compile Include="Interaction\MethodMapper.cs" />
+    <Compile Include="Interaction\MissingCommandParameterException.cs" />
+    <Compile Include="Interaction\NonMappedCommandParameterException.cs" />
     <Compile Include="ITimer.cs" />
     <Compile Include="Protocol\ConnectionMonitor.cs" />
     <Compile Include="DiscoveryInformation.cs" />
@@ -152,7 +171,6 @@
     <Compile Include="ICommunicationFacade.cs" />
     <Compile Include="IDiscoveryVersionMetaData.cs" />
     <Compile Include="Protocol\IConfirmConnections.cs" />
-    <Compile Include="Interaction\CommandData.cs" />
     <Compile Include="Interaction\CommunicationSubjectGroup.cs" />
     <Compile Include="Interaction\DuplicateObjectSerializerException.cs" />
     <Compile Include="Interaction\IHandleInteractionHandshakes.cs" />
@@ -174,8 +192,6 @@
     <Compile Include="Interaction\RegisterNotification.cs" />
     <Compile Include="Interaction\RegisterRequiredCommand.cs" />
     <Compile Include="Interaction\RegisterRequiredNotification.cs" />
-    <Compile Include="Interaction\RequiredCommandsMappedBySubject.cs" />
-    <Compile Include="Interaction\RequiredNotificationsMappedBySubject.cs" />
     <Compile Include="Interaction\SubjectGroupIdentifier.cs" />
     <Compile Include="Interaction\Transport\InteractionConnectionState.cs" />
     <Compile Include="Interaction\Transport\IStoreRemoteCommandProxies.cs" />
@@ -380,7 +396,7 @@
     <Compile Include="Interaction\TypeIsNotAValidCommandSetException.cs" />
     <Compile Include="Interaction\TypeIsNotAValidNotificationSetException.cs" />
     <Compile Include="Interaction\Transport\UnableToGenerateProxyException.cs" />
-    <Compile Include="Interaction\UnknownCommandSetException.cs" />
+    <Compile Include="Interaction\UnknownCommandException.cs" />
     <Compile Include="TcpChannelTemplate.cs" />
     <Compile Include="UnknownEndpointIdFormatException.cs" />
     <Compile Include="Interaction\UnknownNotificationSetException.cs" />

@@ -62,35 +62,12 @@ namespace Nuclei.Examples.Complete
                                 c.Resolve<DownloadDataFromRemoteEndpoints>(),
                                 echoAction);
                         })
-                    .OnActivated(
-                        a =>
-                        {
-                            var collection = a.Context.Resolve<RegisterCommand>();
-                            collection(
-                                typeof(ITestCommandSet), 
-                                a.Instance, 
-                                subjects.Select(s => new SubjectGroupIdentifier(s, new Version(1, 0), "a")).ToArray());
-                        })
-                    .As<ITestCommandSet>()
-                    .As<ICommandSet>()
                     .SingleInstance();
 
-                builder.Register(
-                        c =>
-                        {
-                            RequiredCommandsMappedBySubject func = () =>
-                            {
-                                return new[]
-                                    {
-                                        new Tuple<Type, SubjectGroupIdentifier[]>(
-                                            typeof(ITestCommandSet),
-                                            subjects.Select(s => new SubjectGroupIdentifier(s, new Version(1, 0), "a")).ToArray()), 
-                                    };
-                            };
-
-                            return func;
-                        })
-                    .As<RequiredCommandsMappedBySubject>()
+                builder.Register(c => new CommunicationInitializer(
+                        c.Resolve<IComponentContext>(),
+                        subjects))
+                    .As<IInitializeCommunicationInstances>()
                     .SingleInstance();
 
                 // Register the elements from the current assembly

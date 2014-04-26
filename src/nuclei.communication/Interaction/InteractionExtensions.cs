@@ -5,6 +5,8 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -19,6 +21,46 @@ namespace Nuclei.Communication.Interaction
     /// </summary>
     internal static class InteractionExtensions
     {
+        /// <summary>
+        /// The collection containing the types of all the attributes that can 
+        /// be applied to a command interface method parameter.
+        /// </summary>
+        private static readonly HashSet<Type> s_KnownCommandSetParameterAttributes
+            = new HashSet<Type>();
+
+        /// <summary>
+        /// The collection containing the types of all the attributes that can be
+        /// applied to a command instance method parameter.
+        /// </summary>
+        private static readonly HashSet<Type> s_KnownCommandInstanceParameterAttributes
+            = new HashSet<Type>();
+
+        /// <summary>
+        /// Gets the collection containing the types of all the attributes that can 
+        /// be applied to a command interface method parameter.
+        /// </summary>
+        public static ISet<Type> KnownCommandSetParameterAttributes
+        {
+            [DebuggerStepThrough]
+            get
+            {
+                return s_KnownCommandSetParameterAttributes;
+            }
+        }
+
+        /// <summary>
+        /// Gets the collection containing the types of all the attributes that can be
+        /// applied to a command instance method parameter.
+        /// </summary>
+        public static ISet<Type> KnownCommandInstanceParameterAttributes
+        {
+            [DebuggerStepThrough]
+            get
+            {
+                return s_KnownCommandInstanceParameterAttributes;
+            }
+        }
+
         /// <summary>
         /// Verifies that an interface type will be a correct command set.
         /// </summary>
@@ -83,7 +125,7 @@ namespace Nuclei.Communication.Interaction
                         commandSet));
             }
 
-            if (commandSet.GetProperties().Length > 0)
+            if (commandSet.GetProperties().Length > typeof(ICommandSet).GetProperties().Length)
             {
                 var propertiesText = ReflectionExtensions.PropertyInfoToString(commandSet.GetProperties());
                 throw new TypeIsNotAValidCommandSetException(
@@ -155,7 +197,7 @@ namespace Nuclei.Communication.Interaction
 
         private static bool HasCorrectReturnType(Type type)
         {
-            if (type.Equals(typeof(Task)))
+            if (type == typeof(Task))
             {
                 return true;
             }
@@ -163,7 +205,7 @@ namespace Nuclei.Communication.Interaction
             if (type.IsGenericType)
             {
                 var baseType = type.GetGenericTypeDefinition();
-                if (baseType.Equals(typeof(Task<>)))
+                if (baseType == typeof(Task<>))
                 {
                     var genericParameters = type.GetGenericArguments();
                     if (genericParameters[0].ContainsGenericParameters)
@@ -198,12 +240,16 @@ namespace Nuclei.Communication.Interaction
                 return false;
             }
 
-            if (!IsTypeSerializable(parameter.ParameterType))
+            // If the parameter has an attribute then it should be one of the recognized ones
+            var attributes = parameter.GetCustomAttributes(true);
+            var parameterUsageAttribute = attributes.FirstOrDefault(
+                    o => s_KnownCommandSetParameterAttributes.Contains(o.GetType())) as CommandProxyParameterUsageAttribute;
+            if (parameterUsageAttribute != null)
             {
-                return false;
+                return parameterUsageAttribute.AllowedParameterType == parameter.ParameterType;
             }
 
-            return true;
+            return IsTypeSerializable(parameter.ParameterType);
         }
 
         /// <summary>
@@ -317,7 +363,7 @@ namespace Nuclei.Communication.Interaction
 
         private static bool HasCorrectDelegateType(Type type)
         {
-            if (type.Equals(typeof(EventHandler)))
+            if (type == typeof(EventHandler))
             {
                 return true;
             }
@@ -325,7 +371,7 @@ namespace Nuclei.Communication.Interaction
             if (type.IsGenericType)
             {
                 var baseType = type.GetGenericTypeDefinition();
-                if (baseType.Equals(typeof(EventHandler<>)))
+                if (baseType == typeof(EventHandler<>))
                 {
                     var genericParameters = type.GetGenericArguments();
                     if (genericParameters[0].ContainsGenericParameters)

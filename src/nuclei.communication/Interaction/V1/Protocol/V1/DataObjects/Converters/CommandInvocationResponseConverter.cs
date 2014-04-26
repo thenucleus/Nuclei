@@ -6,7 +6,6 @@
 
 using System;
 using System.Diagnostics;
-using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;

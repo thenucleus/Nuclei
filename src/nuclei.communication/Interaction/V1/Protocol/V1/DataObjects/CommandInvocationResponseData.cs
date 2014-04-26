@@ -21,6 +21,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects
         /// <summary>
         /// Gets or sets the actual <see cref="Type"/> of the returned value.
         /// </summary>
+        [DataMember]
         public SerializedType ReturnedType
         {
             get;

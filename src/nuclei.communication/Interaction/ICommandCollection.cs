@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -14,7 +13,7 @@ namespace Nuclei.Communication.Interaction
     /// Defines the interface for collections that store one or more <see cref="ICommandSet"/>
     /// objects.
     /// </summary>
-    internal interface ICommandCollection : IEnumerable<Tuple<Type, ICommandSet>>
+    internal interface ICommandCollection : IEnumerable<CommandId>
     {
         /// <summary>
         /// Registers a <see cref="ICommandSet"/> object.
@@ -47,17 +46,16 @@ namespace Nuclei.Communication.Interaction
         /// </list>
         /// </para>
         /// </remarks>
-        /// <param name="commandType">The interface that defines the command methods.</param>
-        /// <param name="commands">The commands.</param>
-        void Register(Type commandType, ICommandSet commands);
+        /// <param name="definitions">The definitions that map the command interface methods to the object methods.</param>
+        void Register(CommandDefinition[] definitions);
 
         /// <summary>
-        /// Returns the command object that was registered for the given interface type.
+        /// Returns the command definition that was registered for the given command method.
         /// </summary>
-        /// <param name="interfaceType">The <see cref="ICommandSet"/> derived interface type.</param>
+        /// <param name="id">The ID of the command method.</param>
         /// <returns>
-        /// The desired command set.
+        /// The definition that contains the registered command method.
         /// </returns>
-        ICommandSet CommandsFor(Type interfaceType);
+        CommandDefinition CommandToInvoke(CommandId id);
     }
 }

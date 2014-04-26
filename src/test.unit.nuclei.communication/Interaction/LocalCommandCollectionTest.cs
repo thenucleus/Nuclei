@@ -4,9 +4,9 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Moq;
 using NUnit.Framework;
 
 namespace Nuclei.Communication.Interaction
@@ -21,31 +21,52 @@ namespace Nuclei.Communication.Interaction
         {
             var collection = new LocalCommandCollection();
 
-            var commands = new Mock<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>();
-            collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object);
+            var map = new[]
+                {
+                    new CommandDefinition(
+                        CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) })),
+                        new[]
+                            {
+                                new CommandParameterDefinition(typeof(int), "other", CommandParameterOrigin.FromCommand), 
+                            }, 
+                        false,
+                        (Action)delegate { }), 
+                };
+            collection.Register(map);
 
-            Assert.IsTrue(collection.Any(pair => pair.Item1 == typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
+            Assert.IsTrue(collection.Any(id => id == map[0].Id));
         }
 
         [Test]
         public void RegisterWithExistingType()
         {
             var collection = new LocalCommandCollection();
-            
-            var commands = new Mock<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>();
-            collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object);
-            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
+
+            var map = new[]
+                {
+                    new CommandDefinition(
+                        CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) })),
+                        new[]
+                            {
+                                new CommandParameterDefinition(typeof(int), "other", CommandParameterOrigin.FromCommand), 
+                            }, 
+                        false,
+                        (Action)delegate { }), 
+                };
+            collection.Register(map);
+            Assert.AreEqual(1, collection.Count(id => id == map[0].Id));
 
             Assert.Throws<CommandAlreadyRegisteredException>(
-                () => collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object));
-            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
+                () => collection.Register(map));
+            Assert.AreEqual(1, collection.Count(id => id == map[0].Id));
         }
 
         [Test]
         public void CommandsForWithUnknownType()
         {
             var collection = new LocalCommandCollection();
-            Assert.IsNull(collection.CommandsFor(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn)));
+            var id = CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) }));
+            Assert.Throws<UnknownCommandException>(() => collection.CommandToInvoke(id));
         }
 
         [Test]
@@ -53,11 +74,21 @@ namespace Nuclei.Communication.Interaction
         {
             var collection = new LocalCommandCollection();
 
-            var commands = new Mock<InteractionExtensionsTest.IMockCommandSetWithTaskReturn>();
-            collection.Register(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn), commands.Object);
+            var map = new[]
+                {
+                    new CommandDefinition(
+                        CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) })),
+                        new[]
+                            {
+                                new CommandParameterDefinition(typeof(int), "other", CommandParameterOrigin.FromCommand), 
+                            }, 
+                        false,
+                        (Action)delegate { }), 
+                };
+            collection.Register(map);
 
-            var commandSet = collection.CommandsFor(typeof(InteractionExtensionsTest.IMockCommandSetWithTaskReturn));
-            Assert.AreSame(commands.Object, commandSet);
+            var commandSet = collection.CommandToInvoke(map[0].Id);
+            Assert.AreSame(map[0], commandSet);
         }
     }
 }

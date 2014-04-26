@@ -19,12 +19,14 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         public void Create()
         {
             var id = new EndpointId("sendingEndpoint");
-            var commandData = new CommandData(typeof(int), "a");
+            var commandId = CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) }));
             var invocationData = new CommandInvokedData(
-                commandData,
+                commandId,
                 new[]
                     {
-                        new Tuple<Type, object>(typeof(double), 1.0), 
+                        new CommandParameterValueMap(
+                            new CommandParameterDefinition(typeof(int), "other", CommandParameterOrigin.FromCommand), 
+                            1.0), 
                     });
             var msg = new CommandInvokedMessage(id, invocationData);
 

@@ -11,48 +11,49 @@ using Nuclei.Communication.Properties;
 namespace Nuclei.Communication.Interaction
 {
     /// <summary>
-    /// An exception thrown when a user tries to access an <see cref="ICommandSet"/> that has not been registered.
+    /// An exception thrown when the command interface method has at least one parameter that cannot be mapped to
+    /// the parameters on the command instance method.
     /// </summary>
     [Serializable]
-    public sealed class UnknownCommandSetException : Exception
+    public sealed class NonMappedCommandParameterException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnknownCommandSetException"/> class.
+        /// Initializes a new instance of the <see cref="NonMappedCommandParameterException"/> class.
         /// </summary>
-        public UnknownCommandSetException()
-            : this(Resources.Exceptions_Messages_UnknownCommandSet)
+        public NonMappedCommandParameterException()
+            : this(Resources.Exceptions_Messages_NonMappedCommandParameter)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnknownCommandSetException"/> class.
+        /// Initializes a new instance of the <see cref="NonMappedCommandParameterException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
-        public UnknownCommandSetException(string message) 
+        public NonMappedCommandParameterException(string message) 
             : base(message)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnknownCommandSetException"/> class.
+        /// Initializes a new instance of the <see cref="NonMappedCommandParameterException"/> class.
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="innerException">The inner exception.</param>
-        public UnknownCommandSetException(string message, Exception innerException)
+        public NonMappedCommandParameterException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UnknownCommandSetException"/> class.
+        /// Initializes a new instance of the <see cref="NonMappedCommandParameterException"/> class.
         /// </summary>
         /// <param name="info">
-        ///     The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized
-        ///     object data about the exception being thrown.
+        ///     The <see cref="T:System.Runtime.Serialization.SerializationInfo"/> that holds the serialized object
+        ///     data about the exception being thrown.
         /// </param>
         /// <param name="context">
-        ///     The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual
-        ///     information about the source or destination.
+        ///     The <see cref="T:System.Runtime.Serialization.StreamingContext"/> that contains contextual information
+        ///     about the source or destination.
         /// </param>
         /// <exception cref="T:System.ArgumentNullException">
         /// The <paramref name="info"/> parameter is null.
@@ -60,7 +61,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="T:System.Runtime.Serialization.SerializationException">
         /// The class name is null or <see cref="P:System.Exception.HResult"/> is zero (0).
         /// </exception>
-        private UnknownCommandSetException(SerializationInfo info, StreamingContext context)
+        private NonMappedCommandParameterException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

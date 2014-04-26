@@ -20,7 +20,7 @@ namespace Nuclei.Communication
         /// Initializes a new instance of the <see cref="EndpointId"/> class.
         /// </summary>
         /// <param name="id">The ID text.</param>
-        public EndpointId(string id)
+        internal EndpointId(string id)
             : base(id)
         { 
         }

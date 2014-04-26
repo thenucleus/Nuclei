@@ -24,6 +24,14 @@ namespace Nuclei.Examples.Complete
         Task Echo(string name);
 
         /// <summary>
+        /// Calculates a value from two inputs.
+        /// </summary>
+        /// <param name="first">The first input.</param>
+        /// <param name="second">The second input.</param>
+        /// <returns>A task that returns when the calculation has been completed.</returns>
+        Task<int> Calculate(int first, int second);
+
+        /// <summary>
         /// Starts a download.
         /// </summary>
         /// <param name="downloadOwningEndpoint">The endpoint ID of the endpoint that owns the data stream.</param>

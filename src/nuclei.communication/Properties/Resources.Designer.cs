@@ -133,11 +133,29 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A command ID cannot be deserialized from an empty string..
+        /// </summary>
+        internal static string Exceptions_Messages_CommandIdCannotBeDeserializedFromAnEmptyString {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_CommandIdCannotBeDeserializedFromAnEmptyString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The invocation of a command failed..
         /// </summary>
         internal static string Exceptions_Messages_CommandInvocationFailed {
             get {
                 return ResourceManager.GetString("Exceptions_Messages_CommandInvocationFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more methods on the given command set are not mapped to an instance method..
+        /// </summary>
+        internal static string Exceptions_Messages_CommandMethodNotMapped {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_CommandMethodNotMapped", resourceCulture);
             }
         }
         
@@ -277,6 +295,33 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The command interface method return value cannot be mapped to the command instance method return value..
+        /// </summary>
+        internal static string Exceptions_Messages_InvalidCommandMapping {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_InvalidCommandMapping", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided expression is not a valid method invocation expression..
+        /// </summary>
+        internal static string Exceptions_Messages_InvalidCommandMethodExpression {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_InvalidCommandMethodExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The command parameter has an invalid origin..
+        /// </summary>
+        internal static string Exceptions_Messages_InvalidCommandParameterOrigin {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_InvalidCommandParameterOrigin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The maximum number of channel restarts was exceeded. Not restarting the channel anymore..
         /// </summary>
         internal static string Exceptions_Messages_MaximumNumberOfChannelRestartsExceeded {
@@ -300,6 +345,15 @@ namespace Nuclei.Communication.Properties {
         internal static string Exceptions_Messages_MissingBindingType {
             get {
                 return ResourceManager.GetString("Exceptions_Messages_MissingBindingType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No value was provided for a required command parameter..
+        /// </summary>
+        internal static string Exceptions_Messages_MissingCommandParameter {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_MissingCommandParameter", resourceCulture);
             }
         }
         
@@ -336,6 +390,15 @@ namespace Nuclei.Communication.Properties {
         internal static string Exceptions_Messages_NoCommunicationSubjectsRegistered {
             get {
                 return ResourceManager.GetString("Exceptions_Messages_NoCommunicationSubjectsRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One of the command interface method parameters cannot be mapped to the parameters on the command instance method..
+        /// </summary>
+        internal static string Exceptions_Messages_NonMappedCommandParameter {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_NonMappedCommandParameter", resourceCulture);
             }
         }
         
@@ -551,11 +614,11 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The requested command set has not been registered..
+        ///   Looks up a localized string similar to The requested command has not been registered..
         /// </summary>
-        internal static string Exceptions_Messages_UnknownCommandSet {
+        internal static string Exceptions_Messages_UnknownCommand {
             get {
-                return ResourceManager.GetString("Exceptions_Messages_UnknownCommandSet", resourceCulture);
+                return ResourceManager.GetString("Exceptions_Messages_UnknownCommand", resourceCulture);
             }
         }
         

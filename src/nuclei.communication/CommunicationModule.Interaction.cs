@@ -156,21 +156,19 @@ namespace Nuclei.Communication
                     c =>
                     {
                         var ctx = c.Resolve<IComponentContext>();
-                        RegisterCommand func = (type, command, subjects) =>
+                        RegisterCommand func = (map, subjects) =>
                         {
-                            type.VerifyThatTypeIsACorrectCommandSet();
-                            if (!type.IsInstanceOfType(command))
-                            {
-                                throw new ArgumentException(Resources.Exceptions_Messages_CommandObjectMustImplementCommandInterface);
-                            }
-
                             var collection = ctx.Resolve<ICommandCollection>();
                             var subjectCollection = ctx.Resolve<IRegisterSubjectGroups>();
 
-                            collection.Register(type, command);
+                            collection.Register(map.Definitions);
                             foreach (var subject in subjects)
                             {
-                                subjectCollection.RegisterCommandForProvidedSubjectGroup(subject.Subject, type, subject.Version, subject.Group);
+                                subjectCollection.RegisterCommandForProvidedSubjectGroup(
+                                    subject.Subject, 
+                                    map.CommandType, 
+                                    subject.Version, 
+                                    subject.Group);
                             }
                         };
 

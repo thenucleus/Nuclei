@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 
@@ -18,15 +17,17 @@ namespace Nuclei.Communication.Interaction
         [Test]
         public void Create()
         {
-            var data = new CommandData(typeof(string), "CompareTo");
+            var id = CommandId.Create(typeof(string).GetMethod("CompareTo", new[] { typeof(object) }));
             var parameters = new[]
                 {
-                    new Tuple<Type, object>(typeof(string), "a"), 
+                    new CommandParameterValueMap(
+                        new CommandParameterDefinition(typeof(string), "a", CommandParameterOrigin.FromCommand), 
+                        "b"), 
                 };
 
-            var invocationData = new CommandInvokedData(data, parameters);
-            Assert.AreSame(data, invocationData.Command);
-            Assert.AreSame(parameters, invocationData.ParameterValues);
+            var invocationData = new CommandInvokedData(id, parameters);
+            Assert.AreSame(id, invocationData.Command);
+            Assert.AreSame(parameters, invocationData.Parameters);
         }
     }
 }

@@ -6,7 +6,6 @@
 
 using System;
 using System.Diagnostics;
-using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
@@ -79,15 +78,14 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 
             try
             {
-                var interfaceType = TypeLoader.FromPartialInformation(
-                    msg.InterfaceType.FullName,
-                    msg.InterfaceType.AssemblyName);
-
-                var parameterValues = new Tuple<Type, object>[msg.ParameterTypes.Length];
+                var id = CommandIdExtensions.Deserialize(msg.CommandId);
+                var parameterValues = new CommandParameterValueMap[msg.ParameterTypes.Length];
                 for (int i = 0; i < msg.ParameterTypes.Length; i++)
                 {
                     var typeInfo = msg.ParameterTypes[i];
                     var type = TypeLoader.FromPartialInformation(typeInfo.FullName, typeInfo.AssemblyName);
+
+                    var name = msg.ParameterNames[i];
 
                     var serializedObjectData = msg.ParameterValues[i];
                     if (!m_TypeSerializers.HasSerializerFor(type))
@@ -97,16 +95,16 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 
                     var serializer = m_TypeSerializers.SerializerFor(type);
                     var value = serializer.Deserialize(serializedObjectData);
-                    parameterValues[i] = new Tuple<Type, object>(type, value);
+                    parameterValues[i] = new CommandParameterValueMap(
+                        new CommandParameterDefinition(type, name, CommandParameterOrigin.FromCommand), 
+                        value);
                 }
 
                 return new CommandInvokedMessage(
                     data.Sender,
                     data.Id,
                     new CommandInvokedData(
-                        new CommandData(
-                            interfaceType,
-                            msg.MethodName),
+                        id,
                         parameterValues));
             }
             catch (Exception)
@@ -135,25 +133,28 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 
             try
             {
-                var valuePairs = msg.Invocation.ParameterValues;
-                var parameterTypes = new SerializedType[valuePairs.Length];
-                var parameterValues = new object[valuePairs.Length];
-                for (int i = 0; i < valuePairs.Length; i++)
+                var parameters = msg.Invocation.Parameters;
+                var parameterTypes = new SerializedType[parameters.Length];
+                var parameterNames = new string[parameters.Length];
+                var parameterValues = new object[parameters.Length];
+                for (int i = 0; i < parameters.Length; i++)
                 {
-                    var pair = valuePairs[i];
+                    var parameter = parameters[i];
                     parameterTypes[i] = new SerializedType
                         {
-                            FullName = pair.Item1.FullName,
-                            AssemblyName = pair.Item1.Assembly.GetName().Name
+                            FullName = parameter.Parameter.Type.FullName,
+                            AssemblyName = parameter.Parameter.Type.Assembly.GetName().Name
                         };
 
-                    if (!m_TypeSerializers.HasSerializerFor(pair.Item1))
+                    parameterNames[i] = parameter.Parameter.Name;
+
+                    if (!m_TypeSerializers.HasSerializerFor(parameter.Parameter.Type))
                     {
                         throw new MissingObjectDataSerializerException();
                     }
 
-                    var serializer = m_TypeSerializers.SerializerFor(pair.Item1);
-                    var value = serializer.Serialize(pair.Item2);
+                    var serializer = m_TypeSerializers.SerializerFor(parameter.Parameter.Type);
+                    var value = serializer.Serialize(parameter.Value);
                     parameterValues[i] = value;
                 }
 
@@ -162,13 +163,9 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                         Id = message.Id,
                         InResponseTo = message.InResponseTo,
                         Sender = message.Sender,
-                        InterfaceType = new SerializedType
-                            {
-                                FullName = msg.Invocation.Command.InterfaceType.FullName,
-                                AssemblyName = msg.Invocation.Command.InterfaceType.Assembly.GetName().Name
-                            },
-                        MethodName = msg.Invocation.Command.MethodName,
+                        CommandId = CommandIdExtensions.Serialize(msg.Invocation.Command),
                         ParameterTypes = parameterTypes,
+                        ParameterNames = parameterNames,
                         ParameterValues = parameterValues,
                     };
             }

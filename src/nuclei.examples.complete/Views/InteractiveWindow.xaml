@@ -17,6 +17,9 @@
         <CommandBinding Command="{x:Static views2:InteractiveWindow.SendDataCommand}"
                         Executed="OnExecuteSendDataCommand"
                         CanExecute="OnCanExecuteSendDataCommand" />
+        <CommandBinding Command="{x:Static views2:InteractiveWindow.CalculateTotalCommand}"
+                        Executed="OnExecuteCalculateTotalCommand"
+                        CanExecute="OnCanExecuteCalculateTotalCommand" />
     </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -73,6 +76,9 @@
                     <RowDefinition Height="Auto" />
 
                     <!-- Send data text box + button -->
+                    <RowDefinition Height="Auto" />
+
+                    <!-- Add values text boxes + button -->
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
@@ -149,6 +155,43 @@
                                 <Binding ElementName="m_KnownEndpointsList"
                                          Path="SelectedItem" />
                                 <Binding ElementName="m_DataTextBox"
+                                         Path="Text" />
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                </Grid>
+
+                <Grid Grid.Row="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0"
+                             x:Name="m_FirstAdditionTextBox"
+                             Margin="3,3,3,3"
+                             HorizontalAlignment="Stretch" />
+
+                    <TextBox Grid.Column="1"
+                             x:Name="m_SecondAdditionTextBox"
+                             Margin="3,3,3,3"
+                             HorizontalAlignment="Stretch" />
+
+                    <Button Grid.Column="2"
+                            HorizontalAlignment="Right"
+                            MinWidth="75"
+                            Margin="3,3,3,3"
+                            Command="{x:Static views2:InteractiveWindow.CalculateTotalCommand}">
+                        <Button.Content>
+                            <TextBlock Text="Calculate total" />
+                        </Button.Content>
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource MessageSendParameterMultiConverter}">
+                                <Binding ElementName="m_KnownEndpointsList"
+                                         Path="SelectedItem" />
+                                <Binding ElementName="m_FirstAdditionTextBox"
+                                         Path="Text" />
+                                <Binding ElementName="m_SecondAdditionTextBox"
                                          Path="Text" />
                             </MultiBinding>
                         </Button.CommandParameter>

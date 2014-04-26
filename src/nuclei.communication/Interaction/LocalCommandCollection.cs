@@ -20,17 +20,18 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// The collection of registered commands.
         /// </summary>
-        private readonly SortedList<Type, ICommandSet> m_Commands
-            = new SortedList<Type, ICommandSet>(new TypeComparer());
+        private readonly Dictionary<CommandId, CommandDefinition> m_Commands
+            = new Dictionary<CommandId, CommandDefinition>();
 
         /// <summary>
         /// Registers a <see cref="ICommandSet"/> object.
         /// </summary>
+        /// <remarks>
         /// <para>
         /// A proper command set class has the following characteristics:
         /// <list type="bullet">
         ///     <item>
-        ///         <description>The interface must derrive from <see cref="ICommandSet"/>.</description>
+        ///         <description>The interface must derive from <see cref="ICommandSet"/>.</description>
         ///     </item>
         ///     <item>
         ///         <description>The interface must only have methods, no properties or events.</description>
@@ -52,52 +53,48 @@ namespace Nuclei.Communication.Interaction
         ///     </item>
         /// </list>
         /// </para>
-        /// <param name="commandType">The interface through which the commands will be executed.</param>
-        /// <param name="commands">The object that will execute the commands.</param>
+        /// </remarks>
+        /// <param name="definitions">The definitions that map the command interface methods to the object methods.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="commandType"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="definitions"/> is <see langword="null" />.
         /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="commands"/> is <see langword="null" />.
+        /// <exception cref="CommandAlreadyRegisteredException">
+        ///     Thrown if a <paramref name="definitions"/> with the specific ID has already been registered.
         /// </exception>
-        /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="commands"/> is <see langword="null" />.
-        /// </exception>
-        /// <exception cref="ArgumentException">
-        ///     Thrown if <paramref name="commands"/> does not implement the <paramref name="commandType"/> interface.
-        /// </exception>
-        /// <exception cref="TypeIsNotAValidCommandSetException">
-        ///     If the given type is not a valid <see cref="ICommandSet"/> interface.
-        /// </exception>
-        public void Register(Type commandType, ICommandSet commands)
+        public void Register(CommandDefinition[] definitions)
         {
             {
-                Lokad.Enforce.Argument(() => commandType);
-                Lokad.Enforce.Argument(() => commands);
-                Lokad.Enforce.With<ArgumentException>(
-                    commandType.IsInstanceOfType(commands),
-                    Resources.Exceptions_Messages_CommandObjectMustImplementCommandInterface);
+                Lokad.Enforce.Argument(() => definitions);
             }
 
-            commandType.VerifyThatTypeIsACorrectCommandSet();
-            if (m_Commands.ContainsKey(commandType))
+            foreach (var definition in definitions)
             {
-                throw new CommandAlreadyRegisteredException();
-            }
+                if (m_Commands.ContainsKey(definition.Id))
+                {
+                    throw new CommandAlreadyRegisteredException();
+                }
 
-            m_Commands.Add(commandType, commands);
+                m_Commands.Add(definition.Id, definition);
+            }
         }
 
         /// <summary>
-        /// Returns the command object that was registered for the given interface type.
+        /// Returns the command definition that was registered for the given command method.
         /// </summary>
-        /// <param name="interfaceType">The <see cref="ICommandSet"/> derived interface type.</param>
+        /// <param name="id">The ID of the command method.</param>
         /// <returns>
-        /// The desired command set.
+        /// The definition that contains the registered command method.
         /// </returns>
-        public ICommandSet CommandsFor(Type interfaceType)
+        public CommandDefinition CommandToInvoke(CommandId id)
         {
-            return !m_Commands.ContainsKey(interfaceType) ? null : m_Commands[interfaceType];
+            {
+                Lokad.Enforce.Argument(() => id);
+                Lokad.Enforce.With<UnknownCommandException>(
+                    m_Commands.ContainsKey(id),
+                    Resources.Exceptions_Messages_UnknownCommand);
+            }
+
+            return m_Commands[id];
         }
 
         /// <summary>
@@ -106,11 +103,11 @@ namespace Nuclei.Communication.Interaction
         /// <returns>
         /// The element in the collection at the current position of the enumerator.
         /// </returns>
-        public IEnumerator<Tuple<Type, ICommandSet>> GetEnumerator()
+        public IEnumerator<CommandId> GetEnumerator()
         {
             foreach (var pair in m_Commands)
             {
-                yield return new Tuple<Type, ICommandSet>(pair.Key, pair.Value);
+                yield return pair.Key;
             }
         }
 

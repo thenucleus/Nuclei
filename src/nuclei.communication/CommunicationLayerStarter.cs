@@ -11,7 +11,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using Nuclei.Communication.Discovery;
-using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
@@ -98,11 +97,7 @@ namespace Nuclei.Communication
                 {
                     try
                     {
-                        RegisterRequiredCommands();
-                        RegisterRequiredNotifications();
-
-                        ActivateCommands();
-                        ActivateNotifications();
+                        PreStartInitialize();
 
                         // Start the communication layer so that we can actuallly use it.
                         var layer = m_Context.Resolve<IProtocolLayer>();
@@ -120,6 +115,8 @@ namespace Nuclei.Communication
                         {
                             source.StartDiscovery();
                         }
+
+                        PostStartInitialize();
                     }
                     catch (Exception e)
                     {
@@ -136,67 +133,25 @@ namespace Nuclei.Communication
                 });
         }
 
-        private void RegisterRequiredCommands()
+        private void PreStartInitialize()
         {
-            var commandMapBuilders = m_Context.Resolve<IEnumerable<RequiredCommandsMappedBySubject>>();
-            var registration = m_Context.Resolve<RegisterRequiredCommand>();
-            foreach (var builder in commandMapBuilders)
+            var initializers = m_Context.Resolve<IEnumerable<IInitializeCommunicationInstances>>();
+            foreach (var initializer in initializers)
             {
-                var mappedCommands = builder();
-                foreach (var map in mappedCommands)
-                {
-                    registration(map.Item1, map.Item2);
-                }
+                initializer.RegisterProvidedCommands();
+                initializer.RegisterProvidedNotifications();
+                initializer.RegisterRequiredCommands();
+                initializer.RegisterRequiredNotifications();
+                initializer.InitializeBeforeCommunicationSignIn();
             }
         }
 
-        private void RegisterRequiredNotifications()
+        private void PostStartInitialize()
         {
-            var notificationMapBuilders = m_Context.Resolve<IEnumerable<RequiredNotificationsMappedBySubject>>();
-            var registration = m_Context.Resolve<RegisterRequiredNotification>();
-            foreach (var builder in notificationMapBuilders)
+            var initializers = m_Context.Resolve<IEnumerable<IInitializeCommunicationInstances>>();
+            foreach (var initializer in initializers)
             {
-                var mappedNotifications = builder();
-                foreach (var map in mappedNotifications)
-                {
-                    registration(map.Item1, map.Item2);
-                }
-            }
-        }
-
-        private void ActivateCommands()
-        {
-            // Get all the commands so that they all exist and at the same time
-            // make sure all commands have actually been registered.
-            var commands = m_Context.Resolve<IEnumerable<ICommandSet>>()
-                .Select(c => c.GetType())
-                .ToList();
-
-            var commandCollection = m_Context.Resolve<ICommandCollection>();
-            var unregisteredCommands = commandCollection
-                .Select(p => p.Item2.GetType())
-                .Except(commands, new TypeEqualityComparer());
-            if (unregisteredCommands.Any())
-            {
-                throw new UnknownCommandSetException();
-            }
-        }
-
-        private void ActivateNotifications()
-        {
-            // Get all the notifications so that they actually exist and at the same time
-            // make sure all notifications have actually been registered
-            var notifications = m_Context.Resolve<IEnumerable<INotificationSet>>()
-                .Select(n => n.GetType())
-                .ToList();
-
-            var notificationCollection = m_Context.Resolve<INotificationCollection>();
-            var unregisteredNotifications = notificationCollection
-                .Select(p => p.Item2.GetType())
-                .Except(notifications, new TypeEqualityComparer());
-            if (unregisteredNotifications.Any())
-            {
-                throw new UnknownNotificationSetException();
+                initializer.InitializeAfterCommunicationSignIn();
             }
         }
     }

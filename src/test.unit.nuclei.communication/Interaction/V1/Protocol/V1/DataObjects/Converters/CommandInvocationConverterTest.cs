@@ -70,17 +70,13 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 
             var translator = new CommandInvocationConverter(serializers.Object);
 
+            var id = CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) }));
             var data = new CommandInvocationData
             {
                 Id = new MessageId(),
                 InResponseTo = new MessageId(),
                 Sender = new EndpointId("a"),
-                InterfaceType = new SerializedType
-                {
-                    FullName = typeof(double).FullName,
-                    AssemblyName = typeof(double).Assembly.GetName().Name
-                },
-                MethodName = "method",
+                CommandId = CommandIdExtensions.Serialize(id),
                 ParameterTypes = new[]
                     {
                         new SerializedType
@@ -88,6 +84,10 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                                 FullName = typeof(int).FullName,
                                 AssemblyName = typeof(int).Assembly.GetName().Name
                             }, 
+                    },
+                ParameterNames = new[]
+                    {
+                        "other",
                     },
                 ParameterValues = new object[]
                     {
@@ -98,14 +98,11 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             Assert.IsInstanceOf(typeof(CommandInvokedMessage), msg);
             Assert.AreSame(data.Id, msg.Id);
             Assert.AreSame(data.Sender, msg.Sender);
-            Assert.AreEqual(data.InterfaceType.FullName, ((CommandInvokedMessage)msg).Invocation.Command.InterfaceType.FullName);
-            Assert.AreEqual(
-                data.InterfaceType.AssemblyName,
-                ((CommandInvokedMessage)msg).Invocation.Command.InterfaceType.Assembly.GetName().Name);
-            Assert.AreSame(data.MethodName, ((CommandInvokedMessage)msg).Invocation.Command.MethodName);
-            Assert.AreEqual(data.ParameterTypes.Length, ((CommandInvokedMessage)msg).Invocation.ParameterValues.Length);
-            Assert.AreEqual(typeof(int), ((CommandInvokedMessage)msg).Invocation.ParameterValues[0].Item1);
-            Assert.AreEqual(1, ((CommandInvokedMessage)msg).Invocation.ParameterValues[0].Item2);
+            Assert.AreEqual(id, ((CommandInvokedMessage)msg).Invocation.Command);
+            Assert.AreEqual(data.ParameterTypes.Length, ((CommandInvokedMessage)msg).Invocation.Parameters.Length);
+            Assert.AreEqual(typeof(int), ((CommandInvokedMessage)msg).Invocation.Parameters[0].Parameter.Type);
+            Assert.AreEqual("other", ((CommandInvokedMessage)msg).Invocation.Parameters[0].Parameter.Name);
+            Assert.AreEqual(1, ((CommandInvokedMessage)msg).Invocation.Parameters[0].Value);
         }
 
         [Test]
@@ -135,36 +132,39 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 
             var translator = new CommandInvocationConverter(serializers.Object);
 
+            var id = CommandId.Create(typeof(int).GetMethod("CompareTo", new[] { typeof(object) }));
             var msg = new CommandInvokedMessage(
                 new EndpointId("a"),
                 new CommandInvokedData(
-                    new CommandData(
-                        typeof(int),
-                        "CompareTo"), 
+                    id, 
                     new[]
                         {
-                            new Tuple<Type, object>(typeof(object), 1), 
+                            new CommandParameterValueMap(
+                                new CommandParameterDefinition(typeof(object), "other", CommandParameterOrigin.FromCommand), 
+                                1), 
                         }));
             var data = translator.FromMessage(msg);
             Assert.IsInstanceOf(typeof(CommandInvocationData), data);
             Assert.AreSame(msg.Id, data.Id);
             Assert.AreSame(msg.Sender, data.Sender);
             Assert.AreSame(msg.InResponseTo, data.InResponseTo);
-            Assert.AreEqual(msg.Invocation.Command.InterfaceType.FullName, ((CommandInvocationData)data).InterfaceType.FullName);
+            Assert.AreEqual(CommandIdExtensions.Serialize(id), ((CommandInvocationData)data).CommandId);
+            Assert.AreEqual(msg.Invocation.Parameters.Length, ((CommandInvocationData)data).ParameterTypes.Length);
             Assert.AreEqual(
-                msg.Invocation.Command.InterfaceType.Assembly.GetName().Name,
-                ((CommandInvocationData)data).InterfaceType.AssemblyName);
-            Assert.AreSame(msg.Invocation.Command.MethodName, ((CommandInvocationData)data).MethodName);
-            Assert.AreEqual(msg.Invocation.ParameterValues.Length, ((CommandInvocationData)data).ParameterTypes.Length);
-            Assert.AreEqual(
-                msg.Invocation.ParameterValues[0].Item1.FullName, 
+                msg.Invocation.Parameters[0].Parameter.Type.FullName, 
                 ((CommandInvocationData)data).ParameterTypes[0].FullName);
             Assert.AreEqual(
-                msg.Invocation.ParameterValues[0].Item1.Assembly.GetName().Name,
+                msg.Invocation.Parameters[0].Parameter.Type.Assembly.GetName().Name,
                 ((CommandInvocationData)data).ParameterTypes[0].AssemblyName);
-            Assert.AreEqual(msg.Invocation.ParameterValues.Length, ((CommandInvocationData)data).ParameterValues.Length);
+
+            Assert.AreEqual(msg.Invocation.Parameters.Length, ((CommandInvocationData)data).ParameterNames.Length);
             Assert.AreEqual(
-                msg.Invocation.ParameterValues[0].Item2,
+                msg.Invocation.Parameters[0].Parameter.Name,
+                ((CommandInvocationData)data).ParameterNames[0]);
+
+            Assert.AreEqual(msg.Invocation.Parameters.Length, ((CommandInvocationData)data).ParameterValues.Length);
+            Assert.AreEqual(
+                msg.Invocation.Parameters[0].Value,
                 ((CommandInvocationData)data).ParameterValues[0]);
         }
     }

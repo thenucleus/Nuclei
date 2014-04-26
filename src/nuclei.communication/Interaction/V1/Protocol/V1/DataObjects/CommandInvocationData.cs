@@ -17,20 +17,10 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects
     internal sealed class CommandInvocationData : DataObjectBase
     {
         /// <summary>
-        /// Gets or sets the type of interface on which the command was invoked.
+        /// Gets or sets the ID of the command that was invoked.
         /// </summary>
         [DataMember]
-        public SerializedType InterfaceType
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the name of the method that was invoked.
-        /// </summary>
-        [DataMember]
-        public string MethodName
+        public string CommandId
         {
             get;
             set;
@@ -41,6 +31,16 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects
         /// </summary>
         [DataMember]
         public SerializedType[] ParameterTypes
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the array of method parameter names.
+        /// </summary>
+        [DataMember]
+        public string[] ParameterNames
         {
             get;
             set;
