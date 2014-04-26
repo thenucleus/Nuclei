@@ -7,6 +7,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using Nuclei.Communication;
 using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Protocol;
@@ -86,6 +87,26 @@ namespace Nuclei.Examples.Complete.Views
                 var commands = m_Commands.CommandsFor<ITestCommandSet>(endpoint);
                 commands.Echo(messageText);
             }
+        }
+
+        /// <summary>
+        /// Sends a message to the given endpoint with the request to add the numbers.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to which the message should be send.</param>
+        /// <param name="first">The first number.</param>
+        /// <param name="second">The second number.</param>
+        /// <returns>The result of the addition.</returns>
+        public Task<int> AddNumbers(EndpointId endpoint, int first, int second)
+        {
+            if (!m_Commands.HasCommandFor(endpoint, typeof(ITestCommandSet)))
+            {
+                return Task<int>.Factory.StartNew(() => int.MinValue);
+            }
+
+            var commands = m_Commands.CommandsFor<ITestCommandSet>(endpoint);
+            var result = commands.Calculate(first, second);
+
+            return result;
         }
 
         /// <summary>

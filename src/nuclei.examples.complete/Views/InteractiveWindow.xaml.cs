@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Nuclei.Examples.Complete.Models;
 
 namespace Nuclei.Examples.Complete.Views
@@ -25,9 +26,14 @@ namespace Nuclei.Examples.Complete.Views
         public static readonly RoutedCommand SendDataCommand = new RoutedCommand();
 
         /// <summary>
-        /// The command used to send an Echo message to a given endpoint.
+        /// The command used to send a data message to a given endpoint.
         /// </summary>
         public static readonly RoutedCommand SendMessageCommand = new RoutedCommand();
+
+        /// <summary>
+        /// The command used to send a calculate message to a given endpoint.
+        /// </summary>
+        public static readonly RoutedCommand CalculateTotalCommand = new RoutedCommand();
 
         /// <summary>
         /// The context that will be used to exit the application.
@@ -106,6 +112,42 @@ namespace Nuclei.Examples.Complete.Views
             e.CanExecute = (model != null)
                 && (model.Item2 != null)
                 && m_Communicator.IsConnected && m_Communicator.CanContactEndpoint(model.Item2.Id);
+        }
+
+        private void OnExecuteCalculateTotalCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            var model = e.Parameter as Tuple<string, string, ConnectionInformationViewModel>;
+            var result = m_Communicator.AddNumbers(model.Item3.Id, int.Parse(model.Item1), int.Parse(model.Item2));
+            result.ContinueWith(
+                t => 
+                {
+                    Action action = () => ConnectionState.AddNewMessage(
+                        model.Item3.Id,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "{0} + {1} = {2}",
+                            model.Item1,
+                            model.Item2,
+                            t.Result));
+
+                    if (!Dispatcher.CheckAccess())
+                    {
+                        Dispatcher.Invoke(DispatcherPriority.Normal, action);
+                    }
+                    else
+                    {
+                        action();
+                    }
+                });
+        }
+
+        private void OnCanExecuteCalculateTotalCommand(object sender, CanExecuteRoutedEventArgs e)
+        {
+            var model = e.Parameter as Tuple<string, string, ConnectionInformationViewModel>;
+            e.Handled = true;
+            e.CanExecute = (model != null)
+                && (model.Item3 != null)
+                && m_Communicator.IsConnected && m_Communicator.CanContactEndpoint(model.Item3.Id);
         }
 
         /// <summary>

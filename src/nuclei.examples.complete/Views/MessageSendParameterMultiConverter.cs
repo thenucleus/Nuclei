@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Data;
 using Nuclei.Examples.Complete.Models;
 
@@ -39,13 +40,13 @@ namespace Nuclei.Examples.Complete.Views
         /// </returns>
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            string text = null;
+            var text = new List<string>();
             ConnectionInformationViewModel model = null;
             foreach (var obj in values)
             {
                 if (obj is string)
                 {
-                    text = obj as string;
+                    text.Add(obj as string);
                     continue;
                 }
 
@@ -55,7 +56,17 @@ namespace Nuclei.Examples.Complete.Views
                 }
             }
 
-            return Tuple.Create(text, model);
+            if (text.Count == 1)
+            {
+                return Tuple.Create(text[0], model);
+            }
+
+            if (text.Count == 2)
+            {
+                return Tuple.Create(text[0], text[1], model);
+            }
+
+            return null;
         }
 
         /// <summary>

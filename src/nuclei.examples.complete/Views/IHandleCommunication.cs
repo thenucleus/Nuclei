@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Nuclei.Communication;
 
 namespace Nuclei.Examples.Complete.Views
@@ -43,6 +44,15 @@ namespace Nuclei.Examples.Complete.Views
         /// <param name="endpoint">The endpoint to which the message should be send.</param>
         /// <param name="messageText">The text of the message.</param>
         void SendEchoMessageTo(EndpointId endpoint, string messageText);
+
+        /// <summary>
+        /// Sends a message to the given endpoint with the request to add the numbers.
+        /// </summary>
+        /// <param name="endpoint">The endpoint to which the message should be send.</param>
+        /// <param name="first">The first number.</param>
+        /// <param name="second">The second number.</param>
+        /// <returns>The result of the addition.</returns>
+        Task<int> AddNumbers(EndpointId endpoint, int first, int second);
 
         /// <summary>
         /// Sends a data stream to the given endpoint.
