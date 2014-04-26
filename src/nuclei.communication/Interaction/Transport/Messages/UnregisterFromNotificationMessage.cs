@@ -26,7 +26,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="notificationToUnsubscribeFrom"/> is <see langword="null" />.
         /// </exception>
-        public UnregisterFromNotificationMessage(EndpointId origin, NotificationData notificationToUnsubscribeFrom)
+        public UnregisterFromNotificationMessage(EndpointId origin, NotificationId notificationToUnsubscribeFrom)
             : this(origin, new MessageId(), notificationToUnsubscribeFrom)
         {
         }
@@ -46,7 +46,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="notificationToUnsubscribeFrom"/> is <see langword="null" />.
         /// </exception>
-        public UnregisterFromNotificationMessage(EndpointId origin, MessageId id, NotificationData notificationToUnsubscribeFrom)
+        public UnregisterFromNotificationMessage(EndpointId origin, MessageId id, NotificationId notificationToUnsubscribeFrom)
             : base(origin, id)
         {
             {
@@ -59,7 +59,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         /// <summary>
         /// Gets the notification from which the sender of the current message wants to unsubscribe.
         /// </summary>
-        public NotificationData Notification 
+        public NotificationId Notification 
         { 
             get; 
             private set; 

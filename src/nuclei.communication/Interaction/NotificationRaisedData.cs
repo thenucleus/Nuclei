@@ -17,7 +17,7 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// The notification that was raised.
         /// </summary>
-        private readonly NotificationData m_Notification;
+        private readonly NotificationId m_Notification;
 
         /// <summary>
         /// The event arguments for the notification.
@@ -35,7 +35,7 @@ namespace Nuclei.Communication.Interaction
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="eventArgs"/> is <see langword="null" />.
         /// </exception>
-        public NotificationRaisedData(NotificationData notification, EventArgs eventArgs)
+        public NotificationRaisedData(NotificationId notification, EventArgs eventArgs)
         {
             {
                 Lokad.Enforce.Argument(() => notification);
@@ -49,7 +49,7 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// Gets the notification that was raised.
         /// </summary>
-        public NotificationData Notification
+        public NotificationId Notification
         {
             [DebuggerStepThrough]
             get

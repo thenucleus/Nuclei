@@ -36,8 +36,8 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// The collection that maps an notification to a collection of registered listeners.
         /// </summary>
-        private readonly IDictionary<NotificationData, List<EndpointId>> m_RegisteredListeners
-            = new Dictionary<NotificationData, List<EndpointId>>();
+        private readonly IDictionary<NotificationId, List<EndpointId>> m_RegisteredListeners
+            = new Dictionary<NotificationId, List<EndpointId>>();
 
         /// <summary>
         /// The communication layer that is used to send out messages about newly
@@ -114,7 +114,7 @@ namespace Nuclei.Communication.Interaction
             var events = notificationType.GetEvents();
             foreach (var eventInfo in events)
             {
-                var serializedInfo = new NotificationData(notificationType, eventInfo.Name);
+                var serializedInfo = NotificationId.Create(eventInfo);
                 if (eventInfo.EventHandlerType == typeof(EventHandler))
                 {
                     // This one is easy because we know the types ...
@@ -148,7 +148,7 @@ namespace Nuclei.Communication.Interaction
             }
         }
 
-        private void HandleEventAndForwardToListeners(NotificationData originatingEvent, EventArgs args)
+        private void HandleEventAndForwardToListeners(NotificationId originatingEvent, EventArgs args)
         {
             List<EndpointId> endpoints = null;
             lock (m_Lock)
@@ -200,7 +200,7 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="notification">The object that describes to which event the endpoint wants to be subscribed.</param>
-        public void RegisterForNotification(EndpointId endpoint, NotificationData notification)
+        public void RegisterForNotification(EndpointId endpoint, NotificationId notification)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
@@ -228,7 +228,7 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="notification">The object that describes from which event the endpoint wants to be unsubscribed.</param>
-        public void UnregisterFromNotification(EndpointId endpoint, NotificationData notification)
+        public void UnregisterFromNotification(EndpointId endpoint, NotificationId notification)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);

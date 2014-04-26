@@ -143,6 +143,7 @@
     <Compile Include="Interaction\MethodMapper.cs" />
     <Compile Include="Interaction\MissingCommandParameterException.cs" />
     <Compile Include="Interaction\NonMappedCommandParameterException.cs" />
+    <Compile Include="Interaction\NotificationId.cs" />
     <Compile Include="ITimer.cs" />
     <Compile Include="Protocol\ConnectionMonitor.cs" />
     <Compile Include="DiscoveryInformation.cs" />
@@ -186,7 +187,6 @@
     <Compile Include="Interaction\CommandInvokedData.cs" />
     <Compile Include="Interaction\InteractionHandshakeConductor.cs" />
     <Compile Include="Interaction\InteractionExtensions.cs" />
-    <Compile Include="Interaction\NotificationData.cs" />
     <Compile Include="Interaction\NotificationRaisedData.cs" />
     <Compile Include="Interaction\RegisterCommand.cs" />
     <Compile Include="Interaction\RegisterNotification.cs" />
