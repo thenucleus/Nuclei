@@ -81,18 +81,21 @@ namespace Nuclei.Communication.Interaction.Transport
         {
             Func<T> action = () =>
             {
-                inputTask.Wait();
+                try
+                {
+                    inputTask.Wait();
+                }
+                catch (AggregateException e)
+                {
+                    throw new CommandInvocationFailedException(
+                        Resources.Exceptions_Messages_CommandInvocationFailed,
+                        e);
+                }
 
                 var resultMsg = inputTask.Result as CommandInvokedResponseMessage;
                 if (resultMsg != null)
                 {
                     return (T)resultMsg.Result;
-                }
-
-                var successMsg = inputTask.Result as SuccessMessage;
-                if (successMsg != null)
-                {
-                    return default(T);
                 }
 
                 throw new CommandInvocationFailedException();
