@@ -137,8 +137,17 @@ namespace Nuclei.Communication.Interaction
             var tester = (TNotification)proxy.GetTransparentProxy();
             eventRegistration(tester);
 
-            var eventName = proxy.Invocations.First();
+            var eventName = proxy.Invocations.FirstOrDefault();
+            if (eventName == null)
+            {
+                throw new InvalidNotificationMethodExpressionException();
+            }
+
             var eventInfo = typeof(TNotification).GetEvent(eventName);
+            if (eventInfo == null)
+            {
+                throw new InvalidNotificationMethodExpressionException();
+            }
 
             return new EventMapper(
                 StoreDefinition,

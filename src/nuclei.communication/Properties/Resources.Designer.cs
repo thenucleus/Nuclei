@@ -322,6 +322,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The notification event registration expression is not valid..
+        /// </summary>
+        internal static string Exceptions_Messages_InvalidNotificationMethodExpression {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_InvalidNotificationMethodExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The maximum number of channel restarts was exceeded. Not restarting the channel anymore..
         /// </summary>
         internal static string Exceptions_Messages_MaximumNumberOfChannelRestartsExceeded {

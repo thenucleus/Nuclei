@@ -348,4 +348,7 @@
   <data name="Exceptions_Messages_NotificationEventNotMapped" xml:space="preserve">
     <value>One or more events on the notification set are not mapped to instance events.</value>
   </data>
+  <data name="Exceptions_Messages_InvalidNotificationMethodExpression" xml:space="preserve">
+    <value>The notification event registration expression is not valid.</value>
+  </data>
 </root>
