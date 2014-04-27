@@ -421,6 +421,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One or more events on the notification set are not mapped to instance events..
+        /// </summary>
+        internal static string Exceptions_Messages_NotificationEventNotMapped {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_NotificationEventNotMapped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A notification ID cannot be deserialized from an empty string..
         /// </summary>
         internal static string Exceptions_Messages_NotificationIdCannotBeDeserializedFromAnEmptyString {

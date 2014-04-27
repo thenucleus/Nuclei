@@ -10,54 +10,39 @@ using System.Diagnostics;
 
 namespace Nuclei.Communication.Interaction
 {
-    internal class NotificationDefinition
+    /// <summary>
+    /// Stores information about the mapping of a single event of a <see cref="INotificationSet"/>.
+    /// </summary>
+    internal sealed class NotificationDefinition
     {
         /// <summary>
         /// The ID of the notification.
         /// </summary>
         private readonly NotificationId m_Id;
 
+        /// <summary>
+        /// The collection of event handlers that need to be notified when the notification is raised.
+        /// </summary>
         private readonly List<Action<NotificationId, EventArgs>> m_EventHandlers
             = new List<Action<NotificationId, EventArgs>>();
 
-        private void ConnectToEvents(Type notificationType, INotificationSet notifications)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotificationDefinition"/> class.
+        /// </summary>
+        /// <param name="id">The notification ID for the notification on the <see cref="INotificationSet"/>.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="id"/> is <see langword="null" />.
+        /// </exception>
+        public NotificationDefinition(NotificationId id)
         {
-            var events = notificationType.GetEvents();
-            foreach (var eventInfo in events)
             {
-                if (eventInfo.EventHandlerType == typeof(EventHandler))
-                {
-                    // This one is easy because we know the types ...
-                    eventInfo.AddEventHandler(notifications, (EventHandler)HandleEventAndForwardToListeners);
-                }
-                else
-                {
-                    // This one is not easy. So we need to create an EventHandler of the 
-                    // correct type (EventHandler<T> where T is the correct type) and then
-                    // attach it to the event.
-                    var argsTypes = eventInfo.EventHandlerType.GetGenericArguments();
-                    var handlerType = typeof(EventHandler<>).MakeGenericType(argsTypes);
-                    EventHandler<EventArgs> handler = HandleEventAndForwardToListeners;
-
-                    // The following works if all the interface / class definitions
-                    // are inside the same assembly (?)
-                    //   var del = Delegate.CreateDelegate(handlerType, handler.Method);
-                    // Unfortunately that seems to fail in this case so we'll do this the
-                    // nasty way.
-                    var constructors = handlerType.GetConstructors();
-                    var del = (Delegate)constructors[0].Invoke(
-                        new[] 
-                            { 
-                                handler.Target, 
-                                handler.Method.MethodHandle.GetFunctionPointer() 
-                            });
-
-                    eventInfo.AddEventHandler(notifications, del);
-                }
+                Lokad.Enforce.Argument(() => id);
             }
+
+            m_Id = id;
         }
 
-        private void HandleEventAndForwardToListeners(object sender, EventArgs args)
+        public void HandleEventAndForwardToListeners(object sender, EventArgs args)
         {
             foreach (var handler in m_EventHandlers)
             {
@@ -77,8 +62,17 @@ namespace Nuclei.Communication.Interaction
             }
         }
 
+        /// <summary>
+        /// Stores the handler for later use when a notification is raised.
+        /// </summary>
+        /// <param name="notificationHandler">The notification handler.</param>
         public void OnNotification(Action<NotificationId, EventArgs> notificationHandler)
         {
+            {
+                Lokad.Enforce.Argument(() => notificationHandler);
+            }
+
+            m_EventHandlers.Add(notificationHandler);
         }
     }
 }

@@ -345,4 +345,7 @@
   <data name="Exceptions_Messages_NotificationAlreadyRegistered" xml:space="preserve">
     <value>The given notification interface is already registered.</value>
   </data>
+  <data name="Exceptions_Messages_NotificationEventNotMapped" xml:space="preserve">
+    <value>One or more events on the notification set are not mapped to instance events.</value>
+  </data>
 </root>
