@@ -42,7 +42,7 @@ namespace Nuclei.Communication.Interaction
             m_Id = id;
         }
 
-        public void HandleEventAndForwardToListeners(object sender, EventArgs args)
+        public void ForwardToListeners(object sender, EventArgs args)
         {
             foreach (var handler in m_EventHandlers)
             {

@@ -54,7 +54,7 @@ namespace Nuclei.Communication.Interaction
             var definition = new NotificationDefinition(m_NotificationId);
 
             m_StoreDefinition(definition);
-            return definition.HandleEventAndForwardToListeners;
+            return definition.ForwardToListeners;
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Nuclei.Communication.Interaction
             var definition = new NotificationDefinition(m_NotificationId);
 
             m_StoreDefinition(definition);
-            return definition.HandleEventAndForwardToListeners;
+            return definition.ForwardToListeners;
         }
     }
 }
