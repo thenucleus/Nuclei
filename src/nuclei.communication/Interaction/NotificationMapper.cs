@@ -86,8 +86,9 @@ namespace Nuclei.Communication.Interaction
                 var parameterTypes = (Type[])msg.Properties["__MethodSignature"];
                 var method = typeof(TNotification).GetMethod(methodName, parameterTypes);
 
-                if (method.Name.StartsWith(EventSubscribeMethodPrefix, StringComparison.Ordinal) 
-                    || method.Name.StartsWith(EventUnsubscribeMethodPrefix, StringComparison.Ordinal))
+                if ((method != null) && (method.Name != null) 
+                    && (method.Name.StartsWith(EventSubscribeMethodPrefix, StringComparison.Ordinal)
+                        || method.Name.StartsWith(EventUnsubscribeMethodPrefix, StringComparison.Ordinal)))
                 {
                     m_Invocations.Add(ReplaceAddRemovePrefixes(method.Name));
                 }

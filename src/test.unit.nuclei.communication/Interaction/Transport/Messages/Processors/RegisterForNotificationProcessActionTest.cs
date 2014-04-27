@@ -29,11 +29,11 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
         public void Invoke()
         {
             EndpointId processedId = null;
-            NotificationData registration = null;
+            NotificationId registration = null;
             var sink = new Mock<ISendNotifications>();
             {
-                sink.Setup(s => s.RegisterForNotification(It.IsAny<EndpointId>(), It.IsAny<NotificationData>()))
-                    .Callback<EndpointId, NotificationData>((e, s) =>
+                sink.Setup(s => s.RegisterForNotification(It.IsAny<EndpointId>(), It.IsAny<NotificationId>()))
+                    .Callback<EndpointId, NotificationId>((e, s) =>
                     {
                         processedId = e;
                         registration = s;
@@ -43,7 +43,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
             var action = new RegisterForNotificationProcessAction(sink.Object);
 
             var id = new EndpointId("id");
-            NotificationData reg = new NotificationData(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler), "OnMyEvent");
+            var reg = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent"));
             var msg = new RegisterForNotificationMessage(id, reg);
             action.Invoke(msg);
 

@@ -74,10 +74,11 @@ namespace Nuclei.Communication.Interaction
 
             var collection = new LocalNotificationCollection(layer.Object);
 
-            var obj = new MockNotificationSet();
-            collection.Register(typeof(IMockNotificationSet), obj);
+            var id = NotificationId.Create(typeof(IMockNotificationSet).GetEvent("OnMyEvent"));
+            var def = new NotificationDefinition(id);
+            collection.Register(new[] { def });
 
-            Assert.IsTrue(collection.Any(pair => pair.Item1 == typeof(IMockNotificationSet)));
+            Assert.IsTrue(collection.Any(pair => pair.Equals(id)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
         }
 
@@ -96,10 +97,11 @@ namespace Nuclei.Communication.Interaction
 
             var collection = new LocalNotificationCollection(layer.Object);
 
-            var obj = new MockNotificationSet();
-            collection.Register(typeof(IMockNotificationSet), obj);
+            var id = NotificationId.Create(typeof(IMockNotificationSet).GetEvent("OnMyEvent"));
+            var def = new NotificationDefinition(id);
+            collection.Register(new[] { def });
 
-            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(IMockNotificationSet)));
+            Assert.AreEqual(1, collection.Count(pair => pair.Equals(id)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
         }
 
@@ -133,14 +135,16 @@ namespace Nuclei.Communication.Interaction
 
             var collection = new LocalNotificationCollection(layer.Object);
 
+            var id = NotificationId.Create(typeof(IMockNotificationSet).GetEvent("OnMyEvent"));
+            var def = new NotificationDefinition(id);
             var obj = new MockNotificationSet();
-            collection.Register(typeof(IMockNotificationSet), obj);
+            obj.OnMyEvent += def.ForwardToListeners;
+            collection.Register(new[] { def });
 
-            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(IMockNotificationSet)));
+            Assert.AreEqual(1, collection.Count(pair => pair.Equals(id)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
 
-            var notificationData = new NotificationData(typeof(IMockNotificationSet), "OnMyEvent");
-            collection.RegisterForNotification(knownEndpoint, notificationData);
+            collection.RegisterForNotification(knownEndpoint, id);
 
             var args = new EventArgs();
             obj.RaiseOnMyEvent(args);
@@ -150,7 +154,7 @@ namespace Nuclei.Communication.Interaction
             Assert.IsInstanceOf<NotificationRaisedMessage>(msg);
 
             var notificationMsg = msg as NotificationRaisedMessage;
-            Assert.AreEqual(notificationData, notificationMsg.Notification.Notification);
+            Assert.AreEqual(id, notificationMsg.Notification.Notification);
             Assert.AreSame(args, notificationMsg.Notification.EventArgs);
         }
 
@@ -184,14 +188,16 @@ namespace Nuclei.Communication.Interaction
 
             var collection = new LocalNotificationCollection(layer.Object);
 
+            var id = NotificationId.Create(typeof(IMockNotificationSet).GetEvent("OnMyOtherEvent"));
+            var def = new NotificationDefinition(id);
             var obj = new MockNotificationSet();
-            collection.Register(typeof(IMockNotificationSet), obj);
+            obj.OnMyOtherEvent += def.ForwardToListeners;
+            collection.Register(new[] { def });
 
-            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(IMockNotificationSet)));
+            Assert.AreEqual(1, collection.Count(pair => pair.Equals(id)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
 
-            var notificationData = new NotificationData(typeof(IMockNotificationSet), "OnMyOtherEvent");
-            collection.RegisterForNotification(knownEndpoint, notificationData);
+            collection.RegisterForNotification(knownEndpoint, id);
 
             var args = new UnhandledExceptionEventArgs(new Exception(), false);
             obj.RaiseOnMyOtherEvent(args);
@@ -201,7 +207,7 @@ namespace Nuclei.Communication.Interaction
             Assert.IsInstanceOf<NotificationRaisedMessage>(msg);
 
             var notificationMsg = msg as NotificationRaisedMessage;
-            Assert.AreEqual(notificationData, notificationMsg.Notification.Notification);
+            Assert.AreEqual(id, notificationMsg.Notification.Notification);
             Assert.AreSame(args, notificationMsg.Notification.EventArgs);
         }
 
@@ -235,15 +241,17 @@ namespace Nuclei.Communication.Interaction
 
             var collection = new LocalNotificationCollection(layer.Object);
 
+            var id = NotificationId.Create(typeof(IMockNotificationSet).GetEvent("OnMyEvent"));
+            var def = new NotificationDefinition(id);
             var obj = new MockNotificationSet();
-            collection.Register(typeof(IMockNotificationSet), obj);
+            obj.OnMyEvent += def.ForwardToListeners;
+            collection.Register(new[] { def });
 
-            Assert.AreEqual(1, collection.Count(pair => pair.Item1 == typeof(IMockNotificationSet)));
+            Assert.AreEqual(1, collection.Count(pair => pair.Equals(id)));
             layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
 
-            var notificationData = new NotificationData(typeof(IMockNotificationSet), "OnMyEvent");
-            collection.RegisterForNotification(knownEndpoint, notificationData);
-            collection.UnregisterFromNotification(knownEndpoint, notificationData);
+            collection.RegisterForNotification(knownEndpoint, id);
+            collection.UnregisterFromNotification(knownEndpoint, id);
 
             other = null;
             msg = null;

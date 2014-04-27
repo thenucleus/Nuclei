@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Moq;
 using NUnit.Framework;
@@ -29,11 +28,11 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
         public void Invoke()
         {
             EndpointId processedId = null;
-            NotificationData registration = null;
+            NotificationId registration = null;
             var sink = new Mock<ISendNotifications>();
             {
-                sink.Setup(s => s.UnregisterFromNotification(It.IsAny<EndpointId>(), It.IsAny<NotificationData>()))
-                    .Callback<EndpointId, NotificationData>((e, s) =>
+                sink.Setup(s => s.UnregisterFromNotification(It.IsAny<EndpointId>(), It.IsAny<NotificationId>()))
+                    .Callback<EndpointId, NotificationId>((e, s) =>
                     {
                         processedId = e;
                         registration = s;
@@ -41,9 +40,9 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
             }
 
             var action = new UnregisterFromNotificationProcessAction(sink.Object);
-
+            
             var id = new EndpointId("id");
-            NotificationData reg = new NotificationData(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler), "OnMyEvent");
+            var reg = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent"));
             var msg = new UnregisterFromNotificationMessage(id, reg);
             action.Invoke(msg);
 

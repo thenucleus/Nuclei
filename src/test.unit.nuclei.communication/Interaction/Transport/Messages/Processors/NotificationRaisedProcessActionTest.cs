@@ -5,10 +5,8 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Moq;
-using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
@@ -22,56 +20,41 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
         [Test]
         public void MessageTypeToProcess()
         {
-            var commands = new Mock<INotifyOfRemoteEndpointEvents>();
+            var notifications = new Mock<IRaiseProxyNotifications>();
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
-            var action = new NotificationRaisedProcessAction(commands.Object, systemDiagnostics);
+            var action = new NotificationRaisedProcessAction(notifications.Object, systemDiagnostics);
             Assert.AreEqual(typeof(NotificationRaisedMessage), action.MessageTypeToProcess);
         }
         
         [Test]
         public void Invoke()
         {
-            var local = new EndpointId("local");
-            Action<EndpointId, ICommunicationMessage> messageSender = (e, m) => { };
-
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
-            var builder = new NotificationProxyBuilder(local, messageSender, systemDiagnostics);
 
             var remoteEndpoint = new EndpointId("other");
-            var proxy = builder.ProxyConnectingTo(remoteEndpoint, typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler));
-
-            object sender = null;
-            EventArgs args = null;
-            ((InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler)proxy).OnMyEvent += 
-                (s, e) => 
-                {
-                    sender = s;
-                    args = e;
-                };
-
-            var commandSets = new List<KeyValuePair<Type, INotificationSet>> 
-                { 
-                    new KeyValuePair<Type, INotificationSet>(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler), proxy)
-                };
-
-            var notifications = new Mock<INotifyOfRemoteEndpointEvents>();
+            var reg = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent"));
+            var eventArgs = new InteractionExtensionsTest.MySerializableEventArgs();
+            var notifications = new Mock<IRaiseProxyNotifications>();
             {
-                notifications.Setup(c => c.NotificationsFor(It.IsAny<EndpointId>(), It.IsAny<Type>()))
-                    .Returns(commandSets[0].Value);
+                notifications.Setup(c => c.RaiseNotification(It.IsAny<EndpointId>(), It.IsAny<NotificationId>(), It.IsAny<EventArgs>()))
+                    .Callback<EndpointId, NotificationId, EventArgs>(
+                        (e, n, a) =>
+                        {
+                            Assert.AreSame(remoteEndpoint, e);
+                            Assert.AreSame(reg, n);
+                            Assert.AreSame(eventArgs, a);
+                        })
+                    .Verifiable();
             }
 
             var action = new NotificationRaisedProcessAction(notifications.Object, systemDiagnostics);
-
-            var eventArgs = new InteractionExtensionsTest.MySerializableEventArgs();
             action.Invoke(
                 new NotificationRaisedMessage(
-                    new EndpointId("otherId"),
-                    new NotificationRaisedData(
-                        new NotificationData(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler), "OnMyEvent"), eventArgs)));
+                    remoteEndpoint,
+                    new NotificationRaisedData(reg, eventArgs)));
 
-            Assert.AreSame(proxy, sender);
-            Assert.AreSame(eventArgs, args);
+            notifications.Verify(n => n.RaiseNotification(It.IsAny<EndpointId>(), It.IsAny<NotificationId>(), It.IsAny<EventArgs>()), Times.Once());
         }
     }
 }

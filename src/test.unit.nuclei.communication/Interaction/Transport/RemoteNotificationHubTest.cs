@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Moq;
@@ -164,6 +165,49 @@ namespace Nuclei.Communication.Interaction.Transport
             Assert.IsNotNull(proxy);
             Assert.IsInstanceOf<NotificationSetProxy>(proxy);
             Assert.IsInstanceOf<InteractionExtensionsTest.IMockNotificationSetWithEventHandler>(proxy);
+        }
+
+        [Test]
+        public void RaiseNotification()
+        {
+            var localEndpoint = new EndpointId("local");
+            var notifier = new Mock<IStoreInformationAboutEndpoints>();
+            var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
+
+            var hub = new RemoteNotificationHub(
+                notifier.Object,
+                new NotificationProxyBuilder(
+                    localEndpoint,
+                    (e, msg) => { },
+                    systemDiagnostics),
+                systemDiagnostics);
+
+            var endpoint = new EndpointId("other");
+            var types = new List<OfflineTypeInformation>
+                    {
+                        new OfflineTypeInformation(
+                            typeof(InteractionExtensionsTest.IMockNotificationSetWithEventHandler).FullName,
+                            typeof(InteractionExtensionsTest.IMockNotificationSetWithEventHandler).Assembly.GetName())
+                    };
+
+            hub.OnReceiptOfEndpointNotifications(endpoint, types);
+
+            var proxy = hub.NotificationsFor<InteractionExtensionsTest.IMockNotificationSetWithEventHandler>(endpoint);
+            Assert.IsNotNull(proxy);
+
+            var id = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithEventHandler).GetEvent("OnMyEvent"));
+            var args = new EventArgs();
+
+            var wasEventRaised = false;
+            proxy.OnMyEvent += 
+                (s, e) =>
+                {
+                    wasEventRaised = true;
+                    Assert.AreSame(args, e);
+                };
+            hub.RaiseNotification(endpoint, id, args);
+
+            Assert.IsTrue(wasEventRaised);
         }
     }
 }
