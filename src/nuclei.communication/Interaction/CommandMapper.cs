@@ -17,7 +17,7 @@ namespace Nuclei.Communication.Interaction
 {
     /// <summary>
     /// Defines methods to map the methods on a <see cref="ICommandSet"/> to methods on one or more objects
-    /// which may or may not implement the interface..
+    /// which may or may not implement the interface.
     /// </summary>
     /// <typeparam name="TCommand">The interface type for which the command methods should be mapped.</typeparam>
     public sealed class CommandMapper<TCommand> where TCommand : ICommandSet

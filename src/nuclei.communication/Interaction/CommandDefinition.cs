@@ -12,7 +12,7 @@ using System.Linq;
 namespace Nuclei.Communication.Interaction
 {
     /// <summary>
-    /// Stores information about a single method of a <see cref="ICommandSet"/>.
+    /// Stores information about the mapping of a single method of a <see cref="ICommandSet"/>.
     /// </summary>
     internal sealed class CommandDefinition
     {
