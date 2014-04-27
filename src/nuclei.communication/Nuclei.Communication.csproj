@@ -147,6 +147,7 @@
     <Compile Include="Interaction\NotificationDefinition.cs" />
     <Compile Include="Interaction\NotificationId.cs" />
     <Compile Include="Interaction\NotificationIdExtensions.cs" />
+    <Compile Include="Interaction\Transport\IRaiseProxyNotifications.cs" />
     <Compile Include="ITimer.cs" />
     <Compile Include="Protocol\ConnectionMonitor.cs" />
     <Compile Include="DiscoveryInformation.cs" />
