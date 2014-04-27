@@ -412,6 +412,24 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The given notification interface is already registered..
+        /// </summary>
+        internal static string Exceptions_Messages_NotificationAlreadyRegistered {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_NotificationAlreadyRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A notification ID cannot be deserialized from an empty string..
+        /// </summary>
+        internal static string Exceptions_Messages_NotificationIdCannotBeDeserializedFromAnEmptyString {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_NotificationIdCannotBeDeserializedFromAnEmptyString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The requested notification is not supported by the endpoint..
         /// </summary>
         internal static string Exceptions_Messages_NotificationNotSupported {

@@ -60,16 +60,10 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 
             try
             {
-                var interfaceType = TypeLoader.FromPartialInformation(
-                    msg.InterfaceType.FullName,
-                    msg.InterfaceType.AssemblyName);
-
                 return new UnregisterFromNotificationMessage(
                     data.Sender,
                     data.Id,
-                    new NotificationData(
-                        interfaceType,
-                        msg.EventName));
+                    NotificationIdExtensions.Deserialize(msg.NotificationId));
             }
             catch (Exception)
             {
@@ -102,12 +96,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                         Id = message.Id,
                         InResponseTo = message.InResponseTo,
                         Sender = message.Sender,
-                        InterfaceType = new SerializedType
-                            {
-                                FullName = msg.Notification.InterfaceType.FullName,
-                                AssemblyName = msg.Notification.InterfaceType.Assembly.GetName().Name
-                            },
-                        EventName = msg.Notification.EventName,
+                        NotificationId = NotificationIdExtensions.Serialize(msg.Notification),
                     };
             }
             catch (Exception)

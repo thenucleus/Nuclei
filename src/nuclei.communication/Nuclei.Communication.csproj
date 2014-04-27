@@ -143,7 +143,10 @@
     <Compile Include="Interaction\MethodMapper.cs" />
     <Compile Include="Interaction\MissingCommandParameterException.cs" />
     <Compile Include="Interaction\NonMappedCommandParameterException.cs" />
+    <Compile Include="Interaction\NotificationAlreadyRegisteredException.cs" />
+    <Compile Include="Interaction\NotificationDefinition.cs" />
     <Compile Include="Interaction\NotificationId.cs" />
+    <Compile Include="Interaction\NotificationIdExtensions.cs" />
     <Compile Include="ITimer.cs" />
     <Compile Include="Protocol\ConnectionMonitor.cs" />
     <Compile Include="DiscoveryInformation.cs" />

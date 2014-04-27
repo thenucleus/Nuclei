@@ -38,7 +38,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <summary>
         /// The function which sends the <see cref="RegisterForNotificationMessage"/> to the owning endpoint.
         /// </summary>
-        private readonly Action<NotificationData> m_TransmitDeregistration;
+        private readonly Action<NotificationId> m_TransmitDeregistration;
 
         /// <summary>
         /// The object that provides the diagnostics methods for the system.
@@ -64,7 +64,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </exception>
         public NotificationEventRemoveMethodInterceptor(
             Type proxyInterfaceType,
-            Action<NotificationData> transmitDeregistration,
+            Action<NotificationId> transmitDeregistration,
             SystemDiagnostics systemDiagnostics)
         {
             {
@@ -100,14 +100,16 @@ namespace Nuclei.Communication.Interaction.Transport
             
             var methodToInvoke = invocation.Method.Name;
             var eventName = methodToInvoke.Substring(MethodPrefix.Length);
+            var eventInfo = m_InterfaceType.GetEvent(eventName);
+            var eventId = NotificationId.Create(eventInfo);
 
             var handler = invocation.Arguments[0] as Delegate;
             var proxy = invocation.Proxy as NotificationSetProxy;
-            proxy.RemoveFromEvent(eventName, handler);
+            proxy.RemoveFromEvent(eventId, handler);
 
-            if (!proxy.HasSubscribers(eventName))
+            if (!proxy.HasSubscribers(eventId))
             {
-                m_TransmitDeregistration(new NotificationData(m_InterfaceType, eventName));
+                m_TransmitDeregistration(eventId);
             }
         }
     }
