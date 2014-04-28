@@ -60,5 +60,10 @@ namespace Nuclei.Examples.Complete.Views
         /// <param name="endpoint">The endpoint to which the data should be send.</param>
         /// <param name="dataText">The text.</param>
         void SendDataTo(EndpointId endpoint, string dataText);
+
+        /// <summary>
+        /// Sends a notification to the given endpoint.
+        /// </summary>
+        void Notify();
     }
 }

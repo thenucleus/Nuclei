@@ -36,6 +36,11 @@ namespace Nuclei.Examples.Complete.Views
         public static readonly RoutedCommand CalculateTotalCommand = new RoutedCommand();
 
         /// <summary>
+        /// The command used to send a notification to a given endpoint.
+        /// </summary>
+        public static readonly RoutedCommand NotifyCommand = new RoutedCommand();
+
+        /// <summary>
         /// The context that will be used to exit the application.
         /// </summary>
         private readonly System.Windows.Forms.ApplicationContext m_Context;
@@ -148,6 +153,17 @@ namespace Nuclei.Examples.Complete.Views
             e.CanExecute = (model != null)
                 && (model.Item3 != null)
                 && m_Communicator.IsConnected && m_Communicator.CanContactEndpoint(model.Item3.Id);
+        }
+
+        private void OnExecuteNotifyCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            m_Communicator.Notify();
+        }
+
+        private void OnCanExecuteNotifyCommand(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.Handled = true;
+            e.CanExecute = (m_Communicator != null) && m_Communicator.IsConnected;
         }
 
         /// <summary>

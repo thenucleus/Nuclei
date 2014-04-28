@@ -93,7 +93,14 @@ namespace Nuclei.Examples.Complete
         /// </summary>
         public void RegisterProvidedNotifications()
         {
-            // Do nothing for now ...
+            var instance = m_Context.Resolve<TestNotifications>();
+
+            var map = NotificationMapper<ITestNotificationSet>.Create();
+            instance.OnNotify += map.From(t => t.OnNotify += null)
+                .GenerateHandler();
+
+            var collection = m_Context.Resolve<RegisterNotification>();
+            collection(map.ToMap(), m_Subjects.Select(s => new SubjectGroupIdentifier(s, new Version(1, 0), "a")).ToArray());
         }
 
         /// <summary>
@@ -101,7 +108,8 @@ namespace Nuclei.Examples.Complete
         /// </summary>
         public void RegisterRequiredNotifications()
         {
-            // Do nothing for now ...
+            var registration = m_Context.Resolve<RegisterRequiredNotification>();
+            registration(typeof(ITestNotificationSet), m_Subjects.Select(s => new SubjectGroupIdentifier(s, new Version(1, 0), "a")).ToArray());
         }
 
         /// <summary>

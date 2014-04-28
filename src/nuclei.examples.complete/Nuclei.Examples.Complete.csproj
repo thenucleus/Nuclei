@@ -67,6 +67,7 @@
     <Compile Include="CommunicationInitializer.cs" />
     <Compile Include="IFormTheApplicationCenter.cs" />
     <Compile Include="ITestCommandSet.cs" />
+    <Compile Include="ITestNotificationSet.cs" />
     <Compile Include="Models\CommunicationSubjectViewModel.cs" />
     <Compile Include="Models\ConnectionViewModel.cs" />
     <Compile Include="Models\ConnectionInformationViewModel.cs" />
@@ -75,6 +76,7 @@
     </Compile>
     <Compile Include="TestCommands.cs" />
     <Compile Include="TestConstants.cs" />
+    <Compile Include="TestNotifications.cs" />
     <Compile Include="UtilsModule.cs" />
     <Compile Include="Views\CommunicationPassThrough.cs" />
     <Compile Include="DependencyInjection.cs" />
