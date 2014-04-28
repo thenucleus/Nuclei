@@ -4,8 +4,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Diagnostics.CodeAnalysis;
+using Nuclei.Nunit.Extensions;
 using NUnit.Framework;
 
 namespace Nuclei.Communication.Interaction
@@ -13,17 +13,7 @@ namespace Nuclei.Communication.Interaction
     [TestFixture]
     [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
         Justification = "Unit tests do not need documentation.")]
-    public sealed class NotificationRaisedDataTest
+    public sealed class NotificationEventNotMappedExceptionTest : ExceptionContractVerifier<NotificationEventNotMappedException>
     {
-        [Test]
-        public void Create()
-        {
-            var reg = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent"));
-            var args = new EventArgs();
-
-            var eventRaisedData = new NotificationRaisedData(reg, args);
-            Assert.AreSame(reg, eventRaisedData.Notification);
-            Assert.AreSame(args, eventRaisedData.EventArgs);
-        }
     }
 }

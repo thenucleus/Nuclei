@@ -33,24 +33,24 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <summary>
         /// The collection that holds the delegates for the different events.
         /// </summary>
-        private readonly IDictionary<string, List<Delegate>> m_EventHandlers
-            = new SortedList<string, List<Delegate>>();
+        private readonly IDictionary<NotificationId, List<Delegate>> m_EventHandlers
+            = new SortedList<NotificationId, List<Delegate>>();
 
         /// <summary>
         /// Adds the given event handler to the collection of handlers for the given event.
         /// </summary>
-        /// <param name="eventName">The name of the event.</param>
+        /// <param name="eventId">The ID of the event.</param>
         /// <param name="handler">The event handler.</param>
-        protected internal void AddToEvent(string eventName, Delegate handler)
+        internal void AddToEvent(NotificationId eventId, Delegate handler)
         {
             lock (m_Lock)
             {
-                if (!m_EventHandlers.ContainsKey(eventName))
+                if (!m_EventHandlers.ContainsKey(eventId))
                 {
-                    m_EventHandlers.Add(eventName, new List<Delegate>());
+                    m_EventHandlers.Add(eventId, new List<Delegate>());
                 }
 
-                var delegates = m_EventHandlers[eventName];
+                var delegates = m_EventHandlers[eventId];
                 if (!delegates.Contains(handler))
                 {
                     delegates.Add(handler);
@@ -61,20 +61,20 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <summary>
         /// Removes the given event handler from the collection of handlers for the given event.
         /// </summary>
-        /// <param name="eventName">The name of the event.</param>
+        /// <param name="eventId">The ID of the event.</param>
         /// <param name="handler">The event handler.</param>
-        protected internal void RemoveFromEvent(string eventName, Delegate handler)
+        internal void RemoveFromEvent(NotificationId eventId, Delegate handler)
         {
             lock (m_Lock)
             {
-                if (m_EventHandlers.ContainsKey(eventName))
+                if (m_EventHandlers.ContainsKey(eventId))
                 {
-                    var delegates = m_EventHandlers[eventName];
+                    var delegates = m_EventHandlers[eventId];
                     if (delegates.Remove(handler))
                     {
                         if (delegates.Count == 0)
                         {
-                            m_EventHandlers.Remove(eventName);
+                            m_EventHandlers.Remove(eventId);
                         }
                     }
                 }
@@ -88,7 +88,7 @@ namespace Nuclei.Communication.Interaction.Transport
         ///     Note that this method does not indicate to the remote endpoint that there
         ///     are no more subscribers.
         /// </remarks>
-        protected internal void ClearAllEvents()
+        internal void ClearAllEvents()
         {
             lock (m_Lock)
             {
@@ -102,19 +102,19 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <summary>
         /// Indicates if there are any subscribers to the given event.
         /// </summary>
-        /// <param name="eventName">The name of the event.</param>
+        /// <param name="eventId">The ID of the event.</param>
         /// <returns>
         ///     <see langword="true" /> if there is at least one subscriber to the event; otherwise, <see langword="false" />.
         /// </returns>
         [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
-        protected internal bool HasSubscribers(string eventName)
+        internal bool HasSubscribers(NotificationId eventId)
         {
             lock (m_Lock)
             {
-                if (m_EventHandlers.ContainsKey(eventName))
+                if (m_EventHandlers.ContainsKey(eventId))
                 {
-                    return m_EventHandlers[eventName].Count > 0;
+                    return m_EventHandlers[eventId].Count > 0;
                 }
             }
 
@@ -122,25 +122,25 @@ namespace Nuclei.Communication.Interaction.Transport
         }
 
         /// <summary>
-        /// Raises the event given by the <paramref name="eventName"/> parameter.
+        /// Raises the event given by the <paramref name="eventId"/> parameter.
         /// </summary>
-        /// <param name="eventName">The name of the event that should be raised.</param>
+        /// <param name="eventId">The ID of the event that should be raised.</param>
         /// <param name="args">The event arguments with which the event should be raised.</param>
-        protected internal void RaiseEvent(string eventName, EventArgs args)
+        internal void RaiseEvent(NotificationId eventId, EventArgs args)
         {
             var obj = SelfReference();
             var delegates = new List<Delegate>();
             lock (m_Lock)
             {
-                if (m_EventHandlers.ContainsKey(eventName))
+                if (m_EventHandlers.ContainsKey(eventId))
                 {
-                    delegates.AddRange(m_EventHandlers[eventName]);
+                    delegates.AddRange(m_EventHandlers[eventId]);
                 }
             }
 
             foreach (var del in delegates)
             {
-                del.DynamicInvoke(new object[] { obj, args });
+                del.DynamicInvoke(new[] { obj, args });
             }
         }
 

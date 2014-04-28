@@ -18,7 +18,7 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="notification">The object that describes to which event the endpoint wants to be subscribed.</param>
-        void RegisterForNotification(EndpointId endpoint, NotificationData notification);
+        void RegisterForNotification(EndpointId endpoint, NotificationId notification);
 
         /// <summary>
         /// Deregisters a specific endpoint so that it will no longer be notified when the specified event
@@ -26,6 +26,6 @@ namespace Nuclei.Communication.Interaction
         /// </summary>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="notification">The object that describes from which event the endpoint wants to be unsubscribed.</param>
-        void UnregisterFromNotification(EndpointId endpoint, NotificationData notification);
+        void UnregisterFromNotification(EndpointId endpoint, NotificationId notification);
     }
 }

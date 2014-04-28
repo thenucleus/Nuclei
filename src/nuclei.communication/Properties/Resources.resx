@@ -339,4 +339,16 @@
   <data name="Log_Messages_ManualDisoveryWaitingForLayerSignIn" xml:space="preserve">
     <value>Signaling new connection through manual discovery. Waiting for communication layer to sign in ...</value>
   </data>
+  <data name="Exceptions_Messages_NotificationIdCannotBeDeserializedFromAnEmptyString" xml:space="preserve">
+    <value>A notification ID cannot be deserialized from an empty string.</value>
+  </data>
+  <data name="Exceptions_Messages_NotificationAlreadyRegistered" xml:space="preserve">
+    <value>The given notification interface is already registered.</value>
+  </data>
+  <data name="Exceptions_Messages_NotificationEventNotMapped" xml:space="preserve">
+    <value>One or more events on the notification set are not mapped to instance events.</value>
+  </data>
+  <data name="Exceptions_Messages_InvalidNotificationMethodExpression" xml:space="preserve">
+    <value>The notification event registration expression is not valid.</value>
+  </data>
 </root>

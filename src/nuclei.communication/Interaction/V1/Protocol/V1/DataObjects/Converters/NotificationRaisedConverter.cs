@@ -6,7 +6,6 @@
 
 using System;
 using System.Diagnostics;
-using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
@@ -80,10 +79,6 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
 
             try
             {
-                var interfaceType = TypeLoader.FromPartialInformation(
-                    msg.InterfaceType.FullName,
-                    msg.InterfaceType.AssemblyName);
-
                 var eventArgsType = TypeLoader.FromPartialInformation(
                     msg.EventArgumentsType.FullName,
                     msg.EventArgumentsType.AssemblyName);
@@ -101,9 +96,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                     data.Sender,
                     data.Id,
                     new Interaction.NotificationRaisedData(
-                        new NotificationData(
-                            interfaceType,
-                            msg.EventName), 
+                        NotificationIdExtensions.Deserialize(msg.NotificationId), 
                         eventArgs));
             }
             catch (Exception)
@@ -154,12 +147,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
                         Id = message.Id,
                         InResponseTo = message.InResponseTo,
                         Sender = message.Sender,
-                        InterfaceType = new SerializedType
-                            {
-                                FullName = msg.Notification.Notification.InterfaceType.FullName,
-                                AssemblyName = msg.Notification.Notification.InterfaceType.Assembly.GetName().Name
-                            },
-                        EventName = msg.Notification.Notification.EventName,
+                        NotificationId = NotificationIdExtensions.Serialize(msg.Notification.Notification),
                         EventArgumentsType = serializedEventArgsType,
                         EventArguments = value,
                     };

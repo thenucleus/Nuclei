@@ -46,14 +46,14 @@ namespace Nuclei.Communication.Interaction.Transport
                     receivedArgs = e;
                 };
 
-            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockNotificationSetWithEventHandler), intermediateMsg.Notification.InterfaceType);
-            Assert.AreEqual("OnMyEvent", intermediateMsg.Notification.EventName);
+            var id = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithEventHandler).GetEvent("OnMyEvent"));
+            Assert.AreEqual(id, intermediateMsg.Notification);
 
             var notificationObj = proxy as NotificationSetProxy;
             Assert.IsNotNull(notificationObj);
 
             var args = new EventArgs();
-            notificationObj.RaiseEvent("OnMyEvent", args);
+            notificationObj.RaiseEvent(id, args);
 
             Assert.AreSame(proxy, sender);
             Assert.AreSame(args, receivedArgs);
@@ -84,14 +84,14 @@ namespace Nuclei.Communication.Interaction.Transport
                     receivedArgs = e;
                 };
 
-            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler), intermediateMsg.Notification.InterfaceType);
-            Assert.AreEqual("OnMyEvent", intermediateMsg.Notification.EventName);
+            var id = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent"));
+            Assert.AreEqual(id, intermediateMsg.Notification);
 
             var notificationObj = proxy as NotificationSetProxy;
             Assert.IsNotNull(notificationObj);
 
             var args = new InteractionExtensionsTest.MySerializableEventArgs();
-            notificationObj.RaiseEvent("OnMyEvent", args);
+            notificationObj.RaiseEvent(id, args);
 
             Assert.AreSame(proxy, sender);
             Assert.AreSame(args, receivedArgs);
@@ -129,8 +129,9 @@ namespace Nuclei.Communication.Interaction.Transport
             var notificationObj = proxy as NotificationSetProxy;
             Assert.IsNotNull(notificationObj);
 
+            var id = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithEventHandler).GetEvent("OnMyEvent"));
             var args = new EventArgs();
-            notificationObj.RaiseEvent("OnMyEvent", args);
+            notificationObj.RaiseEvent(id, args);
 
             Assert.AreSame(proxy, sender);
             Assert.AreSame(args, receivedArgs);
@@ -139,10 +140,9 @@ namespace Nuclei.Communication.Interaction.Transport
             receivedArgs = null;
             proxy.OnMyEvent -= handler;
 
-            Assert.AreEqual(typeof(InteractionExtensionsTest.IMockNotificationSetWithEventHandler), intermediateMsg.Notification.InterfaceType);
-            Assert.AreEqual("OnMyEvent", intermediateMsg.Notification.EventName);
+            Assert.AreEqual(id, intermediateMsg.Notification);
 
-            notificationObj.RaiseEvent("OnMyEvent", new EventArgs());
+            notificationObj.RaiseEvent(id, new EventArgs());
             Assert.IsNull(sender);
             Assert.IsNull(receivedArgs);
         }
@@ -177,8 +177,9 @@ namespace Nuclei.Communication.Interaction.Transport
             var notificationObj = proxy as NotificationSetProxy;
             Assert.IsNotNull(notificationObj);
 
+            var id = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithEventHandler).GetEvent("OnMyEvent"));
             var args = new EventArgs();
-            notificationObj.RaiseEvent("OnMyEvent", args);
+            notificationObj.RaiseEvent(id, args);
 
             Assert.AreSame(proxy, sender);
             Assert.AreSame(args, receivedArgs);
@@ -189,7 +190,7 @@ namespace Nuclei.Communication.Interaction.Transport
 
             Assert.IsNull(intermediateMsg);
 
-            notificationObj.RaiseEvent("OnMyEvent", new EventArgs());
+            notificationObj.RaiseEvent(id, new EventArgs());
             Assert.IsNull(sender);
             Assert.IsNull(receivedArgs);
         }

@@ -21,7 +21,7 @@ namespace Nuclei.Communication.Interaction.Transport
     /// the notification interface thereby allowing remote listening to notification events through the proxy notification interface.
     /// </remarks>
     internal sealed class RemoteNotificationHub 
-        : RemoteEndpointProxyHub<NotificationSetProxy>, INotifyOfRemoteEndpointEvents, IStoreRemoteNotificationProxies
+        : RemoteEndpointProxyHub<NotificationSetProxy>, INotifyOfRemoteEndpointEvents, IStoreRemoteNotificationProxies, IRaiseProxyNotifications
     {
         /// <summary>
         /// The collection that holds all the <see cref="INotificationSet"/> proxies for each endpoint that
@@ -29,6 +29,12 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </summary>
         private readonly IDictionary<EndpointId, IDictionary<Type, NotificationSetProxy>> m_RemoteNotifications
             = new Dictionary<EndpointId, IDictionary<Type, NotificationSetProxy>>();
+
+        /// <summary>
+        /// The collection containing the notification proxies mapped based on the ID of the notifications.
+        /// </summary>
+        private readonly Dictionary<EndpointId, IDictionary<NotificationId, NotificationSetProxy>> m_ProxiesByNotification
+            = new Dictionary<EndpointId, IDictionary<NotificationId, NotificationSetProxy>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoteNotificationHub"/> class.
@@ -89,20 +95,9 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <param name="list">The collection of proxies.</param>
         protected override void AddProxiesToStorage(EndpointId endpoint, SortedList<Type, NotificationSetProxy> list)
         {
-            if (!m_RemoteNotifications.ContainsKey(endpoint))
+            foreach (var pair in list)
             {
-                m_RemoteNotifications.Add(endpoint, list);
-            }
-            else
-            {
-                foreach (var pair in list)
-                {
-                    var existingList = (SortedList<Type, NotificationSetProxy>)m_RemoteNotifications[endpoint];
-                    if (!existingList.ContainsKey(pair.Key))
-                    {
-                        existingList.Add(pair.Key, pair.Value);
-                    }
-                }
+                AddProxyFor(endpoint, pair.Key, pair.Value);
             }
         }
 
@@ -132,6 +127,19 @@ namespace Nuclei.Communication.Interaction.Transport
                     };
                 m_RemoteNotifications.Add(endpoint, list);
             }
+
+            if (!m_ProxiesByNotification.ContainsKey(endpoint))
+            {
+                m_ProxiesByNotification.Add(endpoint, new Dictionary<NotificationId, NotificationSetProxy>());
+            }
+
+            var collection = m_ProxiesByNotification[endpoint];
+            var events = proxyType.GetEvents();
+            foreach (var eventInfo in events)
+            {
+                var id = NotificationId.Create(eventInfo);
+                collection.Add(id, proxy);
+            }
         }
 
         /// <summary>
@@ -149,6 +157,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 }
             }
 
+            m_RemoteNotifications.Remove(endpoint);
             m_RemoteNotifications.Remove(endpoint);
         }
 
@@ -221,6 +230,25 @@ namespace Nuclei.Communication.Interaction.Transport
         public void OnReceiptOfEndpointNotifications(EndpointId endpoint, IEnumerable<OfflineTypeInformation> notificationTypes)
         {
             OnReceiptOfEndpointProxies(endpoint, notificationTypes);
+        }
+
+        /// <summary>
+        /// Raises the notification with the given notification ID.
+        /// </summary>
+        /// <param name="endpoint">The ID of the endpoint that raised the notification.</param>
+        /// <param name="id">The ID of the notification.</param>
+        /// <param name="args">The event arguments for the notification.</param>
+        public void RaiseNotification(EndpointId endpoint, NotificationId id, EventArgs args)
+        {
+            if (m_ProxiesByNotification.ContainsKey(endpoint))
+            {
+                var collection = m_ProxiesByNotification[endpoint];
+                if (collection.ContainsKey(id))
+                {
+                    var proxy = collection[id];
+                    proxy.RaiseEvent(id, args);
+                }
+            }
         }
     }
 }

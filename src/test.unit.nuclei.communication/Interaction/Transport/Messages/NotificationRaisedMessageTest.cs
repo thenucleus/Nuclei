@@ -34,7 +34,8 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         public void Create()
         {
             var id = new EndpointId("sendingEndpoint");
-            var notification = new NotificationData(typeof(int), "b");
+            var notification = NotificationId.Create(
+                typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent"));
             var args = new MockEventArgs(1);
             var notificationRaised = new NotificationRaisedData(notification, args);
             var msg = new NotificationRaisedMessage(id, notificationRaised);

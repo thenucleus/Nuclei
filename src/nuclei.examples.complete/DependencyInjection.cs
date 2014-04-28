@@ -64,6 +64,9 @@ namespace Nuclei.Examples.Complete
                         })
                     .SingleInstance();
 
+                builder.Register(c => new TestNotifications())
+                    .SingleInstance();
+
                 builder.Register(c => new CommunicationInitializer(
                         c.Resolve<IComponentContext>(),
                         subjects))
@@ -96,7 +99,9 @@ namespace Nuclei.Examples.Complete
                     .As<IFormTheApplicationCenter>()
                     .SingleInstance();
 
-                builder.Register(c => new ConnectionViewModel(c.Resolve<InteractiveWindow>().Dispatcher))
+                builder.Register(c => new ConnectionViewModel(
+                        c.Resolve<INotifyOfRemoteEndpointEvents>(),
+                        c.Resolve<InteractiveWindow>().Dispatcher))
                     .OnActivated(
                         a => 
                         {
@@ -110,7 +115,8 @@ namespace Nuclei.Examples.Complete
                 builder.Register(c => new CommunicationPassThrough(
                         c.Resolve<ICommunicationFacade>(),
                         c.Resolve<ISendCommandsToRemoteEndpoints>(),
-                        c.Resolve<IStoreUploads>()))
+                        c.Resolve<IStoreUploads>(),
+                        c.Resolve<TestNotifications>()))
                     .As<IHandleCommunication>();
             }
 

@@ -20,6 +20,9 @@
         <CommandBinding Command="{x:Static views2:InteractiveWindow.CalculateTotalCommand}"
                         Executed="OnExecuteCalculateTotalCommand"
                         CanExecute="OnCanExecuteCalculateTotalCommand" />
+        <CommandBinding Command="{x:Static views2:InteractiveWindow.NotifyCommand}"
+                        Executed="OnExecuteNotifyCommand"
+                        CanExecute="OnCanExecuteNotifyCommand" />
     </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>
@@ -79,6 +82,9 @@
                     <RowDefinition Height="Auto" />
 
                     <!-- Add values text boxes + button -->
+                    <RowDefinition Height="Auto" />
+
+                    <!-- Notify -->
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
@@ -195,6 +201,21 @@
                                          Path="Text" />
                             </MultiBinding>
                         </Button.CommandParameter>
+                    </Button>
+                </Grid>
+
+                <Grid Grid.Row="6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0"
+                            HorizontalAlignment="Left"
+                            MinWidth="75"
+                            Margin="3,3,3,3"
+                            Command="{x:Static views2:InteractiveWindow.NotifyCommand}">
+                        <Button.Content>
+                            <TextBlock Text="Notify" />
+                        </Button.Content>
                     </Button>
                 </Grid>
             </Grid>

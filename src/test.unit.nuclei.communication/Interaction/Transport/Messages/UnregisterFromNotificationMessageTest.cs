@@ -18,7 +18,8 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         public void Create()
         {
             var id = new EndpointId("sendingEndpoint");
-            var notification = new NotificationData(typeof(int), "b");
+            var notification = NotificationId.Create(
+                typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent"));
             var msg = new UnregisterFromNotificationMessage(id, notification);
 
             Assert.AreSame(id, msg.Sender);

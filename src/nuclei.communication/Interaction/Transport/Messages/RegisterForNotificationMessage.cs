@@ -26,7 +26,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="notificationToSubscribeTo"/> is <see langword="null" />.
         /// </exception>
-        public RegisterForNotificationMessage(EndpointId origin, NotificationData notificationToSubscribeTo)
+        public RegisterForNotificationMessage(EndpointId origin, NotificationId notificationToSubscribeTo)
             : this(origin, new MessageId(), notificationToSubscribeTo)
         {
         }
@@ -46,7 +46,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="notificationToSubscribeTo"/> is <see langword="null" />.
         /// </exception>
-        public RegisterForNotificationMessage(EndpointId origin, MessageId id, NotificationData notificationToSubscribeTo)
+        public RegisterForNotificationMessage(EndpointId origin, MessageId id, NotificationId notificationToSubscribeTo)
             : base(origin, id)
         {
             {
@@ -59,7 +59,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages
         /// <summary>
         /// Gets the notification to which the sender of the current message wants to subscribe.
         /// </summary>
-        public NotificationData Notification 
+        public NotificationId Notification 
         { 
             get; 
             private set; 

@@ -4,13 +4,11 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using Autofac;
 using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages.Processors;
-using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol;
 using Nuclei.Configuration;
 using Nuclei.Diagnostics;
@@ -63,6 +61,7 @@ namespace Nuclei.Communication
                     c.Resolve<SystemDiagnostics>()))
                 .As<INotifyOfRemoteEndpointEvents>()
                 .As<IStoreRemoteNotificationProxies>()
+                .As<IRaiseProxyNotifications>()
                 .SingleInstance();
 
             builder.Register(
@@ -122,7 +121,7 @@ namespace Nuclei.Communication
                 .As<IMessageProcessAction>();
 
             builder.Register(c => new NotificationRaisedProcessAction(
-                    c.Resolve<INotifyOfRemoteEndpointEvents>(),
+                    c.Resolve<IRaiseProxyNotifications>(),
                     c.Resolve<SystemDiagnostics>()))
                 .As<IMessageProcessAction>();
         }
@@ -204,21 +203,19 @@ namespace Nuclei.Communication
                     c =>
                     {
                         var ctx = c.Resolve<IComponentContext>();
-                        RegisterNotification func = (type, notification, subjects) =>
+                        RegisterNotification func = (map, subjects) =>
                         {
-                            type.VerifyThatTypeIsACorrectNotificationSet();
-                            if (!type.IsInstanceOfType(notification))
-                            {
-                                throw new ArgumentException(Resources.Exceptions_Messages_NotificationObjectMustImplementNotificationInterface);
-                            }
-
                             var collection = ctx.Resolve<INotificationCollection>();
                             var subjectCollection = ctx.Resolve<IRegisterSubjectGroups>();
 
-                            collection.Register(type, notification);
+                            collection.Register(map.Definitions);
                             foreach (var subject in subjects)
                             {
-                                subjectCollection.RegisterNotificationForProvidedSubjectGroup(subject.Subject, type, subject.Version, subject.Group);
+                                subjectCollection.RegisterNotificationForProvidedSubjectGroup(
+                                    subject.Subject, 
+                                    map.NotificationType,
+                                    subject.Version, 
+                                    subject.Group);
                             }
                         };
 

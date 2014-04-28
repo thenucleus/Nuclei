@@ -70,17 +70,13 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
         
             var translator = new NotificationRaisedConverter(serializers.Object);
 
+            var id = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent"));
             var data = new NotificationRaisedData
             {
                 Id = new MessageId(),
                 InResponseTo = new MessageId(),
                 Sender = new EndpointId("a"),
-                InterfaceType = new SerializedType
-                {
-                    FullName = typeof(int).FullName,
-                    AssemblyName = typeof(int).Assembly.GetName().Name
-                },
-                EventName = "event",
+                NotificationId = NotificationIdExtensions.Serialize(id),
                 EventArgumentsType = new SerializedType
                     {
                         FullName = typeof(int).FullName,
@@ -92,11 +88,7 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
             Assert.IsInstanceOf(typeof(NotificationRaisedMessage), msg);
             Assert.AreSame(data.Id, msg.Id);
             Assert.AreSame(data.Sender, msg.Sender);
-            Assert.AreEqual(data.InterfaceType.FullName, ((NotificationRaisedMessage)msg).Notification.Notification.InterfaceType.FullName);
-            Assert.AreEqual(
-                data.InterfaceType.AssemblyName, 
-                ((NotificationRaisedMessage)msg).Notification.Notification.InterfaceType.Assembly.GetName().Name);
-            Assert.AreSame(data.EventName, ((NotificationRaisedMessage)msg).Notification.Notification.EventName);
+            Assert.AreEqual(id, ((NotificationRaisedMessage)msg).Notification.Notification);
             Assert.AreSame(data.EventArguments, ((NotificationRaisedMessage)msg).Notification.EventArgs);
         }
 
@@ -127,23 +119,16 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
         
             var translator = new NotificationRaisedConverter(serializers.Object);
 
+            var id = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent"));
             var msg = new NotificationRaisedMessage(
                 new EndpointId("a"),
-                new Interaction.NotificationRaisedData(
-                    new NotificationData(
-                        typeof(int),
-                        "event"),
-                        new EventArgs()));
+                new Interaction.NotificationRaisedData(id, new EventArgs()));
             var data = translator.FromMessage(msg);
             Assert.IsInstanceOf(typeof(NotificationRaisedData), data);
             Assert.AreSame(msg.Id, data.Id);
             Assert.AreSame(msg.Sender, data.Sender);
             Assert.AreSame(msg.InResponseTo, data.InResponseTo);
-            Assert.AreEqual(msg.Notification.Notification.InterfaceType.FullName, ((NotificationRaisedData)data).InterfaceType.FullName);
-            Assert.AreEqual(
-                msg.Notification.Notification.InterfaceType.Assembly.GetName().Name,
-                ((NotificationRaisedData)data).InterfaceType.AssemblyName);
-            Assert.AreSame(msg.Notification.Notification.EventName, ((NotificationRaisedData)data).EventName);
+            Assert.AreEqual(NotificationIdExtensions.Serialize(id), ((NotificationRaisedData)data).NotificationId);
             Assert.AreEqual(
                 msg.Notification.EventArgs.GetType().FullName, 
                 ((NotificationRaisedData)data).EventArgumentsType.FullName);

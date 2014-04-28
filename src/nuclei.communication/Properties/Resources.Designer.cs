@@ -322,6 +322,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The notification event registration expression is not valid..
+        /// </summary>
+        internal static string Exceptions_Messages_InvalidNotificationMethodExpression {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_InvalidNotificationMethodExpression", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The maximum number of channel restarts was exceeded. Not restarting the channel anymore..
         /// </summary>
         internal static string Exceptions_Messages_MaximumNumberOfChannelRestartsExceeded {
@@ -408,6 +417,33 @@ namespace Nuclei.Communication.Properties {
         internal static string Exceptions_Messages_NoSerializerForTypeFound {
             get {
                 return ResourceManager.GetString("Exceptions_Messages_NoSerializerForTypeFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given notification interface is already registered..
+        /// </summary>
+        internal static string Exceptions_Messages_NotificationAlreadyRegistered {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_NotificationAlreadyRegistered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more events on the notification set are not mapped to instance events..
+        /// </summary>
+        internal static string Exceptions_Messages_NotificationEventNotMapped {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_NotificationEventNotMapped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A notification ID cannot be deserialized from an empty string..
+        /// </summary>
+        internal static string Exceptions_Messages_NotificationIdCannotBeDeserializedFromAnEmptyString {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_NotificationIdCannotBeDeserializedFromAnEmptyString", resourceCulture);
             }
         }
         

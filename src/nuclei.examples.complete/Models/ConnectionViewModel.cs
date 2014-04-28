@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Threading;
 using Nuclei.Communication;
+using Nuclei.Communication.Interaction;
 
 namespace Nuclei.Examples.Complete.Models
 {
@@ -35,6 +36,11 @@ namespace Nuclei.Examples.Complete.Models
         private readonly ObservableCollection<EndpointMessagesViewModel> m_Messages = new ObservableCollection<EndpointMessagesViewModel>();
 
         /// <summary>
+        /// The object that provides the notifications for the remote endpoints.
+        /// </summary>
+        private readonly INotifyOfRemoteEndpointEvents m_RemoteNotifications;
+
+        /// <summary>
         /// The thread dispatcher that is connected to the window.
         /// </summary>
         private readonly Dispatcher m_Dispatcher;
@@ -42,12 +48,25 @@ namespace Nuclei.Examples.Complete.Models
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectionViewModel"/> class.
         /// </summary>
+        /// <param name="remoteNotifications">The notifications from the remote endpoint.</param>
         /// <param name="windowDispatcher">
         /// The dispatcher that is connected to the main display window.
         /// </param>
-        public ConnectionViewModel(Dispatcher windowDispatcher)
+        public ConnectionViewModel(
+            INotifyOfRemoteEndpointEvents remoteNotifications,
+            Dispatcher windowDispatcher)
         {
+            m_RemoteNotifications = remoteNotifications;
+            remoteNotifications.OnEndpointConnected += HandleOnEndpointConnected;
+
             m_Dispatcher = windowDispatcher;
+        }
+
+        private void HandleOnEndpointConnected(object sender, EndpointEventArgs args)
+        {
+            var endpoint = args.Endpoint;
+            var notifications = m_RemoteNotifications.NotificationsFor<ITestNotificationSet>(endpoint);
+            notifications.OnNotify += (s, e) => AddNewMessage(endpoint, "Received notification");
         }
 
         /// <summary>

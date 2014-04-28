@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
@@ -35,16 +36,27 @@ namespace Nuclei.Examples.Complete.Views
         private readonly IStoreUploads m_Uploads;
 
         /// <summary>
+        /// The object that holds the notifications.
+        /// </summary>
+        private readonly TestNotifications m_LocalNotifications;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="CommunicationPassThrough"/> class.
         /// </summary>
         /// <param name="facade">The communication layer which does the actual communication work.</param>
         /// <param name="commands">The object that sends commands to the remote endpoints.</param>
         /// <param name="uploads">The object that tracks files registered for upload.</param>
-        public CommunicationPassThrough(ICommunicationFacade facade, ISendCommandsToRemoteEndpoints commands, IStoreUploads uploads)
+        /// <param name="localNotifications">The object that holds the notifications.</param>
+        public CommunicationPassThrough(
+            ICommunicationFacade facade, 
+            ISendCommandsToRemoteEndpoints commands, 
+            IStoreUploads uploads,
+            TestNotifications localNotifications)
         {
             m_Facade = facade;
             m_Commands = commands;
             m_Uploads = uploads;
+            m_LocalNotifications = localNotifications;
         }
 
         /// <summary>
@@ -129,6 +141,14 @@ namespace Nuclei.Examples.Complete.Views
                 var commands = m_Commands.CommandsFor<ITestCommandSet>(endpoint);
                 commands.StartDownload(m_Facade.Id, token);
             }
+        }
+
+        /// <summary>
+        /// Sends a notification to the given endpoint.
+        /// </summary>
+        public void Notify()
+        {
+            m_LocalNotifications.RaiseOnNotify();
         }
     }
 }

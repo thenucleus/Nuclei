@@ -17,20 +17,10 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects
     internal sealed class NotificationRaisedData : DataObjectBase
     {
         /// <summary>
-        /// Gets or sets the type of interface on which the command was invoked.
+        /// Gets or sets the ID of the notification which has been raised.
         /// </summary>
         [DataMember]
-        public SerializedType InterfaceType
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Gets or sets the name of the method that was invoked.
-        /// </summary>
-        [DataMember]
-        public string EventName
+        public string NotificationId
         {
             get;
             set;

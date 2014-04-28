@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
         /// <summary>
         /// The object that stores all the notification proxies.
         /// </summary>
-        private readonly INotifyOfRemoteEndpointEvents m_AvailableProxies;
+        private readonly IRaiseProxyNotifications m_AvailableProxies;
 
         /// <summary>
         /// The object that provides the diagnostic methods for the system.
@@ -42,7 +42,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public NotificationRaisedProcessAction(
-            INotifyOfRemoteEndpointEvents availableNotificationProxies,
+            IRaiseProxyNotifications availableNotificationProxies,
             SystemDiagnostics systemDiagnostics)
         {
             {
@@ -88,22 +88,14 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 CommunicationConstants.DefaultLogTextPrefix,
                 string.Format(
                     CultureInfo.InvariantCulture,
-                    "Received request to raise event: {0}.{1}",
-                    notification.Notification.InterfaceType,
-                    notification.Notification.EventName));
+                    "Received request to raise event: {0}",
+                    notification.Notification));
 
             try
             {
                 using (m_Diagnostics.Profiler.Measure(CommunicationConstants.TimingGroup, "Raise notification"))
                 {
-                    var type = notification.Notification.InterfaceType;
-                    var notificationSet = m_AvailableProxies.NotificationsFor(msg.Sender, type);
-                    Debug.Assert(notificationSet != null, "There should be a proxy for this notification set.");
-
-                    var proxyObj = notificationSet as NotificationSetProxy;
-                    Debug.Assert(proxyObj != null, "The object should be a NotificationSetProxy.");
-
-                    proxyObj.RaiseEvent(notification.Notification.EventName, notification.EventArgs);
+                    m_AvailableProxies.RaiseNotification(message.Sender, notification.Notification, notification.EventArgs);
                 }
             }
             catch (Exception e)
@@ -113,9 +105,8 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                     CommunicationConstants.DefaultLogTextPrefix,
                     string.Format(
                         CultureInfo.InvariantCulture,
-                        "Error while raising event {0}.{1}. Exception is: {2}",
-                        msg.Notification.Notification.InterfaceType,
-                        msg.Notification.Notification.EventName,
+                        "Error while raising event {0}. Exception is: {1}",
+                        msg.Notification.Notification,
                         e));
             }
         }

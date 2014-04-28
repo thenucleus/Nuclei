@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
-using Nuclei.Communication.Protocol.V1;
 using Nuclei.Communication.Protocol.V1.DataObjects;
 using NUnit.Framework;
 
@@ -56,27 +55,19 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
         {
             var translator = new NotificationRegistrationConverter();
 
+            var id = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent"));
             var data = new NotificationRegistrationData
             {
                 Id = new MessageId(),
                 InResponseTo = new MessageId(),
                 Sender = new EndpointId("a"),
-                InterfaceType = new SerializedType
-                {
-                    FullName = typeof(int).FullName,
-                    AssemblyName = typeof(int).Assembly.GetName().Name
-                },
-                EventName = "event",
+                NotificationId = NotificationIdExtensions.Serialize(id),
             };
             var msg = translator.ToMessage(data);
             Assert.IsInstanceOf(typeof(RegisterForNotificationMessage), msg);
             Assert.AreSame(data.Id, msg.Id);
             Assert.AreSame(data.Sender, msg.Sender);
-            Assert.AreEqual(data.InterfaceType.FullName, ((RegisterForNotificationMessage)msg).Notification.InterfaceType.FullName);
-            Assert.AreEqual(
-                data.InterfaceType.AssemblyName, 
-                ((RegisterForNotificationMessage)msg).Notification.InterfaceType.Assembly.GetName().Name);
-            Assert.AreSame(data.EventName, ((RegisterForNotificationMessage)msg).Notification.EventName);
+            Assert.AreEqual(id, ((RegisterForNotificationMessage)msg).Notification);
         }
 
         [Test]
@@ -97,21 +88,15 @@ namespace Nuclei.Communication.Interaction.V1.Protocol.V1.DataObjects.Converters
         {
             var translator = new NotificationRegistrationConverter();
 
-            var msg = new RegisterForNotificationMessage(
-                new EndpointId("a"),
-                new NotificationData(
-                    typeof(int),
-                    "event"));
+            var id = NotificationId.Create(typeof(InteractionExtensionsTest.IMockNotificationSetWithTypedEventHandler).GetEvent("OnMyEvent"));
+            var msg = new RegisterForNotificationMessage(new EndpointId("a"), id);
+            
             var data = translator.FromMessage(msg);
             Assert.IsInstanceOf(typeof(NotificationRegistrationData), data);
             Assert.AreSame(msg.Id, data.Id);
             Assert.AreSame(msg.Sender, data.Sender);
             Assert.AreSame(msg.InResponseTo, data.InResponseTo);
-            Assert.AreSame(msg.Notification.InterfaceType.FullName, ((NotificationRegistrationData)data).InterfaceType.FullName);
-            Assert.AreEqual(
-                msg.Notification.InterfaceType.Assembly.GetName().Name,
-                ((NotificationRegistrationData)data).InterfaceType.AssemblyName);
-            Assert.AreSame(msg.Notification.EventName, ((NotificationRegistrationData)data).EventName);
+            Assert.AreEqual(NotificationIdExtensions.Serialize(id), ((NotificationRegistrationData)data).NotificationId);
         }
     }
 }
