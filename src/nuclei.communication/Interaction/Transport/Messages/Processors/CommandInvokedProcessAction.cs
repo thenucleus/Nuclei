@@ -139,7 +139,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                     return;
                 }
 
-                var result = commandSet.Invoke(invocation.Parameters);
+                var result = commandSet.Invoke(message.Sender, message.Id, invocation.Parameters);
 
                 ICommunicationMessage responseMessage;
                 if (commandSet.HasReturnValue)

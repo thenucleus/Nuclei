@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Communication.Interaction
 {
@@ -93,9 +94,11 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// Invokes the command and returns the command return value.
         /// </summary>
+        /// <param name="invokingEndpoint">The ID of the endpoint that requested the invocation of the command.</param>
+        /// <param name="invocationMessage">The ID of the message that contained the command parameter values.</param>
         /// <param name="parameters">The parameters for the command.</param>
         /// <returns>The return value for the command.</returns>
-        public object Invoke(CommandParameterValueMap[] parameters)
+        public object Invoke(EndpointId invokingEndpoint, MessageId invocationMessage, CommandParameterValueMap[] parameters)
         {
             {
                 Lokad.Enforce.Argument(() => parameters);
@@ -115,6 +118,18 @@ namespace Nuclei.Communication.Interaction
                     }
 
                     mappedParameterValues[i] = providedParameter.Value;
+                    continue;
+                }
+
+                if (expectedParameter.Origin == CommandParameterOrigin.InvokingEndpointId)
+                {
+                    mappedParameterValues[i] = invokingEndpoint;
+                    continue;
+                }
+
+                if (expectedParameter.Origin == CommandParameterOrigin.InvokingMessageId)
+                {
+                    mappedParameterValues[i] = invocationMessage;
                     continue;
                 }
 

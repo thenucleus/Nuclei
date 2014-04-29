@@ -22,6 +22,18 @@ namespace Nuclei.Communication.Interaction
         FromCommand,
 
         /// <summary>
+        /// The command parameter is the endpoint ID of the endpoint that requested the 
+        /// invocation of the command.
+        /// </summary>
+        InvokingEndpointId,
+
+        /// <summary>
+        /// The command parameter is the message ID of the message that requested the 
+        /// invocation of the command.
+        /// </summary>
+        InvokingMessageId,
+
+        /// <summary>
         /// The command parameter has an unknown origin.
         /// </summary>
         Unknown,

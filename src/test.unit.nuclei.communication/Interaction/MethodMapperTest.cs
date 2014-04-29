@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using Nuclei.Communication.Protocol;
 using NUnit.Framework;
 
 namespace Nuclei.Communication.Interaction
@@ -223,7 +224,7 @@ namespace Nuclei.Communication.Interaction
 
             mapper.To(() => CommandInstance.StaticMethod());
             Assert.IsNotNull(definition);
-            Assert.AreEqual(-1, definition.Invoke(new CommandParameterValueMap[0]));
+            Assert.AreEqual(-1, definition.Invoke(new EndpointId("a"), new MessageId(), new CommandParameterValueMap[0]));
         }
 
         [Test]
@@ -245,7 +246,7 @@ namespace Nuclei.Communication.Interaction
             var instance = new CommandInstance();
             mapper.To(() => instance.InstanceMethod());
             Assert.IsNotNull(definition);
-            Assert.AreEqual(0, definition.Invoke(new CommandParameterValueMap[0]));
+            Assert.AreEqual(0, definition.Invoke(new EndpointId("a"), new MessageId(), new CommandParameterValueMap[0]));
         }
 
         [Test]
@@ -276,7 +277,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 1).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"), 
+                    new MessageId(), 
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -313,7 +317,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 2).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -354,7 +361,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 3).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -399,7 +409,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 4).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -448,7 +461,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 5).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -501,7 +517,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 6).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -558,7 +577,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 7).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -620,7 +642,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 8).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -686,7 +711,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 9).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -756,7 +784,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 10).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -830,7 +861,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 11).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -908,7 +942,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 12).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -991,7 +1028,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 13).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -1078,7 +1118,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 14).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -1169,7 +1212,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 15).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
@@ -1264,7 +1310,10 @@ namespace Nuclei.Communication.Interaction
             var values = Enumerable.Range(1, 16).ToArray();
             Assert.AreEqual(
                 values.Sum(),
-                definition.Invoke(new[]
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new[]
                     {
                         new CommandParameterValueMap(
                             new CommandParameterDefinition(typeof(int), "p1", CommandParameterOrigin.FromCommand), 
