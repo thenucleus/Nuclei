@@ -25,6 +25,26 @@ namespace Nuclei.Communication.Interaction
                 return -1;
             }
 
+            public int InstanceMethodWithEndpointId([InvokingEndpoint]EndpointId id)
+            {
+                return 1;
+            }
+
+            public int InstanceMethodWithStringEndpointId([InvokingEndpoint]string id)
+            {
+                return 2;
+            }
+
+            public int InstanceMethodWithMessageId([InvocationMessage]MessageId id)
+            {
+                return 3;
+            }
+
+            public int InstanceMethodWithStringMessageId([InvocationMessage]string id)
+            {
+                return 4;
+            }
+
             public int InstanceMethod()
             {
                 return 0;
@@ -204,6 +224,92 @@ namespace Nuclei.Communication.Interaction
 
             var version = new Version(1, 0);
             Assert.Throws<NonMappedCommandParameterException>(() => mapper.To((Version v) => version.Equals(v)));
+        }
+
+        [Test]
+        public void ToWithEndpointIdAutomaticallyProvidedOnIncorrectParameterType()
+        {
+            Action<CommandDefinition> store = d => { };
+            var id = new CommandId("a");
+            var mapper = new MethodMapper(
+                store,
+                id,
+                typeof(int),
+                new ParameterInfo[0]);
+
+            var instance = new CommandInstance();
+            Assert.Throws<NonMappedCommandParameterException>(() => mapper.To<string>(p1 => instance.InstanceMethodWithStringEndpointId(p1)));
+        }
+
+        [Test]
+        public void ToWithEndpointIdAutomaticallyProvided()
+        {
+            CommandDefinition definition = null;
+            Action<CommandDefinition> store =
+                d =>
+                {
+                    definition = d;
+                };
+            var id = new CommandId("a");
+            var mapper = new MethodMapper(
+                store,
+                id,
+                typeof(int),
+                new ParameterInfo[0]);
+
+            var instance = new CommandInstance();
+            mapper.To<EndpointId>(p1 => instance.InstanceMethodWithEndpointId(p1));
+            Assert.IsNotNull(definition);
+
+            Assert.AreEqual(
+                1,
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new CommandParameterValueMap[0]));
+        }
+
+        [Test]
+        public void ToWithMessageIdAutomaticallyProvidedOnIncorrectParameterType()
+        {
+            Action<CommandDefinition> store = d => { };
+            var id = new CommandId("a");
+            var mapper = new MethodMapper(
+                store,
+                id,
+                typeof(int),
+                new ParameterInfo[0]);
+
+            var instance = new CommandInstance();
+            Assert.Throws<NonMappedCommandParameterException>(() => mapper.To<string>(p1 => instance.InstanceMethodWithStringMessageId(p1)));
+        }
+
+        [Test]
+        public void ToWithMessageIdAutomaticallyProvided()
+        {
+            CommandDefinition definition = null;
+            Action<CommandDefinition> store =
+                d =>
+                {
+                    definition = d;
+                };
+            var id = new CommandId("a");
+            var mapper = new MethodMapper(
+                store,
+                id,
+                typeof(int),
+                new ParameterInfo[0]);
+
+            var instance = new CommandInstance();
+            mapper.To<MessageId>(p1 => instance.InstanceMethodWithMessageId(p1));
+            Assert.IsNotNull(definition);
+
+            Assert.AreEqual(
+                3,
+                definition.Invoke(
+                    new EndpointId("a"),
+                    new MessageId(),
+                    new CommandParameterValueMap[0]));
         }
 
         [Test]

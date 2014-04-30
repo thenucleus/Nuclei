@@ -5,6 +5,7 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -168,6 +169,7 @@ namespace Nuclei.Communication.Interaction
             }
 
             // Get all the instance parameters for which there is no provided parameter and check that they have an attribute attached to it
+            var instanceParameterDefinitions = new List<CommandParameterDefinition>();
             var nonMappedInstanceParameters = instanceParameters
                 .Where(i => !providedParameters.Any(p => (p.ParameterType == i.ParameterType) && string.Equals(p.Name, i.Name)))
                 .ToList();
@@ -182,11 +184,31 @@ namespace Nuclei.Communication.Interaction
                 {
                     throw new NonMappedCommandParameterException();
                 }
+
+                if (parameterUsageAttribute is InvokingEndpointAttribute)
+                {
+                    instanceParameterDefinitions.Add(
+                        new CommandParameterDefinition(
+                            instanceParameter.ParameterType, 
+                            instanceParameter.Name, 
+                            CommandParameterOrigin.InvokingEndpointId));
+                    continue;
+                }
+
+                if (parameterUsageAttribute is InvocationMessageAttribute)
+                {
+                    instanceParameterDefinitions.Add(
+                        new CommandParameterDefinition(
+                            instanceParameter.ParameterType,
+                            instanceParameter.Name,
+                            CommandParameterOrigin.InvokingMessageId));
+                    continue;
+                }
+
+                throw new NonMappedCommandParameterException();
             }
 
             var commandParameterDefinitions = providedParameters
-                .Select(p => new CommandParameterDefinition(p.ParameterType, p.Name, CommandParameterOrigin.FromCommand));
-            var instanceParameterDefinitions = nonMappedInstanceParameters
                 .Select(p => new CommandParameterDefinition(p.ParameterType, p.Name, CommandParameterOrigin.FromCommand));
 
             return commandParameterDefinitions.Append(instanceParameterDefinitions).ToArray();
