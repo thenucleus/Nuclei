@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using Nuclei.Communication;
+using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Protocol;
 
 namespace Nuclei.Examples.Complete
@@ -75,7 +76,7 @@ namespace Nuclei.Examples.Complete
         /// </summary>
         /// <param name="downloadOwningEndpoint">The endpoint ID of the endpoint that owns the data stream.</param>
         /// <param name="token">The upload token that allows the receiver to indicate which data stream should be downloaded.</param>
-        public void StartDownload(EndpointId downloadOwningEndpoint, UploadToken token)
+        public void StartDownload([InvokingEndpoint]EndpointId downloadOwningEndpoint, UploadToken token)
         {
             var path = Path.Combine(Assembly.GetExecutingAssembly().LocalDirectoryPath(), Path.GetRandomFileName());
             var task = m_Download(downloadOwningEndpoint, token, path, TimeSpan.FromSeconds(15));

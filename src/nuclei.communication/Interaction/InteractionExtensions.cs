@@ -33,7 +33,11 @@ namespace Nuclei.Communication.Interaction
         /// applied to a command instance method parameter.
         /// </summary>
         private static readonly HashSet<Type> s_KnownCommandInstanceParameterAttributes
-            = new HashSet<Type>();
+            = new HashSet<Type>
+                {
+                    typeof(InvokingEndpointAttribute),
+                    typeof(InvocationMessageAttribute),
+                };
 
         /// <summary>
         /// Gets the collection containing the types of all the attributes that can 

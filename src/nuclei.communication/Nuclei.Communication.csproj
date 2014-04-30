@@ -142,6 +142,8 @@
     <Compile Include="Interaction\InvalidCommandMethodExpressionException.cs" />
     <Compile Include="Interaction\InvalidCommandParameterOriginException.cs" />
     <Compile Include="Interaction\InvalidNotificationMethodExpressionException.cs" />
+    <Compile Include="Interaction\InvocationMessageAttribute.cs" />
+    <Compile Include="Interaction\InvokingEndpointAttribute.cs" />
     <Compile Include="Interaction\MethodMapper.cs" />
     <Compile Include="Interaction\MissingCommandParameterException.cs" />
     <Compile Include="Interaction\NonMappedCommandParameterException.cs" />
