@@ -5,7 +5,6 @@
 //-----------------------------------------------------------------------
 
 using System.Threading.Tasks;
-using Nuclei.Communication;
 using Nuclei.Communication.Interaction;
 using Nuclei.Communication.Protocol;
 
@@ -34,9 +33,8 @@ namespace Nuclei.Examples.Complete
         /// <summary>
         /// Starts a download.
         /// </summary>
-        /// <param name="downloadOwningEndpoint">The endpoint ID of the endpoint that owns the data stream.</param>
         /// <param name="token">The upload token that allows the receiver to indicate which data stream should be downloaded.</param>
         /// <returns>A task that returns when the download has been started.</returns>
-        Task StartDownload(EndpointId downloadOwningEndpoint, UploadToken token);
+        Task StartDownload(UploadToken token);
     }
 }

@@ -70,7 +70,7 @@ namespace Nuclei.Examples.Complete
             map.From<int, int>((command, first, second) => command.Calculate(first, second))
                 .To((int first, int second) => instance.Calculate(first, second));
 
-            map.From<EndpointId, UploadToken>((command, endpoint, token) => command.StartDownload(endpoint, token))
+            map.From<UploadToken>((command, token) => command.StartDownload(token))
                 .To((EndpointId e, UploadToken t) => instance.StartDownload(e, t));
 
             var collection = m_Context.Resolve<RegisterCommand>();

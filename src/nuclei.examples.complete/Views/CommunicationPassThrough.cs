@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
@@ -20,11 +19,6 @@ namespace Nuclei.Examples.Complete.Views
     /// </summary>
     internal sealed class CommunicationPassThrough : IHandleCommunication
     {
-        /// <summary>
-        /// The communication layer which does the actual communication work.
-        /// </summary>
-        private readonly ICommunicationFacade m_Facade;
-
         /// <summary>
         /// The object that sends commands to the remote endpoints.
         /// </summary>
@@ -43,17 +37,14 @@ namespace Nuclei.Examples.Complete.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="CommunicationPassThrough"/> class.
         /// </summary>
-        /// <param name="facade">The communication layer which does the actual communication work.</param>
         /// <param name="commands">The object that sends commands to the remote endpoints.</param>
         /// <param name="uploads">The object that tracks files registered for upload.</param>
         /// <param name="localNotifications">The object that holds the notifications.</param>
         public CommunicationPassThrough(
-            ICommunicationFacade facade, 
             ISendCommandsToRemoteEndpoints commands, 
             IStoreUploads uploads,
             TestNotifications localNotifications)
         {
-            m_Facade = facade;
             m_Commands = commands;
             m_Uploads = uploads;
             m_LocalNotifications = localNotifications;
@@ -139,7 +130,7 @@ namespace Nuclei.Examples.Complete.Views
                 var token = m_Uploads.Register(path);
 
                 var commands = m_Commands.CommandsFor<ITestCommandSet>(endpoint);
-                commands.StartDownload(m_Facade.Id, token);
+                commands.StartDownload(token);
             }
         }
 

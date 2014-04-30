@@ -113,7 +113,6 @@ namespace Nuclei.Examples.Complete
                     .SingleInstance();
 
                 builder.Register(c => new CommunicationPassThrough(
-                        c.Resolve<ICommunicationFacade>(),
                         c.Resolve<ISendCommandsToRemoteEndpoints>(),
                         c.Resolve<IStoreUploads>(),
                         c.Resolve<TestNotifications>()))
