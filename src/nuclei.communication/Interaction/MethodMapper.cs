@@ -169,49 +169,58 @@ namespace Nuclei.Communication.Interaction
             }
 
             // Get all the instance parameters for which there is no provided parameter and check that they have an attribute attached to it
-            var instanceParameterDefinitions = new List<CommandParameterDefinition>();
-            var nonMappedInstanceParameters = instanceParameters
-                .Where(i => !providedParameters.Any(p => (p.ParameterType == i.ParameterType) && string.Equals(p.Name, i.Name)))
-                .ToList();
-            foreach (var instanceParameter in nonMappedInstanceParameters)
+            var parameterDefinitions = new List<CommandParameterDefinition>();
+            foreach (var instanceParameter in instanceParameters)
             {
                 var attributes = instanceParameter.GetCustomAttributes(true);
-
-                var parameterUsageAttribute = attributes.FirstOrDefault(
-                    o => InteractionExtensions.KnownCommandInstanceParameterAttributes.Contains(o.GetType())) 
-                    as CommandInstanceParameterUsageAttribute;
-                if ((parameterUsageAttribute == null) || (parameterUsageAttribute.AllowedParameterType != instanceParameter.ParameterType))
+                if (attributes.Length > 0)
                 {
-                    throw new NonMappedCommandParameterException();
+                    var parameterUsageAttribute = attributes.FirstOrDefault(
+                        o => InteractionExtensions.KnownCommandInstanceParameterAttributes.Contains(o.GetType()))
+                        as CommandInstanceParameterUsageAttribute;
+                    if ((parameterUsageAttribute == null) || (parameterUsageAttribute.AllowedParameterType != instanceParameter.ParameterType))
+                    {
+                        throw new NonMappedCommandParameterException();
+                    }
+
+                    if (parameterUsageAttribute is InvokingEndpointAttribute)
+                    {
+                        parameterDefinitions.Add(
+                            new CommandParameterDefinition(
+                                instanceParameter.ParameterType,
+                                instanceParameter.Name,
+                                CommandParameterOrigin.InvokingEndpointId));
+                        continue;
+                    }
+
+                    if (parameterUsageAttribute is InvocationMessageAttribute)
+                    {
+                        parameterDefinitions.Add(
+                            new CommandParameterDefinition(
+                                instanceParameter.ParameterType,
+                                instanceParameter.Name,
+                                CommandParameterOrigin.InvokingMessageId));
+                        continue;
+                    }
                 }
 
-                if (parameterUsageAttribute is InvokingEndpointAttribute)
+                // Match with the known parameters
+                if (providedParameters.Any(
+                    p => (instanceParameter.ParameterType == p.ParameterType)
+                        && string.Equals(instanceParameter.Name, p.Name, StringComparison.Ordinal)))
                 {
-                    instanceParameterDefinitions.Add(
-                        new CommandParameterDefinition(
-                            instanceParameter.ParameterType, 
-                            instanceParameter.Name, 
-                            CommandParameterOrigin.InvokingEndpointId));
-                    continue;
-                }
-
-                if (parameterUsageAttribute is InvocationMessageAttribute)
-                {
-                    instanceParameterDefinitions.Add(
+                    parameterDefinitions.Add(
                         new CommandParameterDefinition(
                             instanceParameter.ParameterType,
                             instanceParameter.Name,
-                            CommandParameterOrigin.InvokingMessageId));
+                            CommandParameterOrigin.FromCommand));
                     continue;
                 }
 
                 throw new NonMappedCommandParameterException();
             }
 
-            var commandParameterDefinitions = providedParameters
-                .Select(p => new CommandParameterDefinition(p.ParameterType, p.Name, CommandParameterOrigin.FromCommand));
-
-            return commandParameterDefinitions.Append(instanceParameterDefinitions).ToArray();
+            return parameterDefinitions.ToArray();
         }
 
         private Delegate CreateCommandDelegate(object instance, MethodInfo method)

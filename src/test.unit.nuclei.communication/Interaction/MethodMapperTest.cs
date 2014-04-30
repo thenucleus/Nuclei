@@ -45,6 +45,11 @@ namespace Nuclei.Communication.Interaction
                 return 4;
             }
 
+            public int InstanceMethodWithEndpointIdAndExternalParameter([InvokingEndpoint]EndpointId id, int p2)
+            {
+                return 5 + p2;
+            }
+
             public int InstanceMethod()
             {
                 return 0;
@@ -310,6 +315,49 @@ namespace Nuclei.Communication.Interaction
                     new EndpointId("a"),
                     new MessageId(),
                     new CommandParameterValueMap[0]));
+        }
+
+        [Test]
+        public void ToWithTwoParametersAndEndpointIdAutomaticallyProvided()
+        {
+            CommandDefinition definition = null;
+            Action<CommandDefinition> store =
+                d =>
+                {
+                    definition = d;
+                };
+            var id = new CommandId("a");
+            var mapper = new MethodMapper(
+                store,
+                id,
+                typeof(int),
+                new[]
+                    {
+                        typeof(CommandInstance).GetMethod(
+                        "InstanceMethodWithEndpointIdAndExternalParameter",
+                        new[]
+                            {
+                                typeof(EndpointId),
+                                typeof(int)
+                            }).GetParameters()[1]
+                    });
+
+            var instance = new CommandInstance();
+            mapper.To<EndpointId, int>((p1, p2) => instance.InstanceMethodWithEndpointIdAndExternalParameter(p1, p2));
+            Assert.IsNotNull(definition);
+
+            var value = 1;
+            Assert.AreEqual(
+                value + 5,
+                definition.Invoke(
+                    new EndpointId("a"), 
+                    new MessageId(), 
+                    new[]
+                    {
+                        new CommandParameterValueMap(
+                            new CommandParameterDefinition(typeof(int), "p2", CommandParameterOrigin.FromCommand), 
+                            value), 
+                    }));
         }
 
         [Test]
