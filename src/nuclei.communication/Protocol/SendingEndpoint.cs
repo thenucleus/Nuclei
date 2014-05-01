@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Nuclei.Communication.Properties;
 
 namespace Nuclei.Communication.Protocol
 {
@@ -93,21 +94,25 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="endpoint">The endpoint to which the message should be send.</param>
         /// <param name="message">The message to be send.</param>
+        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to send the message if delivery fails.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="message"/> is <see langword="null" />.
         /// </exception>
-        public void Send(ProtocolInformation endpoint, ICommunicationMessage message)
+        public void Send(ProtocolInformation endpoint, ICommunicationMessage message, int maximumNumberOfRetries)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
                 Lokad.Enforce.Argument(() => message);
+                Lokad.Enforce.With<ArgumentOutOfRangeException>(
+                    maximumNumberOfRetries > 0,
+                    Resources.Exceptions_Messages_NumberOfRetriesShouldBeLargerThanZero);
             }
 
             var channel = MessageChannelFor(endpoint);
-            channel.Send(message);
+            channel.Send(message, maximumNumberOfRetries);
         }
 
         private IMessageSendingEndpoint MessageChannelFor(ProtocolInformation endpoint)

@@ -27,7 +27,8 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="endpoint">The endpoint to which the message should be send.</param>
         /// <param name="message">The message to be send.</param>
-        void Send(ProtocolInformation endpoint, ICommunicationMessage message);
+        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to send the message if delivery fails.</param>
+        void Send(ProtocolInformation endpoint, ICommunicationMessage message, int maximumNumberOfRetries);
 
         /// <summary>
         /// Transfers the stream to the given endpoint.

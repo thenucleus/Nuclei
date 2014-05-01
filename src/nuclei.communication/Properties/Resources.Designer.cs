@@ -475,6 +475,15 @@ namespace Nuclei.Communication.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The number of retries should be larger than zero..
+        /// </summary>
+        internal static string Exceptions_Messages_NumberOfRetriesShouldBeLargerThanZero {
+            get {
+                return ResourceManager.GetString("Exceptions_Messages_NumberOfRetriesShouldBeLargerThanZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The given type is not a valid command set interface..
         /// </summary>
         internal static string Exceptions_Messages_TypeIsNotAValidCommandSet {
