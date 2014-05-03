@@ -101,6 +101,9 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="message"/> is <see langword="null" />.
         /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///     Thrown if <paramref name="maximumNumberOfRetries"/> is smaller than 1.
+        /// </exception>
         public void Send(ProtocolInformation endpoint, ICommunicationMessage message, int maximumNumberOfRetries)
         {
             {
@@ -162,17 +165,24 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="endpoint">The endpoint to which the data should be send.</param>
         /// <param name="data">The data to be send.</param>
+        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to transfer the data if delivery fails.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="data"/> is <see langword="null" />.
         /// </exception>
-        public void Send(ProtocolInformation endpoint, Stream data)
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///     Thrown if <paramref name="maximumNumberOfRetries"/> is smaller than 1.
+        /// </exception>
+        public void Send(ProtocolInformation endpoint, Stream data, int maximumNumberOfRetries)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
                 Lokad.Enforce.Argument(() => data);
+                Lokad.Enforce.With<ArgumentOutOfRangeException>(
+                    maximumNumberOfRetries > 0,
+                    Resources.Exceptions_Messages_NumberOfRetriesShouldBeLargerThanZero);
             }
 
             var channel = DataChannelFor(endpoint);
@@ -181,7 +191,7 @@ namespace Nuclei.Communication.Protocol
                     SendingEndpoint = m_LocalEndpoint,
                     Data = data,
                 };
-            channel.Send(msg);
+            channel.Send(msg, maximumNumberOfRetries);
         }
 
         /// <summary>

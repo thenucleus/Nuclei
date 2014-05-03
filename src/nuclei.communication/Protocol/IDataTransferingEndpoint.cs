@@ -17,6 +17,7 @@ namespace Nuclei.Communication.Protocol
         /// Sends the given message.
         /// </summary>
         /// <param name="message">The message to be send.</param>
-        void Send(DataTransferMessage message);
+        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to transfer the data if delivery fails.</param>
+        void Send(DataTransferMessage message, int maximumNumberOfRetries);
     }
 }

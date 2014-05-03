@@ -35,7 +35,8 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="endpoint">The endpoint to which the data should be send.</param>
         /// <param name="data">The data to be send.</param>
-        void Send(ProtocolInformation endpoint, Stream data);
+        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to transfer the data if delivery fails.</param>
+        void Send(ProtocolInformation endpoint, Stream data, int maximumNumberOfRetries);
 
         /// <summary>
         /// Closes the channel that connects to the given endpoint.
