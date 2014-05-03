@@ -405,7 +405,11 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="connection">The connection information for the endpoint to which the message has to be send.</param>
         /// <param name="message">The message that has to be send.</param>
-        public void SendMessageToUnregisteredEndpoint(EndpointInformation connection, ICommunicationMessage message)
+        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to send the message if delivery fails.</param>
+        /// <exception cref="FailedToSendMessageException">
+        ///     Thrown when the channel fails to deliver the message to the remote endpoint.
+        /// </exception>
+        public void SendMessageToUnregisteredEndpoint(EndpointInformation connection, ICommunicationMessage message, int maximumNumberOfRetries)
         {
             {
                 Lokad.Enforce.Argument(() => connection);
@@ -426,7 +430,7 @@ namespace Nuclei.Communication.Protocol
                         message.GetType(),
                         connection.Id));
 
-                channel.Send(connection.ProtocolInformation, message);
+                channel.Send(connection.ProtocolInformation, message, maximumNumberOfRetries);
                 RaiseOnConfirmChannelIntegrity(connection.Id);
             }
         }
@@ -436,6 +440,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="endpoint">The endpoint to which the message has to be send.</param>
         /// <param name="message">The message that has to be send.</param>
+        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to send the message if delivery fails.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
@@ -445,7 +450,10 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="message"/> is <see langword="null" />.
         /// </exception>
-        public void SendMessageTo(EndpointId endpoint, ICommunicationMessage message)
+        /// <exception cref="FailedToSendMessageException">
+        ///     Thrown when the channel fails to deliver the message to the remote endpoint.
+        /// </exception>
+        public void SendMessageTo(EndpointId endpoint, ICommunicationMessage message, int maximumNumberOfRetries)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
@@ -463,7 +471,7 @@ namespace Nuclei.Communication.Protocol
                 throw new EndpointNotContactableException(endpoint);
             }
 
-            SendMessageToUnregisteredEndpoint(connection, message);
+            SendMessageToUnregisteredEndpoint(connection, message, maximumNumberOfRetries);
         }
 
         private IProtocolChannel ChannelFor(EndpointInformation connection)
@@ -520,7 +528,7 @@ namespace Nuclei.Communication.Protocol
                         message.GetType(),
                         connection));
 
-                pair.Item1.Send(connection.ProtocolInformation, message);
+                pair.Item1.Send(connection.ProtocolInformation, message, CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
 
                 RaiseOnConfirmChannelIntegrity(connection.Id);
                 return result;
@@ -572,6 +580,7 @@ namespace Nuclei.Communication.Protocol
         /// <param name="filePath">The full path to the file that should be transferred.</param>
         /// <param name="token">The cancellation token that is used to cancel the task if necessary.</param>
         /// <param name="scheduler">The scheduler that is used to run the return task.</param>
+        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to send the message if delivery fails.</param>
         /// <returns>
         ///     A task that will return once the upload is complete.
         /// </returns>
@@ -579,7 +588,8 @@ namespace Nuclei.Communication.Protocol
             EndpointId receivingEndpoint,
             string filePath,
             CancellationToken token,
-            TaskScheduler scheduler)
+            TaskScheduler scheduler,
+            int maximumNumberOfRetries)
         {
             {
                 Lokad.Enforce.Argument(() => filePath);
@@ -592,7 +602,7 @@ namespace Nuclei.Communication.Protocol
             }
 
             var channel = ChannelFor(connection);
-            return channel.TransferData(connection.ProtocolInformation, filePath, token, scheduler);
+            return channel.TransferData(connection.ProtocolInformation, filePath, maximumNumberOfRetries, token, scheduler);
         }
 
         /// <summary>

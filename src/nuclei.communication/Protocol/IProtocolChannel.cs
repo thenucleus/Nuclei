@@ -62,7 +62,7 @@ namespace Nuclei.Communication.Protocol
             string filePath, 
             int maximumNumberOfRetries,
             CancellationToken token,
-            TaskScheduler scheduler);
+            TaskScheduler scheduler = null);
 
         /// <summary>
         /// Sends the given message to the receiving endpoint.

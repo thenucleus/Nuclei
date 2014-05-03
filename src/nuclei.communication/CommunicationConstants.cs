@@ -103,6 +103,11 @@ namespace Nuclei.Communication
         public const int DefaultMaximumTimeInMillisecondsBetweenConnectionConfirmations = 60 * 1000;
 
         /// <summary>
+        /// The default value for the maximum number of times a message is send if previous attempts fail.
+        /// </summary>
+        public const int DefaultMaximuNumberOfRetriesForMessageSending = 3;
+
+        /// <summary>
         /// The version of the communication system.
         /// </summary>
         public static readonly Version CommunicationVersion = new Version(1, 0, 0, 0);

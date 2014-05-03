@@ -89,14 +89,28 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="connection">The connection information for the endpoint to which the message has to be send.</param>
         /// <param name="message">The message that has to be send.</param>
-        void SendMessageToUnregisteredEndpoint(EndpointInformation connection, ICommunicationMessage message);
+        /// <param name="maximumNumberOfRetries">
+        /// The maximum number of times the endpoint will try to send the message if delivery fails. 
+        /// Defaults to <see cref="CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending"/>.
+        /// </param>
+        void SendMessageToUnregisteredEndpoint(
+            EndpointInformation connection, 
+            ICommunicationMessage message,
+            int maximumNumberOfRetries = CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
 
         /// <summary>
         /// Sends the given message to the specified endpoint.
         /// </summary>
         /// <param name="endpoint">The endpoint to which the message has to be send.</param>
         /// <param name="message">The message that has to be send.</param>
-        void SendMessageTo(EndpointId endpoint, ICommunicationMessage message);
+        /// <param name="maximumNumberOfRetries">
+        /// The maximum number of times the endpoint will try to send the message if delivery fails. 
+        /// Defaults to <see cref="CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending"/>.
+        /// </param>
+        void SendMessageTo(
+            EndpointId endpoint, 
+            ICommunicationMessage message,
+            int maximumNumberOfRetries = CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
 
         /// <summary>
         /// Sends the given message to the specified endpoint and returns a task that
@@ -128,6 +142,10 @@ namespace Nuclei.Communication.Protocol
         /// <param name="filePath">The full path to the file that should be transferred.</param>
         /// <param name="token">The cancellation token that is used to cancel the task if necessary.</param>
         /// <param name="scheduler">The scheduler that is used to run the return task.</param>
+        /// <param name="maximumNumberOfRetries">
+        /// The maximum number of times the endpoint will try to send the message if delivery fails. 
+        /// Defaults to <see cref="CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending"/>.
+        /// </param>
         /// <returns>
         ///     A task that will return once the upload is complete.
         /// </returns>
@@ -135,6 +153,7 @@ namespace Nuclei.Communication.Protocol
             EndpointId receivingEndpoint,
             string filePath,
             CancellationToken token,
-            TaskScheduler scheduler);
+            TaskScheduler scheduler = null,
+            int maximumNumberOfRetries = CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
     }
 }
