@@ -323,7 +323,9 @@ namespace Nuclei.Communication.Protocol
                         var msg = new EndpointDisconnectMessage(m_Id);
                         try
                         {
-                            sender.Send(key, msg);
+                            // Don't bother retrying this many times because we're about to go away. If the other
+                            // side isn't there, they won't care we're not there.
+                            sender.Send(key, msg, 1);
                         }
                         catch (FailedToSendMessageException)
                         {
@@ -394,6 +396,7 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="receivingEndpoint">The connection information for the endpoint that will receive the data stream.</param>
         /// <param name="filePath">The file path to the file that should be transferred.</param>
+        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to send the message if delivery fails.</param>
         /// <param name="token">The cancellation token that is used to cancel the task if necessary.</param>
         /// <param name="scheduler">The scheduler that is used to run the return task with.</param>
         /// <returns>
@@ -408,9 +411,13 @@ namespace Nuclei.Communication.Protocol
         /// <exception cref="ArgumentException">
         ///     Thrown if <paramref name="filePath"/> is <see langword="null" />.
         /// </exception>
+        /// <exception cref="FailedToSendMessageException">
+        ///     Thrown when the channel fails to deliver the message to the remote endpoint.
+        /// </exception>
         public Task TransferData(
             ProtocolInformation receivingEndpoint,
             string filePath,
+            int maximumNumberOfRetries,
             CancellationToken token,
             TaskScheduler scheduler)
         {
@@ -427,7 +434,7 @@ namespace Nuclei.Communication.Protocol
                     // Don't catch any exception because the task will store them if we don't catch them.
                     using (var file = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                     {
-                        sender.Send(receivingEndpoint, file);
+                        sender.Send(receivingEndpoint, file, maximumNumberOfRetries);
                     }
                 },
                 token,
@@ -455,13 +462,17 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="endpoint">The connection information for the endpoint to which the message should be send.</param>
         /// <param name="message">The message that should be send.</param>
+        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to send the message if delivery fails.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpoint"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="message"/> is <see langword="null" />.
         /// </exception>
-        public void Send(ProtocolInformation endpoint, ICommunicationMessage message)
+        /// <exception cref="FailedToSendMessageException">
+        ///     Thrown when the channel fails to deliver the message to the remote endpoint.
+        /// </exception>
+        public void Send(ProtocolInformation endpoint, ICommunicationMessage message, int maximumNumberOfRetries)
         {
             {
                 Lokad.Enforce.Argument(() => endpoint);
@@ -474,7 +485,7 @@ namespace Nuclei.Communication.Protocol
                 throw new EndpointNotContactableException();
             }
 
-            sender.Send(endpoint, message);
+            sender.Send(endpoint, message, maximumNumberOfRetries);
         }
 
         private IMessageSendingEndpoint BuildMessageSendingProxy(ProtocolInformation info)
