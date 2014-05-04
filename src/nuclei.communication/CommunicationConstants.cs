@@ -36,6 +36,12 @@ namespace Nuclei.Communication
         public const int DefaultBindingReceiveTimeoutInMilliSeconds = 30 * 60 * 1000;
 
         /// <summary>
+        /// The default time-out in milliseconds that a binding will wait for a receipt confirmation
+        /// message to be received by the message sending side.
+        /// </summary>
+        public const int DefaultBindingReceiveConfirmationTimeoutInMilliseconds = 1 * 1000;
+
+        /// <summary>
         /// The default time-out that will be used while waiting for a response message from a remote endpoint.
         /// </summary>
         public const int DefaultWaitForResponseTimeoutInMilliSeconds = 10 * 1000;
