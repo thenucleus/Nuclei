@@ -602,7 +602,7 @@ namespace Nuclei.Communication.Protocol
             }
 
             var channel = ChannelFor(connection);
-            return channel.TransferData(connection.ProtocolInformation, filePath, maximumNumberOfRetries, token, scheduler);
+            return channel.TransferData(connection.ProtocolInformation, filePath, token, scheduler, maximumNumberOfRetries);
         }
 
         /// <summary>

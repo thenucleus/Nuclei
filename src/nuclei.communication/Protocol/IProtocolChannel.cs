@@ -51,18 +51,18 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="receivingEndpoint">The connection information for the endpoint that will receive the data stream.</param>
         /// <param name="filePath">The file path to the file that should be transferred.</param>
-        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to send the message if delivery fails.</param>
         /// <param name="token">The cancellation token that is used to cancel the task if necessary.</param>
         /// <param name="scheduler">The scheduler that is used to run the return task with.</param>
+        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to send the message if delivery fails.</param>
         /// <returns>
         /// An task that indicates when the transfer is complete.
         /// </returns>
         Task TransferData(
-            ProtocolInformation receivingEndpoint,
+            ProtocolInformation receivingEndpoint, 
             string filePath, 
-            int maximumNumberOfRetries,
-            CancellationToken token,
-            TaskScheduler scheduler = null);
+            CancellationToken token, 
+            TaskScheduler scheduler = null,
+            int maximumNumberOfRetries = CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
 
         /// <summary>
         /// Sends the given message to the receiving endpoint.
