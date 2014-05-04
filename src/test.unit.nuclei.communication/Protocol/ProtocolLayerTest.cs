@@ -288,9 +288,9 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
-                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<ProtocolInformation, ICommunicationMessage>(
-                        (e, m) =>
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.IsInstanceOf(typeof(ConnectionVerificationMessage), m);
@@ -337,7 +337,7 @@ namespace Nuclei.Communication.Protocol
             Assert.IsNotNull(response.Exception);
 
             channel.Verify(c => c.OpenChannel(), Times.Once());
-            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()), Times.Once());
         }
 
@@ -366,9 +366,9 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
-                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<ProtocolInformation, ICommunicationMessage>(
-                        (e, m) =>
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.IsInstanceOf(typeof(ConnectionVerificationMessage), m);
@@ -413,7 +413,7 @@ namespace Nuclei.Communication.Protocol
             Assert.IsTrue(response.IsCanceled);
 
             channel.Verify(c => c.OpenChannel(), Times.Once());
-            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()), Times.Once());
         }
 
@@ -442,9 +442,9 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
-                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<ProtocolInformation, ICommunicationMessage>(
-                        (e, m) =>
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.IsInstanceOf(typeof(ConnectionVerificationMessage), m);
@@ -488,7 +488,7 @@ namespace Nuclei.Communication.Protocol
             Assert.AreSame(responseData, response.Result);
 
             channel.Verify(c => c.OpenChannel(), Times.Once());
-            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()), Times.Once());
         }
 
@@ -516,7 +516,7 @@ namespace Nuclei.Communication.Protocol
                 diagnostics);
 
             Assert.Throws<EndpointNotContactableException>(
-                () => layer.SendMessageTo(new EndpointId("A"), new SuccessMessage(new EndpointId("B"), new MessageId())));
+                () => layer.SendMessageTo(new EndpointId("A"), new SuccessMessage(new EndpointId("B"), new MessageId()), 1));
         }
 
         [Test]
@@ -545,9 +545,9 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
-                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<ProtocolInformation, ICommunicationMessage>(
-                        (e, m) =>
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(msg, m);
@@ -568,9 +568,9 @@ namespace Nuclei.Communication.Protocol
                     },
                 diagnostics);
 
-            layer.SendMessageTo(remoteEndpoint, msg);
+            layer.SendMessageTo(remoteEndpoint, msg, 1);
             channel.Verify(c => c.OpenChannel(), Times.Once());
-            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
         }
 
         [Test]
@@ -599,9 +599,9 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
-                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<ProtocolInformation, ICommunicationMessage>(
-                        (e, m) =>
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(msg, m);
@@ -624,9 +624,9 @@ namespace Nuclei.Communication.Protocol
 
             layer.SignIn();
 
-            layer.SendMessageTo(remoteEndpoint, msg);
+            layer.SendMessageTo(remoteEndpoint, msg, 1);
             channel.Verify(c => c.OpenChannel(), Times.Once());
-            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
         }
 
         [Test]
@@ -688,9 +688,9 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
-                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<ProtocolInformation, ICommunicationMessage>(
-                        (e, m) =>
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(msg, m);
@@ -737,7 +737,7 @@ namespace Nuclei.Communication.Protocol
             Assert.AreSame(responseTask, response);
             
             channel.Verify(c => c.OpenChannel(), Times.Once());
-            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()), Times.Once());
         }
 
@@ -767,9 +767,9 @@ namespace Nuclei.Communication.Protocol
                     .Verifiable();
                 channel.Setup(c => c.LocalConnectionPointForVersion(It.IsAny<Version>()))
                     .Returns(endpointInfo.ProtocolInformation);
-                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<ProtocolInformation, ICommunicationMessage>(
-                        (e, m) =>
+                channel.Setup(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(msg, m);
@@ -818,7 +818,7 @@ namespace Nuclei.Communication.Protocol
             Assert.AreSame(responseTask, response);
 
             channel.Verify(c => c.OpenChannel(), Times.Once());
-            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Verify(c => c.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             pipe.Verify(p => p.ForwardResponse(It.IsAny<EndpointId>(), It.IsAny<MessageId>(), It.IsAny<TimeSpan>()), Times.Once());
         }
 
@@ -846,11 +846,12 @@ namespace Nuclei.Communication.Protocol
                 channel.Setup(
                     c => c.TransferData(
                         It.IsAny<ProtocolInformation>(), 
-                        It.IsAny<string>(), 
+                        It.IsAny<string>(),
                         It.IsAny<CancellationToken>(), 
-                        It.IsAny<TaskScheduler>()))
-                    .Callback<ProtocolInformation, string, CancellationToken, TaskScheduler>(
-                        (e, p, c, s) =>
+                        It.IsAny<TaskScheduler>(), 
+                        It.IsAny<int>()))
+                    .Callback<ProtocolInformation, string, CancellationToken, TaskScheduler, int>(
+                        (e, p, c, s, r) =>
                         {
                             Assert.AreSame(protocolInfo, e);
                             Assert.AreSame(file, p);
@@ -879,10 +880,15 @@ namespace Nuclei.Communication.Protocol
             layer.SignIn();
 
             Assert.Throws<EndpointNotContactableException>(
-                () => layer.UploadData(endpoint, file, new CancellationToken(), new CurrentThreadTaskScheduler()));
+                () => layer.UploadData(endpoint, file, new CancellationToken(), new CurrentThreadTaskScheduler(), 1));
             channel.Verify(c => c.OpenChannel(), Times.Once());
             channel.Verify(
-                c => c.TransferData(It.IsAny<ProtocolInformation>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()),
+                c => c.TransferData(
+                    It.IsAny<ProtocolInformation>(), 
+                    It.IsAny<string>(), 
+                    It.IsAny<CancellationToken>(), 
+                    It.IsAny<TaskScheduler>(), 
+                    It.IsAny<int>()),
                 Times.Never());
         }
 
@@ -915,17 +921,18 @@ namespace Nuclei.Communication.Protocol
                 channel.Setup(
                     c => c.TransferData(
                         It.IsAny<ProtocolInformation>(), 
-                        It.IsAny<string>(), 
+                        It.IsAny<string>(),
                         It.IsAny<CancellationToken>(), 
-                        It.IsAny<TaskScheduler>()))
-                    .Callback<ProtocolInformation, string, CancellationToken, TaskScheduler>(
-                        (e, p, c, s) =>
+                        It.IsAny<TaskScheduler>(), 
+                        It.IsAny<int>()))
+                    .Callback<ProtocolInformation, string, CancellationToken, TaskScheduler, int>(
+                        (e, p, c, s, r) =>
                         {
                             Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(file, p);
                         })
-                    .Returns<ProtocolInformation, string, CancellationToken, TaskScheduler>(
-                        (e, p, c, s) => Task.Factory.StartNew(() => { }, c, TaskCreationOptions.None, s))
+                    .Returns<ProtocolInformation, string, CancellationToken, TaskScheduler, int>(
+                        (e, p, c, s, r) => Task.Factory.StartNew(() => { }, c, TaskCreationOptions.None, s))
                     .Verifiable();
             }
 
@@ -947,10 +954,15 @@ namespace Nuclei.Communication.Protocol
 
             layer.SignIn();
 
-            layer.UploadData(remoteEndpoint, file, new CancellationToken(), new CurrentThreadTaskScheduler());
+            layer.UploadData(remoteEndpoint, file, new CancellationToken(), new CurrentThreadTaskScheduler(), 1);
             channel.Verify(c => c.OpenChannel(), Times.Once());
             channel.Verify(
-                c => c.TransferData(It.IsAny<ProtocolInformation>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()),
+                c => c.TransferData(
+                    It.IsAny<ProtocolInformation>(),
+                    It.IsAny<string>(), 
+                    It.IsAny<CancellationToken>(), 
+                     It.IsAny<TaskScheduler>(), 
+                     It.IsAny<int>()),
                 Times.Once());
         }
 
@@ -983,17 +995,18 @@ namespace Nuclei.Communication.Protocol
                 channel.Setup(
                     c => c.TransferData(
                         It.IsAny<ProtocolInformation>(), 
-                        It.IsAny<string>(), 
+                        It.IsAny<string>(),
                         It.IsAny<CancellationToken>(), 
-                        It.IsAny<TaskScheduler>()))
-                    .Callback<ProtocolInformation, string, CancellationToken, TaskScheduler>(
-                        (e, p, c, s) =>
+                        It.IsAny<TaskScheduler>(), 
+                        It.IsAny<int>()))
+                    .Callback<ProtocolInformation, string, CancellationToken, TaskScheduler, int>(
+                        (e, p, c, s, r) =>
                         {
                             Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(file, p);
                         })
-                    .Returns<ProtocolInformation, string, CancellationToken, TaskScheduler>(
-                        (e, p, c, s) => Task.Factory.StartNew(() => { }, c, TaskCreationOptions.None, s))
+                    .Returns<ProtocolInformation, string, CancellationToken, TaskScheduler, int>(
+                        (e, p, c, s, r) => Task.Factory.StartNew(() => { }, c, TaskCreationOptions.None, s))
                     .Verifiable();
             }
 
@@ -1015,10 +1028,15 @@ namespace Nuclei.Communication.Protocol
 
             layer.SignIn();
 
-            layer.UploadData(remoteEndpoint, file, new CancellationToken(), new CurrentThreadTaskScheduler());
+            layer.UploadData(remoteEndpoint, file, new CancellationToken(), new CurrentThreadTaskScheduler(), 1);
             channel.Verify(c => c.OpenChannel(), Times.Once());
             channel.Verify(
-                c => c.TransferData(It.IsAny<ProtocolInformation>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<TaskScheduler>()), 
+                c => c.TransferData(
+                    It.IsAny<ProtocolInformation>(),
+                    It.IsAny<string>(), 
+                    It.IsAny<CancellationToken>(), 
+                    It.IsAny<TaskScheduler>(), 
+                    It.IsAny<int>()), 
                 Times.Once());
         }
     }

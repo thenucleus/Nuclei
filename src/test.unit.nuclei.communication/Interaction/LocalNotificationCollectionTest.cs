@@ -68,7 +68,7 @@ namespace Nuclei.Communication.Interaction
                             { 
                                 knownEndpoint, 
                             });
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
                     .Verifiable();
             }
 
@@ -79,7 +79,7 @@ namespace Nuclei.Communication.Interaction
             collection.Register(new[] { def });
 
             Assert.IsTrue(collection.Any(pair => pair.Equals(id)));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace Nuclei.Communication.Interaction
                     .Returns(new EndpointId("mine"));
                 layer.Setup(l => l.IsSignedIn)
                     .Returns(false);
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
                     .Verifiable();
             }
 
@@ -102,7 +102,7 @@ namespace Nuclei.Communication.Interaction
             collection.Register(new[] { def });
 
             Assert.AreEqual(1, collection.Count(pair => pair.Equals(id)));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
         }
 
         [Test]
@@ -123,9 +123,9 @@ namespace Nuclei.Communication.Interaction
                             { 
                                 knownEndpoint, 
                             });
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
-                        (e, m) =>
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<EndpointId, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             other = e;
                             msg = m;
@@ -142,14 +142,14 @@ namespace Nuclei.Communication.Interaction
             collection.Register(new[] { def });
 
             Assert.AreEqual(1, collection.Count(pair => pair.Equals(id)));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
 
             collection.RegisterForNotification(knownEndpoint, id);
 
             var args = new EventArgs();
             obj.RaiseOnMyEvent(args);
 
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             Assert.AreEqual(knownEndpoint, other);
             Assert.IsInstanceOf<NotificationRaisedMessage>(msg);
 
@@ -176,9 +176,9 @@ namespace Nuclei.Communication.Interaction
                             { 
                                 knownEndpoint, 
                             });
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
-                        (e, m) =>
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<EndpointId, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             other = e;
                             msg = m;
@@ -195,14 +195,14 @@ namespace Nuclei.Communication.Interaction
             collection.Register(new[] { def });
 
             Assert.AreEqual(1, collection.Count(pair => pair.Equals(id)));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
 
             collection.RegisterForNotification(knownEndpoint, id);
 
             var args = new UnhandledExceptionEventArgs(new Exception(), false);
             obj.RaiseOnMyOtherEvent(args);
 
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             Assert.AreEqual(knownEndpoint, other);
             Assert.IsInstanceOf<NotificationRaisedMessage>(msg);
 
@@ -229,9 +229,9 @@ namespace Nuclei.Communication.Interaction
                             { 
                                 knownEndpoint, 
                             });
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
-                        (e, m) =>
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<EndpointId, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             other = e;
                             msg = m;
@@ -248,7 +248,7 @@ namespace Nuclei.Communication.Interaction
             collection.Register(new[] { def });
 
             Assert.AreEqual(1, collection.Count(pair => pair.Equals(id)));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
 
             collection.RegisterForNotification(knownEndpoint, id);
             collection.UnregisterFromNotification(knownEndpoint, id);
@@ -259,7 +259,7 @@ namespace Nuclei.Communication.Interaction
             var args = new EventArgs();
             obj.RaiseOnMyEvent(args);
 
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Never());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
             Assert.IsNull(other);
             Assert.IsNull(msg);
         }

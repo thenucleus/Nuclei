@@ -88,7 +88,10 @@ namespace Nuclei.Communication.Protocol
                             connection.Id, 
                             connection.ProtocolInformation.MessageAddress, 
                             connection.ProtocolInformation.DataAddress));
-                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()))
+                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpoint(
+                        It.IsAny<EndpointInformation>(), 
+                        It.IsAny<ICommunicationMessage>(), 
+                        It.IsAny<int>()))
                     .Verifiable();
                 protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                         It.IsAny<EndpointInformation>(), 
@@ -161,7 +164,7 @@ namespace Nuclei.Communication.Protocol
             Assert.AreEqual(remoteInfo.ProtocolInformation.DataAddress, info.ProtocolInformation.DataAddress);
 
             protocolLayer.Verify(
-                l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 
+                l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), 
                 Times.Once());
             protocolLayer.Verify(
                 l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
@@ -235,7 +238,10 @@ namespace Nuclei.Communication.Protocol
                             connection.Id,
                             connection.ProtocolInformation.MessageAddress,
                             connection.ProtocolInformation.DataAddress));
-                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()))
+                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpoint(
+                        It.IsAny<EndpointInformation>(), 
+                        It.IsAny<ICommunicationMessage>(), 
+                        It.IsAny<int>()))
                     .Verifiable();
                 protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                         It.IsAny<EndpointInformation>(),
@@ -296,7 +302,7 @@ namespace Nuclei.Communication.Protocol
             Assert.AreEqual(remoteInfo.ProtocolInformation.DataAddress, info.ProtocolInformation.DataAddress);
 
             protocolLayer.Verify(
-                l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 
+                l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), 
                 Times.Once());
             protocolLayer.Verify(
                 l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
@@ -369,7 +375,10 @@ namespace Nuclei.Communication.Protocol
                             connection.Id,
                             connection.ProtocolInformation.MessageAddress,
                             connection.ProtocolInformation.DataAddress));
-                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()))
+                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpoint(
+                        It.IsAny<EndpointInformation>(), 
+                        It.IsAny<ICommunicationMessage>(), 
+                        It.IsAny<int>()))
                     .Verifiable();
                 protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                         It.IsAny<EndpointInformation>(),
@@ -428,7 +437,7 @@ namespace Nuclei.Communication.Protocol
             Assert.IsFalse(storage.CanCommunicateWithEndpoint(remoteEndpoint));
 
             protocolLayer.Verify(
-                l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()), 
+                l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), 
                 Times.Never());
             protocolLayer.Verify(
                 l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
@@ -502,7 +511,10 @@ namespace Nuclei.Communication.Protocol
                             connection.Id,
                             connection.ProtocolInformation.MessageAddress,
                             connection.ProtocolInformation.DataAddress));
-                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpoint(It.IsAny<EndpointInformation>(), It.IsAny<ICommunicationMessage>()))
+                protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpoint(
+                        It.IsAny<EndpointInformation>(), 
+                        It.IsAny<ICommunicationMessage>(), 
+                        It.IsAny<int>()))
                     .Verifiable();
                 protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                         It.IsAny<EndpointInformation>(),

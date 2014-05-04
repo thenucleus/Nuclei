@@ -99,9 +99,9 @@ namespace Nuclei.Communication.Interaction
             {
                 layer.Setup(l => l.Id)
                     .Returns(id);
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
-                        (e, m) =>
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<EndpointId, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             var msg = m as EndpointInteractionInformationResponseMessage;
                             Assert.IsNotNull(msg);
@@ -148,7 +148,7 @@ namespace Nuclei.Communication.Interaction
                 remoteEndpoint, 
                 requiredSubjects.Values.ToArray(),
                 new MessageId());
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
                 Times.Once());
@@ -230,9 +230,9 @@ namespace Nuclei.Communication.Interaction
             {
                 layer.Setup(l => l.Id)
                     .Returns(id);
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
-                        (e, m) =>
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<EndpointId, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             var msg = m as EndpointInteractionInformationResponseMessage;
                             Assert.IsNotNull(msg);
@@ -268,7 +268,7 @@ namespace Nuclei.Communication.Interaction
                 remoteEndpoint, 
                 requiredSubjects.Values.ToArray(),
                 new MessageId());
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
                 Times.Once());
@@ -355,9 +355,9 @@ namespace Nuclei.Communication.Interaction
             {
                 layer.Setup(l => l.Id)
                     .Returns(id);
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
-                        (e, m) =>
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<EndpointId, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             var msg = m as EndpointInteractionInformationResponseMessage;
                             Assert.IsNotNull(msg);
@@ -399,7 +399,7 @@ namespace Nuclei.Communication.Interaction
                             new VersionedTypeFallback[0]), 
                     }, 
                 new MessageId());
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
                 Times.Never());
@@ -487,9 +487,9 @@ namespace Nuclei.Communication.Interaction
             {
                 layer.Setup(l => l.Id)
                     .Returns(id);
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
-                        (e, m) =>
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<EndpointId, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             var msg = m as EndpointInteractionInformationResponseMessage;
                             Assert.IsNotNull(msg);
@@ -539,7 +539,7 @@ namespace Nuclei.Communication.Interaction
                         new CommunicationSubjectGroup(new CommunicationSubject("b"), new VersionedTypeFallback[0], new VersionedTypeFallback[0]), 
                     },
                 new MessageId());
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
                 Times.Never());

@@ -31,13 +31,13 @@ namespace Nuclei.Communication.Protocol
             var msg = new EndpointDisconnectMessage(endpointId);
             var messageProxy = new Mock<IMessageSendingEndpoint>();
             {
-                messageProxy.Setup(p => p.Send(It.IsAny<ICommunicationMessage>()))
-                    .Callback<ICommunicationMessage>(input => Assert.AreSame(msg, input));
+                messageProxy.Setup(p => p.Send(It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ICommunicationMessage, int>((input, retries) => Assert.AreSame(msg, input));
             }
 
             var dataProxy = new Mock<IDataTransferingEndpoint>();
             {
-                dataProxy.Setup(p => p.Send(It.IsAny<DataTransferMessage>()))
+                dataProxy.Setup(p => p.Send(It.IsAny<DataTransferMessage>(), It.IsAny<int>()))
                     .Verifiable();
             }
 
@@ -46,9 +46,9 @@ namespace Nuclei.Communication.Protocol
             Func<ProtocolInformation, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
             var sender = new SendingEndpoint(localEndpoint, builder, dataBuilder);
 
-            sender.Send(endpointInfo, msg);
+            sender.Send(endpointInfo, msg, 1);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
-            dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>()), Times.Never());
+            dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>(), It.IsAny<int>()), Times.Never());
         }
 
         [Test]
@@ -63,14 +63,14 @@ namespace Nuclei.Communication.Protocol
             var msg = new EndpointDisconnectMessage(endpointId);
             var messageProxy = new Mock<IMessageSendingEndpoint>();
             {
-                messageProxy.Setup(p => p.Send(It.IsAny<ICommunicationMessage>()))
-                    .Callback<ICommunicationMessage>(input => Assert.AreSame(msg, input))
+                messageProxy.Setup(p => p.Send(It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ICommunicationMessage, int>((input, retries) => Assert.AreSame(msg, input))
                     .Verifiable();
             }
 
             var dataProxy = new Mock<IDataTransferingEndpoint>();
             {
-                dataProxy.Setup(p => p.Send(It.IsAny<DataTransferMessage>()))
+                dataProxy.Setup(p => p.Send(It.IsAny<DataTransferMessage>(), It.IsAny<int>()))
                     .Verifiable();
             }
 
@@ -79,15 +79,15 @@ namespace Nuclei.Communication.Protocol
             Func<ProtocolInformation, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
             var sender = new SendingEndpoint(localEndpoint, builder, dataBuilder);
 
-            sender.Send(endpointInfo, msg);
+            sender.Send(endpointInfo, msg, 1);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
-            messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>()), Times.Exactly(1));
-            dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>()), Times.Never());
+            messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Exactly(1));
+            dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>(), It.IsAny<int>()), Times.Never());
 
-            sender.Send(endpointInfo, msg);
+            sender.Send(endpointInfo, msg, 1);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
-            messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>()), Times.Exactly(2));
-            dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>()), Times.Never());
+            messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Exactly(2));
+            dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>(), It.IsAny<int>()), Times.Never());
         }
 
         [Test]
@@ -106,15 +106,15 @@ namespace Nuclei.Communication.Protocol
                 new Uri("http://localhost/data"));
             var messageProxy = new Mock<IMessageSendingEndpoint>();
             {
-                messageProxy.Setup(p => p.Send(It.IsAny<ICommunicationMessage>()))
+                messageProxy.Setup(p => p.Send(It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
                     .Verifiable();
             }
 
             var dataProxy = new Mock<IDataTransferingEndpoint>();
             {
-                dataProxy.Setup(p => p.Send(It.IsAny<DataTransferMessage>()))
-                    .Callback<DataTransferMessage>(
-                        msg =>
+                dataProxy.Setup(p => p.Send(It.IsAny<DataTransferMessage>(), It.IsAny<int>()))
+                    .Callback<DataTransferMessage, int>(
+                        (msg, retries) =>
                         {
                             Assert.AreSame(localEndpoint, msg.SendingEndpoint);
                             Assert.AreSame(data, msg.Data);
@@ -126,10 +126,10 @@ namespace Nuclei.Communication.Protocol
             Func<ProtocolInformation, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
             var sender = new SendingEndpoint(localEndpoint, builder, dataBuilder);
 
-            sender.Send(endpointInfo, data);
+            sender.Send(endpointInfo, data, 1);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
-            messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>()), Times.Never());
-            dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>()), Times.Exactly(1));
+            messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
+            dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>(), It.IsAny<int>()), Times.Exactly(1));
         }
 
         [Test]
@@ -148,15 +148,15 @@ namespace Nuclei.Communication.Protocol
                 new Uri("http://localhost/data"));
             var messageProxy = new Mock<IMessageSendingEndpoint>();
             {
-                messageProxy.Setup(p => p.Send(It.IsAny<ICommunicationMessage>()))
+                messageProxy.Setup(p => p.Send(It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
                     .Verifiable();
             }
 
             var dataProxy = new Mock<IDataTransferingEndpoint>();
             {
-                dataProxy.Setup(p => p.Send(It.IsAny<DataTransferMessage>()))
-                    .Callback<DataTransferMessage>(
-                        msg =>
+                dataProxy.Setup(p => p.Send(It.IsAny<DataTransferMessage>(), It.IsAny<int>()))
+                    .Callback<DataTransferMessage, int>(
+                        (msg, retries) =>
                         {
                             Assert.AreSame(localEndpoint, msg.SendingEndpoint);
                             Assert.AreSame(data, msg.Data);
@@ -168,15 +168,15 @@ namespace Nuclei.Communication.Protocol
             Func<ProtocolInformation, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
             var sender = new SendingEndpoint(localEndpoint, builder, dataBuilder);
 
-            sender.Send(endpointInfo, data);
+            sender.Send(endpointInfo, data, 1);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
-            messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>()), Times.Never());
-            dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>()), Times.Exactly(1));
+            messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
+            dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>(), It.IsAny<int>()), Times.Exactly(1));
 
-            sender.Send(endpointInfo, data);
+            sender.Send(endpointInfo, data, 1);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
-            messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>()), Times.Never());
-            dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>()), Times.Exactly(2));
+            messageProxy.Verify(p => p.Send(It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
+            dataProxy.Verify(p => p.Send(It.IsAny<DataTransferMessage>(), It.IsAny<int>()), Times.Exactly(2));
         }
 
         [Test]
@@ -199,7 +199,7 @@ namespace Nuclei.Communication.Protocol
             Func<ProtocolInformation, IDataTransferingEndpoint> dataBuilder = id => dataProxy.Object;
             var sender = new SendingEndpoint(localEndpoint, messageBuilder, dataBuilder);
 
-            sender.Send(endpointInfo, msg);
+            sender.Send(endpointInfo, msg, 1);
             Assert.AreEqual(1, sender.KnownEndpoints().Count());
 
             sender.CloseChannelTo(endpointInfo);

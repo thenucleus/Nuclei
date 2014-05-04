@@ -28,9 +28,9 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("other"));
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
-                        (e, m) => 
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<EndpointId, ICommunicationMessage, int>(
+                        (e, m, r) => 
                         {
                             Assert.IsInstanceOf<SuccessMessage>(m);
                         })
@@ -39,7 +39,8 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                         It.IsAny<EndpointId>(),
                         It.IsAny<string>(),
                         It.IsAny<CancellationToken>(),
-                        It.IsAny<TaskScheduler>()))
+                        It.IsAny<TaskScheduler>(),
+                        It.IsAny<int>()))
                     .Returns(Task.Factory.StartNew(
                         () => { },
                         new CancellationToken(),
@@ -65,13 +66,14 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             action.Invoke(msg);
 
             Assert.IsFalse(uploads.HasRegistration(token));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             layer.Verify(
                 l => l.UploadData(
                     It.IsAny<EndpointId>(),
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>(),
-                    It.IsAny<TaskScheduler>()),
+                    It.IsAny<TaskScheduler>(),
+                    It.IsAny<int>()),
                 Times.Once());
         }
 
@@ -83,9 +85,9 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("other"));
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
-                        (e, m) =>
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<EndpointId, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             Assert.IsInstanceOf<FailureMessage>(m);
                         })
@@ -94,7 +96,8 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                         It.IsAny<EndpointId>(),
                         It.IsAny<string>(),
                         It.IsAny<CancellationToken>(),
-                        It.IsAny<TaskScheduler>()))
+                        It.IsAny<TaskScheduler>(),
+                        It.IsAny<int>()))
                     .Returns(Task.Factory.StartNew(
                         () => { },
                         new CancellationToken(),
@@ -118,13 +121,14 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                 token);
             action.Invoke(msg);
 
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             layer.Verify(
                 l => l.UploadData(
                     It.IsAny<EndpointId>(),
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>(),
-                    It.IsAny<TaskScheduler>()),
+                    It.IsAny<TaskScheduler>(),
+                    It.IsAny<int>()),
                 Times.Never());
         }
 
@@ -136,9 +140,9 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("other"));
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
-                        (e, m) =>
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<EndpointId, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             Assert.IsInstanceOf<FailureMessage>(m);
                         })
@@ -147,7 +151,8 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                         It.IsAny<EndpointId>(),
                         It.IsAny<string>(),
                         It.IsAny<CancellationToken>(),
-                        It.IsAny<TaskScheduler>()))
+                        It.IsAny<TaskScheduler>(),
+                        It.IsAny<int>()))
                     .Returns(Task.Factory.StartNew(
                         () => { throw new Exception(); },
                         new CancellationToken(),
@@ -173,13 +178,14 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             action.Invoke(msg);
 
             Assert.IsTrue(uploads.HasRegistration(token));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
             layer.Verify(
                 l => l.UploadData(
                     It.IsAny<EndpointId>(),
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>(),
-                    It.IsAny<TaskScheduler>()),
+                    It.IsAny<TaskScheduler>(),
+                    It.IsAny<int>()),
                 Times.Once());
         }
 
@@ -191,9 +197,9 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             {
                 layer.Setup(l => l.Id)
                     .Returns(new EndpointId("other"));
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<EndpointId, ICommunicationMessage>(
-                        (e, m) =>
+                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<EndpointId, ICommunicationMessage, int>(
+                        (e, m, r) =>
                         {
                             throw new Exception();
                         })
@@ -202,7 +208,8 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                         It.IsAny<EndpointId>(),
                         It.IsAny<string>(),
                         It.IsAny<CancellationToken>(),
-                        It.IsAny<TaskScheduler>()))
+                        It.IsAny<TaskScheduler>(),
+                        It.IsAny<int>()))
                     .Returns(Task.Factory.StartNew(
                         () => { },
                         new CancellationToken(),
@@ -228,13 +235,14 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             action.Invoke(msg);
 
             Assert.IsFalse(uploads.HasRegistration(token));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>()), Times.Exactly(2));
+            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Exactly(2));
             layer.Verify(
                 l => l.UploadData(
                     It.IsAny<EndpointId>(),
                     It.IsAny<string>(),
                     It.IsAny<CancellationToken>(),
-                    It.IsAny<TaskScheduler>()),
+                    It.IsAny<TaskScheduler>(),
+                    It.IsAny<int>()),
                 Times.Once());
         }
     }
