@@ -50,6 +50,11 @@ namespace Nuclei.Communication.Protocol.V1
         private IChannel m_Channel;
 
         /// <summary>
+        /// A flag that indicates whether the channel has faulted.
+        /// </summary>
+        private volatile bool m_WasFaulted;
+
+        /// <summary>
         /// Indicates if the current endpoint has been disposed.
         /// </summary>
         private volatile bool m_IsDisposed;
@@ -114,6 +119,7 @@ namespace Nuclei.Communication.Protocol.V1
 
         private void SendMessage(StreamData message, int retryCount)
         {
+            var initialStreamPosition = message.Data.Position;
             var count = 0;
             Exception exception = null;
             while (count < retryCount)
@@ -126,8 +132,8 @@ namespace Nuclei.Communication.Protocol.V1
                     var service = m_Service;
                     if (!m_IsDisposed)
                     {
-                        service.AcceptStream(message);
-                        if (m_Channel.State == CommunicationState.Opened)
+                        var confirmation = service.AcceptStream(message);
+                        if ((m_Channel.State == CommunicationState.Opened) && (confirmation != null) && confirmation.WasDataReceived)
                         {
                             return;
                         }
@@ -146,6 +152,7 @@ namespace Nuclei.Communication.Protocol.V1
                     // If there is no inner exception then there is no point in keeping the original call stack. 
                     // The originalexception orginates on the other side of the channel which means that there is no
                     // useful stack trace to keep!
+                    m_WasFaulted = true;
                     exception = e.InnerException != null
                         ? new FailedToSendMessageException(Resources.Exceptions_Messages_FailedToSendMessage, e.InnerException)
                         : new FailedToSendMessageException();
@@ -154,8 +161,23 @@ namespace Nuclei.Communication.Protocol.V1
                 {
                     // Either the connection was aborted or faulted (although it shouldn't be)
                     // or something else nasty went wrong.
+                    // 
+                    // Abort the channel because it is useless now ..
+                    m_WasFaulted = true;
                     exception = new FailedToSendMessageException(Resources.Exceptions_Messages_FailedToSendMessage, e);
                 }
+
+                // After the first try the position of the stream will have changed because
+                // the WCF connection read from it. In order to retry the message send we'll need
+                // to reset it to the original position. If we can't do that, then we just pretend
+                // we tried enough times.
+                if ((message.Data.Position != initialStreamPosition) && !message.Data.CanSeek)
+                {
+                    count = retryCount;
+                    exception = exception ?? new FailedToSendMessageException();
+                }
+
+                message.Data.Position = initialStreamPosition;
 
                 count++;
             }
@@ -190,6 +212,7 @@ namespace Nuclei.Communication.Protocol.V1
                                     "Data channel for endpoint at {0} has faulted. Aborting channel.",
                                     m_Factory.Endpoint.Address.Uri));
                             m_Channel.Abort();
+                            m_Service.Faulted -= HandleOnChannelFaulting;
                         }
 
                         m_Diagnostics.Log(
@@ -199,11 +222,19 @@ namespace Nuclei.Communication.Protocol.V1
                                 CultureInfo.InvariantCulture,
                                 "Creating data channel for endpoint at {0}.",
                                 m_Factory.Endpoint.Address.Uri));
+
+                        m_WasFaulted = false;
                         m_Service = m_Factory.CreateChannel();
                         m_Channel = m_Service;
+                        m_Service.Faulted += HandleOnChannelFaulting;
                     }
                 }
             }
+        }
+
+        private void HandleOnChannelFaulting(object sender, EventArgs e)
+        {
+            m_WasFaulted = true;
         }
 
         private bool ShouldCreateChannel
@@ -211,7 +242,7 @@ namespace Nuclei.Communication.Protocol.V1
             [DebuggerStepThrough]
             get
             {
-                return (!m_IsDisposed) && ((m_Channel == null) || (m_Channel.State == CommunicationState.Faulted));
+                return (!m_IsDisposed) && (m_WasFaulted || (m_Channel == null) || (m_Channel.State != CommunicationState.Opened));
             }
         }
 

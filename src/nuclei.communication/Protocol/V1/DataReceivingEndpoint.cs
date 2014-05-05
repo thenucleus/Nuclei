@@ -5,9 +5,11 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using Nuclei.Communication.Protocol.V1.DataObjects;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
@@ -52,10 +54,23 @@ namespace Nuclei.Communication.Protocol.V1
         /// Accepts the stream.
         /// </summary>
         /// <param name="data">The data message that allows a data stream to be transferred.</param>
+        /// <returns>An object indicating that the data was received successfully.</returns>
+        public StreamReceptionConfirmation AcceptStream(StreamData data)
+        {
+            Task.Factory.StartNew(ProcessStream, data);
+            return new StreamReceptionConfirmation
+                {
+                    WasDataReceived = true,
+                };
+        }
+
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
             Justification = "We don't really want the channel to die just because the other side didn't behave properly.")]
-        public void AcceptStream(StreamData data)
+        private void ProcessStream(object obj)
         {
+            var data = obj as StreamData;
+            Debug.Assert(data != null, "The object should be a StreamData instance.");
+
             try
             {
                 m_Diagnostics.Log(

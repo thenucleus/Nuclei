@@ -24,11 +24,12 @@ namespace Nuclei.Communication.Protocol.V1
         /// Accepts the stream.
         /// </summary>
         /// <param name="data">The data message that allows a data stream to be transferred.</param>
+        /// <returns>An object indicating that the data was received successfully.</returns>
         [OperationContract(
-            IsOneWay = true,
+            IsOneWay = false,
             IsInitiating = true,
             IsTerminating = false,
             ProtectionLevel = ProtectionLevel.None)]
-        void AcceptStream(StreamData data);
+        StreamReceptionConfirmation AcceptStream(StreamData data);
     }
 }

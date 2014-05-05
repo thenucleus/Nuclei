@@ -337,6 +337,7 @@
     <Compile Include="Interaction\Transport\RemoteNotificationHub.cs" />
     <Compile Include="Protocol\ProtocolVersions.cs" />
     <Compile Include="Protocol\SendingEndpoint.cs" />
+    <Compile Include="Protocol\V1\MessageReceptionConfirmation.cs" />
     <Compile Include="Protocol\V1\SerializedType.cs" />
     <Compile Include="Protocol\ProtocolDescription.cs" />
     <Compile Include="CommunicationSubject.cs" />
@@ -344,6 +345,7 @@
     <Compile Include="Protocol\V1\DataObjects\ConnectionVerificationResponseData.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\ConnectionVerificationConverter.cs" />
     <Compile Include="Protocol\V1\DataObjects\Converters\ConnectionVerificationResponseConverter.cs" />
+    <Compile Include="Protocol\V1\StreamReceptionConfirmation.cs" />
     <Compile Include="Protocol\VerifyEndpointConnectionStatusWithCustomData.cs" />
     <Compile Include="SystemTimer.cs" />
     <Compile Include="UnknownCommunicationSubjectException.cs" />
