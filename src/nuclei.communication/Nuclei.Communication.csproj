@@ -210,6 +210,8 @@
     <Compile Include="Interaction\Transport\Messages\EndpointInteractionInformationMessage.cs" />
     <Compile Include="Interaction\Transport\Messages\EndpointInteractionInformationResponseMessage.cs" />
     <Compile Include="Interaction\Transport\Messages\Processors\EndpointInteractionInformationProcessAction.cs" />
+    <Compile Include="Protocol\SendMessage.cs" />
+    <Compile Include="Protocol\SendMessageAndWaitForResponse.cs" />
     <Compile Include="Protocol\V1\MissingObjectDataSerializerException.cs" />
     <Compile Include="Interaction\V1\Protocol\V1\DataObjects\CommandInvocationData.cs" />
     <Compile Include="Interaction\V1\Protocol\V1\DataObjects\CommandInvocationResponseData.cs" />
