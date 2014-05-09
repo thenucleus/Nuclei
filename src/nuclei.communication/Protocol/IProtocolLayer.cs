@@ -91,12 +91,11 @@ namespace Nuclei.Communication.Protocol
         /// <param name="message">The message that has to be send.</param>
         /// <param name="maximumNumberOfRetries">
         /// The maximum number of times the endpoint will try to send the message if delivery fails. 
-        /// Defaults to <see cref="CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending"/>.
         /// </param>
         void SendMessageToUnregisteredEndpoint(
             EndpointInformation connection, 
             ICommunicationMessage message,
-            int maximumNumberOfRetries = CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
+            int maximumNumberOfRetries);
 
         /// <summary>
         /// Sends the given message to the specified endpoint.
@@ -105,12 +104,11 @@ namespace Nuclei.Communication.Protocol
         /// <param name="message">The message that has to be send.</param>
         /// <param name="maximumNumberOfRetries">
         /// The maximum number of times the endpoint will try to send the message if delivery fails. 
-        /// Defaults to <see cref="CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending"/>.
         /// </param>
         void SendMessageTo(
             EndpointId endpoint, 
             ICommunicationMessage message,
-            int maximumNumberOfRetries = CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
+            int maximumNumberOfRetries);
 
         /// <summary>
         /// Sends the given message to the specified endpoint and returns a task that
@@ -118,11 +116,15 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="connection">The connection information for the endpoint to which the message has to be send.</param>
         /// <param name="message">The message that has to be send.</param>
+        /// <param name="maximumNumberOfRetries">
+        /// The maximum number of times the endpoint will try to send the message if delivery fails. 
+        /// </param>
         /// <param name="timeout">The maximum amount of time the response operation is allowed to take.</param>
         /// <returns>A task object that will eventually contain the response message.</returns>
         Task<ICommunicationMessage> SendMessageToUnregisteredEndpointAndWaitForResponse(
             EndpointInformation connection, 
             ICommunicationMessage message,
+            int maximumNumberOfRetries,
             TimeSpan timeout);
 
         /// <summary>
@@ -131,9 +133,16 @@ namespace Nuclei.Communication.Protocol
         /// </summary>
         /// <param name="endpoint">The endpoint to which the message has to be send.</param>
         /// <param name="message">The message that has to be send.</param>
+        /// <param name="maximumNumberOfRetries">
+        /// The maximum number of times the endpoint will try to send the message if delivery fails. 
+        /// </param>
         /// <param name="timeout">The maximum amount of time the response operation is allowed to take.</param>
         /// <returns>A task object that will eventually contain the response message.</returns>
-        Task<ICommunicationMessage> SendMessageAndWaitForResponse(EndpointId endpoint, ICommunicationMessage message, TimeSpan timeout);
+        Task<ICommunicationMessage> SendMessageAndWaitForResponse(
+            EndpointId endpoint, 
+            ICommunicationMessage message, 
+            int maximumNumberOfRetries,
+            TimeSpan timeout);
 
         /// <summary>
         /// Uploads a given file to a specific endpoint.
