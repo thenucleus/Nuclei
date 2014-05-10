@@ -116,14 +116,26 @@ namespace Nuclei.Communication
 
         private static void RegisterInteractionHandshakeConductor(ContainerBuilder builder)
         {
-            builder.Register(c => new InteractionHandshakeConductor(
-                    c.Resolve<IStoreInformationAboutEndpoints>(),
-                    c.Resolve<IStoreInteractionSubjects>(),
-                    c.Resolve<IStoreRemoteCommandProxies>(),
-                    c.Resolve<IStoreRemoteNotificationProxies>(),
-                    c.Resolve<IProtocolLayer>(),
-                    c.Resolve<IConfiguration>(),
-                    c.Resolve<SystemDiagnostics>()))
+            builder.Register(
+                    c =>
+                    {
+                        var configuration = c.Resolve<IConfiguration>();
+                        var sendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
+                            ? TimeSpan.FromMilliseconds(
+                                configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
+                            : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
+
+                        return new InteractionHandshakeConductor(
+                            EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                            c.Resolve<IStoreInformationAboutEndpoints>(),
+                            c.Resolve<IStoreInteractionSubjects>(),
+                            c.Resolve<IStoreRemoteCommandProxies>(),
+                            c.Resolve<IStoreRemoteNotificationProxies>(),
+                            c.Resolve<SendMessage>(),
+                            c.Resolve<SendMessageAndWaitForResponse>(),
+                            sendTimeout,
+                            c.Resolve<SystemDiagnostics>());
+                    })
                 .As<IHandleInteractionHandshakes>()
                 .SingleInstance();
         }

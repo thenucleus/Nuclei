@@ -15,7 +15,6 @@ using Nuclei.Communication.Interaction.Transport;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
-using Nuclei.Configuration;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
@@ -145,6 +144,11 @@ namespace Nuclei.Communication.Interaction
             = new Dictionary<EndpointId, EndpointApprovalState>();
 
         /// <summary>
+        /// The endpoint ID of the current endpoint.
+        /// </summary>
+        private readonly EndpointId m_Current;
+
+        /// <summary>
         /// The object that stores information about the known endpoints.
         /// </summary>
         private readonly IStoreInformationAboutEndpoints m_EndpointInformationStorage;
@@ -165,9 +169,15 @@ namespace Nuclei.Communication.Interaction
         private readonly IStoreRemoteNotificationProxies m_NotificationProxyHub;
 
         /// <summary>
-        /// The object responsible for sending messages to remote endpoints.
+        /// The action that is used to send a message to a remote endpoint.
         /// </summary>
-        private readonly IProtocolLayer m_Layer;
+        private readonly SendMessage m_SendMessage;
+
+        /// <summary>
+        /// The function which sends the message to the owning endpoint and returns a task that will,
+        /// eventually, hold the return message.
+        /// </summary>
+        private readonly SendMessageAndWaitForResponse m_SendMessageAndWaitForResponse;
 
         /// <summary>
         /// The maximum amount of time that may pass between the sending of a message and the reception of
@@ -183,13 +193,20 @@ namespace Nuclei.Communication.Interaction
         /// <summary>
         /// Initializes a new instance of the <see cref="InteractionHandshakeConductor"/> class.
         /// </summary>
+        /// <param name="localEndpoint">The endpoint ID of the local endpoint.</param>
         /// <param name="endpointInformationStorage">The object that stores information about the known endpoints.</param>
         /// <param name="interactionSubjects">The collection that contains all the registered subjects and their commands and notifications.</param>
         /// <param name="commandProxyHub">The object that stores the command proxy objects.</param>
         /// <param name="notificationProxyHub">The object that stores the notification proxy objects.</param>
-        /// <param name="layer">The object responsible for sending messages to remote endpoints.</param>
-        /// <param name="configuration">The object that stores the configuration values for the application.</param>
+        /// <param name="sendMessage">The action that is used to send a message to a remote endpoint.</param>
+        /// <param name="sendMessageAndWaitForResponse">
+        /// The function that sends out a message to the given endpoint and returns a task that will, eventually, hold the return message.
+        /// </param>
+        /// <param name="sendTimeout">The maximum amount of time the instance will wait for a response message to be returned.</param>
         /// <param name="diagnostics">The object that provides the diagnostics methods for the application.</param>
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="localEndpoint"/> is <see langword="null" />.
+        /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="endpointInformationStorage"/> is <see langword="null" />.
         /// </exception>
@@ -203,45 +220,48 @@ namespace Nuclei.Communication.Interaction
         ///     Thrown if <paramref name="notificationProxyHub"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="layer"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="sendMessage"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="configuration"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="sendMessageAndWaitForResponse"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="diagnostics"/> is <see langword="null" />.
         /// </exception>
         public InteractionHandshakeConductor(
+            EndpointId localEndpoint,
             IStoreInformationAboutEndpoints endpointInformationStorage,
             IStoreInteractionSubjects interactionSubjects,
             IStoreRemoteCommandProxies commandProxyHub,
             IStoreRemoteNotificationProxies notificationProxyHub,
-            IProtocolLayer layer,
-            IConfiguration configuration,
+            SendMessage sendMessage,
+            SendMessageAndWaitForResponse sendMessageAndWaitForResponse,
+            TimeSpan sendTimeout,
             SystemDiagnostics diagnostics)
         {
             {
+                Lokad.Enforce.Argument(() => localEndpoint);
                 Lokad.Enforce.Argument(() => endpointInformationStorage);
                 Lokad.Enforce.Argument(() => interactionSubjects);
                 Lokad.Enforce.Argument(() => commandProxyHub);
                 Lokad.Enforce.Argument(() => notificationProxyHub);
-                Lokad.Enforce.Argument(() => layer);
-                Lokad.Enforce.Argument(() => configuration);
+                Lokad.Enforce.Argument(() => sendMessage);
+                Lokad.Enforce.Argument(() => sendMessageAndWaitForResponse);
                 Lokad.Enforce.Argument(() => diagnostics);
             }
 
+            m_Current = localEndpoint;
             m_EndpointInformationStorage = endpointInformationStorage;
             m_EndpointInformationStorage.OnEndpointConnected += HandleEndpointSignIn;
 
             m_InteractionSubjects = interactionSubjects;
             m_CommandProxyHub = commandProxyHub;
             m_NotificationProxyHub = notificationProxyHub;
-            m_Layer = layer;
+            m_SendMessage = sendMessage;
+            m_SendMessageAndWaitForResponse = sendMessageAndWaitForResponse;
             m_Diagnostics = diagnostics;
 
-            m_SendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
-                ? TimeSpan.FromMilliseconds(configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
-                : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
+            m_SendTimeout = sendTimeout;
         }
 
         private void HandleEndpointSignIn(object sender, EndpointEventArgs e)
@@ -278,9 +298,13 @@ namespace Nuclei.Communication.Interaction
 
                 // Send message and wait for response.
                 var message = new EndpointInteractionInformationMessage(
-                    m_Layer.Id,
+                    m_Current,
                     interactionInformation.ToArray());
-                var sendTask = m_Layer.SendMessageAndWaitForResponse(endpoint, message, m_SendTimeout);
+                var sendTask = m_SendMessageAndWaitForResponse(
+                    endpoint, 
+                    message, 
+                    CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending,
+                    m_SendTimeout);
                 sendTask.ContinueWith(HandleResponseToInteractionMessage, TaskContinuationOptions.ExecuteSynchronously);
             }
         }
@@ -399,10 +423,10 @@ namespace Nuclei.Communication.Interaction
 
                 var state = foundAtLeastOneSubjectMatch ? InteractionConnectionState.Desired : InteractionConnectionState.Neutral;
                 var message = new EndpointInteractionInformationResponseMessage(
-                    m_Layer.Id,
+                    m_Current,
                     messageId,
                     state);
-                m_Layer.SendMessageTo(connection, message);
+                m_SendMessage(connection, message, CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
                 tickList.SendResponse = state;
 
                 if (tickList.IsComplete())
