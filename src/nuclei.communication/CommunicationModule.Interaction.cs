@@ -70,24 +70,10 @@ namespace Nuclei.Communication
                 .As<IRaiseProxyNotifications>()
                 .SingleInstance();
 
-            builder.Register(
-                c =>
-                {
-                    var ctx = c.Resolve<IComponentContext>();
-                    return new NotificationProxyBuilder(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                        (endpoint, msg) =>
-                        {
-                            var layer = ctx.Resolve<IProtocolLayer>();
-                            var configuration = ctx.Resolve<IConfiguration>();
-                            var sendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
-                                ? TimeSpan.FromMilliseconds(
-                                    configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
-                                : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
-                            SendMessageWithResponse(layer, endpoint, msg, sendTimeout);
-                        },
-                        c.Resolve<SystemDiagnostics>());
-                });
+            builder.Register(c => new NotificationProxyBuilder(
+                EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                c.Resolve<SendMessage>(),
+                c.Resolve<SystemDiagnostics>()));
         }
 
         private static void RegisterNotificationCollection(ContainerBuilder builder)
@@ -102,15 +88,11 @@ namespace Nuclei.Communication
 
         private static void RegisterInteractionMessageProcessingActions(ContainerBuilder builder)
         {
-            builder.Register(
-                    c =>
-                    {
-                        return new CommandInvokedProcessAction(
-                            EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                            c.Resolve<SendMessage>(),
-                            c.Resolve<ICommandCollection>(),
-                            c.Resolve<SystemDiagnostics>());
-                    })
+            builder.Register(c => new CommandInvokedProcessAction(
+                    EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    c.Resolve<SendMessage>(),
+                    c.Resolve<ICommandCollection>(),
+                    c.Resolve<SystemDiagnostics>()))
                 .As<IMessageProcessAction>();
 
             builder.Register(c => new EndpointInteractionInformationProcessAction(

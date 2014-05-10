@@ -31,7 +31,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <summary>
         /// The function which sends the message to the owning endpoint.
         /// </summary>
-        private readonly Action<EndpointId, ICommunicationMessage> m_SendWithoutResponse;
+        private readonly SendMessage m_SendWithoutResponse;
 
         /// <summary>
         /// The object that provides the diagnostic methods for the system.
@@ -57,7 +57,7 @@ namespace Nuclei.Communication.Interaction.Transport
         /// </exception>
         public NotificationProxyBuilder(
             EndpointId localEndpoint,
-            Action<EndpointId, ICommunicationMessage> sendWithoutResponse,
+            SendMessage sendWithoutResponse,
             SystemDiagnostics systemDiagnostics)
         {
             {
@@ -114,7 +114,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 eventInfo =>
                 {
                     var msg = new RegisterForNotificationMessage(m_Local, eventInfo);
-                    m_SendWithoutResponse(endpoint, msg);
+                    m_SendWithoutResponse(endpoint, msg, CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
                 },
                 m_Diagnostics);
             var removeEventHandler = new NotificationEventRemoveMethodInterceptor(
@@ -122,7 +122,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 eventInfo =>
                 {
                     var msg = new UnregisterFromNotificationMessage(m_Local, eventInfo);
-                    m_SendWithoutResponse(endpoint, msg);
+                    m_SendWithoutResponse(endpoint, msg, CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
                 },
                 m_Diagnostics);
 
