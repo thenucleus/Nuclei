@@ -31,25 +31,11 @@ namespace Nuclei.Communication
                 .As<IStoreRemoteCommandProxies>()
                 .SingleInstance();
 
-            builder.Register(
-                c =>
-                {
-                    var ctx = c.Resolve<IComponentContext>();
-                    return new CommandProxyBuilder(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                        (endpoint, msg) =>
-                        {
-                            var layer = ctx.Resolve<IProtocolLayer>();
-                            var configuration = ctx.Resolve<IConfiguration>();
-                            var sendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
-                                ? TimeSpan.FromMilliseconds(
-                                    configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
-                                : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
-
-                            return SendMessageWithResponse(layer, endpoint, msg, sendTimeout);
-                        },
-                        c.Resolve<SystemDiagnostics>());
-                });
+            builder.Register(c => new CommandProxyBuilder(
+                EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                c.Resolve<SendMessageAndWaitForResponse>(),
+                c.Resolve<IConfiguration>(),
+                c.Resolve<SystemDiagnostics>()));
         }
 
         private static void RegisterCommandCollection(ContainerBuilder builder)
