@@ -445,7 +445,11 @@ namespace Nuclei.Communication
 
                                var layer = ctx.Resolve<IProtocolLayer>();
                                var msg = new DataDownloadRequestMessage(layer.Id, token);
-                               var response = layer.SendMessageAndWaitForResponse(endpoint, msg, timeout);
+                               var response = layer.SendMessageAndWaitForResponse(
+                                   endpoint, 
+                                   msg, 
+                                   CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending,
+                                   timeout);
                                return Task<FileInfo>.Factory.StartNew(
                                    () =>
                                    {
