@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using Autofac;
 using Nuclei.Communication.Interaction;
@@ -38,9 +39,14 @@ namespace Nuclei.Communication
                         EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
                         (endpoint, msg) =>
                         {
-                            var config = ctx.Resolve<IConfiguration>();
                             var layer = ctx.Resolve<IProtocolLayer>();
-                            return SendMessageWithResponse(config, layer, endpoint, msg);
+                            var configuration = ctx.Resolve<IConfiguration>();
+                            var sendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
+                                ? TimeSpan.FromMilliseconds(
+                                    configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
+                                : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
+
+                            return SendMessageWithResponse(layer, endpoint, msg, sendTimeout);
                         },
                         c.Resolve<SystemDiagnostics>());
                 });
@@ -72,9 +78,13 @@ namespace Nuclei.Communication
                         EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
                         (endpoint, msg) =>
                         {
-                            var config = ctx.Resolve<IConfiguration>();
                             var layer = ctx.Resolve<IProtocolLayer>();
-                            SendMessageWithResponse(config, layer, endpoint, msg);
+                            var configuration = ctx.Resolve<IConfiguration>();
+                            var sendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
+                                ? TimeSpan.FromMilliseconds(
+                                    configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
+                                : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
+                            SendMessageWithResponse(layer, endpoint, msg, sendTimeout);
                         },
                         c.Resolve<SystemDiagnostics>());
                 });
@@ -83,7 +93,8 @@ namespace Nuclei.Communication
         private static void RegisterNotificationCollection(ContainerBuilder builder)
         {
             builder.Register(c => new LocalNotificationCollection(
-                    c.Resolve<IProtocolLayer>()))
+                    EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    c.Resolve<SendMessage>()))
                 .As<INotificationCollection>()
                 .As<ISendNotifications>()
                 .SingleInstance();
@@ -94,14 +105,9 @@ namespace Nuclei.Communication
             builder.Register(
                     c =>
                     {
-                        var ctx = c.Resolve<IComponentContext>();
                         return new CommandInvokedProcessAction(
                             EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                            (endpoint, msg) =>
-                            {
-                                var layer = ctx.Resolve<IProtocolLayer>();
-                                layer.SendMessageTo(endpoint, msg);
-                            },
+                            c.Resolve<SendMessage>(),
                             c.Resolve<ICommandCollection>(),
                             c.Resolve<SystemDiagnostics>());
                     })

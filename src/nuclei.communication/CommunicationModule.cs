@@ -136,6 +136,7 @@ namespace Nuclei.Communication
             RegisterMessageHandler(builder);
             RegisterDataHandler(builder);
             RegisterProtocolMessageProcessingActions(builder);
+            RegisterSendMessageFunctions(builder);
             RegisterConnectionHolders(builder);
             RegisterProtocolChannel(builder);
             RegisterEndpoints(builder);

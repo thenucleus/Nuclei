@@ -28,7 +28,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
         /// <summary>
         /// The action that is used to send a message to a remote endpoint.
         /// </summary>
-        private readonly Action<EndpointId, ICommunicationMessage> m_SendMessage;
+        private readonly SendMessage m_SendMessage;
 
         /// <summary>
         /// The endpoint ID of the current endpoint.
@@ -61,7 +61,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
         /// </exception>
         public CommandInvokedProcessAction(
             EndpointId localEndpoint,
-            Action<EndpointId, ICommunicationMessage> sendMessage,
+            SendMessage sendMessage,
             ICommandCollection availableCommands,
             SystemDiagnostics systemDiagnostics)
         {
@@ -135,7 +135,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                             msg.Sender));
 
                     var failureResult = new FailureMessage(m_Current, msg.Id);
-                    m_SendMessage(msg.Sender, failureResult);
+                    m_SendMessage(msg.Sender, failureResult, CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
                     return;
                 }
 
@@ -151,7 +151,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                     responseMessage = new SuccessMessage(m_Current, msg.Id);
                 }
 
-                m_SendMessage(msg.Sender, responseMessage);
+                m_SendMessage(msg.Sender, responseMessage, CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
             }
             catch (Exception e)
             {
@@ -173,7 +173,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                         "Error while invoking command {0}. Exception is: {1}",
                         msg.Invocation.Command,
                         e));
-                m_SendMessage(msg.Sender, new FailureMessage(m_Current, msg.Id));
+                m_SendMessage(msg.Sender, new FailureMessage(m_Current, msg.Id), CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
             }
             catch (Exception errorSendingException)
             {

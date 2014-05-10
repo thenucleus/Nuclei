@@ -21,7 +21,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// <summary>
         /// The action that is used to send a message to a remote endpoint.
         /// </summary>
-        private readonly Action<EndpointId, ICommunicationMessage> m_SendMessage;
+        private readonly SendMessage m_SendMessage;
 
         /// <summary>
         /// The function that is used to generate the response data for a keep-alive message.
@@ -56,7 +56,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// </exception>
         public ConnectionVerificationProcessAction(
             EndpointId localEndpoint,
-            Action<EndpointId, ICommunicationMessage> sendMessage,
+            SendMessage sendMessage,
             SystemDiagnostics systemDiagnostics,
             KeepAliveResponseCustomDataBuilder responseDataBuilder = null)
         {
@@ -109,7 +109,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             try
             {
                 var response = new ConnectionVerificationResponseMessage(m_Current, message.Id, responseData);
-                m_SendMessage(message.Sender, response);
+                m_SendMessage(message.Sender, response, CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
             }
             catch (Exception e)
             {
