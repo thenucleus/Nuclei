@@ -143,6 +143,8 @@
     <Compile Include="Interaction\InvalidCommandParameterOriginException.cs" />
     <Compile Include="Interaction\InvalidNotificationMethodExpressionException.cs" />
     <Compile Include="Interaction\InvocationMessageAttribute.cs" />
+    <Compile Include="Interaction\InvocationRetryCountAttribute.cs" />
+    <Compile Include="Interaction\InvocationTimeoutAttribute.cs" />
     <Compile Include="Interaction\InvokingEndpointAttribute.cs" />
     <Compile Include="Interaction\MethodMapper.cs" />
     <Compile Include="Interaction\MissingCommandParameterException.cs" />
@@ -154,6 +156,7 @@
     <Compile Include="Interaction\NotificationIdExtensions.cs" />
     <Compile Include="Interaction\NotificationMap.cs" />
     <Compile Include="Interaction\NotificationMapper.cs" />
+    <Compile Include="Interaction\Transport\CommandSetMethodInterceptor.cs" />
     <Compile Include="Interaction\Transport\IRaiseProxyNotifications.cs" />
     <Compile Include="Interaction\Transport\SendCommandData.cs" />
     <Compile Include="ITimer.cs" />
