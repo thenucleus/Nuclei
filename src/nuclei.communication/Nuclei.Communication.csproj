@@ -155,6 +155,7 @@
     <Compile Include="Interaction\NotificationMap.cs" />
     <Compile Include="Interaction\NotificationMapper.cs" />
     <Compile Include="Interaction\Transport\IRaiseProxyNotifications.cs" />
+    <Compile Include="Interaction\Transport\SendCommandData.cs" />
     <Compile Include="ITimer.cs" />
     <Compile Include="Protocol\ConnectionMonitor.cs" />
     <Compile Include="DiscoveryInformation.cs" />
