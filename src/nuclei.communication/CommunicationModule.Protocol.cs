@@ -174,14 +174,10 @@ namespace Nuclei.Communication
                 })
                 .As<IMessageProcessAction>();
 
-            builder.Register(
-                c =>
-                {
-                    return new UnknownMessageTypeProcessAction(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                        c.Resolve<SendMessage>(),
-                        c.Resolve<SystemDiagnostics>());
-                })
+            builder.Register(c => new UnknownMessageTypeProcessAction(
+                    EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    c.Resolve<SendMessage>(),
+                    c.Resolve<SystemDiagnostics>()))
                 .As<IMessageProcessAction>();
         }
 
