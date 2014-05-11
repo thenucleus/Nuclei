@@ -27,7 +27,7 @@ namespace Nuclei.Examples.Complete
         /// <summary>
         /// The function called when an echo command is received.
         /// </summary>
-        private readonly Action<string> m_OnEcho;
+        private readonly Action<EndpointId, string> m_OnEcho;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TestCommands"/> class.
@@ -40,7 +40,7 @@ namespace Nuclei.Examples.Complete
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="onEcho"/> is <see langword="null" />.
         /// </exception>
-        public TestCommands(DownloadDataFromRemoteEndpoints download, Action<string> onEcho)
+        public TestCommands(DownloadDataFromRemoteEndpoints download, Action<EndpointId, string> onEcho)
         {
             {
                 Lokad.Enforce.Argument(() => download);
@@ -54,10 +54,11 @@ namespace Nuclei.Examples.Complete
         /// <summary>
         /// Echo's the name.
         /// </summary>
+        /// <param name="remoteEndpoint">The endpoint ID of the remote endpoint.</param>
         /// <param name="name">The name.</param>
-        public void Echo(string name)
+        public void Echo([InvokingEndpoint]EndpointId remoteEndpoint, string name)
         {
-            m_OnEcho(name);
+            m_OnEcho(remoteEndpoint, name);
         }
 
         /// <summary>
@@ -93,6 +94,7 @@ namespace Nuclei.Examples.Complete
             }
 
             m_OnEcho(
+                downloadOwningEndpoint,
                 string.Format(
                     CultureInfo.InvariantCulture,
                     "Downloaded data from: {0}. Data: {1}",

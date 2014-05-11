@@ -53,10 +53,10 @@ namespace Nuclei.Examples.Complete
                         c =>
                         {
                             var ctx = c.Resolve<IComponentContext>();
-                            Action<string> echoAction = text =>
+                            Action<EndpointId, string> echoAction = (id, text) =>
                             {
                                 var model = ctx.Resolve<ConnectionViewModel>();
-                                model.AddNewMessage(null, text);
+                                model.AddNewMessage(id, text);
                             };
                             return new TestCommands(
                                 c.Resolve<DownloadDataFromRemoteEndpoints>(),
