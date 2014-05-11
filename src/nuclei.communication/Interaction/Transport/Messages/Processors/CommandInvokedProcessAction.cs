@@ -173,7 +173,10 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                         "Error while invoking command {0}. Exception is: {1}",
                         msg.Invocation.Command,
                         e));
-                m_SendMessage(msg.Sender, new FailureMessage(m_Current, msg.Id), CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
+                m_SendMessage(
+                    msg.Sender, 
+                    new FailureMessage(m_Current, msg.Id), 
+                    CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
             }
             catch (Exception errorSendingException)
             {
