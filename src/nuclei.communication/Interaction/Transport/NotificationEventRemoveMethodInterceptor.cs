@@ -97,19 +97,33 @@ namespace Nuclei.Communication.Interaction.Transport
                     CultureInfo.InvariantCulture,
                     "Invoking {0}",
                     MethodToText(invocation.Method)));
-            
-            var methodToInvoke = invocation.Method.Name;
-            var eventName = methodToInvoke.Substring(MethodPrefix.Length);
-            var eventInfo = m_InterfaceType.GetEvent(eventName);
-            var eventId = NotificationId.Create(eventInfo);
 
-            var handler = invocation.Arguments[0] as Delegate;
-            var proxy = invocation.Proxy as NotificationSetProxy;
-            proxy.RemoveFromEvent(eventId, handler);
-
-            if (!proxy.HasSubscribers(eventId))
+            try
             {
-                m_TransmitDeregistration(eventId);
+                var methodToInvoke = invocation.Method.Name;
+                var eventName = methodToInvoke.Substring(MethodPrefix.Length);
+                var eventInfo = m_InterfaceType.GetEvent(eventName);
+                var eventId = NotificationId.Create(eventInfo);
+
+                var handler = invocation.Arguments[0] as Delegate;
+                var proxy = invocation.Proxy as NotificationSetProxy;
+                proxy.RemoveFromEvent(eventId, handler);
+
+                if (!proxy.HasSubscribers(eventId))
+                {
+                    m_TransmitDeregistration(eventId);
+                }
+            }
+            catch (Exception e)
+            {
+                m_Diagnostics.Log(
+                    LevelToLog.Error,
+                    CommunicationConstants.DefaultLogTextPrefix,
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        "Error while unregistering from a notification {0}. Error was: {1}",
+                        MethodToText(invocation.Method),
+                        e));
             }
         }
     }

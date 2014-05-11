@@ -97,21 +97,35 @@ namespace Nuclei.Communication.Interaction.Transport
                     CultureInfo.InvariantCulture,
                     "Invoking {0}",
                     MethodToText(invocation.Method)));
-            
-            var methodToInvoke = invocation.Method.Name;
-            var eventName = methodToInvoke.Substring(MethodPrefix.Length);
-            var eventInfo = m_InterfaceType.GetEvent(eventName);
-            var eventId = NotificationId.Create(eventInfo);
 
-            var handler = invocation.Arguments[0] as Delegate;
-            var proxy = invocation.Proxy as NotificationSetProxy;
+            try
+            {
+                var methodToInvoke = invocation.Method.Name;
+                var eventName = methodToInvoke.Substring(MethodPrefix.Length);
+                var eventInfo = m_InterfaceType.GetEvent(eventName);
+                var eventId = NotificationId.Create(eventInfo);
 
-            if (!proxy.HasSubscribers(eventId))
-            { 
-                m_TransmitRegistration(eventId);
+                var handler = invocation.Arguments[0] as Delegate;
+                var proxy = invocation.Proxy as NotificationSetProxy;
+
+                if (!proxy.HasSubscribers(eventId))
+                { 
+                    m_TransmitRegistration(eventId);
+                }
+
+                proxy.AddToEvent(eventId, handler);
             }
-
-            proxy.AddToEvent(eventId, handler);
+            catch (Exception e)
+            {
+                m_Diagnostics.Log(
+                    LevelToLog.Error,
+                    CommunicationConstants.DefaultLogTextPrefix,
+                    string.Format(
+                        CultureInfo.InvariantCulture,
+                        "Error while registering for a notification {0}. Error was: {1}",
+                        MethodToText(invocation.Method),
+                        e));
+            }
         }
     }
 }
