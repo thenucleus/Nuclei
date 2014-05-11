@@ -29,14 +29,10 @@
     </Target>
     
     <PropertyGroup>
-        <FileGitVersionExe>GitHubFlowVersion.exe</FileGitVersionExe>
+        <FileSemanticVersion>$(DirBuildTemp)\semantic_version.json</FileSemanticVersion>
     </PropertyGroup>
-    <Target Name="_GetSemanticVersion">
-        <FindToolFromPackages PackagesDir="$(DirPackages)" FileToLocate="$(FileGitVersionExe)">
-            <Output TaskParameter="Path" PropertyName="PathGitVersionExe" />
-        </FindToolFromPackages>
-        
-        <GetSemanticVersion ExePath="$(PathGitVersionExe)" TempDirectory="$(DirBuildTemp)">
+    <Target Name="_GetSemanticVersion" DependsOnTargets="_DisplayInfo;">
+        <GetSemanticVersion VersionFile="$(FileSemanticVersion)">
             <Output TaskParameter="VersionSemantic" PropertyName="VersionSemantic" />
         </GetSemanticVersion>
     </Target>
@@ -44,7 +40,7 @@
     <PropertyGroup>
         <FileReleaseNotes>$(DirBuildTemp)\releasenotes.md</FileReleaseNotes>
     </PropertyGroup>
-    <Target Name="_LoadReleaseNotes">
+    <Target Name="_LoadReleaseNotes" DependsOnTargets="_DisplayInfo;_GetSemanticVersion">
         <CreateProperty Condition="Exists('$(FileReleaseNotes)')" Value="$([System.IO.File]::ReadAllText('$(FileReleaseNotes)'))">
             <Output TaskParameter="Value" PropertyName="ReleaseNotes" />
         </CreateProperty>

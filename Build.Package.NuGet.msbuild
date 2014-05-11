@@ -55,30 +55,18 @@
     </Target>
     
     <PropertyGroup>
-        <FileGitVersionExe>GitHubFlowVersion.exe</FileGitVersionExe>
+        <FileSemanticVersion>$(DirBuildTemp)\semantic_version.json</FileSemanticVersion>
     </PropertyGroup>
-    <Target Name="_GetSemanticVersion">
-        <FindToolFromPackages PackagesDir="$(DirPackages)" FileToLocate="$(FileGitVersionExe)">
-            <Output TaskParameter="Path" PropertyName="PathGitVersionExe" />
-        </FindToolFromPackages>
-        
-        <GetSemanticVersion ExePath="$(PathGitVersionExe)" TempDirectory="$(DirBuildTemp)">
+    <Target Name="_GetSemanticVersion" DependsOnTargets="_DisplayInfo;">
+        <GetSemanticVersion VersionFile="$(FileSemanticVersion)">
             <Output TaskParameter="VersionSemantic" PropertyName="VersionSemantic" />
         </GetSemanticVersion>
     </Target>
     
     <PropertyGroup>
-        <FileGitReleaseNotes>GitReleaseNotes.exe</FileGitReleaseNotes>
-        <FileReleaseNotes>$(DirBuildTemp)\releasenotes.md</FileReleaseNotes>
+        <FileReleaseNotes>$(DirBuildTemp)\releasenotes_full.md</FileReleaseNotes>
     </PropertyGroup>
     <Target Name="_GatherReleaseNotes" Condition=" '$(GitHubUserName)' != '' AND '$(GitHubToken)' != '' ">
-        <FindToolFromPackages PackagesDir="$(DirPackages)" FileToLocate="$(FileGitReleaseNotes)">
-            <Output TaskParameter="Path" PropertyName="PathGitReleaseNotesExe" />
-        </FindToolFromPackages>
-        
-        <Exec Command="&quot;$(PathGitReleaseNotesExe)&quot; /I GitHub /R $(GitHubUserName)/nuclei /U $(GitHubUserName) /T $(GitHubToken) /F all /O &quot;$(FileReleaseNotes)&quot;"
-              WorkingDirectory="$(DirWorkspace)" />
-    
         <CreateProperty Condition="Exists('$(FileReleaseNotes)')" Value="$([System.IO.File]::ReadAllText('$(FileReleaseNotes)'))">
             <Output TaskParameter="Value" PropertyName="ReleaseNotes" />
         </CreateProperty>
