@@ -164,7 +164,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 if (attributes.Length > 0)
                 {
                     var parameterUsageAttribute = attributes.FirstOrDefault(
-                        o => InteractionExtensions.KnownCommandInstanceParameterAttributes.Contains(o.GetType()))
+                        o => InteractionExtensions.KnownCommandSetParameterAttributes.Contains(o.GetType()))
                         as CommandProxyParameterUsageAttribute;
                     if ((parameterUsageAttribute == null) || (parameterUsageAttribute.AllowedParameterType != methodParameter.ParameterType))
                     {
