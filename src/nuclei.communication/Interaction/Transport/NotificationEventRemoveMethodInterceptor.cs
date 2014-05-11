@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Reflection;
 using Castle.DynamicProxy;
 using Nuclei.Communication.Interaction.Transport.Messages;
+using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
@@ -97,7 +98,7 @@ namespace Nuclei.Communication.Interaction.Transport
                     CultureInfo.InvariantCulture,
                     "Invoking {0}",
                     MethodToText(invocation.Method)));
-            
+
             var methodToInvoke = invocation.Method.Name;
             var eventName = methodToInvoke.Substring(MethodPrefix.Length);
             var eventInfo = m_InterfaceType.GetEvent(eventName);
@@ -109,7 +110,32 @@ namespace Nuclei.Communication.Interaction.Transport
 
             if (!proxy.HasSubscribers(eventId))
             {
-                m_TransmitDeregistration(eventId);
+                try
+                {
+                    m_TransmitDeregistration(eventId);
+                }
+                catch (EndpointNotContactableException e)
+                {
+                    m_Diagnostics.Log(
+                        LevelToLog.Error,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Error while unregistering from a notification {0}. Error was: {1}",
+                            MethodToText(invocation.Method),
+                            e));
+                }
+                catch (FailedToSendMessageException e)
+                {
+                    m_Diagnostics.Log(
+                        LevelToLog.Error,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Error while unregistering from a notification {0}. Error was: {1}",
+                            MethodToText(invocation.Method),
+                            e));
+                }
             }
         }
     }
