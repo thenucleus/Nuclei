@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
@@ -13,6 +12,7 @@ using System.Threading.Tasks.Schedulers;
 using Moq;
 using Nuclei.Communication.Protocol;
 using Nuclei.Communication.Protocol.Messages;
+using Nuclei.Configuration;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
 
@@ -28,9 +28,15 @@ namespace Nuclei.Communication.Interaction.Transport
         {
             var localEndpoint = new EndpointId("local");
             var notifier = new Mock<IStoreInformationAboutEndpoints>();
+            var configuration = new Mock<IConfiguration>();
+            {
+                configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                    .Returns(false);
+            }
+
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
-            Func<EndpointId, ICommunicationMessage, Task<ICommunicationMessage>> sender =
-                (e, m) => Task<ICommunicationMessage>.Factory.StartNew(
+            SendMessageAndWaitForResponse sender =
+                (e, m, r, t) => Task<ICommunicationMessage>.Factory.StartNew(
                     () => new SuccessMessage(localEndpoint, new MessageId()),
                     new CancellationToken(),
                     TaskCreationOptions.None,
@@ -41,6 +47,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 new CommandProxyBuilder(
                     localEndpoint,
                     sender, 
+                    configuration.Object,
                     systemDiagnostics), 
                 systemDiagnostics);
             
@@ -69,9 +76,15 @@ namespace Nuclei.Communication.Interaction.Transport
         {
             var localEndpoint = new EndpointId("local");
             var notifier = new Mock<IStoreInformationAboutEndpoints>();
+            var configuration = new Mock<IConfiguration>();
+            {
+                configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                    .Returns(false);
+            }
+
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
-            Func<EndpointId, ICommunicationMessage, Task<ICommunicationMessage>> sender =
-                (e, m) => Task<ICommunicationMessage>.Factory.StartNew(
+            SendMessageAndWaitForResponse sender =
+                (e, m, r, t) => Task<ICommunicationMessage>.Factory.StartNew(
                     () => new SuccessMessage(localEndpoint, new MessageId()),
                     new CancellationToken(),
                     TaskCreationOptions.None,
@@ -82,6 +95,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 new CommandProxyBuilder(
                     localEndpoint,
                     sender,
+                    configuration.Object,
                     systemDiagnostics),
                 systemDiagnostics);
 
@@ -120,9 +134,15 @@ namespace Nuclei.Communication.Interaction.Transport
         {
             var localEndpoint = new EndpointId("local");
             var notifier = new Mock<IStoreInformationAboutEndpoints>();
+            var configuration = new Mock<IConfiguration>();
+            {
+                configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                    .Returns(false);
+            }
+
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
-            Func<EndpointId, ICommunicationMessage, Task<ICommunicationMessage>> sender =
-                (e, m) => Task<ICommunicationMessage>.Factory.StartNew(
+            SendMessageAndWaitForResponse sender =
+                (e, m, r, t) => Task<ICommunicationMessage>.Factory.StartNew(
                     () => new SuccessMessage(localEndpoint, new MessageId()),
                     new CancellationToken(),
                     TaskCreationOptions.None,
@@ -133,6 +153,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 new CommandProxyBuilder(
                     localEndpoint,
                     sender,
+                    configuration.Object,
                     systemDiagnostics),
                 systemDiagnostics);
 
@@ -164,9 +185,15 @@ namespace Nuclei.Communication.Interaction.Transport
         {
             var localEndpoint = new EndpointId("local");
             var notifier = new Mock<IStoreInformationAboutEndpoints>();
+            var configuration = new Mock<IConfiguration>();
+            {
+                configuration.Setup(c => c.HasValueFor(It.IsAny<ConfigurationKey>()))
+                    .Returns(false);
+            }
+
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
-            Func<EndpointId, ICommunicationMessage, Task<ICommunicationMessage>> sender =
-                (e, m) => Task<ICommunicationMessage>.Factory.StartNew(
+            SendMessageAndWaitForResponse sender =
+                (e, m, r, t) => Task<ICommunicationMessage>.Factory.StartNew(
                     () => new SuccessMessage(localEndpoint, new MessageId()),
                     new CancellationToken(),
                     TaskCreationOptions.None,
@@ -177,6 +204,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 new CommandProxyBuilder(
                     localEndpoint,
                     sender,
+                    configuration.Object,
                     systemDiagnostics),
                 systemDiagnostics);
 

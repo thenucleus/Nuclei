@@ -659,6 +659,7 @@ namespace Nuclei.Communication.Protocol
                 () => layer.SendMessageAndWaitForResponse(
                     new EndpointId("A"), 
                     new SuccessMessage(new EndpointId("B"), new MessageId()), 
+                    1,
                     TimeSpan.FromSeconds(1)));
         }
 
@@ -681,6 +682,7 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
+            var retryCount = 1;
             var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
             var channel = new Mock<IProtocolChannel>();
             {
@@ -694,6 +696,7 @@ namespace Nuclei.Communication.Protocol
                         {
                             Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(msg, m);
+                            Assert.AreEqual(retryCount, r);
                         })
                     .Verifiable();
             }
@@ -733,7 +736,7 @@ namespace Nuclei.Communication.Protocol
                     },
                 diagnostics);
 
-            var response = layer.SendMessageAndWaitForResponse(remoteEndpoint, msg, timeout);
+            var response = layer.SendMessageAndWaitForResponse(remoteEndpoint, msg, retryCount, timeout);
             Assert.AreSame(responseTask, response);
             
             channel.Verify(c => c.OpenChannel(), Times.Once());
@@ -760,6 +763,7 @@ namespace Nuclei.Communication.Protocol
                     .Returns(true);
             }
 
+            var retryCount = 1;
             var msg = new SuccessMessage(new EndpointId("B"), new MessageId());
             var channel = new Mock<IProtocolChannel>();
             {
@@ -773,6 +777,7 @@ namespace Nuclei.Communication.Protocol
                         {
                             Assert.AreSame(endpointInfo.ProtocolInformation, e);
                             Assert.AreSame(msg, m);
+                            Assert.AreEqual(retryCount, r);
                         })
                     .Verifiable();
             }
@@ -814,7 +819,7 @@ namespace Nuclei.Communication.Protocol
 
             layer.SignIn();
 
-            var response = layer.SendMessageAndWaitForResponse(remoteEndpoint, msg, timeout);
+            var response = layer.SendMessageAndWaitForResponse(remoteEndpoint, msg, retryCount, timeout);
             Assert.AreSame(responseTask, response);
 
             channel.Verify(c => c.OpenChannel(), Times.Once());

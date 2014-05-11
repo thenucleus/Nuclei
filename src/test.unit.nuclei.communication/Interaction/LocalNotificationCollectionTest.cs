@@ -5,10 +5,8 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Moq;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Protocol;
 using NUnit.Framework;
@@ -55,54 +53,41 @@ namespace Nuclei.Communication.Interaction
         [Test]
         public void Register()
         {
-            var knownEndpoint = new EndpointId("other");
-            var layer = new Mock<IProtocolLayer>();
-            {
-                layer.Setup(l => l.Id)
-                    .Returns(new EndpointId("mine"));
-                layer.Setup(l => l.IsSignedIn)
-                    .Returns(true);
-                layer.Setup(l => l.KnownEndpoints())
-                    .Returns(
-                        new List<EndpointId> 
-                            { 
-                                knownEndpoint, 
-                            });
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
-                    .Verifiable();
-            }
+            var wasInvoked = false;
+            SendMessage sender =
+                (endpoint, message, retries) =>
+                {
+                    wasInvoked = true;
+                };
 
-            var collection = new LocalNotificationCollection(layer.Object);
+            var collection = new LocalNotificationCollection(new EndpointId("a"), sender);
 
             var id = NotificationId.Create(typeof(IMockNotificationSet).GetEvent("OnMyEvent"));
             var def = new NotificationDefinition(id);
             collection.Register(new[] { def });
 
             Assert.IsTrue(collection.Any(pair => pair.Equals(id)));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
+            Assert.IsFalse(wasInvoked);
         }
 
         [Test]
         public void RegisterWithoutBeingSignedIn()
         {
-            var layer = new Mock<IProtocolLayer>();
-            {
-                layer.Setup(l => l.Id)
-                    .Returns(new EndpointId("mine"));
-                layer.Setup(l => l.IsSignedIn)
-                    .Returns(false);
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
-                    .Verifiable();
-            }
+            var wasInvoked = false;
+            SendMessage sender =
+                (endpoint, message, retries) =>
+                {
+                    wasInvoked = true;
+                };
 
-            var collection = new LocalNotificationCollection(layer.Object);
+            var collection = new LocalNotificationCollection(new EndpointId("a"), sender);
 
             var id = NotificationId.Create(typeof(IMockNotificationSet).GetEvent("OnMyEvent"));
             var def = new NotificationDefinition(id);
             collection.Register(new[] { def });
 
             Assert.AreEqual(1, collection.Count(pair => pair.Equals(id)));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
+            Assert.IsFalse(wasInvoked);
         }
 
         [Test]
@@ -111,29 +96,16 @@ namespace Nuclei.Communication.Interaction
             var knownEndpoint = new EndpointId("other");
             EndpointId other = null;
             ICommunicationMessage msg = null;
-            var layer = new Mock<IProtocolLayer>();
-            {
-                layer.Setup(l => l.Id)
-                    .Returns(new EndpointId("mine"));
-                layer.Setup(l => l.IsSignedIn)
-                    .Returns(true);
-                layer.Setup(l => l.KnownEndpoints())
-                    .Returns(
-                        new List<EndpointId> 
-                            { 
-                                knownEndpoint, 
-                            });
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
-                    .Callback<EndpointId, ICommunicationMessage, int>(
-                        (e, m, r) =>
-                        {
-                            other = e;
-                            msg = m;
-                        })
-                    .Verifiable();
-            }
+            var wasInvoked = false;
+            SendMessage sender =
+                (endpoint, message, retries) =>
+                {
+                    wasInvoked = true;
+                    other = endpoint;
+                    msg = message;
+                };
 
-            var collection = new LocalNotificationCollection(layer.Object);
+            var collection = new LocalNotificationCollection(new EndpointId("a"), sender);
 
             var id = NotificationId.Create(typeof(IMockNotificationSet).GetEvent("OnMyEvent"));
             var def = new NotificationDefinition(id);
@@ -142,14 +114,14 @@ namespace Nuclei.Communication.Interaction
             collection.Register(new[] { def });
 
             Assert.AreEqual(1, collection.Count(pair => pair.Equals(id)));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
+            Assert.IsFalse(wasInvoked);
 
             collection.RegisterForNotification(knownEndpoint, id);
 
             var args = new EventArgs();
             obj.RaiseOnMyEvent(args);
 
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
+            Assert.IsTrue(wasInvoked);
             Assert.AreEqual(knownEndpoint, other);
             Assert.IsInstanceOf<NotificationRaisedMessage>(msg);
 
@@ -164,29 +136,16 @@ namespace Nuclei.Communication.Interaction
             var knownEndpoint = new EndpointId("other");
             EndpointId other = null;
             ICommunicationMessage msg = null;
-            var layer = new Mock<IProtocolLayer>();
-            {
-                layer.Setup(l => l.Id)
-                    .Returns(new EndpointId("mine"));
-                layer.Setup(l => l.IsSignedIn)
-                    .Returns(true);
-                layer.Setup(l => l.KnownEndpoints())
-                    .Returns(
-                        new List<EndpointId> 
-                            { 
-                                knownEndpoint, 
-                            });
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
-                    .Callback<EndpointId, ICommunicationMessage, int>(
-                        (e, m, r) =>
-                        {
-                            other = e;
-                            msg = m;
-                        })
-                    .Verifiable();
-            }
+            var wasInvoked = false;
+            SendMessage sender =
+                (endpoint, message, retries) =>
+                {
+                    wasInvoked = true;
+                    other = endpoint;
+                    msg = message;
+                };
 
-            var collection = new LocalNotificationCollection(layer.Object);
+            var collection = new LocalNotificationCollection(new EndpointId("a"), sender);
 
             var id = NotificationId.Create(typeof(IMockNotificationSet).GetEvent("OnMyOtherEvent"));
             var def = new NotificationDefinition(id);
@@ -195,14 +154,14 @@ namespace Nuclei.Communication.Interaction
             collection.Register(new[] { def });
 
             Assert.AreEqual(1, collection.Count(pair => pair.Equals(id)));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
+            Assert.IsFalse(wasInvoked);
 
             collection.RegisterForNotification(knownEndpoint, id);
 
             var args = new UnhandledExceptionEventArgs(new Exception(), false);
             obj.RaiseOnMyOtherEvent(args);
 
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
+            Assert.IsTrue(wasInvoked);
             Assert.AreEqual(knownEndpoint, other);
             Assert.IsInstanceOf<NotificationRaisedMessage>(msg);
 
@@ -217,29 +176,16 @@ namespace Nuclei.Communication.Interaction
             var knownEndpoint = new EndpointId("other");
             EndpointId other = null;
             ICommunicationMessage msg = null;
-            var layer = new Mock<IProtocolLayer>();
-            {
-                layer.Setup(l => l.Id)
-                    .Returns(new EndpointId("mine"));
-                layer.Setup(l => l.IsSignedIn)
-                    .Returns(true);
-                layer.Setup(l => l.KnownEndpoints())
-                    .Returns(
-                        new List<EndpointId> 
-                            { 
-                                knownEndpoint, 
-                            });
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
-                    .Callback<EndpointId, ICommunicationMessage, int>(
-                        (e, m, r) =>
-                        {
-                            other = e;
-                            msg = m;
-                        })
-                    .Verifiable();
-            }
+            var wasInvoked = false;
+            SendMessage sender =
+                (endpoint, message, retries) =>
+                {
+                    wasInvoked = true;
+                    other = endpoint;
+                    msg = message;
+                };
 
-            var collection = new LocalNotificationCollection(layer.Object);
+            var collection = new LocalNotificationCollection(new EndpointId("a"), sender);
 
             var id = NotificationId.Create(typeof(IMockNotificationSet).GetEvent("OnMyEvent"));
             var def = new NotificationDefinition(id);
@@ -248,7 +194,7 @@ namespace Nuclei.Communication.Interaction
             collection.Register(new[] { def });
 
             Assert.AreEqual(1, collection.Count(pair => pair.Equals(id)));
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
+            Assert.IsFalse(wasInvoked);
 
             collection.RegisterForNotification(knownEndpoint, id);
             collection.UnregisterFromNotification(knownEndpoint, id);
@@ -259,7 +205,7 @@ namespace Nuclei.Communication.Interaction
             var args = new EventArgs();
             obj.RaiseOnMyEvent(args);
 
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
+            Assert.IsFalse(wasInvoked);
             Assert.IsNull(other);
             Assert.IsNull(msg);
         }

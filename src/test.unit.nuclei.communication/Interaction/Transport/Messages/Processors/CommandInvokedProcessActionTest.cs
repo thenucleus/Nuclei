@@ -32,7 +32,7 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
         public void MessageTypeToProcess()
         {
             var endpoint = new EndpointId("id");
-            Action<EndpointId, ICommunicationMessage> sendAction = (e, m) => { };
+            SendMessage sendAction = (e, m, r) => { };
             var commands = new Mock<ICommandCollection>();
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
@@ -71,7 +71,8 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
             var endpoint = new EndpointId("id");
 
             ICommunicationMessage storedMsg = null;
-            Action<EndpointId, ICommunicationMessage> sendAction = (e, m) =>
+            SendMessage sendAction =
+                (e, m, r) =>
                 {
                     storedMsg = m;
                 };
@@ -134,8 +135,8 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
             var endpoint = new EndpointId("id");
 
             ICommunicationMessage storedMsg = null;
-            Action<EndpointId, ICommunicationMessage> sendAction = 
-                (e, m) =>
+            SendMessage sendAction =
+                (e, m, r) =>
                 {
                     storedMsg = m;
                 };
@@ -202,7 +203,8 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
 
             int count = 0;
             ICommunicationMessage storedMsg = null;
-            Action<EndpointId, ICommunicationMessage> sendAction = (e, m) =>
+            SendMessage sendAction =
+                (e, m, r) =>
                 {
                     count++;
                     if (count <= 1)
@@ -271,8 +273,8 @@ namespace Nuclei.Communication.Interaction.Transport.Messages.Processors
                 };
 
             var endpoint = new EndpointId("id");
-            Action<EndpointId, ICommunicationMessage> sendAction =
-                (e, m) =>
+            SendMessage sendAction =
+                (e, m, r) =>
                 {
                     throw new Exception();
                 };

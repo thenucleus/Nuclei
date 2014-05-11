@@ -95,27 +95,27 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var layer = new Mock<IProtocolLayer>();
-            {
-                layer.Setup(l => l.Id)
-                    .Returns(id);
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
-                    .Callback<EndpointId, ICommunicationMessage, int>(
-                        (e, m, r) =>
-                        {
-                            var msg = m as EndpointInteractionInformationResponseMessage;
-                            Assert.IsNotNull(msg);
-                            Assert.AreEqual(InteractionConnectionState.Desired, msg.State);
-                        })
-                    .Verifiable();
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
-                    .Returns(Task<ICommunicationMessage>.Factory.StartNew(
+            var wasMessageSend = false;
+            SendMessage sendMessage = (endpoint, message, retries) =>
+                {
+                    wasMessageSend = true;
+
+                    var msg = message as EndpointInteractionInformationResponseMessage;
+                    Assert.IsNotNull(msg);
+                    Assert.AreEqual(InteractionConnectionState.Desired, msg.State);
+                };
+
+            var wasMessageSendAndWaitedForResponse = false;
+            SendMessageAndWaitForResponse sendMessageAndWaitForResponse = (endpoint, message, retries, timeout) =>
+                {
+                    wasMessageSendAndWaitedForResponse = true;
+
+                    return Task<ICommunicationMessage>.Factory.StartNew(
                         () => new EndpointInteractionInformationResponseMessage(remoteEndpoint, new MessageId(), InteractionConnectionState.Neutral),
                         new CancellationTokenSource().Token,
                         TaskCreationOptions.None,
-                        new CurrentThreadTaskScheduler()))
-                    .Verifiable();
-            }
+                        new CurrentThreadTaskScheduler());
+                };
 
             var configuration = new Mock<IConfiguration>();
             {
@@ -125,18 +125,19 @@ namespace Nuclei.Communication.Interaction
 
             var diagnostics = new SystemDiagnostics((l, m) => { }, null);
             var conductor = new InteractionHandshakeConductor(
+                id,
                 endpointStorage.Object,
                 interactionSubjects.Object,
                 commandProxies.Object,
                 notificationProxies.Object,
-                layer.Object,
-                configuration.Object,
+                sendMessage,
+                sendMessageAndWaitForResponse,
+                TimeSpan.FromMinutes(1),
                 diagnostics);
 
             endpointStorage.Raise(e => e.OnEndpointConnected += null, new EndpointEventArgs(remoteEndpoint));
-            layer.Verify(
-                l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()), 
-                Times.Once());
+            Assert.IsTrue(wasMessageSendAndWaitedForResponse);
+            Assert.IsFalse(wasMessageSend);
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
                 Times.Never());
@@ -148,7 +149,7 @@ namespace Nuclei.Communication.Interaction
                 remoteEndpoint, 
                 requiredSubjects.Values.ToArray(),
                 new MessageId());
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
+            Assert.IsTrue(wasMessageSend);
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
                 Times.Once());
@@ -226,27 +227,27 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var layer = new Mock<IProtocolLayer>();
+            var wasMessageSend = false;
+            SendMessage sendMessage = (endpoint, message, retries) =>
             {
-                layer.Setup(l => l.Id)
-                    .Returns(id);
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
-                    .Callback<EndpointId, ICommunicationMessage, int>(
-                        (e, m, r) =>
-                        {
-                            var msg = m as EndpointInteractionInformationResponseMessage;
-                            Assert.IsNotNull(msg);
-                            Assert.AreEqual(InteractionConnectionState.Desired, msg.State);
-                        })
-                    .Verifiable();
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
-                    .Returns(Task<ICommunicationMessage>.Factory.StartNew(
-                        () => new EndpointInteractionInformationResponseMessage(remoteEndpoint, new MessageId(), InteractionConnectionState.Neutral),
-                        new CancellationTokenSource().Token,
-                        TaskCreationOptions.None,
-                        new CurrentThreadTaskScheduler()))
-                    .Verifiable();
-            }
+                wasMessageSend = true;
+
+                var msg = message as EndpointInteractionInformationResponseMessage;
+                Assert.IsNotNull(msg);
+                Assert.AreEqual(InteractionConnectionState.Desired, msg.State);
+            };
+
+            var wasMessageSendAndWaitedForResponse = false;
+            SendMessageAndWaitForResponse sendMessageAndWaitForResponse = (endpoint, message, retries, timeout) =>
+            {
+                wasMessageSendAndWaitedForResponse = true;
+
+                return Task<ICommunicationMessage>.Factory.StartNew(
+                    () => new EndpointInteractionInformationResponseMessage(remoteEndpoint, new MessageId(), InteractionConnectionState.Neutral),
+                    new CancellationTokenSource().Token,
+                    TaskCreationOptions.None,
+                    new CurrentThreadTaskScheduler());
+            };
 
             var configuration = new Mock<IConfiguration>();
             {
@@ -256,19 +257,22 @@ namespace Nuclei.Communication.Interaction
 
             var diagnostics = new SystemDiagnostics((l, m) => { }, null);
             var conductor = new InteractionHandshakeConductor(
+                id,
                 endpointStorage.Object,
                 interactionSubjects.Object,
                 commandProxies.Object,
                 notificationProxies.Object,
-                layer.Object,
-                configuration.Object,
+                sendMessage,
+                sendMessageAndWaitForResponse,
+                TimeSpan.FromMinutes(1),
                 diagnostics);
 
             conductor.ContinueHandshakeWith(
                 remoteEndpoint, 
                 requiredSubjects.Values.ToArray(),
                 new MessageId());
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
+            Assert.IsTrue(wasMessageSend);
+            Assert.IsTrue(wasMessageSendAndWaitedForResponse);
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
                 Times.Once());
@@ -351,27 +355,27 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var layer = new Mock<IProtocolLayer>();
+            var wasMessageSend = false;
+            SendMessage sendMessage = (endpoint, message, retries) =>
             {
-                layer.Setup(l => l.Id)
-                    .Returns(id);
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
-                    .Callback<EndpointId, ICommunicationMessage, int>(
-                        (e, m, r) =>
-                        {
-                            var msg = m as EndpointInteractionInformationResponseMessage;
-                            Assert.IsNotNull(msg);
-                            Assert.AreEqual(InteractionConnectionState.Neutral, msg.State);
-                        })
-                    .Verifiable();
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
-                    .Returns(Task<ICommunicationMessage>.Factory.StartNew(
-                        () => new EndpointInteractionInformationResponseMessage(remoteEndpoint, new MessageId(), InteractionConnectionState.Neutral),
-                        new CancellationTokenSource().Token,
-                        TaskCreationOptions.None,
-                        new CurrentThreadTaskScheduler()))
-                    .Verifiable();
-            }
+                wasMessageSend = true;
+
+                var msg = message as EndpointInteractionInformationResponseMessage;
+                Assert.IsNotNull(msg);
+                Assert.AreEqual(InteractionConnectionState.Neutral, msg.State);
+            };
+
+            var wasMessageSendAndWaitedForResponse = false;
+            SendMessageAndWaitForResponse sendMessageAndWaitForResponse = (endpoint, message, retries, timeout) =>
+            {
+                wasMessageSendAndWaitedForResponse = true;
+
+                return Task<ICommunicationMessage>.Factory.StartNew(
+                    () => new EndpointInteractionInformationResponseMessage(remoteEndpoint, new MessageId(), InteractionConnectionState.Neutral),
+                    new CancellationTokenSource().Token,
+                    TaskCreationOptions.None,
+                    new CurrentThreadTaskScheduler());
+            };
 
             var configuration = new Mock<IConfiguration>();
             {
@@ -381,12 +385,14 @@ namespace Nuclei.Communication.Interaction
 
             var diagnostics = new SystemDiagnostics((l, m) => { }, null);
             var conductor = new InteractionHandshakeConductor(
+                id,
                 endpointStorage.Object,
                 interactionSubjects.Object,
                 commandProxies.Object,
                 notificationProxies.Object,
-                layer.Object,
-                configuration.Object,
+                sendMessage,
+                sendMessageAndWaitForResponse,
+                TimeSpan.FromMinutes(1),
                 diagnostics);
 
             conductor.ContinueHandshakeWith(
@@ -399,7 +405,8 @@ namespace Nuclei.Communication.Interaction
                             new VersionedTypeFallback[0]), 
                     }, 
                 new MessageId());
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
+            Assert.IsTrue(wasMessageSend);
+            Assert.IsTrue(wasMessageSendAndWaitedForResponse);
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
                 Times.Never());
@@ -483,27 +490,27 @@ namespace Nuclei.Communication.Interaction
                     .Verifiable();
             }
 
-            var layer = new Mock<IProtocolLayer>();
+            var wasMessageSend = false;
+            SendMessage sendMessage = (endpoint, message, retries) =>
             {
-                layer.Setup(l => l.Id)
-                    .Returns(id);
-                layer.Setup(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
-                    .Callback<EndpointId, ICommunicationMessage, int>(
-                        (e, m, r) =>
-                        {
-                            var msg = m as EndpointInteractionInformationResponseMessage;
-                            Assert.IsNotNull(msg);
-                            Assert.AreEqual(InteractionConnectionState.Neutral, msg.State);
-                        })
-                    .Verifiable();
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
-                    .Returns(Task<ICommunicationMessage>.Factory.StartNew(
-                        () => new EndpointInteractionInformationResponseMessage(remoteEndpoint, new MessageId(), InteractionConnectionState.Neutral),
-                        new CancellationTokenSource().Token,
-                        TaskCreationOptions.None,
-                        new CurrentThreadTaskScheduler()))
-                    .Verifiable();
-            }
+                wasMessageSend = true;
+
+                var msg = message as EndpointInteractionInformationResponseMessage;
+                Assert.IsNotNull(msg);
+                Assert.AreEqual(InteractionConnectionState.Neutral, msg.State);
+            };
+
+            var wasMessageSendAndWaitedForResponse = false;
+            SendMessageAndWaitForResponse sendMessageAndWaitForResponse = (endpoint, message, retries, timeout) =>
+            {
+                wasMessageSendAndWaitedForResponse = true;
+
+                return Task<ICommunicationMessage>.Factory.StartNew(
+                    () => new EndpointInteractionInformationResponseMessage(remoteEndpoint, new MessageId(), InteractionConnectionState.Neutral),
+                    new CancellationTokenSource().Token,
+                    TaskCreationOptions.None,
+                    new CurrentThreadTaskScheduler());
+            };
 
             var configuration = new Mock<IConfiguration>();
             {
@@ -513,18 +520,19 @@ namespace Nuclei.Communication.Interaction
 
             var diagnostics = new SystemDiagnostics((l, m) => { }, null);
             var conductor = new InteractionHandshakeConductor(
+                id,
                 endpointStorage.Object,
                 interactionSubjects.Object,
                 commandProxies.Object,
                 notificationProxies.Object,
-                layer.Object,
-                configuration.Object,
+                sendMessage,
+                sendMessageAndWaitForResponse,
+                TimeSpan.FromMinutes(1),
                 diagnostics);
 
             endpointStorage.Raise(e => e.OnEndpointConnected += null, new EndpointEventArgs(remoteEndpoint));
-            layer.Verify(
-                l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()), 
-                Times.Once());
+            Assert.IsTrue(wasMessageSendAndWaitedForResponse);
+            Assert.IsFalse(wasMessageSend);
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
                 Times.Never());
@@ -539,7 +547,7 @@ namespace Nuclei.Communication.Interaction
                         new CommunicationSubjectGroup(new CommunicationSubject("b"), new VersionedTypeFallback[0], new VersionedTypeFallback[0]), 
                     },
                 new MessageId());
-            layer.Verify(l => l.SendMessageTo(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
+            Assert.IsTrue(wasMessageSend);
             commandProxies.Verify(
                 c => c.OnReceiptOfEndpointCommands(It.IsAny<EndpointId>(), It.IsAny<IEnumerable<OfflineTypeInformation>>()),
                 Times.Never());

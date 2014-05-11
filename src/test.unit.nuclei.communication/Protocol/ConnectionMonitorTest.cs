@@ -10,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Schedulers;
 using Moq;
-using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Configuration;
 using NUnit.Framework;
 
@@ -52,7 +51,11 @@ namespace Nuclei.Communication.Protocol
             {
                 layer.Setup(l => l.Id)
                     .Returns(localId);
-                layer.Setup(l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()))
+                layer.Setup(l => l.SendMessageAndWaitForResponse(
+                        It.IsAny<EndpointId>(), 
+                        It.IsAny<ICommunicationMessage>(), 
+                        It.IsAny<int>(),
+                        It.IsAny<TimeSpan>()))
                     .Verifiable();
             }
 
@@ -87,7 +90,11 @@ namespace Nuclei.Communication.Protocol
             timer.Raise(t => t.OnElapsed += null, EventArgs.Empty);
 
             layer.Verify(
-                l => l.SendMessageAndWaitForResponse(It.IsAny<EndpointId>(), It.IsAny<ICommunicationMessage>(), It.IsAny<TimeSpan>()),
+                l => l.SendMessageAndWaitForResponse(
+                    It.IsAny<EndpointId>(), 
+                    It.IsAny<ICommunicationMessage>(), 
+                    It.IsAny<int>(),
+                    It.IsAny<TimeSpan>()),
                 Times.Never());
         }
 

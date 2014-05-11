@@ -96,6 +96,7 @@ namespace Nuclei.Communication.Protocol
                 protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                         It.IsAny<EndpointInformation>(), 
                         It.IsAny<ICommunicationMessage>(),
+                        It.IsAny<int>(),
                         It.IsAny<TimeSpan>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new SuccessMessage(remoteEndpoint, new MessageId()),
@@ -170,6 +171,7 @@ namespace Nuclei.Communication.Protocol
                 l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                     It.IsAny<EndpointInformation>(), 
                     It.IsAny<ICommunicationMessage>(),
+                    It.IsAny<int>(),
                     It.IsAny<TimeSpan>()), 
                 Times.Once());
         }
@@ -246,6 +248,7 @@ namespace Nuclei.Communication.Protocol
                 protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                         It.IsAny<EndpointInformation>(),
                         It.IsAny<ICommunicationMessage>(),
+                        It.IsAny<int>(),
                         It.IsAny<TimeSpan>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new SuccessMessage(remoteEndpoint, new MessageId()),
@@ -308,6 +311,7 @@ namespace Nuclei.Communication.Protocol
                 l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                     It.IsAny<EndpointInformation>(), 
                     It.IsAny<ICommunicationMessage>(),
+                    It.IsAny<int>(),
                     It.IsAny<TimeSpan>()),
                 Times.Once());
         }
@@ -383,6 +387,7 @@ namespace Nuclei.Communication.Protocol
                 protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                         It.IsAny<EndpointInformation>(),
                         It.IsAny<ICommunicationMessage>(),
+                        It.IsAny<int>(),
                         It.IsAny<TimeSpan>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new FailureMessage(remoteEndpoint, new MessageId()),
@@ -443,6 +448,7 @@ namespace Nuclei.Communication.Protocol
                 l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                     It.IsAny<EndpointInformation>(), 
                     It.IsAny<ICommunicationMessage>(),
+                    It.IsAny<int>(),
                     It.IsAny<TimeSpan>()),
                 Times.Once());
         }
@@ -519,6 +525,7 @@ namespace Nuclei.Communication.Protocol
                 protocolLayer.Setup(l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                         It.IsAny<EndpointInformation>(),
                         It.IsAny<ICommunicationMessage>(),
+                        It.IsAny<int>(),
                         It.IsAny<TimeSpan>()))
                     .Returns(Task<ICommunicationMessage>.Factory.StartNew(
                         () => new SuccessMessage(remoteEndpoint, new MessageId()),
@@ -579,6 +586,7 @@ namespace Nuclei.Communication.Protocol
                 l => l.SendMessageToUnregisteredEndpointAndWaitForResponse(
                     It.IsAny<EndpointInformation>(), 
                     It.IsAny<ICommunicationMessage>(),
+                    It.IsAny<int>(),
                     It.IsAny<TimeSpan>()),
                 Times.Never());
         }
