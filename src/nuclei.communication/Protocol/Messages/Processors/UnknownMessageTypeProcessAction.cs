@@ -23,7 +23,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// <summary>
         /// The action that is used to send a message to a remote endpoint.
         /// </summary>
-        private readonly Action<EndpointId, ICommunicationMessage> m_SendMessage;
+        private readonly SendMessage m_SendMessage;
 
         /// <summary>
         /// The endpoint ID of the current endpoint.
@@ -52,7 +52,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         /// </exception>
         public UnknownMessageTypeProcessAction(
             EndpointId localEndpoint,
-            Action<EndpointId, ICommunicationMessage> sendMessage,
+            SendMessage sendMessage,
             SystemDiagnostics systemDiagnostics)
         {
             {
@@ -99,7 +99,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             try
             {
                 var returnMessage = new FailureMessage(m_Current, message.Id);
-                m_SendMessage(message.Sender, returnMessage);
+                m_SendMessage(message.Sender, returnMessage, CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
             }
             catch (Exception e)
             {

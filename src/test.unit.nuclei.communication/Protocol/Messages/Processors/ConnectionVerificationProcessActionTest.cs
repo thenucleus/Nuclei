@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Diagnostics.CodeAnalysis;
 using Nuclei.Diagnostics;
 using NUnit.Framework;
@@ -20,7 +19,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         public void MessageTypeToProcess()
         {
             var endpoint = new EndpointId("id");
-            Action<EndpointId, ICommunicationMessage> sendAction = (e, m) => { };
+            SendMessage sendAction = (e, m, r) => { };
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
             KeepAliveResponseCustomDataBuilder customData = o => o;
 
@@ -34,7 +33,8 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             var endpoint = new EndpointId("id");
 
             ICommunicationMessage storedMsg = null;
-            Action<EndpointId, ICommunicationMessage> sendAction = (e, m) =>
+            SendMessage sendAction = 
+                (e, m, r) =>
                 {
                     storedMsg = m;
                 };

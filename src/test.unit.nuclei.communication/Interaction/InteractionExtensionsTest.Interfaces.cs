@@ -77,6 +77,10 @@ namespace Nuclei.Communication.Interaction
         public interface IMockCommandSetWithTaskReturn : ICommandSet
         {
             Task MyMethod(int input);
+
+            Task MyRetryMethod([InvocationRetryCount]int count);
+
+            Task MyTimeoutMethod([InvocationTimeout]int timeout);
         }
 
         public interface IMockCommandSetWithTypedTaskReturn : ICommandSet

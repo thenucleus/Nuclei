@@ -178,8 +178,9 @@ namespace Nuclei.Communication.Protocol
                     .Returns(new[] { endpointInfo });
                 sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()))
                     .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<ProtocolInformation, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
+                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage, int>(
+                        (e, m, r) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
                     .Verifiable();
             }
 
@@ -207,14 +208,16 @@ namespace Nuclei.Communication.Protocol
                  h => h.OpenChannel(It.IsAny<IReceiveInformationFromRemoteEndpoints>(), It.IsAny<Func<ServiceHost, ServiceEndpoint>>()),
                  Times.Exactly(2));
 
-            channel.Send(endpointInfo, msg);
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Send(endpointInfo, msg, 1);
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
 
             channel.OpenChannel();
             host.Verify(h => h.CloseConnection(), Times.Exactly(2));
             sendingEndpoint.Verify(e => e.KnownEndpoints(), Times.Once());
             sendingEndpoint.Verify(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()), Times.Once());
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Exactly(2));
+            sendingEndpoint.Verify(
+                e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), 
+                Times.Exactly(2));
             host.Verify(
                  h => h.OpenChannel(It.IsAny<IReceiveInformationFromRemoteEndpoints>(), It.IsAny<Func<ServiceHost, ServiceEndpoint>>()),
                  Times.Exactly(4));
@@ -266,8 +269,9 @@ namespace Nuclei.Communication.Protocol
                     .Returns(new[] { endpointInfo.ProtocolInformation });
                 sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()))
                     .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<ProtocolInformation, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
+                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage, int>(
+                        (e, m, r) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
                     .Verifiable();
             }
 
@@ -297,14 +301,16 @@ namespace Nuclei.Communication.Protocol
                  h => h.OpenChannel(It.IsAny<IReceiveInformationFromRemoteEndpoints>(), It.IsAny<Func<ServiceHost, ServiceEndpoint>>()),
                  Times.Exactly(2));
 
-            channel.Send(endpointInfo.ProtocolInformation, msg);
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Send(endpointInfo.ProtocolInformation, msg, 1);
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
 
             channel.CloseChannel();
             host.Verify(h => h.CloseConnection(), Times.Exactly(2));
             sendingEndpoint.Verify(e => e.KnownEndpoints(), Times.Once());
             sendingEndpoint.Verify(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()), Times.Once());
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Exactly(2));
+            sendingEndpoint.Verify(
+                e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), 
+                Times.Exactly(2));
         }
 
         [Test]
@@ -349,8 +355,9 @@ namespace Nuclei.Communication.Protocol
                     .Returns(new[] { endpointInfo });
                 sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()))
                     .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<ProtocolInformation, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
+                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage, int>(
+                        (e, m, r) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
                     .Verifiable();
             }
 
@@ -376,7 +383,7 @@ namespace Nuclei.Communication.Protocol
             host.Verify(h => h.CloseConnection(), Times.Never());
             sendingEndpoint.Verify(e => e.KnownEndpoints(), Times.Never());
             sendingEndpoint.Verify(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()), Times.Never());
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Never());
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Never());
         }
 
         [Test]
@@ -422,8 +429,9 @@ namespace Nuclei.Communication.Protocol
                     .Returns(new[] { endpointInfo });
                 sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()))
                     .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<ProtocolInformation, ICommunicationMessage>((e, m) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
+                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage, int>(
+                        (e, m, t) => Assert.IsInstanceOf(typeof(EndpointDisconnectMessage), m))
                     .Verifiable();
             }
 
@@ -449,8 +457,8 @@ namespace Nuclei.Communication.Protocol
             var protocols = channel.LocalConnectionPoints().ToList();
             Assert.AreEqual(1, protocols.Count());
 
-            channel.Send(endpointInfo, msg);
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Send(endpointInfo, msg, 1);
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
 
             host.Verify(
                  h => h.OpenChannel(It.IsAny<IReceiveInformationFromRemoteEndpoints>(), It.IsAny<Func<ServiceHost, ServiceEndpoint>>()),
@@ -503,8 +511,8 @@ namespace Nuclei.Communication.Protocol
                     .Returns(new[] { endpointInfo });
                 sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()))
                     .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()))
-                    .Callback<ProtocolInformation, ICommunicationMessage>((e, m) => Assert.AreSame(msg, m))
+                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, ICommunicationMessage, int>((e, m, r) => Assert.AreSame(msg, m))
                     .Verifiable();
             }
 
@@ -530,8 +538,8 @@ namespace Nuclei.Communication.Protocol
             var protocols = channel.LocalConnectionPoints().ToList();
             Assert.AreEqual(1, protocols.Count());
 
-            channel.Send(endpointInfo, msg);
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>()), Times.Once());
+            channel.Send(endpointInfo, msg, 1);
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<ICommunicationMessage>(), It.IsAny<int>()), Times.Once());
         }
 
         [Test]
@@ -584,9 +592,9 @@ namespace Nuclei.Communication.Protocol
                     .Returns(new[] { endpointInfo });
                 sendingEndpoint.Setup(e => e.CloseChannelTo(It.IsAny<ProtocolInformation>()))
                     .Verifiable();
-                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<Stream>()))
-                    .Callback<ProtocolInformation, Stream>(
-                        (e, m) =>
+                sendingEndpoint.Setup(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<Stream>(), It.IsAny<int>()))
+                    .Callback<ProtocolInformation, Stream, int>(
+                        (e, m, r) =>
                         {
                             string fileText;
                             using (var reader = new StreamReader(m))
@@ -621,9 +629,9 @@ namespace Nuclei.Communication.Protocol
             var protocols = channel.LocalConnectionPoints().ToList();
             Assert.AreEqual(1, protocols.Count());
 
-            var task = channel.TransferData(endpointInfo, path, new CancellationToken(), new CurrentThreadTaskScheduler());
+            var task = channel.TransferData(endpointInfo, path, new CancellationToken(), new CurrentThreadTaskScheduler(), 1);
             task.Wait();
-            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<Stream>()), Times.Once());
+            sendingEndpoint.Verify(e => e.Send(It.IsAny<ProtocolInformation>(), It.IsAny<Stream>(), It.IsAny<int>()), Times.Once());
         }
 
         [Test]

@@ -39,27 +39,35 @@ namespace Nuclei.Communication.Interaction
             = new Dictionary<NotificationId, List<EndpointId>>();
 
         /// <summary>
-        /// The communication layer that is used to send out messages about newly
-        /// registered commands.
+        /// The action that is used to send a message to a remote endpoint.
         /// </summary>
-        private readonly IProtocolLayer m_Layer;
+        private readonly SendMessage m_SendMessage;
+
+        /// <summary>
+        /// The endpoint ID of the current endpoint.
+        /// </summary>
+        private readonly EndpointId m_Current;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalNotificationCollection"/> class.
         /// </summary>
-        /// <param name="layer">
-        ///     The communication layer that is used to send out messages about newly registered notifications.
-        /// </param>
+        /// <param name="localEndpoint">The endpoint ID of the local endpoint.</param>
+        /// <param name="sendMessage">The action that is used to send messages.</param>
         /// <exception cref="ArgumentNullException">
-        ///     Thrown if <paramref name="layer"/> is <see langword="null" />.
+        ///     Thrown if <paramref name="localEndpoint"/> is <see langword="null" />.
         /// </exception>
-        public LocalNotificationCollection(IProtocolLayer layer)
+        /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="sendMessage"/> is <see langword="null" />.
+        /// </exception>
+        public LocalNotificationCollection(EndpointId localEndpoint, SendMessage sendMessage)
         {
             {
-                Lokad.Enforce.Argument(() => layer);
+                Lokad.Enforce.Argument(() => localEndpoint);
+                Lokad.Enforce.Argument(() => sendMessage);
             }
 
-            m_Layer = layer;
+            m_Current = localEndpoint;
+            m_SendMessage = sendMessage;
         }
 
         /// <summary>
@@ -119,7 +127,10 @@ namespace Nuclei.Communication.Interaction
             {
                 foreach (var endpoint in endpoints)
                 {
-                    m_Layer.SendMessageTo(endpoint, new NotificationRaisedMessage(m_Layer.Id, new NotificationRaisedData(originatingEvent, args)));
+                    m_SendMessage(
+                        endpoint, 
+                        new NotificationRaisedMessage(m_Current, new NotificationRaisedData(originatingEvent, args)),
+                        CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
                 }
             }
         }

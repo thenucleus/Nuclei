@@ -64,8 +64,8 @@ namespace Nuclei.Examples.Complete
             var instance = m_Context.Resolve<TestCommands>();
 
             var map = CommandMapper<ITestCommandSet>.Create();
-            map.From<string>((command, name) => command.Echo(name))
-                .To((string n) => instance.Echo(n));
+            map.From<string, int, int>((command, name, retry, timeout) => command.Echo(name, retry, timeout))
+                .To((EndpointId e, string n) => instance.Echo(e, n));
 
             map.From<int, int>((command, first, second) => command.Calculate(first, second))
                 .To((int first, int second) => instance.Calculate(first, second));

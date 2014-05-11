@@ -4,6 +4,7 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using System;
 using System.Collections.Generic;
 using Autofac;
 using Nuclei.Communication.Interaction;
@@ -30,20 +31,11 @@ namespace Nuclei.Communication
                 .As<IStoreRemoteCommandProxies>()
                 .SingleInstance();
 
-            builder.Register(
-                c =>
-                {
-                    var ctx = c.Resolve<IComponentContext>();
-                    return new CommandProxyBuilder(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                        (endpoint, msg) =>
-                        {
-                            var config = ctx.Resolve<IConfiguration>();
-                            var layer = ctx.Resolve<IProtocolLayer>();
-                            return SendMessageWithResponse(config, layer, endpoint, msg);
-                        },
-                        c.Resolve<SystemDiagnostics>());
-                });
+            builder.Register(c => new CommandProxyBuilder(
+                EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                c.Resolve<SendMessageAndWaitForResponse>(),
+                c.Resolve<IConfiguration>(),
+                c.Resolve<SystemDiagnostics>()));
         }
 
         private static void RegisterCommandCollection(ContainerBuilder builder)
@@ -64,26 +56,17 @@ namespace Nuclei.Communication
                 .As<IRaiseProxyNotifications>()
                 .SingleInstance();
 
-            builder.Register(
-                c =>
-                {
-                    var ctx = c.Resolve<IComponentContext>();
-                    return new NotificationProxyBuilder(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                        (endpoint, msg) =>
-                        {
-                            var config = ctx.Resolve<IConfiguration>();
-                            var layer = ctx.Resolve<IProtocolLayer>();
-                            SendMessageWithResponse(config, layer, endpoint, msg);
-                        },
-                        c.Resolve<SystemDiagnostics>());
-                });
+            builder.Register(c => new NotificationProxyBuilder(
+                EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                c.Resolve<SendMessage>(),
+                c.Resolve<SystemDiagnostics>()));
         }
 
         private static void RegisterNotificationCollection(ContainerBuilder builder)
         {
             builder.Register(c => new LocalNotificationCollection(
-                    c.Resolve<IProtocolLayer>()))
+                    EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    c.Resolve<SendMessage>()))
                 .As<INotificationCollection>()
                 .As<ISendNotifications>()
                 .SingleInstance();
@@ -91,20 +74,11 @@ namespace Nuclei.Communication
 
         private static void RegisterInteractionMessageProcessingActions(ContainerBuilder builder)
         {
-            builder.Register(
-                    c =>
-                    {
-                        var ctx = c.Resolve<IComponentContext>();
-                        return new CommandInvokedProcessAction(
-                            EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                            (endpoint, msg) =>
-                            {
-                                var layer = ctx.Resolve<IProtocolLayer>();
-                                layer.SendMessageTo(endpoint, msg);
-                            },
-                            c.Resolve<ICommandCollection>(),
-                            c.Resolve<SystemDiagnostics>());
-                    })
+            builder.Register(c => new CommandInvokedProcessAction(
+                    EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    c.Resolve<SendMessage>(),
+                    c.Resolve<ICommandCollection>(),
+                    c.Resolve<SystemDiagnostics>()))
                 .As<IMessageProcessAction>();
 
             builder.Register(c => new EndpointInteractionInformationProcessAction(
@@ -128,14 +102,26 @@ namespace Nuclei.Communication
 
         private static void RegisterInteractionHandshakeConductor(ContainerBuilder builder)
         {
-            builder.Register(c => new InteractionHandshakeConductor(
-                    c.Resolve<IStoreInformationAboutEndpoints>(),
-                    c.Resolve<IStoreInteractionSubjects>(),
-                    c.Resolve<IStoreRemoteCommandProxies>(),
-                    c.Resolve<IStoreRemoteNotificationProxies>(),
-                    c.Resolve<IProtocolLayer>(),
-                    c.Resolve<IConfiguration>(),
-                    c.Resolve<SystemDiagnostics>()))
+            builder.Register(
+                    c =>
+                    {
+                        var configuration = c.Resolve<IConfiguration>();
+                        var sendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
+                            ? TimeSpan.FromMilliseconds(
+                                configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
+                            : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
+
+                        return new InteractionHandshakeConductor(
+                            EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                            c.Resolve<IStoreInformationAboutEndpoints>(),
+                            c.Resolve<IStoreInteractionSubjects>(),
+                            c.Resolve<IStoreRemoteCommandProxies>(),
+                            c.Resolve<IStoreRemoteNotificationProxies>(),
+                            c.Resolve<SendMessage>(),
+                            c.Resolve<SendMessageAndWaitForResponse>(),
+                            sendTimeout,
+                            c.Resolve<SystemDiagnostics>());
+                    })
                 .As<IHandleInteractionHandshakes>()
                 .SingleInstance();
         }

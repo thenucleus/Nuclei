@@ -19,8 +19,12 @@ namespace Nuclei.Examples.Complete
         /// Echo's the name.
         /// </summary>
         /// <param name="name">The name.</param>
+        /// <param name="retryCount">The maximum number of times the message should be resend if the initial message send fails.</param>
+        /// <param name="timeoutInMilliseconds">
+        /// The maximum time allowed to expire between the message send and the reception of the response.
+        /// </param>
         /// <returns>A task that returns when the echo message has been send.</returns>
-        Task Echo(string name);
+        Task Echo(string name, [InvocationRetryCount]int retryCount, [InvocationTimeout]int timeoutInMilliseconds);
 
         /// <summary>
         /// Calculates a value from two inputs.

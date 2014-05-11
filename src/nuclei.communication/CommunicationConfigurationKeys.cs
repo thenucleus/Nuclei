@@ -82,6 +82,15 @@ namespace Nuclei.Communication
             = new ConfigurationKey("BindingReceiveTimeout", typeof(int));
 
         /// <summary>
+        /// The <see cref="ConfigurationKey"/> that is used to retrieve the value for the message receive confirmation 
+        /// timeout (in milliseconds) for the WCF binding (int).
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes",
+            Justification = "ConfigurationKey is immutable")]
+        public static readonly ConfigurationKey BindingReceiveConfirmationTimeoutInMilliseconds
+            = new ConfigurationKey("BindingReceiveConfirmationTimeout", typeof(int));
+
+        /// <summary>
         /// The <see cref="ConfigurationKey"/> that is used to retrieve the value for the maximum buffer size (in bytes)
         /// for the WCF binding, used when processing messages (int).
         /// </summary>
@@ -178,6 +187,7 @@ namespace Nuclei.Communication
                     NamedPipeProtocolPath,
                     BindingMaximumNumberOfConnections,
                     BindingReceiveTimeoutInMilliseconds,
+                    BindingReceiveConfirmationTimeoutInMilliseconds,
                     BindingMaxBufferSizeForMessagesInBytes,
                     BindingMaxReceivedSizeForMessagesInBytes,
                     BindingMaxBufferSizeForDataInBytes,

@@ -83,6 +83,16 @@ namespace Nuclei.Communication.Protocol
                         ? Configuration.Value<long>(CommunicationConfigurationKeys.BindingMaxReceivedSizeForMessagesInBytes)
                         : CommunicationConstants.DefaultBindingMaxReceivedSizeForMessagesInBytes,
                     TransferMode = TransferMode.Buffered,
+                    ReliableSession = new OptionalReliableSession
+                        {
+                            Enabled = true,
+                            InactivityTimeout = Configuration.HasValueFor(
+                                    CommunicationConfigurationKeys.BindingReceiveConfirmationTimeoutInMilliseconds)
+                                ? TimeSpan.FromMilliseconds(
+                                    Configuration.Value<int>(CommunicationConfigurationKeys.BindingReceiveConfirmationTimeoutInMilliseconds))
+                                : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultBindingReceiveConfirmationTimeoutInMilliseconds),
+                            Ordered = false,
+                        },
                 };
 
             return binding;

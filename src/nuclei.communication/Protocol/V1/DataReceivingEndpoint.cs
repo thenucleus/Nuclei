@@ -5,9 +5,12 @@
 //-----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.IO;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using Nuclei.Communication.Protocol.V1.DataObjects;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
@@ -52,10 +55,22 @@ namespace Nuclei.Communication.Protocol.V1
         /// Accepts the stream.
         /// </summary>
         /// <param name="data">The data message that allows a data stream to be transferred.</param>
+        /// <returns>An object indicating that the data was received successfully.</returns>
+        public StreamReceptionConfirmation AcceptStream(StreamData data)
+        {
+            ProcessStream(data);
+            return new StreamReceptionConfirmation
+                {
+                    WasDataReceived = true,
+                };
+        }
+
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
             Justification = "We don't really want the channel to die just because the other side didn't behave properly.")]
-        public void AcceptStream(StreamData data)
+        private void ProcessStream(StreamData data)
         {
+            Debug.Assert(data != null, "The object should be a StreamData instance.");
+
             try
             {
                 m_Diagnostics.Log(
@@ -67,7 +82,10 @@ namespace Nuclei.Communication.Protocol.V1
                         data.SendingEndpoint));
 
                 var translatedData = TranslateMessage(data);
-                RaiseOnNewData(translatedData);
+
+                // Raise the event on another thread AFTER we copied the stream so that the 
+                // WCF auto-dispose doesn't stuff us up.
+                Task.Factory.StartNew(() => RaiseOnNewData(translatedData));
             }
             catch (Exception e)
             {
@@ -84,10 +102,16 @@ namespace Nuclei.Communication.Protocol.V1
 
         private DataTransferMessage TranslateMessage(StreamData data)
         {
+            // copy the stream here because WCF automatically closes streams
+            // see here: http://stackoverflow.com/a/6681478/539846
+            var stream = new MemoryStream();
+            data.Data.CopyTo(stream);
+            stream.Position = 0;
+
             var result = new DataTransferMessage
                 {
                     SendingEndpoint = data.SendingEndpoint,
-                    Data = data.Data,
+                    Data = stream,
                 };
 
             return result;

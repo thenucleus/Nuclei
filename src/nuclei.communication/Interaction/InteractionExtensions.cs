@@ -26,7 +26,11 @@ namespace Nuclei.Communication.Interaction
         /// be applied to a command interface method parameter.
         /// </summary>
         private static readonly HashSet<Type> s_KnownCommandSetParameterAttributes
-            = new HashSet<Type>();
+            = new HashSet<Type>
+                {
+                    typeof(InvocationRetryCountAttribute),
+                    typeof(InvocationTimeoutAttribute),
+                };
 
         /// <summary>
         /// The collection containing the types of all the attributes that can be

@@ -25,10 +25,10 @@ namespace Nuclei.Communication.Interaction.Transport
         {
             var local = new EndpointId("local");
             RegisterForNotificationMessage intermediateMsg = null;
-            Action<EndpointId, ICommunicationMessage> messageSender = (e, m) =>
-            {
-                intermediateMsg = m as RegisterForNotificationMessage;
-            };
+            SendMessage messageSender = (e, m, r) =>
+                {
+                    intermediateMsg = m as RegisterForNotificationMessage;
+                };
 
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
@@ -64,10 +64,10 @@ namespace Nuclei.Communication.Interaction.Transport
         {
             var local = new EndpointId("local");
             RegisterForNotificationMessage intermediateMsg = null;
-            Action<EndpointId, ICommunicationMessage> messageSender = (e, m) =>
-            {
-                intermediateMsg = m as RegisterForNotificationMessage;
-            };
+            SendMessage messageSender = (e, m, r) =>
+                {
+                    intermediateMsg = m as RegisterForNotificationMessage;
+                };
 
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
             var builder = new NotificationProxyBuilder(local, messageSender, systemDiagnostics);
@@ -102,10 +102,10 @@ namespace Nuclei.Communication.Interaction.Transport
         {
             var local = new EndpointId("local");
             UnregisterFromNotificationMessage intermediateMsg = null;
-            Action<EndpointId, ICommunicationMessage> messageSender = (e, m) =>
-            {
-                intermediateMsg = m as UnregisterFromNotificationMessage;
-            };
+            SendMessage messageSender = (e, m, r) =>
+                {
+                    intermediateMsg = m as UnregisterFromNotificationMessage;
+                };
 
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
             var builder = new NotificationProxyBuilder(local, messageSender, systemDiagnostics);
@@ -152,10 +152,10 @@ namespace Nuclei.Communication.Interaction.Transport
         {
             var local = new EndpointId("local");
             UnregisterFromNotificationMessage intermediateMsg = null;
-            Action<EndpointId, ICommunicationMessage> messageSender = (e, m) =>
-            {
-                intermediateMsg = m as UnregisterFromNotificationMessage;
-            };
+            SendMessage messageSender = (e, m, r) =>
+                {
+                    intermediateMsg = m as UnregisterFromNotificationMessage;
+                };
 
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
             var builder = new NotificationProxyBuilder(local, messageSender, systemDiagnostics);

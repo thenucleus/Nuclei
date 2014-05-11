@@ -6,9 +6,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using Nuclei.Communication.Protocol.Messages;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
@@ -71,10 +73,23 @@ namespace Nuclei.Communication.Protocol.V1
         /// Accepts the messages.
         /// </summary>
         /// <param name="message">The message.</param>
+        /// <returns>An object indicating that the data was received successfully.</returns>
+        public MessageReceptionConfirmation AcceptMessage(IStoreV1CommunicationData message)
+        {
+            Task.Factory.StartNew(ProcessMessage, message);
+            return new MessageReceptionConfirmation
+                {
+                    WasDataReceived = true,
+                };
+        }
+
         [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
             Justification = "We don't really want the channel to die just because the other side didn't behave properly.")]
-        public void AcceptMessage(IStoreV1CommunicationData message)
+        private void ProcessMessage(object obj)
         {
+            var message = obj as IStoreV1CommunicationData;
+            Debug.Assert(message != null, "The data should be an IStoreV1CommunicationData instance.");
+
             try
             {
                 m_Diagnostics.Log(
@@ -85,7 +100,8 @@ namespace Nuclei.Communication.Protocol.V1
                         "Received message of type {0}.",
                         message.GetType()));
 
-                ProcessMessage(message);
+                var translatedMessage = TranslateMessage(message);
+                RaiseOnNewMessage(translatedMessage);
             }
             catch (Exception e)
             {
@@ -98,12 +114,6 @@ namespace Nuclei.Communication.Protocol.V1
                         message.GetType(),
                         e));
             }
-        }
-
-        private void ProcessMessage(IStoreV1CommunicationData message)
-        {
-            var translatedMessage = TranslateMessage(message);
-            RaiseOnNewMessage(translatedMessage);
         }
 
         private ICommunicationMessage TranslateMessage(IStoreV1CommunicationData message)

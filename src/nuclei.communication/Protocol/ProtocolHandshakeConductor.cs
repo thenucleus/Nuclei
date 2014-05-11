@@ -346,7 +346,11 @@ namespace Nuclei.Communication.Protocol
                                 connectionInfo.Item2,
                                 connectionInfo.Item3), 
                             m_Descriptions.ToStorage());
-                        var task = m_Layer.SendMessageToUnregisteredEndpointAndWaitForResponse(information, message, m_SendTimeout);
+                        var task = m_Layer.SendMessageToUnregisteredEndpointAndWaitForResponse(
+                            information, 
+                            message, 
+                            CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending,
+                            m_SendTimeout);
                         task.ContinueWith(HandleResponseToConnectMessage, TaskContinuationOptions.ExecuteSynchronously);
                     }
                 }
@@ -451,14 +455,20 @@ namespace Nuclei.Communication.Protocol
                 if (!AllowConnection(connection.ProtocolInformation.Version, information))
                 {
                     var failMsg = new FailureMessage(m_Layer.Id, messageId);
-                    m_Layer.SendMessageToUnregisteredEndpoint(connection, failMsg);
+                    m_Layer.SendMessageToUnregisteredEndpoint(
+                        connection, 
+                        failMsg, 
+                        CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
 
                     RemoveEndpoint(connection.Id);
                     return;
                 }
 
                 var successMessage = new SuccessMessage(m_Layer.Id, messageId);
-                m_Layer.SendMessageToUnregisteredEndpoint(connection, successMessage);
+                m_Layer.SendMessageToUnregisteredEndpoint(
+                    connection, 
+                    successMessage,
+                    CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
                 tickList.HaveSendConnectResponse = true;
 
                 m_PotentialEndpoints.TryStartApproval(connection.Id, information);

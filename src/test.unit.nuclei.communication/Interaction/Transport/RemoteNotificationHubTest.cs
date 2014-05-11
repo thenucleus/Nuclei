@@ -29,7 +29,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 notifier.Object, 
                 new NotificationProxyBuilder(
                     localEndpoint,
-                    (e, msg) => { },
+                    (e, msg, r) => { },
                     systemDiagnostics), 
                 systemDiagnostics);
 
@@ -64,7 +64,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 notifier.Object, 
                 new NotificationProxyBuilder(
                     localEndpoint,
-                    (e, msg) => { },
+                    (e, msg, r) => { },
                     systemDiagnostics), 
                 systemDiagnostics);
 
@@ -109,7 +109,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 notifier.Object,
                 new NotificationProxyBuilder(
                     localEndpoint,
-                    (e, msg) => { },
+                    (e, msg, r) => { },
                     systemDiagnostics),
                 systemDiagnostics);
 
@@ -147,7 +147,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 notifier.Object,
                 new NotificationProxyBuilder(
                     localEndpoint,
-                    (e, msg) => { },
+                    (e, msg, r) => { },
                     systemDiagnostics),
                 systemDiagnostics);
 
@@ -178,7 +178,7 @@ namespace Nuclei.Communication.Interaction.Transport
                 notifier.Object,
                 new NotificationProxyBuilder(
                     localEndpoint,
-                    (e, msg) => { },
+                    (e, msg, r) => { },
                     systemDiagnostics),
                 systemDiagnostics);
 

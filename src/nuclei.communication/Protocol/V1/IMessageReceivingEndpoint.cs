@@ -23,11 +23,12 @@ namespace Nuclei.Communication.Protocol.V1
         /// Accepts the messages.
         /// </summary>
         /// <param name="message">The message.</param>
+        /// <returns>An object indicating that the data was received successfully.</returns>
         [OperationContract(
-            IsOneWay = true, 
+            IsOneWay = false, 
             IsInitiating = true, 
             IsTerminating = false, 
             ProtectionLevel = ProtectionLevel.None)]
-        void AcceptMessage(IStoreV1CommunicationData message);
+        MessageReceptionConfirmation AcceptMessage(IStoreV1CommunicationData message);
     }
 }

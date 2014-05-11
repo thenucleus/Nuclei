@@ -198,10 +198,11 @@ namespace Nuclei.Communication.Protocol
             var localEndpoint = new EndpointId("id");
 
             ICommunicationMessage storedMsg = null;
-            Action<EndpointId, ICommunicationMessage> sendAction = (e, m) =>
-            {
-                storedMsg = m;
-            };
+            SendMessage sendAction = 
+                (e, m, r) =>
+                {
+                    storedMsg = m;
+                };
 
             var store = new Mock<IStoreInformationAboutEndpoints>();
             {

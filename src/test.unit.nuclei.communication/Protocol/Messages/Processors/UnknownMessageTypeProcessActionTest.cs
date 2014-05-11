@@ -20,7 +20,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         public void MessageTypeToProcess()
         {
             var endpoint = new EndpointId("id");
-            Action<EndpointId, ICommunicationMessage> sendAction = (e, m) => { };
+            SendMessage sendAction = (e, m, r) => { };
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
             var action = new UnknownMessageTypeProcessAction(endpoint, sendAction, systemDiagnostics);
@@ -34,11 +34,12 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
 
             EndpointId storedEndpoint = null;
             ICommunicationMessage storedMsg = null;
-            Action<EndpointId, ICommunicationMessage> sendAction = (e, m) =>
-            {
-                storedEndpoint = e;
-                storedMsg = m;
-            };
+            SendMessage sendAction = 
+                (e, m, r) =>
+                {
+                    storedEndpoint = e;
+                    storedMsg = m;
+                };
 
             var systemDiagnostics = new SystemDiagnostics((p, s) => { }, null);
 
@@ -57,14 +58,15 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
             var endpoint = new EndpointId("id");
 
             int count = 0;
-            Action<EndpointId, ICommunicationMessage> sendAction = (e, m) =>
-            {
-                count++;
-                if (count <= 1)
+            SendMessage sendAction = 
+                (e, m, r) =>
                 {
-                    throw new Exception();
-                }
-            };
+                    count++;
+                    if (count <= 1)
+                    {
+                        throw new Exception();
+                    }
+                };
 
             int loggerCount = 0;
             var systemDiagnostics = new SystemDiagnostics((p, s) => { loggerCount++; }, null);
@@ -80,7 +82,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         public void InvokeWithFailedChannel()
         {
             var endpoint = new EndpointId("id");
-            Action<EndpointId, ICommunicationMessage> sendAction = (e, m) => { throw new Exception(); };
+            SendMessage sendAction = (e, m, r) => { throw new Exception(); };
 
             int count = 0;
             var systemDiagnostics = new SystemDiagnostics((p, s) => { count++; }, null);

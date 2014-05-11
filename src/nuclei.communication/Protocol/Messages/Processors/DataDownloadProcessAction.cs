@@ -156,7 +156,7 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
         {
             try
             {
-                m_Layer.SendMessageTo(msg.Sender, returnMsg);
+                m_Layer.SendMessageTo(msg.Sender, returnMsg, CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
             }
             catch (Exception e)
             {
@@ -177,7 +177,10 @@ namespace Nuclei.Communication.Protocol.Messages.Processors
                         CultureInfo.InvariantCulture,
                         "Error while sending endpoint information. Exception is: {0}",
                         e));
-                m_Layer.SendMessageTo(msg.Sender, new FailureMessage(m_Layer.Id, msg.Id));
+                m_Layer.SendMessageTo(
+                    msg.Sender, 
+                    new FailureMessage(m_Layer.Id, msg.Id),
+                    CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending);
             }
             catch (Exception errorSendingException)
             {

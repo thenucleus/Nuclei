@@ -5,10 +5,8 @@
 //-----------------------------------------------------------------------
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,49 +15,16 @@ using Lokad.Quality;
 using Nuclei.Communication.Interaction.Transport.Messages;
 using Nuclei.Communication.Properties;
 using Nuclei.Communication.Protocol;
-using Nuclei.Communication.Protocol.Messages;
+using Nuclei.Configuration;
 using Nuclei.Diagnostics;
-using Nuclei.Diagnostics.Logging;
 
 namespace Nuclei.Communication.Interaction.Transport
 {
     /// <summary>
     /// Defines an <see cref="IInterceptor"/> for <see cref="ICommandSet"/> methods that return a value.
     /// </summary>
-    internal sealed class CommandSetMethodWithResultInterceptor : IInterceptor
+    internal sealed class CommandSetMethodWithResultInterceptor : CommandSetMethodInterceptor
     {
-        /// <summary>
-        /// Translates a <see cref="MethodInfo"/> and the related parameter values into a serializable form.
-        /// </summary>
-        /// <param name="method">The method information that needs to be serialized.</param>
-        /// <param name="parameters">
-        ///     The collection of parameter values with which the method should be called. Note that the parameter
-        ///     values should be in the same order as they are given by the <c>MethodInfo.GetParameters()</c> method.
-        /// </param>
-        /// <returns>
-        ///     An object that stores the method invocation information in a serializable format.
-        /// </returns>
-        private static CommandParameterValueMap[] ToParameterArray(MethodBase method, object[] parameters)
-        {
-            var methodParameters = method.GetParameters();
-            Debug.Assert(methodParameters.Length == parameters.Length, "There are a different number of parameters than there are parameter values.");
-
-            var namedParameters = new List<CommandParameterValueMap>();
-            for (int i = 0; i < parameters.Length; i++)
-            {
-                var methodParameter = methodParameters[i];
-                namedParameters.Add(
-                    new CommandParameterValueMap(
-                        new CommandParameterDefinition(
-                            methodParameter.ParameterType,
-                            methodParameter.Name,
-                            CommandParameterOrigin.FromCommand), 
-                        parameters[i]));
-            }
-
-            return namedParameters.ToArray();
-        }
-
         /// <summary>
         /// Returns a task with a specific return type based on an expected <see cref="CommandInvokedResponseMessage"/> object
         /// which is delivered by another task.
@@ -108,21 +73,6 @@ namespace Nuclei.Communication.Interaction.Transport
                 scheduler);
         }
 
-        private static string MethodToText(MethodInfo method)
-        {
-            return method.ToString();
-        }
-
-        /// <summary>
-        /// The function which sends the <see cref="CommandInvokedMessage"/> to the owning endpoint.
-        /// </summary>
-        private readonly Func<CommandInvokedData, Task<ICommunicationMessage>> m_TransmitCommandInvocation;
-
-        /// <summary>
-        /// The object that provides the diagnostics for the system.
-        /// </summary>
-        private readonly SystemDiagnostics m_Diagnostics;
-
         /// <summary>
         /// The scheduler that will be used to schedule tasks.
         /// </summary>
@@ -134,76 +84,36 @@ namespace Nuclei.Communication.Interaction.Transport
         /// <param name="transmitCommandInvocation">
         ///     The function used to send the information about the method invocation to the owning endpoint.
         /// </param>
+        /// <param name="configuration">The object that stores the configuration for the application.</param>
         /// <param name="systemDiagnostics">The function that is used to log messages.</param>
         /// <param name="scheduler">The scheduler that is used to run the tasks.</param>
         /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="transmitCommandInvocation"/> is <see langword="null" />.
         /// </exception>
         /// <exception cref="ArgumentNullException">
+        ///     Thrown if <paramref name="configuration"/> is <see langword="null" />.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
         ///     Thrown if <paramref name="systemDiagnostics"/> is <see langword="null" />.
         /// </exception>
         public CommandSetMethodWithResultInterceptor(
-            Func<CommandInvokedData, Task<ICommunicationMessage>> transmitCommandInvocation,
+            SendCommandData transmitCommandInvocation,
+            IConfiguration configuration,
             SystemDiagnostics systemDiagnostics,
-            TaskScheduler scheduler = null)
+            TaskScheduler scheduler = null) 
+            : base(transmitCommandInvocation, configuration, systemDiagnostics)
         {
-            {
-                Lokad.Enforce.Argument(() => transmitCommandInvocation);
-                Lokad.Enforce.Argument(() => systemDiagnostics);
-            }
-
-            m_TransmitCommandInvocation = transmitCommandInvocation;
-            m_Diagnostics = systemDiagnostics;
             m_Scheduler = scheduler ?? TaskScheduler.Default;
         }
 
         /// <summary>
-        /// Called when a method or property call is intercepted.
+        /// Extracts the return value of the method from the response message.
         /// </summary>
-        /// <param name="invocation">Information about the call that was intercepted.</param>
-        public void Intercept(IInvocation invocation)
+        /// <param name="invocation">The information about the method invocation.</param>
+        /// <param name="result">The task that will eventually return the response message.</param>
+        /// <returns>The <see cref="Task"/> that will complete when the response message is received.</returns>
+        protected override Task ExtractMethodReturnFrom(IInvocation invocation, Task<ICommunicationMessage> result)
         {
-            m_Diagnostics.Log(
-                LevelToLog.Trace,
-                CommunicationConstants.DefaultLogTextPrefix,
-                string.Format(
-                    CultureInfo.InvariantCulture,
-                    "Invoking {0}",
-                    MethodToText(invocation.Method)));
-
-            Task<ICommunicationMessage> result;
-            try
-            {
-                result = m_TransmitCommandInvocation(
-                    new CommandInvokedData(
-                        CommandId.Create(invocation.Method),
-                        ToParameterArray(invocation.Method, invocation.Arguments)));
-            }
-            catch (EndpointNotContactableException e)
-            {
-                m_Diagnostics.Log(
-                    LevelToLog.Error,
-                    CommunicationConstants.DefaultLogTextPrefix,
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Tried to invoke {0}, but failed to contact the remote endpoint.",
-                        MethodToText(invocation.Method)));
-
-                throw new CommandInvocationFailedException(Resources.Exceptions_Messages_CommandInvocationFailed, e);
-            }
-            catch (FailedToSendMessageException e)
-            {
-                m_Diagnostics.Log(
-                    LevelToLog.Error,
-                    CommunicationConstants.DefaultLogTextPrefix,
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Tried to invoke {0}, but failed to send the message.",
-                        MethodToText(invocation.Method)));
-
-                throw new CommandInvocationFailedException(Resources.Exceptions_Messages_CommandInvocationFailed, e);
-            }
-
             // Now that we have the result we need to create the return value of the correct type
             // The only catch is that we don't know (at compile time) what the return value must
             // be so we'll have to do this the nasty way
@@ -236,7 +146,7 @@ namespace Nuclei.Communication.Interaction.Transport
             // slow but we don't expect it to cause too much trouble given that we're getting
             // the result from another application which lives on the other side of a named pipe
             // (best case) or TCP connection (worst case)
-            invocation.ReturnValue = taskBuilder.Invoke(null, new object[] { result, m_Scheduler });
+            return taskBuilder.Invoke(null, new object[] { result, m_Scheduler }) as Task;
         }
     }
 }

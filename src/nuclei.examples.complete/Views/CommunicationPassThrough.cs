@@ -88,7 +88,7 @@ namespace Nuclei.Examples.Complete.Views
             if (m_Commands.HasCommandFor(endpoint, typeof(ITestCommandSet)))
             {
                 var commands = m_Commands.CommandsFor<ITestCommandSet>(endpoint);
-                commands.Echo(messageText);
+                commands.Echo(messageText, 10, 15 * 1000);
             }
         }
 

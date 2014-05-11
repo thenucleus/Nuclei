@@ -166,45 +166,42 @@ namespace Nuclei.Communication
                 {
                     KeepAliveResponseCustomDataBuilder keepAliveFunction;
                     var success = c.TryResolve(out keepAliveFunction);
-                    var ctx = c.Resolve<IComponentContext>();
                     return new ConnectionVerificationProcessAction(
                         EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                        (endpoint, msg) =>
-                        {
-                            var layer = ctx.Resolve<IProtocolLayer>();
-                            layer.SendMessageTo(endpoint, msg);
-                        },
+                        c.Resolve<SendMessage>(),
                         c.Resolve<SystemDiagnostics>(),
                         success ? keepAliveFunction : null);
                 })
                 .As<IMessageProcessAction>();
 
-            builder.Register(
-                c =>
-                {
-                    var ctx = c.Resolve<IComponentContext>();
-                    return new UnknownMessageTypeProcessAction(
-                        EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
-                        (endpoint, msg) =>
-                        {
-                            var layer = ctx.Resolve<IProtocolLayer>();
-                            layer.SendMessageTo(endpoint, msg);
-                        },
-                        c.Resolve<SystemDiagnostics>());
-                })
+            builder.Register(c => new UnknownMessageTypeProcessAction(
+                    EndpointIdExtensions.CreateEndpointIdForCurrentProcess(),
+                    c.Resolve<SendMessage>(),
+                    c.Resolve<SystemDiagnostics>()))
                 .As<IMessageProcessAction>();
         }
 
-        private static Task<ICommunicationMessage> SendMessageWithResponse(
-            IConfiguration configuration,
-            IProtocolLayer layer,
-            EndpointId endpoint,
-            ICommunicationMessage message)
+        private static void RegisterSendMessageFunctions(ContainerBuilder builder)
         {
-            var sendTimeout = configuration.HasValueFor(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds)
-                ? TimeSpan.FromMilliseconds(configuration.Value<int>(CommunicationConfigurationKeys.WaitForResponseTimeoutInMilliSeconds))
-                : TimeSpan.FromMilliseconds(CommunicationConstants.DefaultWaitForResponseTimeoutInMilliSeconds);
-            return layer.SendMessageAndWaitForResponse(endpoint, message, sendTimeout);
+            builder.Register(
+                    c =>
+                    {
+                        var layer = c.Resolve<IProtocolLayer>();
+                        SendMessage result = layer.SendMessageTo;
+                        return result;
+                    })
+                .As<SendMessage>()
+                .SingleInstance();
+
+            builder.Register(
+                    c =>
+                    {
+                        var layer = c.Resolve<IProtocolLayer>();
+                        SendMessageAndWaitForResponse result = layer.SendMessageAndWaitForResponse;
+                        return result;
+                    })
+                .As<SendMessageAndWaitForResponse>()
+                .SingleInstance();
         }
 
         private static void RegisterConnectionHolders(ContainerBuilder builder)
@@ -444,7 +441,11 @@ namespace Nuclei.Communication
 
                                var layer = ctx.Resolve<IProtocolLayer>();
                                var msg = new DataDownloadRequestMessage(layer.Id, token);
-                               var response = layer.SendMessageAndWaitForResponse(endpoint, msg, timeout);
+                               var response = layer.SendMessageAndWaitForResponse(
+                                   endpoint, 
+                                   msg, 
+                                   CommunicationConstants.DefaultMaximuNumberOfRetriesForMessageSending,
+                                   timeout);
                                return Task<FileInfo>.Factory.StartNew(
                                    () =>
                                    {

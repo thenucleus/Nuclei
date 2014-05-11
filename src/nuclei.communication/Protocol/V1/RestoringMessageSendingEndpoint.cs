@@ -52,12 +52,17 @@ namespace Nuclei.Communication.Protocol.V1
         /// <summary>
         /// The service on the other side of the channel.
         /// </summary>
-        private IMessageReceivingEndpoint m_Service;
+        private IMessageReceivingEndpointProxy m_Service;
 
         /// <summary>
         /// The channel that handles the connections.
         /// </summary>
         private IChannel m_Channel;
+
+        /// <summary>
+        /// A flag that indicates whether the channel has faulted.
+        /// </summary>
+        private volatile bool m_WasFaulted;
 
         /// <summary>
         /// Indicates if the current endpoint has been disposed.
@@ -129,10 +134,11 @@ namespace Nuclei.Communication.Protocol.V1
         /// Sends the given message.
         /// </summary>
         /// <param name="message">The message to be send.</param>
-        public void Send(ICommunicationMessage message)
+        /// <param name="maximumNumberOfRetries">The maximum number of times the endpoint will try to send the message if delivery fails.</param>
+        public void Send(ICommunicationMessage message, int maximumNumberOfRetries)
         {
             var v1Message = TranslateMessage(message);
-            SendMessage(v1Message);
+            SendMessage(v1Message, maximumNumberOfRetries);
         }
 
         private IStoreV1CommunicationData TranslateMessage(ICommunicationMessage message)
@@ -146,44 +152,65 @@ namespace Nuclei.Communication.Protocol.V1
             return converter.FromMessage(message);
         }
 
-        private void SendMessage(IStoreV1CommunicationData message)
+        private void SendMessage(IStoreV1CommunicationData message, int retryCount)
         {
-            EnsureChannelIsAvailable();
-
-            try
+            var count = 0;
+            Exception exception = null;
+            while (count < retryCount)
             {
-                var service = m_Service;
-                if (!m_IsDisposed)
+                EnsureChannelIsAvailable();
+                exception = null;
+
+                try
                 {
-                    service.AcceptMessage(message);
+                    var service = m_Service;
+                    if (!m_IsDisposed)
+                    {
+                        var confirmation = service.AcceptMessage(message);
+                        if ((m_Channel.State == CommunicationState.Opened) && (confirmation != null) && confirmation.WasDataReceived)
+                        {
+                            return;
+                        }
+                    }
                 }
-            }
-            catch (FaultException e)
-            {
-                m_Diagnostics.Log(
-                    LevelToLog.Error,
-                    CommunicationConstants.DefaultLogTextPrefix,
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Exception occurred during the sending of message of type {0}. Exception was: {1}",
-                        message.GetType(),
-                        e));
-
-                if (e.InnerException != null)
+                catch (FaultException e)
                 {
-                    throw new FailedToSendMessageException(Resources.Exceptions_Messages_FailedToSendMessage, e.InnerException);
+                    m_Diagnostics.Log(
+                        LevelToLog.Error,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Exception occurred during the sending of message of type {0}. Exception was: {1}",
+                            message.GetType(),
+                            e));
+
+                    // If there is no inner exception then there is no point in keeping the original call stack. 
+                    // The originalexception orginates on the other side of the channel which means that there is no
+                    // useful stack trace to keep!
+                    m_WasFaulted = true;
+                    exception = e.InnerException != null 
+                        ? new FailedToSendMessageException(Resources.Exceptions_Messages_FailedToSendMessage, e.InnerException) 
+                        : new FailedToSendMessageException();
+                }
+                catch (CommunicationException e)
+                {
+                    // Either the connection was aborted or faulted (although it shouldn't be)
+                    // or something else nasty went wrong.
+                    m_WasFaulted = true;
+                    exception = new FailedToSendMessageException(Resources.Exceptions_Messages_FailedToSendMessage, e);
                 }
 
-                // There is no point in keeping the original call stack. The original
-                // exception orginates on the other side of the channel. There is no
-                // useful stack trace to keep!
-                throw new FailedToSendMessageException();
+                count++;
             }
-            catch (CommunicationException e)
+
+            if ((m_Channel.State != CommunicationState.Opened) && (exception == null))
             {
-                // Either the connection was aborted or faulted (although it shouldn't be)
-                // or something else nasty went wrong.
-                throw new FailedToSendMessageException(Resources.Exceptions_Messages_FailedToSendMessage, e);
+                exception = new FailedToSendMessageException();
+            }
+
+            if (exception != null)
+            {
+                throw exception;
             }
         }
 
@@ -206,6 +233,7 @@ namespace Nuclei.Communication.Protocol.V1
                                     "Channel for endpoint at {0} has faulted. Aborting channel.",
                                     m_Factory.Endpoint.Address.Uri));
                             m_Channel.Abort();
+                            m_Service.Faulted -= HandleOnChannelFaulting;
                         }
 
                         m_Diagnostics.Log(
@@ -216,10 +244,16 @@ namespace Nuclei.Communication.Protocol.V1
                                 "Creating channel for endpoint at {0}.",
                                 m_Factory.Endpoint.Address.Uri));
                         m_Service = m_Factory.CreateChannel();
-                        m_Channel = (IChannel)m_Service;
+                        m_Channel = m_Service;
+                        m_Service.Faulted -= HandleOnChannelFaulting;
                     }
                 }
             }
+        }
+
+        private void HandleOnChannelFaulting(object sender, EventArgs e)
+        {
+            m_WasFaulted = true;
         }
 
         private bool ShouldCreateChannel
@@ -227,7 +261,7 @@ namespace Nuclei.Communication.Protocol.V1
             [DebuggerStepThrough]
             get
             {
-                return (!m_IsDisposed) && ((m_Channel == null) || (m_Channel.State == CommunicationState.Faulted));
+                return (!m_IsDisposed) && (m_WasFaulted || (m_Channel == null) || (m_Channel.State == CommunicationState.Faulted));
             }
         }
 
