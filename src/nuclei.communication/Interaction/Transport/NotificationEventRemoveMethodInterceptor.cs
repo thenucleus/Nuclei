@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Reflection;
 using Castle.DynamicProxy;
 using Nuclei.Communication.Interaction.Transport.Messages;
+using Nuclei.Communication.Protocol;
 using Nuclei.Diagnostics;
 using Nuclei.Diagnostics.Logging;
 
@@ -98,32 +99,43 @@ namespace Nuclei.Communication.Interaction.Transport
                     "Invoking {0}",
                     MethodToText(invocation.Method)));
 
-            try
+            var methodToInvoke = invocation.Method.Name;
+            var eventName = methodToInvoke.Substring(MethodPrefix.Length);
+            var eventInfo = m_InterfaceType.GetEvent(eventName);
+            var eventId = NotificationId.Create(eventInfo);
+
+            var handler = invocation.Arguments[0] as Delegate;
+            var proxy = invocation.Proxy as NotificationSetProxy;
+            proxy.RemoveFromEvent(eventId, handler);
+
+            if (!proxy.HasSubscribers(eventId))
             {
-                var methodToInvoke = invocation.Method.Name;
-                var eventName = methodToInvoke.Substring(MethodPrefix.Length);
-                var eventInfo = m_InterfaceType.GetEvent(eventName);
-                var eventId = NotificationId.Create(eventInfo);
-
-                var handler = invocation.Arguments[0] as Delegate;
-                var proxy = invocation.Proxy as NotificationSetProxy;
-                proxy.RemoveFromEvent(eventId, handler);
-
-                if (!proxy.HasSubscribers(eventId))
+                try
                 {
                     m_TransmitDeregistration(eventId);
                 }
-            }
-            catch (Exception e)
-            {
-                m_Diagnostics.Log(
-                    LevelToLog.Error,
-                    CommunicationConstants.DefaultLogTextPrefix,
-                    string.Format(
-                        CultureInfo.InvariantCulture,
-                        "Error while unregistering from a notification {0}. Error was: {1}",
-                        MethodToText(invocation.Method),
-                        e));
+                catch (EndpointNotContactableException e)
+                {
+                    m_Diagnostics.Log(
+                        LevelToLog.Error,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Error while unregistering from a notification {0}. Error was: {1}",
+                            MethodToText(invocation.Method),
+                            e));
+                }
+                catch (FailedToSendMessageException e)
+                {
+                    m_Diagnostics.Log(
+                        LevelToLog.Error,
+                        CommunicationConstants.DefaultLogTextPrefix,
+                        string.Format(
+                            CultureInfo.InvariantCulture,
+                            "Error while unregistering from a notification {0}. Error was: {1}",
+                            MethodToText(invocation.Method),
+                            e));
+                }
             }
         }
     }
