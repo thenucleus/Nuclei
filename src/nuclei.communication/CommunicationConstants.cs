@@ -4,7 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System;
 using System.Diagnostics;
 using Nuclei.Diagnostics.Profiling;
 
@@ -24,11 +23,6 @@ namespace Nuclei.Communication
         /// The default post-fix string template used to indicate that a channel is a data channel.
         /// </summary>
         public const string DefaultDataAddressPostfixTemplate = @"{0}/Data";
-
-        /// <summary>
-        /// The default time-out that will be used while waiting for an endpoint to connect.
-        /// </summary>
-        public const int DefaultWaitForConnectionTimeoutInMilliSeconds = 30000;
 
         /// <summary>
         /// The default time-out in milliseconds for a binding to receive any messages.
@@ -112,11 +106,6 @@ namespace Nuclei.Communication
         /// The default value for the maximum number of times a message is send if previous attempts fail.
         /// </summary>
         public const int DefaultMaximuNumberOfRetriesForMessageSending = 3;
-
-        /// <summary>
-        /// The version of the communication system.
-        /// </summary>
-        public static readonly Version CommunicationVersion = new Version(1, 0, 0, 0);
 
         /// <summary>
         /// The timing group used for the profiling of the communication system.
