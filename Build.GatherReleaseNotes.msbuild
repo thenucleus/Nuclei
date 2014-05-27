@@ -75,10 +75,10 @@
             <Output TaskParameter="Path" PropertyName="PathGitReleaseNotesExe" />
         </FindToolFromPackages>
         
-        <Exec Command="&quot;$(PathGitReleaseNotesExe)&quot; /I GitHub /R $(GitHubUserName)/nuclei /U $(GitHubUserName) /T $(GitHubToken) /V $(VersionSemantic) /O &quot;$(FileReleaseNotesShort)&quot;"
+        <Exec Command="&quot;$(PathGitReleaseNotesExe)&quot; /IssueTracker GitHub /Repo $(GitHubUserName)/nuclei /Username $(GitHubUserName) /Token $(GitHubToken) /Version $(VersionSemantic) /OutputFile &quot;$(FileReleaseNotesShort)&quot;"
               WorkingDirectory="$(DirWorkspace)" />
         
-        <Exec Command="&quot;$(PathGitReleaseNotesExe)&quot; /I GitHub /R $(GitHubUserName)/nuclei /U $(GitHubUserName) /T $(GitHubToken) /F all /V $(VersionSemantic) /O &quot;$(FileReleaseNotesFull)&quot;"
+        <Exec Command="&quot;$(PathGitReleaseNotesExe)&quot; /IssueTracker GitHub /Repo $(GitHubUserName)/nuclei /Username $(GitHubUserName) /Token $(GitHubToken) /AllTags /Version $(VersionSemantic) /OutputFile &quot;$(FileReleaseNotesFull)&quot;"
               WorkingDirectory="$(DirWorkspace)" />
     </Target>
  </Project>
