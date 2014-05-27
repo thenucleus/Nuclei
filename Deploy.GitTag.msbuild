@@ -21,7 +21,7 @@
     <Import Project="$(MsBuildExtensionsPath)\GetSemanticVersion.msbuild" 
             Condition="Exists('$(MsBuildExtensionsPath)\GetSemanticVersion.msbuild')" />
     
-    <Target Name="Run" DependsOnTargets="_DisplayInfo;_TagRelease;" />
+    <Target Name="Run" DependsOnTargets="_DisplayInfo;_LoadReleaseNotes;_TagRelease;" />
     
     <!-- Display info -->
     <Target Name="_DisplayInfo">
@@ -40,7 +40,7 @@
     <PropertyGroup>
         <FileReleaseNotes>$(DirBuildTemp)\releasenotes_short.md</FileReleaseNotes>
     </PropertyGroup>
-    <Target Name="_LoadReleaseNotes" DependsOnTargets="_DisplayInfo;_GetSemanticVersion">
+    <Target Name="_LoadReleaseNotes" DependsOnTargets="_DisplayInfo;_GetSemanticVersion;_LoadReleaseNotes">
         <CreateProperty Condition="Exists('$(FileReleaseNotes)')" Value="$([System.IO.File]::ReadAllText('$(FileReleaseNotes)'))">
             <Output TaskParameter="Value" PropertyName="ReleaseNotes" />
         </CreateProperty>
