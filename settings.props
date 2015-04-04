@@ -542,7 +542,7 @@
 
     <!-- Execute code analysis after the build -->
     <PropertyGroup>
-        <ShouldPerformCodeAnalysis Condition=" '$(ShouldPerformCodeAnalysis)' == '' ">true</ShouldPerformCodeAnalysis>
+        <ShouldPerformCodeAnalysis Condition=" '$(ShouldPerformCodeAnalysis)' == '' ">false</ShouldPerformCodeAnalysis>
         <CodeAnalysisRuleSet Condition="$(ShouldPerformCodeAnalysis) AND !$(IsTest)">$(SolutionDir)\codeanalysis.base.ruleset</CodeAnalysisRuleSet>
         <CodeAnalysisRuleSet Condition="$(ShouldPerformCodeAnalysis) AND $(IsTest)">$(SolutionDir)\codeanalysis.test.ruleset</CodeAnalysisRuleSet>
         <CodeAnalysisCulture Condition="$(ShouldPerformCodeAnalysis)">en-US</CodeAnalysisCulture>
