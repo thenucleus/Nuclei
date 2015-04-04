@@ -7,16 +7,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuclei", "Nuclei\Nuclei.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0245F9D1-9F8D-43AA-8C61-69370002790D}"
 	ProjectSection(SolutionItems) = preProject
-		..\NextVersion.txt = ..\NextVersion.txt
-		..\templates\nuget.binaries.nuspec.in = ..\templates\nuget.binaries.nuspec.in
+		..\.gitattributes = ..\.gitattributes
+		..\.gitignore = ..\.gitignore
+		..\LICENSE.md = ..\LICENSE.md
 		..\nuget.config = ..\nuget.config
-		..\templates\nuget.manifestbuilder.nuspec.in = ..\templates\nuget.manifestbuilder.nuspec.in
-		..\templates\nuget.msbuild.nuspec.in = ..\templates\nuget.msbuild.nuspec.in
-		..\templates\nuget.src.nuspec.in = ..\templates\nuget.src.nuspec.in
 		..\packages.config = ..\packages.config
+		..\README.md = ..\README.md
+		..\Settings.StyleCop = ..\Settings.StyleCop
 	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolutionLevel", "solutionlevel\SolutionLevel.csproj", "{B0B1C32A-53FC-4B7E-BA60-6DAFB8180A42}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuclei.Communication", "Nuclei.Communication\Nuclei.Communication.csproj", "{B0D0341B-98D0-48D0-A2D8-9B05761AE64E}"
 EndProject
@@ -32,9 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuclei.Examples.Complete", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{FE08C557-2C2F-409C-A106-C12F6A6E8C40}"
 	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
+		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuclei.AppDomains", "nuclei.appdomains\Nuclei.AppDomains.csproj", "{DCB074C2-9A85-4A50-A011-832757C5DF44}"
@@ -53,6 +49,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.Nuclei.Fusion", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nuclei.NUnit.Extensions", "nuclei.nunit.extensions\Nuclei.NUnit.Extensions.csproj", "{95F183AF-7BBA-4ECE-AC1C-EE006317470D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{525FF8D6-BF44-4BEB-BEF4-DD767DC0E722}"
+	ProjectSection(SolutionItems) = preProject
+		..\build.msbuild = ..\build.msbuild
+		..\build.onerror.msbuild = ..\build.onerror.msbuild
+		..\build.preparesourcepackages.msbuild = ..\build.preparesourcepackages.msbuild
+		..\deploy.msbuild = ..\deploy.msbuild
+		..\settings.props = ..\settings.props
+		..\shared.locatenbuildkit.msbuild = ..\shared.locatenbuildkit.msbuild
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,12 +72,6 @@ Global
 		{7C12C611-1780-4E93-9B0E-B806B738559D}.Deploy|Any CPU.Build.0 = Deploy|Any CPU
 		{7C12C611-1780-4E93-9B0E-B806B738559D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C12C611-1780-4E93-9B0E-B806B738559D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0B1C32A-53FC-4B7E-BA60-6DAFB8180A42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0B1C32A-53FC-4B7E-BA60-6DAFB8180A42}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0B1C32A-53FC-4B7E-BA60-6DAFB8180A42}.Deploy|Any CPU.ActiveCfg = Deploy|Any CPU
-		{B0B1C32A-53FC-4B7E-BA60-6DAFB8180A42}.Deploy|Any CPU.Build.0 = Deploy|Any CPU
-		{B0B1C32A-53FC-4B7E-BA60-6DAFB8180A42}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0B1C32A-53FC-4B7E-BA60-6DAFB8180A42}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B0D0341B-98D0-48D0-A2D8-9B05761AE64E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B0D0341B-98D0-48D0-A2D8-9B05761AE64E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0D0341B-98D0-48D0-A2D8-9B05761AE64E}.Deploy|Any CPU.ActiveCfg = Deploy|Any CPU
