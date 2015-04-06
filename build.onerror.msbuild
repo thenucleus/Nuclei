@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0"
+         DefaultTargets="Run"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+    
+        <!-- Directories -->
+        <ErrorMessage Condition=" '$(ErrorMessage)' == '' ">An error occurred during the build</ErrorMessage>
+    </PropertyGroup>
+    
+    <Target Name="Run" DependsOnTargets="_DisplayInfo" />
+    
+    <!-- Display info -->
+    <Target Name="_DisplayInfo">
+        <Message Text="$(ErrorMessage)" />
+    </Target>
+ </Project>

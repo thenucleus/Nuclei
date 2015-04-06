@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0"
+         DefaultTargets="Run"
+         xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+    
+        <!-- Directories -->
+        <DirWorkspace>$(MSBuildProjectDirectory)</DirWorkspace>
+        <DirBuild Condition=" '$(DirBuild)' == '' ">$(DirWorkspace)\build</DirBuild>
+        <DirBuildTemp Condition=" '$(DirBuildTemp)' == '' ">$(DirBuild)\temp</DirBuildTemp>
+        <DirTempSource >$(DirBuildTemp)\src</DirTempSource>
+        <DirSrc Condition=" '$(DirSrc)' == '' ">$(DirWorkspace)\src</DirSrc>
+        <DirMsBuildExtensions Condition=" '$(DirMsBuildExtensions)' == '' ">$(MSBuildProjectDirectory)\extensions</DirMsBuildExtensions>
+    </PropertyGroup>
+    
+    <Import Project="$(DirMsBuildExtensions)\FindAndReplaceInFile.msbuild"
+            Condition="Exists('$(DirMsBuildExtensions)\FindAndReplaceInFile.msbuild')"/>
+    
+    <Target Name="Run" DependsOnTargets="_DisplayInfo;_PatchSourceNucleiAppDomains;_PatchSourceNucleiExceptionHandling;_PatchSourceNucleiFusion" />
+    
+    <!-- Display info -->
+    <Target Name="_DisplayInfo">
+        <Message Text="Preparing source files for inclusion in NuGet source packages ..." />
+    </Target>
+    
+    <PropertyGroup>
+        <DirTempSourceNucleiAppDomains>$(DirTempSource)\Nuclei.AppDomains</DirTempSourceNucleiAppDomains>
+    </PropertyGroup>
+    <Target Name="_PatchSourceNucleiAppDomains">
+        <ItemGroup>
+            <SourceNucleiAppDomains Include="$(DirSrc)\Nuclei.AppDomains\*.cs" />
+        </ItemGroup>
+        <MakeDir Directories="$(DirTempSourceNucleiAppDomains)" Condition="!Exists('$(DirTempSourceNucleiAppDomains)')" />
+        <Copy SourceFiles="@(SourceNucleiAppDomains)" 
+              DestinationFiles="@(SourceNucleiAppDomains->'$(DirTempSourceNucleiAppDomains)\%(Filename).cs.pp')" />
+              
+        <ItemGroup>
+            <SourceNucleiAppDomainsTokens Include="using Nuclei.ExceptionHandling">
+                <ReplacementValue>using $rootnamespace$.Nuclei.ExceptionHandling</ReplacementValue>
+            </SourceNucleiAppDomainsTokens>
+            <SourceNucleiAppDomainsTokens Include="using Nuclei.Fusion">
+                <ReplacementValue>using $rootnamespace$.Nuclei.Fusion</ReplacementValue>
+            </SourceNucleiAppDomainsTokens>
+            <SourceNucleiAppDomainsTokens Include="namespace Nuclei.AppDomains">
+                <ReplacementValue>namespace $rootnamespace$.Nuclei.AppDomains</ReplacementValue>
+            </SourceNucleiAppDomainsTokens>
+        </ItemGroup>
+        
+        <ItemGroup>
+            <SourceNucleiAppDomainsPp Include="$(DirTempSourceNucleiAppDomains)\*.cs.pp" />
+        </ItemGroup>
+        
+        <FindAndReplaceInFile Input="%(SourceNucleiAppDomainsPp.FullPath)"
+                              Tokens="@(SourceNucleiAppDomainsTokens)" />
+    </Target>
+    
+    <PropertyGroup>
+        <DirTempSourceNucleiExceptionHandling>$(DirTempSource)\Nuclei.ExceptionHandling</DirTempSourceNucleiExceptionHandling>
+    </PropertyGroup>
+    <Target Name="_PatchSourceNucleiExceptionHandling">
+        <ItemGroup>
+            <SourceNucleiExceptionHandling Include="$(DirSrc)\Nuclei.ExceptionHandling\*.cs" />
+        </ItemGroup>
+        <MakeDir Directories="$(DirTempSourceNucleiExceptionHandling)" Condition="!Exists('$(DirTempSourceNucleiExceptionHandling)')" />
+        <Copy SourceFiles="@(SourceNucleiExceptionHandling)" 
+              DestinationFiles="@(SourceNucleiExceptionHandling->'$(DirTempSourceNucleiExceptionHandling)\%(Filename).cs.pp')" />
+              
+        <ItemGroup>
+            <SourceNucleiExceptionHandlingTokens Include="namespace Nuclei.ExceptionHandling">
+                <ReplacementValue>namespace $rootnamespace$.Nuclei.ExceptionHandling</ReplacementValue>
+            </SourceNucleiExceptionHandlingTokens>
+        </ItemGroup>
+        
+        <ItemGroup>
+            <SourceNucleiExceptionHandlingPp Include="$(DirTempSourceNucleiExceptionHandling)\*.cs.pp" />
+        </ItemGroup>
+        
+        <FindAndReplaceInFile Input="%(SourceNucleiExceptionHandlingPp.FullPath)"
+                              Tokens="@(SourceNucleiExceptionHandlingTokens)" />
+    </Target>    
+    
+    <PropertyGroup>
+        <DirTempSourceNucleiFusion>$(DirTempSource)\Nuclei.Fusion</DirTempSourceNucleiFusion>
+    </PropertyGroup>
+    <Target Name="_PatchSourceNucleiFusion">
+        <ItemGroup>
+            <SourceNucleiFusion Include="$(DirSrc)\Nuclei.Fusion\*.cs" />
+        </ItemGroup>
+        <MakeDir Directories="$(DirTempSourceNucleiFusion)" Condition="!Exists('$(DirTempSourceNucleiFusion)')" />
+        <Copy SourceFiles="@(SourceNucleiFusion)" 
+              DestinationFiles="@(SourceNucleiFusion->'$(DirTempSourceNucleiFusion)\%(Filename).cs.pp')" />
+              
+        <ItemGroup>
+            <SourceNucleiFusionTokens Include="namespace Nuclei.Fusion">
+                <ReplacementValue>namespace $rootnamespace$.Nuclei.Fusion</ReplacementValue>
+            </SourceNucleiFusionTokens>
+        </ItemGroup>
+        
+        <ItemGroup>
+            <SourceNucleiFusionPp Include="$(DirTempSourceNucleiFusion)\*.cs.pp" />
+        </ItemGroup>
+        
+        <FindAndReplaceInFile Input="%(SourceNucleiFusionPp.FullPath)"
+                              Tokens="@(SourceNucleiFusionTokens)" />
+    </Target>
+ </Project>
