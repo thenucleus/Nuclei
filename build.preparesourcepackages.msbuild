@@ -10,11 +10,11 @@
         <DirBuildTemp Condition=" '$(DirBuildTemp)' == '' ">$(DirBuild)\temp</DirBuildTemp>
         <DirTempSource >$(DirBuildTemp)\src</DirTempSource>
         <DirSrc Condition=" '$(DirSrc)' == '' ">$(DirWorkspace)\src</DirSrc>
-        <DirMsBuildExtensions Condition=" '$(DirMsBuildExtensions)' == '' ">$(MSBuildProjectDirectory)\extensions</DirMsBuildExtensions>
+        <DirNBuildKitMsBuildExtensions Condition=" '$(DirNBuildKitMsBuildExtensions)' == '' ">$(MSBuildProjectDirectory)\extensions</DirNBuildKitMsBuildExtensions>
     </PropertyGroup>
     
-    <Import Project="$(DirMsBuildExtensions)\FindAndReplaceInFile.msbuild"
-            Condition="Exists('$(DirMsBuildExtensions)\FindAndReplaceInFile.msbuild')"/>
+    <Import Project="$(DirNBuildKitMsBuildExtensions)\FindAndReplaceInFile.msbuild"
+            Condition="Exists('$(DirNBuildKitMsBuildExtensions)\FindAndReplaceInFile.msbuild')"/>
     
     <Target Name="Run" DependsOnTargets="_DisplayInfo;_PatchSourceNucleiAppDomains;_PatchSourceNucleiExceptionHandling;_PatchSourceNucleiFusion" />
     
