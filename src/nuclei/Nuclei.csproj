@@ -103,8 +103,6 @@
       <Link>Properties\AssemblyInfo.Base.cs</Link>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.BuildInformation.cs" />
-    <Compile Include="Properties\AssemblyInfo.Company.cs" />
-    <Compile Include="Properties\AssemblyInfo.VersionNumber.cs" />
     <Compile Include="Properties\AssemblyInfo.InternalsVisibleTo.cs" />
     <Compile Include="AssemblyExtensions.cs" />
     <Compile Include="EmbeddedResourceExtracter.cs" />
