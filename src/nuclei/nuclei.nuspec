@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Nuclei</id>
-    <version>$VersionSemanticNuGet$</version>
+    <version>$VersionSemantic$</version>
     <authors>P. van der Velde</authors>
     <owners>P. van der Velde</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
@@ -19,9 +19,9 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="$DirBin$\Nuclei.dll" target="lib\net45" />
-    <file src="$DirBin$\Nuclei.pdb" target="lib\net45" />
-    <file src="$DirBin$\Nuclei.xml" target="lib\net45" />
+    <file src="$DirBin$\Nuclei.dll" target="lib\net40" />
+    <file src="$DirBin$\Nuclei.pdb" target="lib\net40" />
+    <file src="$DirBin$\Nuclei.xml" target="lib\net40" />
     <file src="$DirSrc$\Nuclei\**\*.cs" target="src\Nuclei" />
   </files>
 </package>
