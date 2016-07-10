@@ -5,7 +5,7 @@
     <!-- Overrides for the build configuration -->
     <PropertyGroup>
         <!-- A flag that indicates whether or not the build output of the VS projects is redirected to the $(DirBuildBinPlatformConfig) directory. -->
-        <RedirectBuildOutputToSingleFolder Condition=" '$(RedirectBuildOutputToSingleFolder)' == '' ">true</RedirectBuildOutputToSingleFolder>
+        <!-- <RedirectBuildOutputToSingleFolder Condition=" '$(RedirectBuildOutputToSingleFolder)' == '' ">false</RedirectBuildOutputToSingleFolder> -->
 
         <!-- The build configuration (debug / release / ...) that will be used to run all the unit tests and the static verification on -->
         <TestConfiguration Condition=" '$(TestConfiguration)' == '' ">Release</TestConfiguration>
@@ -33,6 +33,10 @@
           NuGet packages as specified in the nBuildKit specific 'packages.config' files.
 
         The following build steps are by default provided through the given properties:
+        $(BuildStepsPrepareVcsBranch)                    - When building from a GIT repository on Jenkins ensures that the current checkout has the same branch
+                                                           name as the remote tracking branch.
+        $(BuildStepsPrepareVcsInfo)                      - Stores the Version Control System (VCS) information in a file for later use.
+                                                           Currently supported version control systems is GIT
         $(BuildStepsPrepareGetVersion)                   - Gathers version information and stores it in a temporary file for use by the rest of the build process.
                                                            Currently supported methods of gathering version information are using (in order):
                                                            - The version defined by a custom MsBuild task which is defined in a file of which the path is stored
@@ -55,11 +59,13 @@
                                                              - VersionPreRelease
                                                            - The GitVersion tool (https://github.com/ParticularLabs/GitVersion)
                                                            - The GitHubFlowVersion tool (https://github.com/JakeGinnivan/GitHubFlowVersion)
+        $(BuildStepsPrepareGetIssueIds)                  - Gets the issue IDs from the commits on the current branch and stores them in a temp file for later use.
+        $(BuildStepsPrepareVcsMerge)                     - Merges the current changes to the designated target branch (specified by $(BranchMergeTarget)).
         $(BuildStepsPrepareReleaseNotes)                 - Gathers the release notes and stores them for later use during the build process. Release notes
                                                            are retrieved with the GitReleaseNotes tool (https://github.com/GitTools/GitReleaseNotes) which
                                                            currently allows gathering release notes from GitHub, Jira and YouTrack
-        $(BuildStepsPrepareVcsInfo)                      - Stores the Version Control System (VCS) information in a file for later use.
-                                                           Currently supported version control systems is GIT
+        $(BuildStepsPrepareRestoreNpm)                   - Restores all the NPM packages for the project.
+        $(BuildStepsPrepareRestoreBower)                 - Restores all the Bower packages for the project.
         $(BuildStepsPrepareAssemblyInfo)                 - Updates all existing AssemblyInfo.cs and AssemblyInfo.vb files with the version numbers, company information,
                                                            copyright information and optionally build time and build information.
         $(BuildStepsPrepareGenerateFiles)                - Generates one or more files from a set of template files.
@@ -92,32 +98,94 @@
         Additionally any properties defined by the 'Properties' section are also pushed up.
     -->
     <ItemGroup>
-        <BuildStepsToExecute Include="$(BuildStepsPrepareGetVersion)">
+        <BuildStepsToExecute Include="$(BuildStepsPrepareVcsBranch)">
             <Properties>
             </Properties>
-        </BuildStepsToExecute>
-        <BuildStepsToExecute Include="$(BuildStepsPrepareReleaseNotes)">
-            <Properties>
-            </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
         </BuildStepsToExecute>
         <BuildStepsToExecute Include="$(BuildStepsPrepareVcsInfo)">
             <Properties>
             </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
         </BuildStepsToExecute>
+        <BuildStepsToExecute Include="$(BuildStepsPrepareGetVersion)">
+            <Properties>
+            </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
+        </BuildStepsToExecute>
+        <BuildStepsToExecute Include="$(BuildStepsPrepareGetIssueIds)">
+            <Properties>
+            </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
+        </BuildStepsToExecute>
+        <BuildStepsToExecute Include="$(BuildStepsPrepareVcsMerge)">
+            <Properties>
+            </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
+        </BuildStepsToExecute>
+        <BuildStepsToExecute Include="$(BuildStepsPrepareReleaseNotes)">
+            <Properties>
+            </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
+        </BuildStepsToExecute>
+
+        <!--
+        <BuildStepsToExecute Include="$(BuildStepsPrepareRestoreNpm)">
+            <Properties>
+            </Properties>
+            <Groups>
+                Npm;
+                Prepare;
+                Restore;
+            </Groups>
+        </BuildStepsToExecute>
+        <BuildStepsToExecute Include="$(BuildStepsPrepareRestoreBower)">
+            <Properties>
+            </Properties>
+            <Groups>
+                Bower;
+                Prepare;
+                Restore;
+            </Groups>
+        </BuildStepsToExecute>
+        -->
+
         <BuildStepsToExecute Include="$(BuildStepsPrepareAssemblyInfo)">
             <Properties>
             </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
         </BuildStepsToExecute>
         <!--
         <BuildStepsToExecute Include="$(BuildStepsPrepareGenerateLicenses)">
             <Properties>
             </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
         </BuildStepsToExecute>
         -->
         <!--
         <BuildStepsToExecute Include="$(BuildStepsPrepareGenerateFiles)">
             <Properties>
             </Properties>
+            <Groups>
+                Generate;
+                Prepare;
+            </Groups>
         </BuildStepsToExecute>
         -->
 
@@ -125,16 +193,25 @@
         <BuildStepsToExecute Include="$(BuildStepsAnalyzeSourceCcm)">
             <Properties>
             </Properties>
+            <Groups>
+                Analyze;
+            </Groups>
         </BuildStepsToExecute>
         <BuildStepsToExecute Include="$(BuildStepsAnalyzeSourceSouceMonitor)">
             <Properties>
             </Properties>
+            <Groups>
+                Analyze;
+            </Groups>
         </BuildStepsToExecute>
         -->
 
         <BuildStepsToExecute Include="$(BuildStepsBuildVisualStudioSolution)">
             <Properties>
             </Properties>
+            <Groups>
+                Compile;
+            </Groups>
         </BuildStepsToExecute>
 
         <BuildStepsToExecute Include="$(BuildStepsUnitTestNUnit)">
@@ -142,6 +219,9 @@
                 Configuration=$(TestConfiguration);
                 Platform=$(Platform)
             </Properties>
+            <Groups>
+                UnitTest;
+            </Groups>
         </BuildStepsToExecute>
         <!--
         <BuildStepsToExecute Include="$(BuildStepsUnitTestMsTest)">
@@ -149,12 +229,18 @@
                 Configuration=$(TestConfiguration);
                 Platform=$(Platform)
             </Properties>
+            <Groups>
+                UnitTest;
+            </Groups>
         </BuildStepsToExecute>
         <BuildStepsToExecute Include="$(BuildStepsUnitTestVsTest)">
             <Properties>
                 Configuration=$(TestConfiguration);
                 Platform=$(Platform)
             </Properties>
+            <Groups>
+                UnitTest;
+            </Groups>
         </BuildStepsToExecute>
         -->
 
@@ -164,14 +250,20 @@
                 Configuration=$(TestConfiguration);
                 Platform=$(Platform)
             </Properties>
+            <Groups>
+                Analyze;
+            </Groups>
         </BuildStepsToExecute>
+        -->
         <BuildStepsToExecute Include="$(BuildStepsAnalyzeBinariesFxCop)">
             <Properties>
                 Configuration=$(TestConfiguration);
                 Platform=$(Platform)
             </Properties>
+            <Groups>
+                Analyze;
+            </Groups>
         </BuildStepsToExecute>
-        -->
 
         <!--
         <BuildStepsToExecute Include="$(BuildStepsBuildApiDocumentationWithSandcastle)">
@@ -179,29 +271,30 @@
                 Configuration=$(ProductionConfiguration);
                 Platform=$(Platform)
             </Properties>
+            <Groups>
+                Compile;
+            </Groups>
         </BuildStepsToExecute>
         -->
 
-        <BuildStepsToExecute Include="$(DirWorkspace)\build.preparesourcepackages.msbuild">
-            <Properties>
-                Configuration=$(ProductionConfiguration);
-                Platform=$(Platform)
-            </Properties>
-        </BuildStepsToExecute>
         <BuildStepsToExecute Include="$(BuildStepsPackNuGet)">
             <Properties>
                 Configuration=$(ProductionConfiguration);
                 Platform=$(Platform)
             </Properties>
+            <Groups>
+                Package;
+            </Groups>
         </BuildStepsToExecute>
-        <!--
         <BuildStepsToExecute Include="$(BuildStepsPackZip)">
             <Properties>
                 Configuration=$(ProductionConfiguration);
                 Platform=$(Platform)
             </Properties>
+            <Groups>
+                Package;
+            </Groups>
         </BuildStepsToExecute>
-        -->
     </ItemGroup>
 
     <!--
@@ -223,11 +316,14 @@
         Additionally any properties defined by the 'Properties' section are also pushed up.
     -->
     <ItemGroup>
-        <BuildFailureStepsToExecute Include="$(DirWorkspace)\build.onerror.msbuild">
+        <!--
+        <BuildFailureStepsToExecute Include="">
             <Properties>
-                ErrorMessage="An error occurred during the build";
             </Properties>
+            <Groups>
+            </Groups>
         </BuildFailureStepsToExecute>
+        -->
     </ItemGroup>
 
 
@@ -257,11 +353,13 @@
         <!--
         <BuildFilesToGenerate Include="$(DirBuildTemp)\MyFile.txt">
             <Template>$(DirTemplates)\MyTemplatefile.txt</Template>
+            <Encoding>UTF-8</Encoding>
         </BuildFilesToGenerate>
         <BuildFilesToGenerate Include="$(DirBuildTemp)\MyOtherFile.txt">
             <Template>$(DirTemplates)\MyOtherTemplatefile.txt</Template>
             <Token>MyAdditionalTemplateParameter</Token>
             <ReplacementValue>MyAdditionalTemplateValue</ReplacementValue>
+            <Encoding>UTF-8</Encoding>
         </BuildFilesToGenerate>
         -->
     </ItemGroup>
@@ -330,22 +428,6 @@
 
     <PropertyGroup>
         <!--
-            A flag that indicates whether the source files with the company and product information should be generated.
-            The files will be placed in the source directory (i.e. DirSrc) and will be called CompanyInformation.xx
-            (cs/vb/wxi) and ProductInformation.xx (cs/vc/wxi).
-
-            The CompanyInformation file will contain the Company website URL, the company name and the company name as used
-            in file paths.
-
-            The ProductInformation file will contain the product name, the product description and the product name as used
-            in file paths.
-
-            Any namespaces will be created as <ProductNamespace>.Internals where 'ProductNamespace' is defined
-            in the current file at the top.
-        -->
-        <!-- <ShouldGenerateCompanyAndProductInfo>false</ShouldGenerateCompanyAndProductInfo> -->
-
-        <!--
             A flag that indicates whether an AssemblyInfo file with the company and copyright information should be generated.
             The file will be placed in the Properties directory of the Visual Studio project and will be named
             AssemblyInfo.Company.xx (cs/vb). This file will contain:
@@ -383,159 +465,6 @@
             This assembly can be found on NuGet.org (http://www.nuget.org/packages/Nuclei.Build/)
         -->
         <ShouldGenerateAssemblyBuildInfo>true</ShouldGenerateAssemblyBuildInfo>
-
-        <!--
-            A flag that indicates whether an application manifest file should be generated for executables. The
-            manifest file is placed in the same directory as the Visual Studio project and will be named
-            <ProjectOutputName>.manifest, e.g. MyCoolApp.exe.manifest.
-        -->
-        <!--<ShouldGenerateApplicationManifest>false</ShouldGenerateApplicationManifest>-->
-
-        <!--
-            A flag that indicates whether the current project is a Test project. The value will be set in the Visual
-            Studio project files based on whether the project is a test project (as determined by the ProjectType GUID).
-
-            This value is defined here just so that there is a value when no other value is specified. Do not comment this
-            value out unless you know what you are doing!
-        -->
-        <!--
-            Note that {3AC096D0-A1C2-E12C-1390-A8335801FDAB} is the project type GUID for test projects in any language
-            See here: http://www.codeproject.com/Reference/720512/List-of-Visual-Studio-Project-Type-GUIDs
-        -->
-        <!--<IsTest Condition=" '$(IsTest)' == '' ">$(ProjectTypeGuids.Contains('{3AC096D0-A1C2-E12C-1390-A8335801FDAB}'))</IsTest>-->
-    </PropertyGroup>
-
-    <!-- Build configuration -->
-    <PropertyGroup>
-        <!--
-            A flag indicating whether warnings should be treated as errors by the compiler. This value is set
-            for all projects that include the MsBuild.Projects.XXXX NuGet package.
-        -->
-        <!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
-        <!--
-            The version of the .NET framework at which the assemblies should be targeted. This value is set
-            for all projects that include the MsBuild.Projects.XXXX NuGet package.
-        -->
-        <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-
-        <!--
-            The platform against which the code should be compiled. Note that the target should not have space in it,
-            i.e. AnyCPU, x86, x64 etc.
-        -->
-        <!--<PlatformTarget>$(PlatformWithoutSpaces)</PlatformTarget>-->
-    </PropertyGroup>
-
-    <!-- Execute code analysis after the build -->
-    <PropertyGroup>
-        <!--
-            A flag that indicates whether or not the code analysis should be executed immediately after the compilation
-            process is complete.
-        -->
-        <ShouldPerformCodeAnalysis Condition=" '$(ShouldPerformCodeAnalysis)' == '' ">false</ShouldPerformCodeAnalysis>
-        <!--
-            The code analysis rule set that should be used for non-test assemblies.
-        -->
-        <!--<CodeAnalysisRuleSet Condition="$(ShouldPerformCodeAnalysis) AND !$(IsTest)">$(SolutionDir)\codeanalysis.base.ruleset</CodeAnalysisRuleSet>-->
-        <!--
-            The code analysis rule set that should be used for test assemblies. If no code analysis should be executed on test
-            assemblies then it can be turned off in the settings for the different build configurations below.
-        -->
-        <!--<CodeAnalysisRuleSet Condition="$(ShouldPerformCodeAnalysis) AND $(IsTest)">$(SolutionDir)\codeanalysis.test.ruleset</CodeAnalysisRuleSet>-->
-        <!--
-            The culture which will be used by the code analysis when searching for spelling errors. The culture name should
-            be formatted using the .NET culture format.
-        -->
-        <!--<CodeAnalysisCulture Condition="$(ShouldPerformCodeAnalysis)">en-US</CodeAnalysisCulture>-->
-    </PropertyGroup>
-
-    <!-- Generate the XML documentation file -->
-    <PropertyGroup>
-        <!--
-            A flag indicating whether or not the XML documentation file should be generated during the compilation process.
-            Note that if 'WarningsAsErrors' is enabled then missing documentation will generate errors that stop the
-            build process.
-
-            If documentation should only be generated for non-test assemblies then add the '!$(IsTest)' condition
-            to the property.
-        -->
-        <!--<GenerateDocumentation>true</GenerateDocumentation>-->
-        <!--
-            The full file path where the XML documentation file should be created.
-        -->
-        <!--<DocumentationFile Condition="$(GenerateDocumentation) AND !$(IsTest)">$(OutputPath)\$(AssemblyName).XML</DocumentationFile>-->
-    </PropertyGroup>
-
-    <!-- Strong name the binaries -->
-    <PropertyGroup>
-        <!--
-            A flag that indicates whether or not the assemblies should be strong named during the compilation process.
-        -->
-        <ShouldSign Condition=" '$(ShouldSign)' == '' ">true</ShouldSign>
-        <SignAssembly Condition="$(ShouldSign)">true</SignAssembly>
-        <DelaySign Condition="$(ShouldSign)">false</DelaySign>
-        <!--
-            The full path of the key file that will be used to sign the assemblies during the compilation process.
-        -->
-        <AssemblyOriginatorKeyFile Condition="$(ShouldSign)">$(SOFTWARE_SIGNING_KEY_PATH)</AssemblyOriginatorKeyFile>
-    </PropertyGroup>
-
-    <!--
-        Debug configuration
-    -->
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-        <!--<DebugSymbols>true</DebugSymbols>-->
-        <!--<DebugType>full</DebugType>-->
-        <!--<DefineDebug>true</DefineDebug>-->
-        <!--<DefineTrace>true</DefineTrace>-->
-        <!--<Optimize>false</Optimize>-->
-        <!--<RunCodeAnalysis>$(ShouldPerformCodeAnalysis)</RunCodeAnalysis>-->
-    </PropertyGroup>
-
-    <!--
-        Release configuration
-    -->
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-        <!--<DebugSymbols>false</DebugSymbols>-->
-        <!--<DebugType>pdbonly</DebugType>-->
-        <!--<DefineDebug>false</DefineDebug>-->
-        <!--<DefineTrace>true</DefineTrace>-->
-        <!--<Optimize>true</Optimize>-->
-        <!--<RunCodeAnalysis>$(ShouldPerformCodeAnalysis)</RunCodeAnalysis>-->
-    </PropertyGroup>
-
-    <!--
-        Deploy configuration
-    -->
-    <PropertyGroup Condition=" '$(Configuration)' == 'Deploy' ">
-        <DebugSymbols>false</DebugSymbols>
-        <DebugType>pdbonly</DebugType>
-        <Optimize>true</Optimize>
-        <RunCodeAnalysis>false</RunCodeAnalysis>
-    </PropertyGroup>
-
-    <!-- Compiler specific configurations -->
-    <PropertyGroup>
-        <!--
-            Indicates what the warning level is for the C# compiler.
-        -->
-        <!--<CSharpWarningLevel>4</CSharpWarningLevel>-->
-        <!--
-            Define any additional constants for the C# compiler. Multiple constants should be
-            separated by a semi-colon (;).
-        -->
-        <!--<CSharpConstants>TRACE</CSharpConstants>-->
-        <!--
-            The name of the directory that contains the VB.NET AssemblyInfo and resoure files.
-        -->
-        <!--<VbNetAppDesignerFolder>My Project</VbNetAppDesignerFolder>-->
-        <!--
-            Indicates if the VB.NET Option Explicit is 'on' or 'off'
-        -->
-        <!--<VbNetOptionExplicit>On</VbNetOptionExplicit>-->
-        <!--
-            Indicates if the VB.NET Option strict is 'on' or 'off'
-        -->
-        <!--<VbNetOptionStrict>On</VbNetOptionStrict>-->
     </PropertyGroup>
 
     <!--
@@ -556,125 +485,32 @@
         If the assemblies are not signed it is possible to leave out the signing information, e.g. the 'KeyFile'
         property, the 'AssemblyFromPackage' property and the 'PublicKey' property.
     -->
+    <PropertyGroup>
+        <!--
+            Defines the compiler constants for which the InternalsVisibleTo attributes should
+            be generated.
+
+            Separate multiple compiler constants with semi-colons.
+        -->
+        <!-- <InternalsVisibletoCompilerConstants>$(TestConfiguration.ToUpper())</InternalsVisibletoCompilerConstants> -->
+    </PropertyGroup>
     <ItemGroup>
-        <InternalsVisibleTo Include="Nuclei.AppDomains">
-            <Projects>
-                Nuclei;
-                Nuclei.Communication;
-                Nuclei.Configuration;
-                Nuclei.Diagnostics;
-                Nuclei.Fusion;
-            </Projects>
-            <KeyFile>$(SOFTWARE_SIGNING_KEY_PATH)</KeyFile>
-        </InternalsVisibleTo>
         <InternalsVisibleTo Include="Test.Unit.Nuclei">
             <Projects>
-                Nuclei;
-                Nuclei.Communication;
-                Nuclei.Configuration;
-                Nuclei.Diagnostics;
-                Nuclei.Fusion;
+                Nuclei
             </Projects>
-            <KeyFile>$(SOFTWARE_SIGNING_KEY_PATH)</KeyFile>
-        </InternalsVisibleTo>
-        <InternalsVisibleTo Include="Test.Unit.Nuclei.Communication">
-            <Projects>
-                Nuclei;
-                Nuclei.Communication;
-                Nuclei.Configuration;
-                Nuclei.Diagnostics;
-                Nuclei.Fusion;
-            </Projects>
-            <KeyFile>$(SOFTWARE_SIGNING_KEY_PATH)</KeyFile>
-        </InternalsVisibleTo>
-        <InternalsVisibleTo Include="Test.Unit.Nuclei.Configuration">
-            <Projects>
-                Nuclei;
-                Nuclei.Communication;
-                Nuclei.Configuration;
-                Nuclei.Diagnostics;
-                Nuclei.Fusion;
-            </Projects>
-            <KeyFile>$(SOFTWARE_SIGNING_KEY_PATH)</KeyFile>
-        </InternalsVisibleTo>
-        <InternalsVisibleTo Include="Test.Unit.Nuclei.Diagnostics">
-            <Projects>
-                Nuclei;
-                Nuclei.Communication;
-                Nuclei.Configuration;
-                Nuclei.Diagnostics;
-                Nuclei.Fusion;
-            </Projects>
-            <KeyFile>$(SOFTWARE_SIGNING_KEY_PATH)</KeyFile>
-        </InternalsVisibleTo>
-        <InternalsVisibleTo Include="Test.Unit.Nuclei.Fusion">
-            <Projects>
-                Nuclei;
-                Nuclei.Communication;
-                Nuclei.Configuration;
-                Nuclei.Diagnostics;
-                Nuclei.Fusion;
-            </Projects>
-            <KeyFile>$(SOFTWARE_SIGNING_KEY_PATH)</KeyFile>
-        </InternalsVisibleTo>
-        <InternalsVisibleTo Include="Moq">
-            <Projects>
-                Nuclei;
-                Nuclei.Communication;
-                Nuclei.Configuration;
-                Nuclei.Diagnostics;
-                Nuclei.Fusion;
-            </Projects>
-            <AssemblyFromPackage>Moq.dll</AssemblyFromPackage>
-        </InternalsVisibleTo>
-        <InternalsVisibleTo Include="DynamicProxyGenAssembly2">
-            <Projects>
-                Nuclei;
-                Nuclei.Communication;
-                Nuclei.Configuration;
-                Nuclei.Diagnostics;
-                Nuclei.Fusion;
-            </Projects>
-            <PublicKey>0024000004800000940000000602000000240000525341310004000001000100c547cac37abd99c8db225ef2f6c8a3602f3b3606cc9891605d02baa56104f4cfc0734aa39b93bf7852f7d9266654753cc297e7d2edfe0bac1cdcf9f717241550e0a7b191195b7667bb4f64bcb8e2121380fd1d9d46ad2d92d2d15605093924cceaf74c4861eff62abf69b9291ed0a340e113be11e6a7d3113e92484cf7045cc7</PublicKey>
+            <KeyFile>$(SOFTWARE_SIGNING_KEY_PATH)\nuclei.snk</KeyFile>
         </InternalsVisibleTo>
     </ItemGroup>
 
-    <!--
-        Define additional scripts that need to be executed prior to the start of the Visual Studio clean process and the
-        start of the Visual Studio build process.
-
-        Scripts are defined by providing the path to the MsBuild script that should be executed,
-        e.g. 'c:\stuff\MyCoolScript.msbuild'.
-
-        Each script has the following properties passed to it:
-        $(SharedPropertyFile)             - The full path to the settings.props file (i.e. this file).
-        $(Configuration)                 - The configuratino for the compilation process.
-        $(Platform)                      - The platform for the compilation process.
-        $(ShouldDisplayDebugLog)         - A flag indicating whether or not to display debug log information, usually at the start of the script execution.
-        $(NBuildKitVersion)              - The full version of the nBuildKit library that is executing the build.
-        $(DirNBuildKitMsBuild)           - The full path to the directory that contains the nBuildKit scripts.
-        $(DirNBuildKitMsBuildShared)     - The full path to the directory that contains the shared nBuildkit scripts.
-        $(DirNBuildKitMsBuildExtensions) - The full path to the directory that contains the nBuildKit extension scripts.
-        $(DirNBuildKitMsBuildTemplates)  - The full path to the directory that contains the nBuildKit templates.
-
-        Additionally any properties defined by the 'Properties' section are also pushed up.
-    -->
-    <ItemGroup>
+    <!-- Build configuration -->
+    <PropertyGroup>
         <!--
-        <PreCleanScripts Include="">
-            <Properties>
-                Configuration=$(ProductionConfiguration);
-                Platform=$(Platform)
-            </Properties>
-        </PreCleanScripts>
-        <PreCompilationScripts Include="">
-            <Properties>
-                Configuration=$(ProductionConfiguration);
-                Platform=$(Platform)
-            </Properties>
-        </PreCompilationScripts>
+            The version of the .NET framework at which the assemblies should be targeted. This value is set
+            for all projects that include the MsBuild.Projects.XXXX NuGet package.
         -->
-    </ItemGroup>
+        <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    </PropertyGroup>
 
 
     <!--
@@ -716,7 +552,7 @@
             The ItemGroup items that define which files contain the unit test cases. Paths can include build templates,
             e.g. $(DirBuildBinPlatformConfig)\${VersionMajor}.0\**\test*.dll
         -->
-        <UnitTestAssemblies Include="$(DirBuildBinPlatformConfig)\**\$(UnitTestAssemblyNamePrefix)*.dll" />
+        <!-- <UnitTestAssemblies Include="$(DirSrc)\**\bin\$(Configuration)\**\$(UnitTestAssemblyNamePrefix)*.dll" /> -->
     </ItemGroup>
     <ItemGroup>
         <!--
@@ -776,7 +612,7 @@
         <!--
             The full path to the rules file that indicates which rules FxCop should use to analyse the binaries.
         -->
-        <!--<FileFxCopRuleSet Condition=" '$(FileFxCopRuleSet)' == '' ">$(DirSrc)\codeanalysis.base.ruleset</FileFxCopRuleSet>-->
+        <FileFxCopRuleSet Condition=" '$(FileFxCopRuleSet)' == '' ">$(DirSrc)\default.ruleset</FileFxCopRuleSet>
 
         <!--
             The full path to the XML file that contains the custom dictionary for FxCop.
@@ -792,21 +628,16 @@
             A flag that indicates whether any fxcop analysis errors should be marked as errors or as warnings. If FxCop analysis
             errors are marked as errors then any analysis error will stop the build.
         -->
-        <!--<FxCopWarningsAsErrors Condition=" '$(FxCopWarningsAsErrors)' == '' ">false</FxCopWarningsAsErrors>-->
+        <FxCopWarningsAsErrors Condition=" '$(FxCopWarningsAsErrors)' == '' ">true</FxCopWarningsAsErrors>
     </PropertyGroup>
     <ItemGroup>
         <!--
             The locations of the files that should be analyzed by FxCop.
         -->
-        <!--
-        <FxCopFiles Include="$(DirSrc)\**\bin\**\*.dll"
+        <FxCopFiles Include="$(DirSrc)\**\bin\**\nuclei.dll"
                     Exclude="$(DirSrc)\**\bin\**\Test.*.dll">
-            <TargetFramework>4.5</TargetFramework>
+            <TargetFramework>4.0</TargetFramework>
         </FxCopFiles>
-        <FxCopFiles Include="$(DirSrc)\**\bin\**\*.exe">
-            <TargetFramework>2.0</TargetFramework>
-        </FxCopFiles>
-        -->
     </ItemGroup>
     <ItemGroup>
         <!--
@@ -871,56 +702,8 @@
         All file paths allow build templates, e.g. $(DirSrc)\${ProductName}\myproject.nuspec.
     -->
     <ItemGroup>
-        <NuGetPackageSpecs Include="$(DirSrc)\nuclei\nuclei.nuspec">
+        <NuGetPackageSpecs Include="$(DirSrc)\**\*.nuspec">
             <ShouldBuildSymbols>true</ShouldBuildSymbols>
-            <IncludedDependencies>
-            </IncludedDependencies>
-            <ExcludedDependencies></ExcludedDependencies>
-        </NuGetPackageSpecs>
-        <NuGetPackageSpecs Include="$(DirSrc)\nuclei.build\nuclei.build.nuspec">
-            <ShouldBuildSymbols>true</ShouldBuildSymbols>
-            <IncludedDependencies>
-            </IncludedDependencies>
-            <ExcludedDependencies></ExcludedDependencies>
-        </NuGetPackageSpecs>
-        <NuGetPackageSpecs Include="$(DirSrc)\nuclei.communication\nuclei.communication.nuspec">
-            <ShouldBuildSymbols>true</ShouldBuildSymbols>
-            <IncludedDependencies>
-            </IncludedDependencies>
-            <ExcludedDependencies></ExcludedDependencies>
-        </NuGetPackageSpecs>
-        <NuGetPackageSpecs Include="$(DirSrc)\nuclei.configuration\nuclei.configuration.nuspec">
-            <ShouldBuildSymbols>true</ShouldBuildSymbols>
-            <IncludedDependencies>
-            </IncludedDependencies>
-            <ExcludedDependencies></ExcludedDependencies>
-        </NuGetPackageSpecs>
-        <NuGetPackageSpecs Include="$(DirSrc)\nuclei.diagnostics\nuclei.diagnostics.nuspec">
-            <ShouldBuildSymbols>true</ShouldBuildSymbols>
-            <IncludedDependencies>
-            </IncludedDependencies>
-            <ExcludedDependencies></ExcludedDependencies>
-        </NuGetPackageSpecs>
-        <NuGetPackageSpecs Include="$(DirSrc)\nuclei.nunit.extensions\nuclei.nunit.extensions.nuspec">
-            <ShouldBuildSymbols>true</ShouldBuildSymbols>
-            <IncludedDependencies>
-            </IncludedDependencies>
-            <ExcludedDependencies></ExcludedDependencies>
-        </NuGetPackageSpecs>
-        <NuGetPackageSpecs Include="$(DirSrc)\nuclei.appdomains\nuclei.appdomains.nuspec">
-            <ShouldBuildSymbols>false</ShouldBuildSymbols>
-            <IncludedDependencies>
-            </IncludedDependencies>
-            <ExcludedDependencies></ExcludedDependencies>
-        </NuGetPackageSpecs>
-        <NuGetPackageSpecs Include="$(DirSrc)\nuclei.exceptionhandling\nuclei.exceptionhandling.nuspec">
-            <ShouldBuildSymbols>false</ShouldBuildSymbols>
-            <IncludedDependencies>
-            </IncludedDependencies>
-            <ExcludedDependencies></ExcludedDependencies>
-        </NuGetPackageSpecs>
-        <NuGetPackageSpecs Include="$(DirSrc)\nuclei.fusion\nuclei.fusion.nuspec">
-            <ShouldBuildSymbols>false</ShouldBuildSymbols>
             <IncludedDependencies>
             </IncludedDependencies>
             <ExcludedDependencies></ExcludedDependencies>
@@ -931,10 +714,13 @@
         The item group defining the (partial) names of the NuGet packages that only contain design time element and should
         thus not be considered dependencies for the generated NuGet packages, even if they are included in the list
         of dependencies that should be included.
+
+        By default nBuildkit and nUnit are ignored.
     -->
     <ItemGroup>
-        <!--<DesignTimeDependencies Include="nBuildKit" />-->
-        <!--<DesignTimeDependencies Include="nUnit" />-->
+        <DesignTimeDependencies Include="nBuildKit" />
+        <DesignTimeDependencies Include="nUnit" />
+        <DesignTimeDependencies Include="StyleCop.Analyzers" />
     </ItemGroup>
 
 
@@ -943,16 +729,99 @@
     -->
     <!--
         The item group defining the location and contents of the archive files that are generated during the build
-
-        The IncludedFiles and the ExcludedFiles are actually lists of packages.config files that
-        should be included (or excluded) in the list of dependencies. Each entry is separated by a semi-colon(;).
-
         All file paths allow build templates, e.g. $(DirBuildDeploy)\myarchive-${VersionSemantic}.zip.
     -->
     <ItemGroup>
-        <!--<ArchivePackageSpecs Include="$(DirWorkspace)\**\*.zipspec"
-                             Exclude="$(DirBuild)\**\*.zipspec" />-->
+        <!--
+        <ArchivePackageSpecs Include="$(DirWorkspace)\**\*.zipspec"
+                             Exclude="$(DirBuild)\**\*.zipspec" />
+        -->
     </ItemGroup>
+
+
+
+
+
+    <!--
+        *************************************
+        *                                   *
+        *     SHARED TOOLS                  *
+        *                                   *
+        *************************************
+    -->
+
+    <!-- Overrides for the tools paths -->
+    <PropertyGroup>
+        <!--
+            The full path to the Visual Studio installation directory
+        -->
+        <!-- <ToolsExternalVisualStudioDir Condition=" '$(ToolsExternalVisualStudioDir)' == '' AND Exists('C:\Program Files (x86)\Microsoft Visual Studio 14.0')">C:\Program Files (x86)\Microsoft Visual Studio 14.0</ToolsExternalVisualStudioDir>
+        <ToolsExternalVisualStudioDir Condition=" '$(ToolsExternalVisualStudioDir)' == '' AND Exists('C:\Program Files (x86)\Microsoft Visual Studio 12.0')">C:\Program Files (x86)\Microsoft Visual Studio 12.0</ToolsExternalVisualStudioDir>
+        <ToolsExternalVisualStudioDir Condition=" '$(ToolsExternalVisualStudioDir)' == '' AND Exists('C:\Program Files (x86)\Microsoft Visual Studio 11.0')">C:\Program Files (x86)\Microsoft Visual Studio 11.0</ToolsExternalVisualStudioDir> -->
+
+        <!--
+            The full path to the CCM command line executable. If not defined the packages directory is searched.
+        -->
+        <!-- <ToolsExternalCcmPath Condition=" '$(ToolsExternalCcmPath)' == '' ">UNDEFINED</ToolsExternalCcmPath> -->
+
+        <!--
+            The full path to the directory that contains the FxCop command line executable
+        -->
+        <!-- <ToolsExternalFxCopDir Condition=" '$(ToolsExternalFxCopDir)' == '' AND Exists('$(ToolsExternalVisualStudioDir)\Team Tools\Static Analysis Tools\FxCop')">$(ToolsExternalVisualStudioDir)\Team Tools\Static Analysis Tools\FxCop</ToolsExternalFxCopDir>
+        <ToolsExternalFxCopDir Condition=" '$(ToolsExternalFxCopDir)' == '' AND Exists('C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop')">C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop</ToolsExternalFxCopDir>
+        <ToolsExternalFxCopDir Condition=" '$(ToolsExternalFxCopDir)' == '' ">UNDEFINED</ToolsExternalFxCopDir> -->
+
+        <!--
+            The full path to the MoMA command line executable. If not defined the packages directory is searched.
+        -->
+        <!-- <ToolsExternalMomaPath Condition=" '$(ToolsExternalMomaPath)' == '' ">UNDEFINED</ToolsExternalMomaPath> -->
+
+        <!--
+            The full path to the MsTest command line executable.
+        -->
+        <!-- <ToolsExternalMsTestPath Condition=" '$(ToolsExternalMsTestPath)' == '' AND Exists('$(ToolsExternalVisualStudioDir)\Common7\IDE\MsTest.exe')">$(ToolsExternalVisualStudioDir)\Common7\IDE\MsTest.exe</ToolsExternalMsTestPath>
+        <ToolsExternalMsTestPath Condition=" '$(ToolsExternalMsTestPath)' == '' AND Exists('C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\MsTest.exe')">C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE\MsTest.exe</ToolsExternalMsTestPath>
+        <ToolsExternalMsTestPath Condition=" '$(ToolsExternalMsTestPath)' == '' ">UNDEFINED</ToolsExternalMsTestPath> -->
+
+        <!--
+            The full path and version to the nUnit command line executable. If not defined the packages directory is searched.
+        -->
+        <!-- <ToolsExternalNUnitConsolePath Condition=" '$(ToolsExternalNUnitConsolePath)' == '' ">UNDEFINED</ToolsExternalNUnitConsolePath>
+        <ToolsExternalNUnitConsoleVersion Condition=" '$(ToolsExternalNUnitConsoleVersion)' == '' ">2.6.4</ToolsExternalNUnitConsoleVersion> -->
+
+        <!--
+            The full path and version to the OpenCover command line executable. If not defined the packages directory is searched.
+        -->
+        <!-- <ToolsExternalOpenCoverPath Condition=" '$(ToolsExternalOpenCoverPath)' == '' ">UNDEFINED</ToolsExternalOpenCoverPath>
+        <ToolsExternalOpenCoverVersion Condition=" '$(ToolsExternalOpenCoverVersion)' == '' ">4.6.519</ToolsExternalOpenCoverVersion>-->
+
+        <!--
+            The full path and version to the ReportGenerator command line executable. If not defined the packages directory is searched.
+        -->
+        <!-- <ToolsExternalReportGeneratorPath Condition=" '$(ToolsExternalReportGeneratorPath)' == '' ">UNDEFINED</ToolsExternalReportGeneratorPath>
+        <ToolsExternalReportGeneratorVersion Condition=" '$(ToolsExternalReportGeneratorVersion)' == '' ">2.4.4</ToolsExternalReportGeneratorVersion>-->
+
+        <!--
+            The full path to the sn.exe command line executable.
+        -->
+        <!-- <ToolsExternalSnPath Condition=" '$(ToolsExternalSnPath)' == '' ">UNDEFINED</ToolsExternalSnPath>-->
+
+        <!--
+            The full path to the SourceMonitor command line executable. If not defined the packages directory is searched.
+        -->
+        <!-- <ToolsExternalSourceMonitorPath Condition=" '$(ToolsExternalSourceMonitorPath)' == '' ">UNDEFINED</ToolsExternalSourceMonitorPath> -->
+
+        <!--
+            The full path to the VSCoverageToReportGenerator command line executable. If not defined the packages directory is searched.
+        -->
+        <!-- <ToolsExternalVSCoverageToReportGeneratorPath Condition=" '$(ToolsExternalVSCoverageToReportGeneratorPath)' == '' ">UNDEFINED</ToolsExternalVSCoverageToReportGeneratorPath> -->
+
+        <!--
+            The full path to the VsTest command line executable.
+        -->
+        <!-- <ToolsExternalVsTestPath Condition=" '$(ToolsExternalVsTestPath)' == '' AND Exists('$(ToolsExternalVisualStudioDir)\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe')">$(ToolsExternalVisualStudioDir)\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe</ToolsExternalVsTestPath>
+        <ToolsExternalVsTestPath Condition=" '$(ToolsExternalVsTestPath)' == '' ">UNDEFINED</ToolsExternalVsTestPath> -->
+    </PropertyGroup>
 
 
 

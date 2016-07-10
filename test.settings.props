@@ -13,10 +13,12 @@
           NuGet packages as specified in the nBuildKit specific 'packages.config' files.
 
         The following test steps are by default provided through the given properties:
+        $(TestStepsPrepareVcsBranch)     - When building from a GIT repository on Jenkins ensures that the current checkout has the same branch
+                                           name as the remote tracking branch.
         $(TestStepsPrepareGetVersion)    - Gathers version information and stores it in a temporary file for use by the rest of the test process.
                                            Currently supported methods of gathering version information are using (in order):
                                            - The version defined by a custom MsBuild task which is defined in a file of which the path is stored
-                                             in the 'VersionScriptPath' property. The task should output:
+                                             in the 'ScriptGetVersion' property. The task should output:
                                              - VersionMajor
                                              - VersionMinor
                                              - VersionPatch
@@ -35,6 +37,7 @@
                                              - VersionPreRelease
                                              - The GitVersion tool (https://github.com/ParticularLabs/GitVersion)
                                              - The GitHubFlowVersion tool (https://github.com/JakeGinnivan/GitHubFlowVersion)
+        $(TestStepsPrepareGetIssueIds)   - Gets the issue IDs from the commits on the current branch and stores them in a temp file for later use.
         $(TestStepsPrepareReleaseNotes)  - Gathers the release notes and stores them for later use during the test process. Release notes
                                            are retrieved with the GitReleaseNotes tool (https://github.com/GitTools/GitReleaseNotes) which
                                            currently allows gathering release notes from GitHub, Jira and YouTrack
@@ -56,21 +59,48 @@
         $(DirNBuildKitMsBuildTemplates)   - The full path to the directory that contains the nBuildKit templates.
     -->
     <ItemGroup>
+        <TestStepsToExecute Include="$(TestStepsPrepareVcsBranch)">
+            <Properties>
+            </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
+        </TestStepsToExecute>
         <TestStepsToExecute Include="$(TestStepsPrepareGetVersion)">
             <Properties>
             </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
+        </TestStepsToExecute>
+        <TestStepsToExecute Include="$(TestStepsPrepareGetIssueIds)">
+            <Properties>
+            </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
         </TestStepsToExecute>
         <TestStepsToExecute Include="$(TestStepsPrepareReleaseNotes)">
             <Properties>
             </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
         </TestStepsToExecute>
         <TestStepsToExecute Include="$(TestStepsPrepareVcsInfo)">
             <Properties>
             </Properties>
+            <Groups>
+                Prepare;
+            </Groups>
         </TestStepsToExecute>
         <TestStepsToExecute Include="$(TestStepsPrepareGenerateFiles)">
             <Properties>
             </Properties>
+            <Groups>
+                Generate;
+                Prepare;
+            </Groups>
         </TestStepsToExecute>
     </ItemGroup>
 
@@ -126,13 +156,32 @@
     <ItemGroup>
         <!--<TestFilesToGenerate Include="$(DirBuildTemp)\MyFile.txt">
             <Template>$(DirTemplates)\MyTemplatefile.txt</Template>
+            <Encoding>UTF-8</Encoding>
         </TestFilesToGenerate>
         <TestFilesToGenerate Include="$(DirBuildTemp)\MyOtherFile.txt">
             <Template>$(DirTemplates)\MyOtherTemplatefile.txt</Template>
             <Token>MyAdditionalTemplateParameter</Token>
             <ReplacementValue>MyAdditionalTemplateValue</ReplacementValue>
+            <Encoding>UTF-8</Encoding>
         </TestFilesToGenerate>-->
     </ItemGroup>
+
+
+
+
+
+    <!--
+        *************************************
+        *                                   *
+        *     SHARED TOOLS                  *
+        *                                   *
+        *************************************
+    -->
+
+    <!-- Overrides for the tools paths -->
+    <PropertyGroup>
+        <!-- Currently there are no test specific tools -->
+    </PropertyGroup>
 
 
 
