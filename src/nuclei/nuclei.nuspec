@@ -12,7 +12,7 @@
       Provides a set of utility methods and classes.
     </description>
     <releaseNotes>
-      $ReleaseNotes$
+      $ReleaseNotesHtmlEncoded$
     </releaseNotes>
     <dependencies>
       $Dependencies$
