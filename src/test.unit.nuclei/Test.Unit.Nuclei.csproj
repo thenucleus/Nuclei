@@ -87,10 +87,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\templates\AssemblyInfo.Base.cs">
-      <Link>Properties\AssemblyInfo.Base.cs</Link>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.BuildInformation.cs" />
     <Compile Include="AssemblyExtensionsTest.cs" />
     <Compile Include="IdTest.cs" />
     <Compile Include="MockId.cs" />

@@ -67,11 +67,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\templates\AssemblyInfo.Base.cs">
-      <Link>Properties\AssemblyInfo.Base.cs</Link>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.BuildInformation.cs" />
-    <Compile Include="Properties\AssemblyInfo.InternalsVisibleTo.cs" />
     <Compile Include="AssemblyExtensions.cs" />
     <Compile Include="EmbeddedResourceExtracter.cs" />
     <Compile Include="Id.cs" />
