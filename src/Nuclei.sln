@@ -11,24 +11,31 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\.gitignore = ..\.gitignore
 		..\LICENSE.md = ..\LICENSE.md
 		..\README.md = ..\README.md
-		..\Settings.StyleCop = ..\Settings.StyleCop
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.Unit.Nuclei", "test.unit.Nuclei\Test.Unit.Nuclei.csproj", "{0FA80344-F6F5-4D93-8D1E-249456D6A6B7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{FE08C557-2C2F-409C-A106-C12F6A6E8C40}"
 	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
+		..\nuget.config = ..\nuget.config
+		..\packages.config = ..\packages.config
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{525FF8D6-BF44-4BEB-BEF4-DD767DC0E722}"
 	ProjectSection(SolutionItems) = preProject
-		..\build.onerror.msbuild = ..\build.onerror.msbuild
-		..\build.preparesourcepackages.msbuild = ..\build.preparesourcepackages.msbuild
-		..\nuclei.msbuild = ..\nuclei.msbuild
-		..\nuget.config = ..\nuget.config
-		..\packages.config = ..\packages.config
+		base.props = base.props
+		..\build.settings.props = ..\build.settings.props
+		..\deploy.settings.props = ..\deploy.settings.props
+		..\entrypoint.msbuild = ..\entrypoint.msbuild
 		..\settings.props = ..\settings.props
+		..\test.settings.props = ..\test.settings.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "codeanalysis", "codeanalysis", "{BC3CBE56-0A8E-48BE-9E45-4F1DB9033C2A}"
+	ProjectSection(SolutionItems) = preProject
+		default.ruleset = default.ruleset
+		stylecop.json = stylecop.json
+		test.ruleset = test.ruleset
 	EndProjectSection
 EndProject
 Global
