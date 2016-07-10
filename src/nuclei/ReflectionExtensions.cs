@@ -1,6 +1,7 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="Nuclei">
-//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// <copyright company="TheNucleus">
+// Copyright (c) TheNucleus. All rights reserved.
+// Licensed under the Apache License, Version 2.0 license. See LICENCE.md file in the project root for full license information.
 // </copyright>
 //-----------------------------------------------------------------------
 
@@ -32,10 +33,17 @@ namespace Nuclei
         /// <returns>
         /// The name of the member in the expression or <see langword="null"/> if no member was called in the expression.
         /// </returns>
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures",
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1006:DoNotNestGenericTypesInMemberSignatures",
             Justification = "The generics are necessar to get the name of the member via a lambda expression.")]
         public static string MemberName(LambdaExpression expression)
         {
+            if (expression == null)
+            {
+                return null;
+            }
+
             var method = expression.Body as MemberExpression;
             if (method != null)
             {
@@ -58,12 +66,21 @@ namespace Nuclei
         /// <returns>
         /// The name of the member in the expression or <see langword="null"/> if no member was called in the expression.
         /// </returns>
-        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters",
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1011:ConsiderPassingBaseTypesAsParameters",
             Justification = "By typing it as Expression<T> it becomes possible to use the lambda syntax at the caller site.")]
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures",
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1006:DoNotNestGenericTypesInMemberSignatures",
             Justification = "The generics are necessar to get the name of the member via a lambda expression.")]
         public static string MemberName<T>(Expression<Action<T>> expression)
         {
+            if (expression == null)
+            {
+                return null;
+            }
+
             var method = expression.Body as MemberExpression;
             if (method != null)
             {
@@ -87,12 +104,21 @@ namespace Nuclei
         /// <returns>
         /// The name of the member in the expression or <see langword="null"/> if no member was called in the expression.
         /// </returns>
-        [SuppressMessage("Microsoft.Design", "CA1011:ConsiderPassingBaseTypesAsParameters",
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1011:ConsiderPassingBaseTypesAsParameters",
             Justification = "By typing it as Expression<T> it becomes possible to use the lambda syntax at the caller site.")]
-        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures",
+        [SuppressMessage(
+            "Microsoft.Design",
+            "CA1006:DoNotNestGenericTypesInMemberSignatures",
             Justification = "The generics are necessar to get the name of the member via a lambda expression.")]
         public static string MemberName<T, TResult>(Expression<Func<T, TResult>> expression)
         {
+            if (expression == null)
+            {
+                return null;
+            }
+
             var method = expression.Body as MemberExpression;
             if (method != null)
             {
@@ -108,8 +134,16 @@ namespace Nuclei
         /// </summary>
         /// <param name="methods">The collection containing the method information.</param>
         /// <returns>A string containing all the method signatures.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="methods"/> is <see langword="null"/>.
+        /// </exception>
         public static string MethodInfoToString(IEnumerable<MethodInfo> methods)
         {
+            if (methods == null)
+            {
+                throw new ArgumentNullException("methods");
+            }
+
             var methodsText = new StringBuilder();
             foreach (var methodInfo in methods)
             {
@@ -153,8 +187,16 @@ namespace Nuclei
         /// </summary>
         /// <param name="properties">The collection containing the property information.</param>
         /// <returns>A string containing the property information.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="properties"/> is <see langword="null"/>.
+        /// </exception>
         public static string PropertyInfoToString(IEnumerable<PropertyInfo> properties)
         {
+            if (properties == null)
+            {
+                throw new ArgumentNullException("properties");
+            }
+
             var propertiesText = new StringBuilder();
             foreach (var propertyInfo in properties)
             {
@@ -180,8 +222,16 @@ namespace Nuclei
         /// </summary>
         /// <param name="events">The collection containing the events.</param>
         /// <returns>A string containing the event signatures.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="events"/> is <see langword="null"/>.
+        /// </exception>
         public static string EventInfoToString(IEnumerable<EventInfo> events)
         {
+            if (events == null)
+            {
+                throw new ArgumentNullException("events");
+            }
+
             var propertiesText = new StringBuilder();
             foreach (var eventInfo in events)
             {
@@ -210,10 +260,17 @@ namespace Nuclei
         /// <see langword="true" /> if the given assembly name is an exact match for the current assembly name;
         /// otherwise, <see langword="false"/>.
         /// </returns>
-        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
+        [SuppressMessage(
+            "Microsoft.StyleCop.CSharp.DocumentationRules",
+            "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
         public static bool IsSame(this AssemblyName current, AssemblyName other)
         {
+            if ((current == null) || (other == null))
+            {
+                return false;
+            }
+
             var isMatch = string.Equals(current.Name, other.Name, StringComparison.Ordinal);
             isMatch = isMatch
                 && (((current.CultureInfo != null) && current.CultureInfo.Equals(other.CultureInfo))
@@ -240,10 +297,17 @@ namespace Nuclei
         /// <see langword="true" /> if the current assembly name belongs to the same assembly as the assembly with the other name, or
         /// a later version of that assembly; otherwise, <see langword="false"/>.
         /// </returns>
-        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
+        [SuppressMessage(
+            "Microsoft.StyleCop.CSharp.DocumentationRules",
+            "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
         public static bool IsMatch(this AssemblyName current, AssemblyName other)
         {
+            if ((current == null) || (other == null))
+            {
+                return false;
+            }
+
             var isMatch = string.Equals(current.Name, other.Name, StringComparison.Ordinal);
             isMatch = isMatch
                 && (((current.CultureInfo != null) && current.CultureInfo.Equals(other.CultureInfo))

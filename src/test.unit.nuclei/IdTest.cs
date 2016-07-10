@@ -1,6 +1,7 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="Nuclei">
-//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// <copyright company="TheNucleus">
+// Copyright (c) TheNucleus. All rights reserved.
+// Licensed under the Apache License, Version 2.0 license. See LICENCE.md file in the project root for full license information.
 // </copyright>
 //-----------------------------------------------------------------------
 
@@ -14,15 +15,17 @@ using NUnit.Framework;
 namespace Nuclei
 {
     [TestFixture]
-    [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
-            Justification = "Unit tests do not need documentation.")]
+    [SuppressMessage(
+        "Microsoft.StyleCop.CSharp.DocumentationRules",
+        "SA1600:ElementsMustBeDocumented",
+        Justification = "Unit tests do not need documentation.")]
     public sealed class IdTest : EqualityContractVerifierTest
     {
         private sealed class IdEqualityContractVerifier : EqualityContractVerifier<MockId>
         {
-            private readonly MockId m_First = new MockId(0);
+            private readonly MockId _first = new MockId(0);
 
-            private readonly MockId m_Second = new MockId(1);
+            private readonly MockId _second = new MockId(1);
 
             protected override MockId Copy(MockId original)
             {
@@ -33,7 +36,7 @@ namespace Nuclei
             {
                 get
                 {
-                    return m_First;
+                    return _first;
                 }
             }
 
@@ -41,7 +44,7 @@ namespace Nuclei
             {
                 get
                 {
-                    return m_Second;
+                    return _second;
                 }
             }
 
@@ -54,10 +57,10 @@ namespace Nuclei
             }
         }
 
-        private sealed class IdHashcodeContractVerfier : HashcodeContractVerifier
+        private sealed class IdHashCodeContractVerfier : HashCodeContractVerifier
         {
-            private readonly IEnumerable<MockId> m_DistinctInstances
-                = new List<MockId> 
+            private readonly IEnumerable<MockId> _distinctInstances
+                = new List<MockId>
                      {
                         new MockId(0),
                         new MockId(1),
@@ -71,21 +74,21 @@ namespace Nuclei
                         new MockId(9),
                      };
 
-            protected override IEnumerable<int> GetHashcodes()
+            protected override IEnumerable<int> GetHashCodes()
             {
-                return m_DistinctInstances.Select(i => i.GetHashCode());
+                return _distinctInstances.Select(i => i.GetHashCode());
             }
         }
 
-        private readonly IdHashcodeContractVerfier m_HashcodeVerifier = new IdHashcodeContractVerfier();
+        private readonly IdHashCodeContractVerfier _hashCodeVerifier = new IdHashCodeContractVerfier();
 
-        private readonly IdEqualityContractVerifier m_EqualityVerifier = new IdEqualityContractVerifier();
+        private readonly IdEqualityContractVerifier _equalityVerifier = new IdEqualityContractVerifier();
 
-        protected override HashcodeContractVerifier HashContract
+        protected override HashCodeContractVerifier HashContract
         {
             get
             {
-                return m_HashcodeVerifier;
+                return _hashCodeVerifier;
             }
         }
 
@@ -93,7 +96,7 @@ namespace Nuclei
         {
             get
             {
-                return m_EqualityVerifier;
+                return _equalityVerifier;
             }
         }
 

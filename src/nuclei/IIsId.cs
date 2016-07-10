@@ -1,6 +1,7 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="Nuclei">
-//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// <copyright company="TheNucleus">
+// Copyright (c) TheNucleus. All rights reserved.
+// Licensed under the Apache License, Version 2.0 license. See LICENCE.md file in the project root for full license information.
 // </copyright>
 //-----------------------------------------------------------------------
 
@@ -20,7 +21,8 @@ namespace Nuclei
     /// </example>
     /// </remarks>
     /// <typeparam name="TId">The type of the object which is the ID.</typeparam>
-    public interface IIsId<TId> : IComparable<TId>, IComparable, IEquatable<TId> where TId : IIsId<TId>
+    public interface IIsId<TId> : IComparable<TId>, IComparable, IEquatable<TId>
+        where TId : IIsId<TId>
     {
         /// <summary>
         /// Clones this ID number.

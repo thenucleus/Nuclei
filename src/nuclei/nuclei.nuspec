@@ -3,25 +3,25 @@
   <metadata>
     <id>Nuclei</id>
     <version>$VersionSemantic$</version>
-    <authors>P. van der Velde</authors>
-    <owners>P. van der Velde</owners>
+    <authors>Metamorpher</authors>
+    <owners>Metamorpher</owners>
     <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
-    <projectUrl>https://github.com/pvandervelde/Nuclei</projectUrl>
+    <projectUrl>https://github.com/Metamorpher/Nuclei</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
       Provides a set of utility methods and classes.
     </description>
     <releaseNotes>
-      $ReleaseNotes$
+      $ReleaseNotesHtmlEncoded$
     </releaseNotes>
     <dependencies>
       $Dependencies$
     </dependencies>
   </metadata>
   <files>
-    <file src="$DirBin$\Nuclei.dll" target="lib\net40" />
-    <file src="$DirBin$\Nuclei.pdb" target="lib\net40" />
-    <file src="$DirBin$\Nuclei.xml" target="lib\net40" />
+    <file src="$DirSrc$\Nuclei\bin\$Configuration$\Nuclei.dll" target="lib\net40" />
+    <file src="$DirSrc$\Nuclei\bin\$Configuration$\Nuclei.pdb" target="lib\net40" />
+    <file src="$DirSrc$\Nuclei\bin\$Configuration$\Nuclei.xml" target="lib\net40" />
     <file src="$DirSrc$\Nuclei\**\*.cs" target="src\Nuclei" />
   </files>
 </package>
