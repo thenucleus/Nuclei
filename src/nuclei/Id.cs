@@ -1,6 +1,7 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="Nuclei">
-//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// <copyright company="TheNucleus">
+// Copyright (c) TheNucleus. All rights reserved.
+// Licensed under the Apache License, Version 2.0 license. See LICENCE.md file in the project root for full license information.
 // </copyright>
 //-----------------------------------------------------------------------
 
@@ -210,7 +211,7 @@ namespace Nuclei
         /// The internal value which defines the value for the current ID.
         /// </summary>
         [DataMember]
-        private readonly TInternalValue m_Value;
+        private readonly TInternalValue _value;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Id&lt;TId, TInternalValue&gt;"/> class.
@@ -225,7 +226,7 @@ namespace Nuclei
         /// </design>
         protected Id(TInternalValue value)
         {
-            m_Value = value;
+            _value = value;
         }
 
         /// <summary>
@@ -237,7 +238,7 @@ namespace Nuclei
             [DebuggerStepThrough]
             get
             {
-                return m_Value;
+                return _value;
             }
         }
 
@@ -249,7 +250,7 @@ namespace Nuclei
         /// </returns>
         public TId Clone()
         {
-            return Clone(m_Value);
+            return Clone(_value);
         }
 
         /// <summary>
@@ -284,7 +285,7 @@ namespace Nuclei
             // Check if other is a null reference by using ReferenceEquals because
             // we overload the == operator. If other isn't actually null then
             // we get an infinite loop where we're constantly trying to compare to null.
-            return ReferenceEquals(other, null) ? 1 : CompareValues(m_Value, other.m_Value);
+            return ReferenceEquals(other, null) ? 1 : CompareValues(_value, other._value);
         }
 
         /// <summary>
@@ -308,7 +309,7 @@ namespace Nuclei
         /// </returns>
         protected virtual int CompareValues(TInternalValue ourValue, TInternalValue theirValue)
         {
-            return m_Value.CompareTo(theirValue);
+            return _value.CompareTo(theirValue);
         }
 
         /// <summary>
@@ -367,7 +368,9 @@ namespace Nuclei
         ///     <see langword="true"/> if the specified <see cref="Id&lt;TId, TInternalValue&gt;"/> is equal to this instance;
         ///     otherwise, <see langword="false"/>.
         /// </returns>
-        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
+        [SuppressMessage(
+            "Microsoft.StyleCop.CSharp.DocumentationRules",
+            "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
         public bool Equals(TId other)
         {
@@ -379,7 +382,7 @@ namespace Nuclei
             // Check if other is a null reference by using ReferenceEquals because
             // we overload the == operator. If other isn't actually null then
             // we get an infinite loop where we're constantly trying to compare to null.
-            return !ReferenceEquals(other, null) && AreValuesEqual(m_Value, other.m_Value);
+            return !ReferenceEquals(other, null) && AreValuesEqual(_value, other._value);
         }
 
         /// <summary>
@@ -391,7 +394,9 @@ namespace Nuclei
         ///     <see langword="true"/> if <paramref name="theirValue"/> is equal to the value owned by this instance;
         ///     otherwise, <see langword="false"/>.
         /// </returns>
-        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
+        [SuppressMessage(
+            "Microsoft.StyleCop.CSharp.DocumentationRules",
+            "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
         protected virtual bool AreValuesEqual(TInternalValue ourValue, TInternalValue theirValue)
         {
@@ -399,13 +404,15 @@ namespace Nuclei
         }
 
         /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
+        /// Determines whether the specified <see cref="object"/> is equal to this instance.
         /// </summary>
-        /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
+        /// <param name="obj">The <see cref="object"/> to compare with this instance.</param>
         /// <returns>
-        ///     <see langword="true"/> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <see langword="false"/>.
+        ///     <see langword="true"/> if the specified <see cref="object"/> is equal to this instance; otherwise, <see langword="false"/>.
         /// </returns>
-        [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1628:DocumentationTextMustBeginWithACapitalLetter",
+        [SuppressMessage(
+            "Microsoft.StyleCop.CSharp.DocumentationRules",
+            "SA1628:DocumentationTextMustBeginWithACapitalLetter",
             Justification = "Documentation can start with a language keyword")]
         public sealed override bool Equals(object obj)
         {
@@ -425,18 +432,18 @@ namespace Nuclei
         /// Returns a hash code for this instance.
         /// </summary>
         /// <returns>
-        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
+        /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.
         /// </returns>
         public sealed override int GetHashCode()
         {
-            return m_Value.GetHashCode();
+            return _value.GetHashCode();
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        /// Returns a <see cref="string"/> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
+        /// A <see cref="string"/> that represents this instance.
         /// </returns>
         public abstract override string ToString();
     }

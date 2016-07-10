@@ -1,6 +1,7 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="Nuclei">
-//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// <copyright company="TheNucleus">
+// Copyright (c) TheNucleus. All rights reserved.
+// Licensed under the Apache License, Version 2.0 license. See LICENCE.md file in the project root for full license information.
 // </copyright>
 //-----------------------------------------------------------------------
 
@@ -15,7 +16,10 @@ namespace Nuclei
     /// <summary>
     /// Defines utility methods for dealing with resources stored in the assembly.
     /// </summary>
-    [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Extracter",
+    [SuppressMessage(
+        "Microsoft.Naming",
+        "CA1704:IdentifiersShouldBeSpelledCorrectly",
+        MessageId = "Extracter",
         Justification = "Noun version of extraction. Seems reasonable.")]
     public static class EmbeddedResourceExtracter
     {
@@ -26,9 +30,12 @@ namespace Nuclei
         /// <param name="filePath">The name of the file to extract.</param>
         /// <returns>A stream containing the file data.</returns>
         /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="assembly"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="filePath"/> is <see langword="null"/>.
         /// </exception>
-        /// <exception cref="InvalidOperationException">
+        /// <exception cref="ArgumentException">
         /// Thrown if <paramref name="filePath"/> is an empty string.
         /// </exception>
         /// <exception cref="TemplateLoadException">
@@ -36,10 +43,21 @@ namespace Nuclei
         /// </exception>
         public static Stream LoadEmbeddedStream(Assembly assembly, string filePath)
         {
+            if (assembly == null)
             {
-                Lokad.Enforce.Argument(() => assembly);
-                Lokad.Enforce.Argument(() => filePath);
-                Lokad.Enforce.That(!string.IsNullOrEmpty(filePath));
+                throw new ArgumentNullException("assembly");
+            }
+
+            if (filePath == null)
+            {
+                throw new ArgumentNullException("filePath");
+            }
+
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new ArgumentException(
+                    Resources.Exceptions_Messages_ParameterShouldNotBeAnEmptyString,
+                    "filePath");
             }
 
             Stream str;
@@ -71,6 +89,9 @@ namespace Nuclei
         /// <param name="filePath">The name of the file to extract.</param>
         /// <returns>A string containing the file data.</returns>
         /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="assembly"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
         /// Thrown if <paramref name="filePath"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidOperationException">
@@ -81,10 +102,21 @@ namespace Nuclei
         /// </exception>
         public static string LoadEmbeddedTextFile(Assembly assembly, string filePath)
         {
+            if (assembly == null)
             {
-                Lokad.Enforce.Argument(() => assembly);
-                Lokad.Enforce.Argument(() => filePath);
-                Lokad.Enforce.That(!string.IsNullOrEmpty(filePath));
+                throw new ArgumentNullException("assembly");
+            }
+
+            if (filePath == null)
+            {
+                throw new ArgumentNullException("filePath");
+            }
+
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new ArgumentException(
+                    Resources.Exceptions_Messages_ParameterShouldNotBeAnEmptyString,
+                    "filePath");
             }
 
             Stream str;

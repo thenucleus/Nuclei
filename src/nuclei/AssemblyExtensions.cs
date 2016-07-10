@@ -1,6 +1,7 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="Nuclei">
-//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// <copyright company="TheNucleus">
+// Copyright (c) TheNucleus. All rights reserved.
+// Licensed under the Apache License, Version 2.0 license. See LICENCE.md file in the project root for full license information.
 // </copyright>
 //-----------------------------------------------------------------------
 
@@ -31,8 +32,9 @@ namespace Nuclei
         /// </exception>
         public static string LocalFilePath(this Assembly assembly)
         {
+            if (assembly == null)
             {
-                Lokad.Enforce.Argument(() => assembly);
+                throw new ArgumentNullException("assembly");
             }
 
             // Get the location of the assembly before it was shadow-copied
@@ -59,8 +61,9 @@ namespace Nuclei
         /// </exception>
         public static string LocalDirectoryPath(this Assembly assembly)
         {
+            if (assembly == null)
             {
-                Lokad.Enforce.Argument(() => assembly);
+                throw new ArgumentNullException("assembly");
             }
 
             // Get the location of the assembly before it was shadow-copied
@@ -81,8 +84,9 @@ namespace Nuclei
         /// <returns>The strong name of the assembly.</returns>
         public static StrongName GetStrongName(this Assembly assembly)
         {
+            if (assembly == null)
             {
-                Lokad.Enforce.Argument(() => assembly);
+                throw new ArgumentNullException("assembly");
             }
 
             var assemblyName = assembly.GetName();

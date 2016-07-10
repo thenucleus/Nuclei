@@ -96,7 +96,7 @@
     <Compile Include="TypeEqualityComparerTest.cs" />
     <Compile Include="TypeExtensionsTest.cs" />
     <Compile Include="TypeLoaderTest.cs" />
-    <Compile Include="UnableToLoadTypeException.cs" />
+    <Compile Include="UnableToLoadTypeExceptionTest.cs" />
   </ItemGroup>
   <!-- Indicate that we depend on the SolutionLevel build projects -->
   <ItemGroup>
