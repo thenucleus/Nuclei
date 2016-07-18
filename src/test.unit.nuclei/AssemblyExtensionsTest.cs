@@ -1,26 +1,49 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="Nuclei">
-//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// <copyright company="TheNucleus">
+// Copyright (c) TheNucleus. All rights reserved.
+// Licensed under the Apache License, Version 2.0 license. See LICENCE.md file in the project root for full license information.
 // </copyright>
 //-----------------------------------------------------------------------
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Reflection;
 using NUnit.Framework;
 
 namespace Nuclei
 {
     [TestFixture]
-    [SuppressMessage("Microsoft.StyleCop.CSharp.DocumentationRules", "SA1600:ElementsMustBeDocumented",
-            Justification = "Unit tests do not need documentation.")]
+    [SuppressMessage(
+        "Microsoft.StyleCop.CSharp.DocumentationRules",
+        "SA1600:ElementsMustBeDocumented",
+        Justification = "Unit tests do not need documentation.")]
     public sealed class AssemblyExtensionsTest
     {
-        private string GetAssemblyPath(Assembly assembly)
+        private static string GetAssemblyDirectory(Assembly assembly)
+        {
+            var codebase = assembly.CodeBase;
+            var uri = new Uri(codebase);
+            return Path.GetDirectoryName(uri.LocalPath);
+        }
+
+        private static string GetAssemblyPath(Assembly assembly)
         {
             var codebase = assembly.CodeBase;
             var uri = new Uri(codebase);
             return uri.LocalPath;
+        }
+
+        [Test]
+        public void LocalDirectoryPath()
+        {
+            // Note that this test isn't complete by a long shot. We should really test
+            // networked paths too
+            // and failures (i.e. dynamically generated code)
+            // and ...???
+            Assert.AreEqual(GetAssemblyDirectory(typeof(string).Assembly), typeof(string).Assembly.LocalDirectoryPath());
+            Assert.AreEqual(GetAssemblyDirectory(typeof(SetUpAttribute).Assembly), typeof(SetUpAttribute).Assembly.LocalDirectoryPath());
+            Assert.AreEqual(GetAssemblyDirectory(Assembly.GetExecutingAssembly()), Assembly.GetExecutingAssembly().LocalDirectoryPath());
         }
 
         [Test]
@@ -36,10 +59,12 @@ namespace Nuclei
         }
 
         [Test]
-        public void GetStrongName()
+        public void StrongName()
         {
             var assembly = typeof(string).Assembly;
-            var strongName = assembly.GetStrongName();
+            Assert.IsTrue(assembly.IsStrongNamed());
+
+            var strongName = assembly.StrongName();
 
             Assert.AreEqual(assembly.GetName().Name, strongName.Name);
             Assert.AreEqual(assembly.GetName().Version, strongName.Version);

@@ -1,6 +1,7 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright company="Nuclei">
-//     Copyright 2013 Nuclei. Licensed under the Apache License, Version 2.0.
+// <copyright company="TheNucleus">
+// Copyright (c) TheNucleus. All rights reserved.
+// Licensed under the Apache License, Version 2.0 license. See LICENCE.md file in the project root for full license information.
 // </copyright>
 //-----------------------------------------------------------------------
 
@@ -27,21 +28,34 @@ namespace Nuclei
         /// <see langword="true" /> to throw an exception if the type cannot be found; <see langword="false" /> to return <see langword="null" />.
         /// </param>
         /// <returns>
-        /// The <see cref="Type"/> or <see langword="null" /> if the type could not be loaded 
+        /// The <see cref="Type"/> or <see langword="null" /> if the type could not be loaded
         /// and <paramref name="throwOnError"/> was set to <see langword="false" />.
         /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="typeName"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown if <paramref name="typeName"/> is an empty string.
+        /// </exception>
         /// <exception cref="UnableToLoadTypeException">
         /// Thrown when the <see cref="Type"/> could not be loaded and <paramref name="throwOnError"/> was set to <see langword="true" />.
         /// </exception>
         public static Type FromPartialInformation(
-            string typeName, 
-            string assemblyName = null, 
-            Version assemblyVersion = null, 
+            string typeName,
+            string assemblyName = null,
+            Version assemblyVersion = null,
             bool throwOnError = true)
         {
+            if (typeName == null)
             {
-                Lokad.Enforce.Argument(() => typeName);
-                Lokad.Enforce.Argument(() => typeName, Lokad.Rules.StringIs.NotEmpty);
+                throw new ArgumentNullException("typeName");
+            }
+
+            if (string.IsNullOrEmpty(typeName))
+            {
+                throw new ArgumentException(
+                    Resources.Exceptions_Messages_ParameterShouldNotBeAnEmptyString,
+                    "typeName");
             }
 
             // Generate the non-strong named assembly qualified name for the type, based
@@ -54,7 +68,7 @@ namespace Nuclei
                     CultureInfo.InvariantCulture,
                     "{0}{1}{2}{3}",
                     assemblyName,
-                    (assemblyVersion != null) 
+                    (assemblyVersion != null)
                         ? string.Format(
                             CultureInfo.InvariantCulture,
                             ", Version={0}",
@@ -82,17 +96,30 @@ namespace Nuclei
         /// <see langword="true" /> to throw an exception if the type cannot be found; <see langword="false" /> to return <see langword="null" />.
         /// </param>
         /// <returns>
-        /// The <see cref="Type"/> or <see langword="null" /> if the type could not be loaded 
+        /// The <see cref="Type"/> or <see langword="null" /> if the type could not be loaded
         /// and <paramref name="throwOnError"/> was set to <see langword="false" />.
         /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="assemblyQualifiedName"/> is <see langword="null"/>.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown if <paramref name="assemblyQualifiedName"/> is an empty string.
+        /// </exception>
         /// <exception cref="UnableToLoadTypeException">
         /// Thrown when the <see cref="Type"/> could not be loaded and <paramref name="throwOnError"/> was set to <see langword="true" />.
         /// </exception>
         public static Type FromFullyQualifiedName(string assemblyQualifiedName, bool throwOnError = true)
         {
+            if (assemblyQualifiedName == null)
             {
-                Lokad.Enforce.Argument(() => assemblyQualifiedName);
-                Lokad.Enforce.Argument(() => assemblyQualifiedName, Lokad.Rules.StringIs.NotEmpty);
+                throw new ArgumentNullException("assemblyQualifiedName");
+            }
+
+            if (string.IsNullOrEmpty(assemblyQualifiedName))
+            {
+                throw new ArgumentException(
+                    Resources.Exceptions_Messages_ParameterShouldNotBeAnEmptyString,
+                    "assemblyQualifiedName");
             }
 
             try
