@@ -48,6 +48,7 @@
                 Prepare;
             </Groups>
         </DeployStepsToExecute>
+        <!--
         <DeployStepsToExecute Include="$(DeployStepsTagVcs)">
             <Properties>
                 Configuration=$(ProductionConfiguration);
@@ -57,6 +58,7 @@
                 Tag;
             </Groups>
         </DeployStepsToExecute>
+        -->
         <DeployStepsToExecute Include="$(DeployStepsPushToNuget)">
             <Properties>
                 Configuration=$(ProductionConfiguration);
@@ -235,14 +237,12 @@
         allow the use of build templates, e.g. $(DirBuildDeploy)\myarchive-${VersionSemantic}.zip
     -->
     <ItemGroup>
-        <!--
-        <PushToGitBranchSpecs Include="$(DirBuildDeploy)\myarchive-${VersionSemantic}.zip">
+         <PushToGitBranchSpecs Include="$(DirBuildDeploy)\*.documentation*.zip">
              <Repository>$(GitRemoteRepository)</Repository>
-             <Branch>master</Branch>
+             <Branch>gh-pages</Branch>
              <ExtractZipFiles>true</ExtractZipFiles>
-             <CommitMessage>New changes</CommitMessage>
+             <CommitMessage>Documentation update for version ${VersionSemantic}</CommitMessage>
         </PushToGitBranchSpecs>
-        -->
     </ItemGroup>
 
 
