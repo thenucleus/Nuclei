@@ -216,11 +216,9 @@
 
             Also used as the 'ApplicationVersion' in the 'VersionNumber.wxi' file.
         -->
-        <!--
         <TemplateVersion Include="VersionProduct">
-            <Template>${VersionSemanticFull}</Template>
+            <Template>${VersionSemantic}</Template>
         </TemplateVersion>
-        -->
         <!--
             The template for the version number that will be used as the 'InstallVersion' in the
             'VersionNumber.wxi' file which can be generated if the 'ShouldGenerateAssemblyVersionInfo'
