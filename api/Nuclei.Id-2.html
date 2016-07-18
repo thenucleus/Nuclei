@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class Id&lt;TId, TInternalValue&gt;
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class Id&lt;TId, TInternalValue&gt;
+   ">
+    <meta name="generator" content="docfx 2.1.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content">
+              
+              <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2.md&amp;value=---%0Auid%3A%20Nuclei.Id%602%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L30" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              <h1 id="Nuclei_Id_2" data-uid="Nuclei.Id`2">Class Id&lt;TId, TInternalValue&gt;
+              </h1>
+              <div class="markdown level0 summary"><p>Defines the base class for ID numbers.</p>
+</div>
+              <div class="markdown level0 conceptual"></div>
+              <div class="inheritance">
+                <h5>Inheritance</h5>
+                  <div class="level0"><span class="xref">System.Object</span></div>
+                  <div class="level1"><span class="xref">Id&lt;TId, TInternalValue&gt;</span></div>
+              </div>
+              <div class="inheritedMembers">
+                <h5>Inherited Members</h5>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetType()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.MemberwiseClone()</span>
+                </div>
+              </div>
+              <h6><strong>Namespace</strong>:Nuclei</h6>
+              <h6><strong>Assembly</strong>:Nuclei.dll</h6>
+              <h5 id="Nuclei_Id_2_syntax">Syntax</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">[Serializable]
+[DataContract]
+public abstract class Id&lt;TId, TInternalValue&gt; : IIsId&lt;TId&gt;, IComparable&lt;TId&gt;, IComparable, IEquatable&lt;TId&gt; where TId : Id&lt;TId, TInternalValue&gt; where TInternalValue : IComparable&lt;TInternalValue&gt;, IEquatable&lt;TInternalValue&gt;</code></pre>
+              </div>
+              <h5 class="typeParameters">Type Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><em>TId</em></td>
+                    <td>The type of the id.</td>
+                  </tr>
+                  <tr>
+                    <td><em>TInternalValue</em></td>
+                    <td>The type of object that is stored internally as the ID number.</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 id="Nuclei_Id_2_remarks"><strong>Remarks</strong></h5>
+              <div class="markdown level0 remarks"><p><p>
+Derivative classes should define the type parameters as:
+</p></p>
+<example>
+public sealed class SomeId : Id<someid, somevaluetype="">
+</someid,></example>
+</div>
+              <h3 id="constructors">Constructors
+              </h3>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2__ctor__1_.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.%23ctor(%601)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L227">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2__ctor__1_" data-uid="Nuclei.Id`2.#ctor(`1)">Id(TInternalValue)</h4>
+              <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id&lt;TId, TInternalValue&gt;</a> class.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">protected Id(TInternalValue value)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">TInternalValue</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h3 id="properties">Properties
+              </h3>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_InternalValue.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.InternalValue%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L236">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_InternalValue" data-uid="Nuclei.Id`2.InternalValue">InternalValue</h4>
+              <div class="markdown level1 summary"><p>Gets the internal value in a readonly fashion.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">protected TInternalValue InternalValue
+{
+    [DebuggerStepThrough]
+    get;
+}</code></pre>
+              </div>
+              <h5 class="propertyValue">Property Value</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">TInternalValue</span></td>
+                    <td><p>The internal value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h3 id="methods">Methods
+              </h3>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_AreValuesEqual__1__1_.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.AreValuesEqual(%601%2C%601)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L397">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_AreValuesEqual__1__1_" data-uid="Nuclei.Id`2.AreValuesEqual(`1,`1)">AreValuesEqual(TInternalValue, TInternalValue)</h4>
+              <div class="markdown level1 summary"><p>Determines whether the specified values to see if they are equal.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">[SuppressMessage(&quot;Microsoft.StyleCop.CSharp.DocumentationRules&quot;, &quot;SA1628:DocumentationTextMustBeginWithACapitalLetter&quot;, Justification = &quot;Documentation can start with a language keyword&quot;)]
+protected virtual bool AreValuesEqual(TInternalValue ourValue, TInternalValue theirValue)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">TInternalValue</span></td>
+                    <td><em>ourValue</em></td>
+                    <td><p>The value owned by the current ID.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">TInternalValue</span></td>
+                    <td><em>theirValue</em></td>
+                    <td><p>The value owned by the other ID.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><p><span class="xref">true</span> if <em>theirValue</em> is equal to the value owned by this instance;
+otherwise, <span class="xref">false</span>.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_Clone.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.Clone%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L251">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_Clone" data-uid="Nuclei.Id`2.Clone">Clone()</h4>
+              <div class="markdown level1 summary"><p>Clones this ID number.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public TId Clone()</code></pre>
+              </div>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">TId</span></td>
+                    <td><p>A copy of the current ID number.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="implements">Implements</h5>
+                  <div><a class="xref" href="Nuclei.IIsId-1.html#Nuclei_IIsId_1_Clone">Id&lt;TId, TInternalValue&gt;.Clone()</a></div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_Clone__1_.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.Clone(%601)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L263">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_Clone__1_" data-uid="Nuclei.Id`2.Clone(`1)">Clone(TInternalValue)</h4>
+              <div class="markdown level1 summary"><p>Performs the actual act of creating a copy of the current ID number.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">protected abstract TId Clone(TInternalValue value)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">TInternalValue</span></td>
+                    <td><em>value</em></td>
+                    <td><p>The internally stored value.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">TId</span></td>
+                    <td><p>A copy of the current ID number.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_CompareTo__0_.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.CompareTo(%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L283">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_CompareTo__0_" data-uid="Nuclei.Id`2.CompareTo(`0)">CompareTo(TId)</h4>
+              <div class="markdown level1 summary"><p>Compares the current instance with another object of the same type and returns an integer that
+indicates whether the current instance precedes, follows, or occurs in the same position in the
+sort order as the other object.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public int CompareTo(TId other)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">TId</span></td>
+                    <td><em>other</em></td>
+                    <td><p>An object to compare with this instance.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td><p>A 32-bit signed integer that indicates the relative order of the objects being compared.
+The return value has these meanings:
+Value
+Meaning
+Less than zero
+This instance is less than <em>other</em>.
+Zero
+This instance is equal to <em>other</em>.
+Greater than zero
+This instance is greater than <em>other</em>.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="implements">Implements</h5>
+                  <div><span class="xref">System.IComparable&lt;TId&gt;.CompareTo(TId)</span></div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_CompareTo_System_Object_.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.CompareTo(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L336">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_CompareTo_System_Object_" data-uid="Nuclei.Id`2.CompareTo(System.Object)">CompareTo(Object)</h4>
+              <div class="markdown level1 summary"><p>Compares the current instance with another object of the same type and returns an integer that
+indicates whether the current instance precedes, follows, or occurs in the same position in the
+sort order as the other object.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public int CompareTo(object obj)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Object</span></td>
+                    <td><em>obj</em></td>
+                    <td><p>An object to compare with this instance.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td><p>A 32-bit signed integer that indicates the relative order of the objects being compared.
+The return value has these meanings:
+Value
+Meaning
+Less than zero
+This instance is less than <em>obj</em>.
+Zero
+This instance is equal to <em>obj</em>.
+Greater than zero
+This instance is greater than <em>obj</em>.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="implements">Implements</h5>
+                  <div><span class="xref">System.IComparable.CompareTo(System.Object)</span></div>
+              <h5 class="exceptions">Exceptions</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Condition</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.ArgumentException</span></td>
+                    <td><p><em>obj</em> is not the same type as this instance.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_CompareValues__1__1_.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.CompareValues(%601%2C%601)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L310">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_CompareValues__1__1_" data-uid="Nuclei.Id`2.CompareValues(`1,`1)">CompareValues(TInternalValue, TInternalValue)</h4>
+              <div class="markdown level1 summary"><p>Compares the current instance with another object of the same type and returns an integer that
+indicates whether the current instance precedes, follows, or occurs in the same position in the
+sort order as the other object.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">protected virtual int CompareValues(TInternalValue ourValue, TInternalValue theirValue)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">TInternalValue</span></td>
+                    <td><em>ourValue</em></td>
+                    <td><p>The value of the current object.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><span class="xref">TInternalValue</span></td>
+                    <td><em>theirValue</em></td>
+                    <td><p>The value of the object with which the current object is being compared.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td><p>A 32-bit signed integer that indicates the relative order of the objects being compared.
+The return value has these meanings:
+Value
+Meaning
+Less than zero
+<em>ourValue</em> is less than <em>theirValue</em>.
+Zero
+<em>ourValue</em> is equal to <em>theirValue</em>.
+Greater than zero
+<em>ourValue</em> is greater than <em>theirValue</em>.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_Equals__0_.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.Equals(%600)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L371">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_Equals__0_" data-uid="Nuclei.Id`2.Equals(`0)">Equals(TId)</h4>
+              <div class="markdown level1 summary"><p>Determines whether the specified <a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id&lt;TId, TInternalValue&gt;</a> is equal to this instance.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">[SuppressMessage(&quot;Microsoft.StyleCop.CSharp.DocumentationRules&quot;, &quot;SA1628:DocumentationTextMustBeginWithACapitalLetter&quot;, Justification = &quot;Documentation can start with a language keyword&quot;)]
+public bool Equals(TId other)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">TId</span></td>
+                    <td><em>other</em></td>
+                    <td><p>The <a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id&lt;TId, TInternalValue&gt;</a> to compare with this instance.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><p><span class="xref">true</span> if the specified <a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id&lt;TId, TInternalValue&gt;</a> is equal to this instance;
+otherwise, <span class="xref">false</span>.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="implements">Implements</h5>
+                  <div><span class="xref">System.IEquatable&lt;TId&gt;.Equals(TId)</span></div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_Equals_System_Object_.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.Equals(System.Object)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L413">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_Equals_System_Object_" data-uid="Nuclei.Id`2.Equals(System.Object)">Equals(Object)</h4>
+              <div class="markdown level1 summary"><p>Determines whether the specified <span class="xref">Object</span> is equal to this instance.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">[SuppressMessage(&quot;Microsoft.StyleCop.CSharp.DocumentationRules&quot;, &quot;SA1628:DocumentationTextMustBeginWithACapitalLetter&quot;, Justification = &quot;Documentation can start with a language keyword&quot;)]
+public override sealed bool Equals(object obj)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Object</span></td>
+                    <td><em>obj</em></td>
+                    <td><p>The <span class="xref">Object</span> to compare with this instance.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><p><span class="xref">true</span> if the specified <span class="xref">Object</span> is equal to this instance; otherwise, <span class="xref">false</span>.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="overrides">Overrides</h5>
+              <div><span class="xref">System.Object.Equals(System.Object)</span></div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_GetHashCode.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.GetHashCode%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L437">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_GetHashCode" data-uid="Nuclei.Id`2.GetHashCode">GetHashCode()</h4>
+              <div class="markdown level1 summary"><p>Returns a hash code for this instance.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public override sealed int GetHashCode()</code></pre>
+              </div>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Int32</span></td>
+                    <td><p>A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="overrides">Overrides</h5>
+              <div><span class="xref">System.Object.GetHashCode()</span></div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_ToString.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.ToString%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L448">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_ToString" data-uid="Nuclei.Id`2.ToString">ToString()</h4>
+              <div class="markdown level1 summary"><p>Returns a <span class="xref">String</span> that represents this instance.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public abstract override string ToString()</code></pre>
+              </div>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.String</span></td>
+                    <td><p>A <span class="xref">String</span> that represents this instance.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="overrides">Overrides</h5>
+              <div><span class="xref">System.Object.ToString()</span></div>
+              <h3 id="operators">Operators
+              </h3>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_op_Equality_Nuclei_Id__0__1__Nuclei_Id__0__1__.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.op_Equality(Nuclei.Id%7B%600%2C%601%7D%2CNuclei.Id%7B%600%2C%601%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L42">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_op_Equality_Nuclei_Id__0__1__Nuclei_Id__0__1__" data-uid="Nuclei.Id`2.op_Equality(Nuclei.Id{`0,`1},Nuclei.Id{`0,`1})">Equality(Id&lt;TId, TInternalValue&gt;, Id&lt;TId, TInternalValue&gt;)</h4>
+              <div class="markdown level1 summary"><p>Implements the operator ==.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static bool operator ==(Id&lt;TId, TInternalValue&gt; first, Id&lt;TId, TInternalValue&gt; second)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id</a>&lt;TId, TInternalValue&gt;</td>
+                    <td><em>first</em></td>
+                    <td><p>The first object.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id</a>&lt;TId, TInternalValue&gt;</td>
+                    <td><em>second</em></td>
+                    <td><p>The second object.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><p>The result of the operator.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_op_GreaterThan_Nuclei_Id__0__1__Nuclei_Id__0__1__.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.op_GreaterThan(Nuclei.Id%7B%600%2C%601%7D%2CNuclei.Id%7B%600%2C%601%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L96">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_op_GreaterThan_Nuclei_Id__0__1__Nuclei_Id__0__1__" data-uid="Nuclei.Id`2.op_GreaterThan(Nuclei.Id{`0,`1},Nuclei.Id{`0,`1})">GreaterThan(Id&lt;TId, TInternalValue&gt;, Id&lt;TId, TInternalValue&gt;)</h4>
+              <div class="markdown level1 summary"><p>Implements the operator &gt;.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static bool operator&gt;(Id&lt;TId, TInternalValue&gt; first, Id&lt;TId, TInternalValue&gt; second)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id</a>&lt;TId, TInternalValue&gt;</td>
+                    <td><em>first</em></td>
+                    <td><p>The first object.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id</a>&lt;TId, TInternalValue&gt;</td>
+                    <td><em>second</em></td>
+                    <td><p>The second object.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><p>The result of the operator.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_op_GreaterThanOrEqual_Nuclei_Id__0__1__Nuclei_Id__0__1__.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.op_GreaterThanOrEqual(Nuclei.Id%7B%600%2C%601%7D%2CNuclei.Id%7B%600%2C%601%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L126">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_op_GreaterThanOrEqual_Nuclei_Id__0__1__Nuclei_Id__0__1__" data-uid="Nuclei.Id`2.op_GreaterThanOrEqual(Nuclei.Id{`0,`1},Nuclei.Id{`0,`1})">GreaterThanOrEqual(Id&lt;TId, TInternalValue&gt;, Id&lt;TId, TInternalValue&gt;)</h4>
+              <div class="markdown level1 summary"><p>Implements the operator &gt;=.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static bool operator &gt;=(Id&lt;TId, TInternalValue&gt; first, Id&lt;TId, TInternalValue&gt; second)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id</a>&lt;TId, TInternalValue&gt;</td>
+                    <td><em>first</em></td>
+                    <td><p>The first object.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id</a>&lt;TId, TInternalValue&gt;</td>
+                    <td><em>second</em></td>
+                    <td><p>The second object.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><p>The result of the operator.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_op_Inequality_Nuclei_Id__0__1__Nuclei_Id__0__1__.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.op_Inequality(Nuclei.Id%7B%600%2C%601%7D%2CNuclei.Id%7B%600%2C%601%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L69">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_op_Inequality_Nuclei_Id__0__1__Nuclei_Id__0__1__" data-uid="Nuclei.Id`2.op_Inequality(Nuclei.Id{`0,`1},Nuclei.Id{`0,`1})">Inequality(Id&lt;TId, TInternalValue&gt;, Id&lt;TId, TInternalValue&gt;)</h4>
+              <div class="markdown level1 summary"><p>Implements the operator !=.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static bool operator !=(Id&lt;TId, TInternalValue&gt; first, Id&lt;TId, TInternalValue&gt; second)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id</a>&lt;TId, TInternalValue&gt;</td>
+                    <td><em>first</em></td>
+                    <td><p>The first object.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id</a>&lt;TId, TInternalValue&gt;</td>
+                    <td><em>second</em></td>
+                    <td><p>The second object.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><p>The result of the operator.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_op_LessThan_Nuclei_Id__0__1__Nuclei_Id__0__1__.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.op_LessThan(Nuclei.Id%7B%600%2C%601%7D%2CNuclei.Id%7B%600%2C%601%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L156">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_op_LessThan_Nuclei_Id__0__1__Nuclei_Id__0__1__" data-uid="Nuclei.Id`2.op_LessThan(Nuclei.Id{`0,`1},Nuclei.Id{`0,`1})">LessThan(Id&lt;TId, TInternalValue&gt;, Id&lt;TId, TInternalValue&gt;)</h4>
+              <div class="markdown level1 summary"><p>Implements the operator &lt;.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static bool operator &lt;(Id&lt;TId, TInternalValue&gt; first, Id&lt;TId, TInternalValue&gt; second)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id</a>&lt;TId, TInternalValue&gt;</td>
+                    <td><em>first</em></td>
+                    <td><p>The first object.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id</a>&lt;TId, TInternalValue&gt;</td>
+                    <td><em>second</em></td>
+                    <td><p>The second object.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><p>The result of the operator.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Id_2_op_LessThanOrEqual_Nuclei_Id__0__1__Nuclei_Id__0__1__.md&amp;value=---%0Auid%3A%20Nuclei.Id%602.op_LessThanOrEqual(Nuclei.Id%7B%600%2C%601%7D%2CNuclei.Id%7B%600%2C%601%7D)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/src/nuclei/Id.cs/#L186">View Source</a>
+              </span>
+              <h4 id="Nuclei_Id_2_op_LessThanOrEqual_Nuclei_Id__0__1__Nuclei_Id__0__1__" data-uid="Nuclei.Id`2.op_LessThanOrEqual(Nuclei.Id{`0,`1},Nuclei.Id{`0,`1})">LessThanOrEqual(Id&lt;TId, TInternalValue&gt;, Id&lt;TId, TInternalValue&gt;)</h4>
+              <div class="markdown level1 summary"><p>Implements the operator &lt;=.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public static bool operator &lt;=(Id&lt;TId, TInternalValue&gt; first, Id&lt;TId, TInternalValue&gt; second)</code></pre>
+              </div>
+              <h5 class="parameters">Parameters</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id</a>&lt;TId, TInternalValue&gt;</td>
+                    <td><em>first</em></td>
+                    <td><p>The first object.</p>
+</td>
+                  </tr>
+                  <tr>
+                    <td><a class="xref" href="Nuclei.Id-2.html#Nuclei_Id_2">Id</a>&lt;TId, TInternalValue&gt;</td>
+                    <td><em>second</em></td>
+                    <td><p>The second object.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+              <h5 class="returns">Returns</h5>
+              <table class="table table-bordered table-striped table-condensed">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="xref">System.Boolean</span></td>
+                    <td><p>The result of the operator.</p>
+</td>
+                  </tr>
+                </tbody>
+              </table>
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright (c) - TheNucleus 2013 - 2016. All rights reserved.
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

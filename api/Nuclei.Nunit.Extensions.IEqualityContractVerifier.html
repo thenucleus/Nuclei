@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Interface IEqualityContractVerifier
+   </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Interface IEqualityContractVerifier
+   ">
+    <meta name="generator" content="docfx 2.1.0.0">
+    
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content">
+              
+              <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L25" class="btn btn-primary pull-right mobile-hide">View Source</a>
+              <h1 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier">Interface IEqualityContractVerifier
+              </h1>
+              <div class="markdown level0 summary"><p>Defines the interface for tests that need to verify that the equality contract
+is implemented correctly.</p>
+</div>
+              <div class="markdown level0 conceptual"></div>
+              <h6><strong>Namespace</strong>:Nuclei.Nunit.Extensions</h6>
+              <h6><strong>Assembly</strong>:Nuclei.Nunit.Extensions.dll</h6>
+              <h5 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_syntax">Syntax</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">public interface IEqualityContractVerifier</code></pre>
+              </div>
+              <h5 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_remarks"><strong>Remarks</strong></h5>
+              <div class="markdown level0 remarks"><p>
+The interface is defined so that the <a class="xref" href="Nuclei.Nunit.Extensions.EqualityContractVerifierTest.html#Nuclei_Nunit_Extensions_EqualityContractVerifierTest">EqualityContractVerifierTest</a> can
+call methods on a non-generic object, while the user can provide a generic class.
+</p>
+<p>
+This code is based on, but not exactly the same as, the code of the hashcode contract verifier in the MbUnit
+project which is licensed under the Apache License 2.0. More information can be found at:
+<a href="https://code.google.com/p/mb-unit/">https://code.google.com/p/mb-unit/</a>
+</p>
+</div>
+              <h3 id="methods">Methods
+              </h3>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_EqualsOperatorWithEqualObject.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.EqualsOperatorWithEqualObject%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L65">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_EqualsOperatorWithEqualObject" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.EqualsOperatorWithEqualObject">EqualsOperatorWithEqualObject()</h4>
+              <div class="markdown level1 summary"><p>Tests whether the equals operator gives the correct return value
+if two equal objects are compared.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void EqualsOperatorWithEqualObject()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_EqualsOperatorWithLeftNullObject.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.EqualsOperatorWithLeftNullObject%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L77">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_EqualsOperatorWithLeftNullObject" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.EqualsOperatorWithLeftNullObject">EqualsOperatorWithLeftNullObject()</h4>
+              <div class="markdown level1 summary"><p>Tests whether the equals operator gives the correct return value
+if a null reference is compared to an object.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void EqualsOperatorWithLeftNullObject()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_EqualsOperatorWithNonEqualObject.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.EqualsOperatorWithNonEqualObject%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L71">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_EqualsOperatorWithNonEqualObject" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.EqualsOperatorWithNonEqualObject">EqualsOperatorWithNonEqualObject()</h4>
+              <div class="markdown level1 summary"><p>Tests whether the equals operator gives the correct return value
+if two non-equal objects are compared.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void EqualsOperatorWithNonEqualObject()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_EqualsOperatorWithRightNullObject.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.EqualsOperatorWithRightNullObject%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L83">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_EqualsOperatorWithRightNullObject" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.EqualsOperatorWithRightNullObject">EqualsOperatorWithRightNullObject()</h4>
+              <div class="markdown level1 summary"><p>Tests whether the equals operator gives the correct return value
+if an object is compared to a null reference.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void EqualsOperatorWithRightNullObject()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_EquatableEquals.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.EquatableEquals%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L53">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_EquatableEquals" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.EquatableEquals">EquatableEquals()</h4>
+              <div class="markdown level1 summary"><p>Tests whether <code>IEquatable{T}.Equals(T)</code> gives the correct return value.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void EquatableEquals()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_EquatableEqualsWithNonEqualObject.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.EquatableEqualsWithNonEqualObject%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L59">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_EquatableEqualsWithNonEqualObject" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.EquatableEqualsWithNonEqualObject">EquatableEqualsWithNonEqualObject()</h4>
+              <div class="markdown level1 summary"><p>Tests whether <code>IEquatable{T}.Equals(T)</code> gives the correct return value
+if a non-equal object is passed in as the parameter.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void EquatableEqualsWithNonEqualObject()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_HashCodeComparisonForEqualObjects.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.HashCodeComparisonForEqualObjects%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L113">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_HashCodeComparisonForEqualObjects" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.HashCodeComparisonForEqualObjects">HashCodeComparisonForEqualObjects()</h4>
+              <div class="markdown level1 summary"><p>Tests whether <code>object.GetHashcode()</code> returns the same value
+for two equal objects.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void HashCodeComparisonForEqualObjects()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_NotEqualsOperatorWithEqualObject.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.NotEqualsOperatorWithEqualObject%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L89">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_NotEqualsOperatorWithEqualObject" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.NotEqualsOperatorWithEqualObject">NotEqualsOperatorWithEqualObject()</h4>
+              <div class="markdown level1 summary"><p>Tests whether the not-equals operator gives the correct return value
+if two equal objects are compared.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void NotEqualsOperatorWithEqualObject()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_NotEqualsOperatorWithLeftNullObject.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.NotEqualsOperatorWithLeftNullObject%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L101">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_NotEqualsOperatorWithLeftNullObject" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.NotEqualsOperatorWithLeftNullObject">NotEqualsOperatorWithLeftNullObject()</h4>
+              <div class="markdown level1 summary"><p>Tests whether the not-equals operator gives the correct return value
+if a null reference is compared to an object.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void NotEqualsOperatorWithLeftNullObject()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_NotEqualsOperatorWithNonEqualObject.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.NotEqualsOperatorWithNonEqualObject%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L95">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_NotEqualsOperatorWithNonEqualObject" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.NotEqualsOperatorWithNonEqualObject">NotEqualsOperatorWithNonEqualObject()</h4>
+              <div class="markdown level1 summary"><p>Tests whether the not-equals operator gives the correct return value
+if two non-equal objects are compared.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void NotEqualsOperatorWithNonEqualObject()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_NotEqualsOperatorWithRightNullObject.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.NotEqualsOperatorWithRightNullObject%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L107">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_NotEqualsOperatorWithRightNullObject" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.NotEqualsOperatorWithRightNullObject">NotEqualsOperatorWithRightNullObject()</h4>
+              <div class="markdown level1 summary"><p>Tests whether the not-equals operator gives the correct return value
+if an object is compared to a null reference.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void NotEqualsOperatorWithRightNullObject()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_ObjectEquals.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.ObjectEquals%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L30">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_ObjectEquals" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.ObjectEquals">ObjectEquals()</h4>
+              <div class="markdown level1 summary"><p>Tests whether <code>Object.Equals(object)</code> gives the correct return value.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void ObjectEquals()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_ObjectEqualsWithNonEqualObjectOfDifferentType.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.ObjectEqualsWithNonEqualObjectOfDifferentType%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L48">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_ObjectEqualsWithNonEqualObjectOfDifferentType" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.ObjectEqualsWithNonEqualObjectOfDifferentType">ObjectEqualsWithNonEqualObjectOfDifferentType()</h4>
+              <div class="markdown level1 summary"><p>Tests whether <code>Object.Equals(object)</code> gives the correct return value
+if an object of a different type is passed as the parameter.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void ObjectEqualsWithNonEqualObjectOfDifferentType()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_ObjectEqualsWithNonEqualObjectOfSameType.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.ObjectEqualsWithNonEqualObjectOfSameType%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L42">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_ObjectEqualsWithNonEqualObjectOfSameType" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.ObjectEqualsWithNonEqualObjectOfSameType">ObjectEqualsWithNonEqualObjectOfSameType()</h4>
+              <div class="markdown level1 summary"><p>Tests whether <code>Object.Equals(object)</code> gives the correct return value
+if a non-equal object of the same type is passed as the parameter.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void ObjectEqualsWithNonEqualObjectOfSameType()</code></pre>
+              </div>
+              <span class="small pull-right mobile-hide">
+                <span class="divider">|</span>
+                <a href="https://github.com/thenucleus/Nuclei/new/develop/doc/Nuclei.Documentation/apispec/new?filename=Nuclei_Nunit_Extensions_IEqualityContractVerifier_ObjectEqualsWithNullObject.md&amp;value=---%0Auid%3A%20Nuclei.Nunit.Extensions.IEqualityContractVerifier.ObjectEqualsWithNullObject%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
+              </span>
+              <span class="small pull-right mobile-hide">
+                <a href="https://github.com/thenucleus/nuclei.nunit.extensions/blob/master/src/nuclei.nunit.extensions/IEqualityContractVerifier.cs/#L36">View Source</a>
+              </span>
+              <h4 id="Nuclei_Nunit_Extensions_IEqualityContractVerifier_ObjectEqualsWithNullObject" data-uid="Nuclei.Nunit.Extensions.IEqualityContractVerifier.ObjectEqualsWithNullObject">ObjectEqualsWithNullObject()</h4>
+              <div class="markdown level1 summary"><p>Tests whether <code>Object.Equals(object)</code> gives the correct return value
+if the passed object is <span class="xref">null</span>.</p>
+</div>
+              <div class="markdown level1 conceptual"></div>
+              <h5 class="decalaration">Declaration</h5>
+              <div class="codewrapper">
+                <pre><code class="lang-csharp hljs">void ObjectEqualsWithNullObject()</code></pre>
+              </div>
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright (c) - TheNucleus 2013 - 2016. All rights reserved.
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>

@@ -1,103 +1,124 @@
 <!DOCTYPE html>
+<!--[if IE]><![endif]-->
 <html>
-  <head>
-    <meta charset='utf-8'>
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-
-    <title>Nuclei by pvandervelde</title>
-  </head>
-
-  <body>
-    <header>
-      <div class="inner">
-        <h1>Nuclei</h1>
-        <h2>Nuclei is a collection of libraries containing classes and functions for inter-application interaction via a command mechanism, diagnostics, configuration handling, exception handling and assembly location and loading.</h2>
-        <a href="https://github.com/pvandervelde/Nuclei" class="button"><small>View project on</small>GitHub</a>
-      </div>
-    </header>
-
-    <div id="content-wrapper">
-      <div class="inner clearfix">
-        <section id="main-content">
-          <h1>
-<a name="nuclei" class="anchor" href="#nuclei"><span class="octicon octicon-link"></span></a>Nuclei</h1>
-
-<p>Nuclei is a collection of libraries containing classes and functions for inter-application interaction via a command mechanism, diagnostics, configuration handling, exception handling and assembly location and loading.</p>
-
-<p>The capabilities in Nuclei are currently divided as follows:</p>
-
-<ul>
-<li>
-<strong>Nuclei</strong> - Base classes and interfaces, mostly used by the other libraries.</li>
-<li>
-<strong>Nuclei.Build</strong> - Assembly attributes which can be used at build time to embed information about the specific build into an assembly, e.g. time and date of build or information describing the version control revision of the source code that was used to create the assembly.</li>
-<li>
-<strong>Nuclei.Communication</strong> - Provides classes, interfaces and delegates used to provide a means of interacting between two or more applications through one or more command interfaces (similar to a Remote Procedure Call (RPC)). Capabilities include:
-
-<ul>
-<li>Based on WCF. Currently implemented methods for using TCP and named-pipes as base network layers.</li>
-<li>Discovery of communication sources on the local machine and the local network (using WS discovery).</li>
-<li>Automatic exchange of connection parameters between endpoints, if endpoints desired to communicate on the same topics (i.e. using an API that is familiar to both).</li>
-<li>User provides command and notification interfaces which provide asynchronous methods which can be called by remote endpoints. Command parameters and return data are transported over via a message based mechanism.</li>
-</ul>
-</li>
-<li>
-<strong>Nuclei.Configuration</strong> - Provides an abstraction of a configuration. Build-in support for configuration via an application config file.</li>
-<li>
-<strong>Nuclei.Diagnostics</strong> - Provides classes for logging (using NLog) and and in-application measuring of performance.</li>
-<li><p><strong>Nuclei.Nunit.Extensions</strong> - Contains a simple implementation of contract verification for NUnit. Ideas based
-on the <a href="http://interfacingreality.blogspot.co.nz/2009/03/contract-verifiers-in-mbunit-v307.html">contract verifiers in MbUnit</a>. Currently only has
-verifiers for hashcode and equality.</p></li>
-<li><p><strong>Nuclei.AppDomains</strong> - Provides classes for the creation of AppDomains with pre-set assembly resolve and exception handlers.</p></li>
-<li><p><strong>Nuclei.ExceptionHandling</strong> - Provides exception filters for use in top level exception recording.</p></li>
-<li><p><strong>Nuclei.Fusion</strong> - Provides methods for assembly resolve requests.</p></li>
-</ul><h1>
-<a name="installation-instructions" class="anchor" href="#installation-instructions"><span class="octicon octicon-link"></span></a>Installation instructions</h1>
-
-<p>All libraries are available on <a href="http://www.nuget.org">NuGet.org</a>. </p>
-
-<p>Note that <strong>Nuclei.AppDomains</strong>, <strong>Nuclei.ExceptionHandling</strong> and <strong>Nuclei.Fusion</strong> are source-only packages because of the capabilities they provide. For both top-level exception handlers and for assembly resolvers it makes no sense to provide binary packages because then it is possible that trying to load the respective assemblies may be the cause of the unhandled exception or assembly resolve request.</p>
-
-<h1>
-<a name="how-to-build" class="anchor" href="#how-to-build"><span class="octicon octicon-link"></span></a>How to build</h1>
-
-<p>The solution files are created in Visual Studio 2012 (using .NET 4.5) and the entire project can be build by invoking MsBuild on the nuclei.integration.msbuild script. This will build the binaries and the NuGet package. The binaries will be placed in the <code>build\bin\AnyCpu\Release</code> directory and the NuGet package will be placed in the <code>build\deploy</code> directory.</p>
-
-<p>Note that the build scripts assume that:</p>
-
-<ul>
-<li>The binaries should be signed, however the SNK key file is not included in the repository so a new key file has to be <a href="http://msdn.microsoft.com/en-us/library/6f05ezxy(v=vs.110).aspx">created</a>. The key file is referenced through an environment variable called <code>SOFTWARE_SIGNING_KEY_PATH</code> that has as value the full path of the key file. </li>
-<li>GIT can be found on the PATH somewhere so that it can be called to get the hash of the last commit in the current repository. This hash is embedded in the nuclei assemblies together with information about the build configuration and build time and date.</li>
-<li>The Windows SDK 7 or 8 is installed on the machine so that the script has access to the strong naming utility (<code>sn.exe</code>) for the generation of the <code>InternalsVisibleTo</code> attributes that are used during the unit tests.</li>
-</ul>
-        </section>
-
-        <aside id="sidebar">
-          <a href="https://github.com/pvandervelde/Nuclei/zipball/master" class="button">
-            <small>Download</small>
-            .zip file
-          </a>
-          <a href="https://github.com/pvandervelde/Nuclei/tarball/master" class="button">
-            <small>Download</small>
-            .tar.gz file
-          </a>
-
-          <p class="repo-owner"><a href="https://github.com/pvandervelde/Nuclei"></a> is maintained by <a href="https://github.com/pvandervelde">pvandervelde</a>.</p>
-
-          <p>This page was generated by <a href="pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
-        </aside>
-      </div>
-    </div>
-
   
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Nuclei </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Nuclei ">
+    <meta name="generator" content="docfx 2.1.0.0">
+    
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles/docfx.vendor.css">
+    <link rel="stylesheet" href="styles/docfx.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <meta property="docfx:navrel" content="toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+              <a href="https://github.com/thenucleus/Nuclei/blob/release/0.9.0/doc/Nuclei.Documentation/index.md/#L1" class="btn btn-primary pull-right mobile-hide">Improve this Doc</a>
+              <h1 id="nuclei">Nuclei</h1>
+              
+<p>Nuclei is a collection of libraries containing classes and functions for inter-application interaction via a command mechanism, diagnostics, configuration handling, exception handling and assembly location and loading.
+The <code>Nuclei</code> assembly contains a set of classes and interfaces for:</p>
+<ul>
+<li>An ID instance that is comparable and equatable.</li>
+<li>Extracting text and streams from an embedded resource.</li>
+<li>Comparison of <code>Type</code> instances.</li>
+<li>Loading of <code>Type</code> instances with a partial assembly name.</li>
+<li>Extension methods for <code>Assembly</code> instances.</li>
+</ul>
+<h1 id="installation-instructions">Installation instructions</h1>
+<p>All libraries are available on <a href="https://www.nuget.org/packages/Nuclei/">NuGet.org</a>.</p>
+<h1 id="how-to-build">How to build</h1>
+<p>The solution files are created in Visual Studio 2013 (using .NET 4.0) and the assemblies can be build either from Visual Studio or through the build script.
+To invoke the build script use the following command line from the workspace directory (assuming MsBuild is on the PATH)</p>
+<pre><code>msbuild nuclei.msbuild /t:build
+</code></pre><p>This will build the binaries and the NuGet package. The binaries will be placed in the <code>build\bin\AnyCpu\Release</code> directory and the NuGet package will be placed in the <code>build\deploy</code> directory.</p>
+<p>Note that the build scripts assume that:</p>
+<ul>
+<li>The binaries should be signed, however the SNK key file is not included in the repository so a new key file has to be <a href="http://msdn.microsoft.com/en-us/library/6f05ezxy(v=vs.110).aspx">created</a>. The key file is referenced
+through an environment variable called <code>SOFTWARE_SIGNING_KEY_PATH</code> that has as value the directory path of the key file. The key file is expected to be called <code>nuclei.snk</code></li>
+<li>GIT can be found on the PATH somewhere so that it can be called to get the hash of the last commit in the current repository. This hash is embedded in the assemblies together
+with information about the build configuration and build time and date.</li>
+</ul>
+<h1 id="how-to-contribute">How to contribute</h1>
+<p>There are a few ways to contribute:</p>
+<ul>
+<li>By opening an issue on the project.</li>
+<li>By provide a pull-request for a new feature or a bug.</li>
+</ul>
+<p>Any suggestions or improvements you may have are more than welcome.</p>
+
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+            <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+            </nav>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright (c) - TheNucleus 2013 - 2016. All rights reserved.
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
   </body>
 </html>
