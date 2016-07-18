@@ -33,10 +33,6 @@ namespace Nuclei
         /// <returns>
         /// The name of the member in the expression or <see langword="null"/> if no member was called in the expression.
         /// </returns>
-        [SuppressMessage(
-            "Microsoft.Design",
-            "CA1006:DoNotNestGenericTypesInMemberSignatures",
-            Justification = "The generics are necessar to get the name of the member via a lambda expression.")]
         public static string MemberName(LambdaExpression expression)
         {
             if (expression == null)
@@ -232,15 +228,15 @@ namespace Nuclei
                 throw new ArgumentNullException("events");
             }
 
-            var propertiesText = new StringBuilder();
+            var eventText = new StringBuilder();
             foreach (var eventInfo in events)
             {
-                if (propertiesText.Length > 0)
+                if (eventText.Length > 0)
                 {
-                    propertiesText.Append("; ");
+                    eventText.Append("; ");
                 }
 
-                propertiesText.Append(
+                eventText.Append(
                     string.Format(
                         CultureInfo.InvariantCulture,
                         "{0}.{1}",
@@ -248,7 +244,7 @@ namespace Nuclei
                         eventInfo.Name));
             }
 
-            return propertiesText.ToString();
+            return eventText.ToString();
         }
 
         /// <summary>
