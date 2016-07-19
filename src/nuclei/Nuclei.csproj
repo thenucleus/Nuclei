@@ -16,8 +16,6 @@
     <FileAlignment>512</FileAlignment>
     <!-- Project directories -->
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <OutputPath>$(SolutionDir)\..\build\bin\$(Platform)\$(Configuration)\</OutputPath>
-    <IntermediateOutputPath>$(SolutionDir)\..\build\temp\bin\obj\$(AssemblyName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
     <!-- Build configuration -->
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
