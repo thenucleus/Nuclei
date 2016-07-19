@@ -80,8 +80,8 @@
         <!--
             A flag that indicates whether or not the assemblies should be strong named during the compilation process.
         -->
-        <ShouldSign Condition=" '$(ShouldSign)' == '' ">false</ShouldSign>
-        <SignAssembly Condition=" '$(ShouldSign)' == 'true' ">false</SignAssembly>
+        <ShouldSign Condition=" '$(ShouldSign)' == '' ">true</ShouldSign>
+        <SignAssembly Condition=" '$(ShouldSign)' == 'true' ">true</SignAssembly>
         <DelaySign Condition=" '$(ShouldSign)' == 'true' ">false</DelaySign>
         <!--
             The full path of the key file that will be used to sign the assemblies during the compilation process.

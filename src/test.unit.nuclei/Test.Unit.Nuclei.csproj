@@ -16,18 +16,11 @@
     <FileAlignment>512</FileAlignment>
     <!-- Project directories -->
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <OutputPath>$(SolutionDir)\..\build\bin\$(Platform)\$(Configuration)\</OutputPath>
-    <IntermediateOutputPath>$(SolutionDir)\..\build\temp\bin\obj\$(AssemblyName)\$(Platform)\$(Configuration)\</IntermediateOutputPath>
     <!-- Build configuration -->
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <!--
-      A flag that indicates whether the current project is a Test project.
-      This value is used here just so that there is a value when no other value is specified. Do not comment this
-      value out unless you know what you are doing!
-    -->
-    <IsTest Condition=" '$(IsTest)' == '' ">true</IsTest>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup>
