@@ -166,3 +166,4 @@ AssemblyInfo.Company.cs
 *.ide
 .vs/
 _site/
+doc/Nuclei.Documentation/docfx.json
