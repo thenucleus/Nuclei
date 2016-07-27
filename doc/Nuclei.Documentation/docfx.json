@@ -10,7 +10,7 @@
                         "_site/**"
                     ],
                     "files": [
-                        "src/**/*.csproj"
+                        "src/**/Nuclei.csproj"
                     ]
                 }
             ],
