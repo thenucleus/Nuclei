@@ -14,9 +14,9 @@ using Nuclei.Build;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Nuclei.Nunit.Extensions.Samples")]
+[assembly: AssemblyTitle("Nuclei.Samples")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyProduct("Nuclei.Nunit.Extensions.Samples")]
+[assembly: AssemblyProduct("Nuclei.Samples")]
 
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
