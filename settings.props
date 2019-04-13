@@ -86,7 +86,7 @@
             * Copyrights
             * API documentation
         -->
-        <ProductName Condition=" '$(ProductName)' == '' ">Nuclei</ProductName>
+        <ProductName>Nuclei</ProductName>
 
         <!--
             The name of the product that can be used as part of a file path. This is for instance used for:
@@ -94,7 +94,7 @@
             * SourceMonitor
             * Deployment directory naming
         -->
-        <ProductNameInFilePath Condition=" '$(ProductNameInFilePath)' == '' ">Nuclei</ProductNameInFilePath>
+        <ProductNameInFilePath>Nuclei</ProductNameInFilePath>
 
         <!--
             The description of the product. This is for instance used for:
@@ -109,38 +109,38 @@
             * Finding the correct assemblies and namespaces for unit testing and coverage reporting
             * Generated code files that contain namespaces
         -->
-        <ProductNamespace Condition=" '$(ProductNamespace)' == '' ">Nuclei</ProductNamespace>
+        <ProductNamespace>Nuclei</ProductNamespace>
 
         <!--
             The first year the product was available / created. This is for instance used for:
             * Copyrights
         -->
-        <ProductStartingYear Condition=" '$(ProductStartingYear)' == '' ">2013</ProductStartingYear>
+        <ProductStartingYear>2013</ProductStartingYear>
 
         <!--
             The name of the company. This is for instance used for:
             * Copyrights
             * API documentation
         -->
-        <CompanyName Condition=" '$(CompanyName)' == '' ">TheNucleus</CompanyName>
+        <CompanyName>TheNucleus</CompanyName>
 
         <!--
             The name of the company that can be used as a part of a file path. This is for instance used for:
             * Installer file paths
         -->
-        <CompanyNameInFilePath Condition=" '$(CompanyNameInFilePath)' == '' ">thenucleus</CompanyNameInFilePath>
+        <CompanyNameInFilePath>thenucleus</CompanyNameInFilePath>
 
         <!--
             The URL of the company website. This is for instance used for:
             * nuspec files
         -->
-        <CompanyUrl Condition=" '$(CompanyUrl)' == '' ">https://github.com/thenucleus/Nuclei</CompanyUrl>
+        <CompanyUrl>https://github.com/thenucleus/Nuclei</CompanyUrl>
 
         <!--
             The email address that is specified in the documentation. This is for instance used for:
             * API documentation
         -->
-        <EmailDocumentation Condition=" '$(EmailDocumentation)' == '' ">UNDEFINED</EmailDocumentation>
+        <EmailDocumentation>UNDEFINED</EmailDocumentation>
 
         <!--
             The short form of the  copyright text. This is for instance used for:
@@ -161,19 +161,19 @@
     -->
     <PropertyGroup>
         <!-- The user name of the user who owns the repository on GitHub -->
-        <GitHubUserName Condition=" '$(GitHubUserName)' == '' ">thenucleus</GitHubUserName>
+        <GitHubUserName>thenucleus</GitHubUserName>
 
         <!--
             The github repository that contains the source code for the current product. Used when getting the release notes
             from the github issues, e.g. nbuildkit.
         -->
-        <GitHubRepositoryName Condition=" '$(GitHubRepositoryName)' == '' ">Nuclei</GitHubRepositoryName>
+        <GitHubRepositoryName>Nuclei</GitHubRepositoryName>
 
         <!--
             The full URL to the GIT repository. Can include the '%GitHubToken%' environment variable for authenticated
             connection to the repository, e.g. https://%GitHubToken%:@github.com/MyUser/MyProject.git
         -->
-        <GitRemoteRepository Condition=" '$(GitRemoteRepository)' == '' ">https://github.com/$(GitHubUserName)/Nuclei.git</GitRemoteRepository>
+        <GitRemoteRepository>https://github.com/$(GitHubUserName)/Nuclei.git</GitRemoteRepository>
     </PropertyGroup>
 
     <!--
@@ -637,7 +637,7 @@
         NuGet if no package is specified in the packages.config file.
     -->
     <PropertyGroup>
-        <NBuildKitMinimumVersion Condition=" '$(NBuildKitMinimumVersion)' == '' ">0.8.0</NBuildKitMinimumVersion>
-        <NBuildKitMaximumVersion Condition=" '$(NBuildKitMaximumVersion)' == '' ">1.0.0</NBuildKitMaximumVersion>
+        <NBuildKitMinimumVersion>1.0.0</NBuildKitMinimumVersion>
+        <NBuildKitMaximumVersion>2.0.0</NBuildKitMaximumVersion>
     </PropertyGroup>
 </Project>

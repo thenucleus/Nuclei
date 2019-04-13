@@ -36,8 +36,8 @@
   </PropertyGroup>
   <Import Project="$(SolutionDir)\base.props" />
   <ItemGroup>
-    <Reference Include="Nuclei.Build, Version=0.9.0.0, Culture=neutral, PublicKeyToken=ee5b68ec5ad4ef93, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Nuclei.Build.0.9.0\lib\net40\Nuclei.Build.dll</HintPath>
+    <Reference Include="Nuclei.Build, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ee5b68ec5ad4ef93, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Nuclei.Build.1.0.0\lib\net40\Nuclei.Build.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=2.6.2.12296, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
